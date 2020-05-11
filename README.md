@@ -1,2 +1,11 @@
 # app-flutter
-Lectary 4. This time, it is Flutter.
+
+Lectary 4 - A sign language learning application.
+
+This time, it is Flutter.
+
+
+
+## Getting Started
+
+ToDo
