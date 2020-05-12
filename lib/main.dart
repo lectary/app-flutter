@@ -23,6 +23,7 @@ class LectaryApp extends StatelessWidget {
         const Locale('de', 'DE'),
       ],
       theme: ThemeData(
+        typography: Typography.material2018(platform: TargetPlatform.android),
         primarySwatch: Colors.blue,
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
