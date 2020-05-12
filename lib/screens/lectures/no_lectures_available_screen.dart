@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 
-class LectureEmptyPage extends StatelessWidget {
-  LectureEmptyPage({Key key}) : super(key: key);
+class NoLecturesAvailableScreen extends StatelessWidget {
+  NoLecturesAvailableScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

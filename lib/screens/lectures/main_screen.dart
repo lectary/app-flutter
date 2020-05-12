@@ -10,6 +10,6 @@ class LectureMainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return lecturesAvailable ? LecturePage() : LectureEmptyPage();
+    return lecturesAvailable ? LectureScreen() : NoLecturesAvailableScreen();
   }
 }
