@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:lectary/i18n/localizations.dart';
 
 void main() {
   runApp(LectaryApp());
@@ -9,7 +11,16 @@ class LectaryApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Lectary 4', // used by os task switcher
+      onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).appTitle, // used by os task switcher
+      localizationsDelegates: [
+        AppLocalizations.delegate, // custom localization
+        GlobalMaterialLocalizations.delegate, // provides localized values for the material component library
+        GlobalWidgetsLocalizations.delegate, // defines text direction (right2left/left2right)
+        GlobalCupertinoLocalizations.delegate, // ios
+      ],
+      supportedLocales: [
+        const Locale('de', 'DE'),
+      ],
       theme: ThemeData(
         primarySwatch: Colors.blue,
         // This makes the visual density adapt to the platform that you run
@@ -17,28 +28,26 @@ class LectaryApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LectaryMainPage(title: 'Lectary 4',),
+      home: LectaryMainPage(),
     );
   }
 }
 
 class LectaryMainPage extends StatelessWidget {
-  LectaryMainPage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  LectaryMainPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(AppLocalizations.of(context).appTitle),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Hello Lectary',
+              AppLocalizations.of(context).emptyLectures,
             ),
           ],
         ),
