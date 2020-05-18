@@ -26,6 +26,8 @@ class AppLocalizations {
   String get emptyLectures => _getValue(EmptyLectures);
   String get minMaxLectureSizes => _getValue(MinMaxLectureSizes);
   String get downloadAndManageLectures => _getValue(DownloadAndManageLectures);
+  String get buttonLectureManagement => _getValue(ButtonLectureManagement);
+  String get buttonSettings => _getValue(ButtonSettings);
 }
 
 /// Bridge-class for flutter i18n mechanics and custom i18n resource class.
