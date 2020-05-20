@@ -6,6 +6,7 @@ const String
     ButtonLectureManagement = 'button_lecture_management',
     ButtonSettings = 'button_settings',
     ScreenManagementTitle = 'screen_management_title',
+    ScreenManagementSearchHint ='screen_management_search_hint',
     ScreenSettingsTitle = 'screen_settings_title';
 
 
@@ -19,6 +20,7 @@ final de = {
   ButtonLectureManagement: 'Lektionen verwalten',
   ButtonSettings: 'Einstellungen',
   ScreenManagementTitle: 'Lektionen verwalten',
+  ScreenManagementSearchHint: 'Suche',
   ScreenSettingsTitle: 'Einstellungen',
 };
 

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
@@ -18,9 +20,39 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         title: Text(AppLocalizations.of(context).screenManagementTitle),
       ),
       drawer: MainDrawer(),
-      body: Center(
-        child: Text("Hello lecture management")
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: _generateListView(),
+          ),
+        ],
       ),
     );
   }
+
+  // builds a listView with ListTiles based on the generated item-list
+  ListView _generateListView() {
+    return ListView.separated(
+      padding: EdgeInsets.all(0),
+      separatorBuilder: (context, index) => Divider(),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: Visibility(
+            visible: _checkDownloadStatus(),
+            child: Icon(Icons.check_circle),
+          ),
+          title: Text("${items[index]}"),
+          trailing: Icon(Icons.more_horiz),
+        );
+      },
+    );
+  }
+
+  bool _checkDownloadStatus() {
+    // TODO connect with real data
+    final random = Random();
+    return random.nextBool();
+  }
+
 }

@@ -29,6 +29,7 @@ class AppLocalizations {
   String get buttonLectureManagement => _getValue(ButtonLectureManagement);
   String get buttonSettings => _getValue(ButtonSettings);
   String get screenManagementTitle => _getValue(ScreenManagementTitle);
+  String get screenManagementSearchHint => _getValue(ScreenManagementSearchHint);
   String get screenSettingsTitle => _getValue(ScreenSettingsTitle);
 }
 
