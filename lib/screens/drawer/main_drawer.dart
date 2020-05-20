@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
+import 'package:lectary/screens/management/lecture_management_screen.dart';
 
 class MainDrawer extends StatelessWidget {
 
@@ -22,7 +23,7 @@ class MainDrawer extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: Icon(Icons.arrow_back),
+                    icon: Icon(Icons.arrow_back_ios),
                   ),
                   Text("Drawer-Header")
                 ],
@@ -36,9 +37,11 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           Divider(height: 1, thickness: 1),
-          _buildButton(Icons.cloud_download, AppLocalizations.of(context).buttonLectureManagement),
+          _buildButton(Icons.cloud_download, AppLocalizations.of(context).buttonLectureManagement,
+              context, '/lectureManagement'),
           Divider(height: 1, thickness: 1),
-          _buildButton(Icons.settings, AppLocalizations.of(context).buttonSettings),
+          _buildButton(Icons.settings, AppLocalizations.of(context).buttonSettings,
+              context, '/settings'),
           Divider(height: 1, thickness: 1),
         ],
       ),
@@ -59,11 +62,14 @@ class MainDrawer extends StatelessWidget {
   }
 
   // creates a max size button with desired icon and text
-  Expanded _buildButton(icon, text) {
+  Expanded _buildButton(icon, text, context, route) {
     return Expanded(
         flex: 1,
         child: RaisedButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
+            Navigator.pushNamedAndRemoveUntil(context, route, ModalRoute.withName('/'));
+          },
           child: Container(
             child: Row(
               children: <Widget>[

@@ -4,7 +4,10 @@ const String
     MinMaxLectureSizes = 'min_max_lecture_sizes',
     DownloadAndManageLectures = 'download_and_manage_lectures',
     ButtonLectureManagement = 'button_lecture_management',
-    ButtonSettings = 'button_settings';
+    ButtonSettings = 'button_settings',
+    ScreenManagementTitle = 'screen_management_title',
+    ScreenSettingsTitle = 'screen_settings_title';
+
 
 
 
@@ -15,6 +18,8 @@ final de = {
   DownloadAndManageLectures: 'Lektionen herunterladen und verwalten.',
   ButtonLectureManagement: 'Lektionen verwalten',
   ButtonSettings: 'Einstellungen',
+  ScreenManagementTitle: 'Lektionen verwalten',
+  ScreenSettingsTitle: 'Einstellungen',
 };
 
 final en = {
