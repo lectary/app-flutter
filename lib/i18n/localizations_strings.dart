@@ -7,7 +7,8 @@ const String
     ButtonSettings = 'button_settings',
     ScreenManagementTitle = 'screen_management_title',
     ScreenManagementSearchHint ='screen_management_search_hint',
-    ScreenSettingsTitle = 'screen_settings_title';
+    ScreenSettingsTitle = 'screen_settings_title',
+    ScreenAboutTitle = 'screen_about_title';
 
 
 
@@ -22,6 +23,7 @@ final de = {
   ScreenManagementTitle: 'Lektionen verwalten',
   ScreenManagementSearchHint: 'Suche',
   ScreenSettingsTitle: 'Einstellungen',
+  ScreenAboutTitle: 'Über',
 };
 
 final en = {

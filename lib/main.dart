@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:lectary/i18n/localizations.dart';
+import 'package:lectary/screens/about/about_screen.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
@@ -31,6 +32,7 @@ class LectaryApp extends StatelessWidget {
         '/': (context) => LectureMainScreen(),
         '/lectureManagement': (context) => LectureManagementScreen(),
         '/settings': (context) => SettingsScreen(),
+        '/about': (context) => AboutScreen(),
       }
     );
   }

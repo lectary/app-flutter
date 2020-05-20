@@ -31,6 +31,7 @@ class AppLocalizations {
   String get screenManagementTitle => _getValue(ScreenManagementTitle);
   String get screenManagementSearchHint => _getValue(ScreenManagementSearchHint);
   String get screenSettingsTitle => _getValue(ScreenSettingsTitle);
+  String get screenAboutTitle => _getValue(ScreenAboutTitle);
 }
 
 /// Bridge-class for flutter i18n mechanics and custom i18n resource class.
