@@ -1,5 +1,14 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:video_player/video_player.dart';
+
+
+final List<String> videoList = [
+  'assets/videos/mock_videos/video1.mp4',
+  'assets/videos/mock_videos/video2.mp4',
+  'assets/videos/mock_videos/video3.mp4',
+];
 
 
 class LectureScreen extends StatefulWidget {
@@ -13,6 +22,64 @@ class _LectureScreenState extends State<LectureScreen> {
   bool repeatModeOn = false;
   bool vocableVisible = false;
 
+  VideoPlayerController _controller1;
+  VideoPlayerController _controller2;
+  VideoPlayerController _controller3;
+  Future<void> _initializeVideoPlayerFuture1;
+  Future<void> _initializeVideoPlayerFuture2;
+  Future<void> _initializeVideoPlayerFuture3;
+
+  @override
+  void initState() {
+    // Create and store the VideoPlayerController
+    _controller1 = VideoPlayerController.asset(videoList[0]);
+    _controller2= VideoPlayerController.asset(videoList[1]);
+    _controller3 = VideoPlayerController.asset(videoList[2]);
+
+    _initializeVideoPlayerFuture1 = _controller1.initialize().then((value) => setState(() {}));
+    _controller1.setLooping(true);
+    _controller1.play();
+    _initializeVideoPlayerFuture2 = _controller2.initialize().then((value) => setState(() {}));
+    _controller2.setLooping(true);
+    _controller2.play();
+    _initializeVideoPlayerFuture3 = _controller3.initialize().then((value) => setState(() {}));
+    _controller3.setLooping(true);
+    _controller3.play();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Ensure disposing of the VideoPlayerController to free up resources.
+    _controller1.dispose();
+    _controller2.dispose();
+    _controller3.dispose();
+
+    super.dispose();
+  }
+
+  Widget _buildVideoFuture(_initializeVideoPlayerFuture, _controller) {
+    return FutureBuilder(
+        future: _initializeVideoPlayerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If the VideoPlayerController has finished initialization, use
+            // the data it provides to limit the aspect ratio of the video.
+            return AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              // Use the VideoPlayer widget to display the video.
+              child: VideoPlayer(_controller),
+            );
+          } else {
+            // If the VideoPlayerController is still initializing, show a
+            // loading spinner.
+            return Center(child: CircularProgressIndicator());
+          }
+        }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -21,10 +88,20 @@ class _LectureScreenState extends State<LectureScreen> {
         Container(
           child: (vocableVisible ? Text('Vokabel') : Icon(Icons.visibility, size: 80, color: ColorsLectary.green,)),
         ),
-        // TODO Videoplayer
+        // FIXME Videoplayer
         Container(
           height: 300,
-          color: Colors.grey
+          color: Colors.grey,
+          child: CarouselSlider(
+              options: CarouselOptions(
+              autoPlay: false,
+              enlargeCenterPage: true,
+              ),
+              items: [
+                _buildVideoFuture(_initializeVideoPlayerFuture1, _controller1),
+                _buildVideoFuture(_initializeVideoPlayerFuture2, _controller2),
+                _buildVideoFuture(_initializeVideoPlayerFuture3, _controller3)],
+        ),
         ),
         /// First button row for setting different video modes
         Container(
