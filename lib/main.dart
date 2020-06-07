@@ -5,6 +5,7 @@ import 'package:lectary/screens/about/about_screen.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
+import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/global_theme.dart';
 
 void main() {
@@ -26,7 +27,7 @@ class LectaryApp extends StatelessWidget {
       supportedLocales: [
         const Locale('de', 'DE'),
       ],
-      theme: LectaryTheme(),
+      theme: lectaryThemeLight(),
       initialRoute: '/',
       routes: {
         '/': (context) => LectureMainScreen(),

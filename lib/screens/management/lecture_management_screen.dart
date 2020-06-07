@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/utils/colors.dart';
 
 class LectureManagementScreen extends StatefulWidget {
   @override
@@ -44,13 +45,16 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
       separatorBuilder: (context, index) => Divider(),
       itemCount: items.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          leading: Visibility(
+        return ListTileTheme(
+          iconColor: ColorsLectary.lightBlue,
+            child: ListTile(
+            leading: Visibility(
             visible: _checkDownloadStatus(),
             child: Icon(Icons.check_circle),
           ),
-          title: Text("${items[index]}"),
-          trailing: IconButton(onPressed: () => _showLectureMenu(), icon: Icon(Icons.more_horiz))
+            title: Text("${items[index]}"),
+            trailing: IconButton(onPressed: () => _showLectureMenu(), icon: Icon(Icons.more_horiz))
+        ),
         );
       },
     );
@@ -122,13 +126,14 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     return Container(
       height: 50, // TODO maybe better use relative values via expanded?
       child: RaisedButton(
+
         onPressed: () {
           // TODO perform action
         },
         child: Container(
           child: Row(
             children: <Widget>[
-              Icon(icon),
+              Icon(icon, color: ColorsLectary.lightBlue,),
               SizedBox(width: 10), // spacer
               Text(text),
             ],

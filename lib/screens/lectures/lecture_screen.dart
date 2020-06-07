@@ -33,7 +33,7 @@ class _LectureScreenState extends State<LectureScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               _buildButton(
-                  (slowModeOn ? ColorsLectary.yellow : ColorsLectary.darkblue),
+                  (slowModeOn ? ColorsLectary.yellow : ColorsLectary.darkBlue),
                   IconData(0xe900, fontFamily: 'icomoon'),
                   35,
                   func: () => setState(() {
@@ -41,7 +41,7 @@ class _LectureScreenState extends State<LectureScreen> {
                   })
               ),
               _buildButton(
-                  (autoModeOn ? ColorsLectary.orange : ColorsLectary.darkblue),
+                  (autoModeOn ? ColorsLectary.orange : ColorsLectary.darkBlue),
                   IconData(0xe901, fontFamily: 'icomoon'),
                   35,
                   iconContainerWidth: 80, // extra container size for aligning rectangular icon correctly
@@ -50,7 +50,7 @@ class _LectureScreenState extends State<LectureScreen> {
                   }),
               ),
               _buildButton(
-                  (repeatModeOn ? ColorsLectary.red : ColorsLectary.darkblue),
+                  (repeatModeOn ? ColorsLectary.red : ColorsLectary.darkBlue),
                   IconData(0xe902, fontFamily: 'icomoon'),
                   35,
                   func: () => setState(() {
@@ -75,14 +75,14 @@ class _LectureScreenState extends State<LectureScreen> {
                   })
               ),
               _buildButton(
-                  ColorsLectary.violett, Icons.casino,
+                  ColorsLectary.violet, Icons.casino,
                   70,
                   func: () => setState(() {
                     // TODO select vocable randomly
                   })
               ),
               _buildButton(
-                  ColorsLectary.lightblue, Icons.search,
+                  ColorsLectary.lightBlue, Icons.search,
                   70,
                   func: () => setState(() {
                     // TODO search vocable
