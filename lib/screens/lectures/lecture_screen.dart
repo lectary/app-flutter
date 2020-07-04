@@ -4,9 +4,23 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/screens/lectures/widgets/lectary_video_player.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:provider/provider.dart';
 
 
 final List<String> videoList = List.generate(1000, (index) => 'assets/videos/mock_videos/video${(index%3)+1}.mp4');
+
+/// Helper class to keep track of active video page
+class VideosProvider with ChangeNotifier {
+  int _currentVideo = 0;
+
+  int get currentVideo => _currentVideo;
+
+  set currentVideo(int currentVideo) {
+    _currentVideo = currentVideo;
+    notifyListeners();
+  }
+}
+
 
 class LectureScreen extends StatefulWidget {
   @override
@@ -26,6 +40,7 @@ class _LectureScreenState extends State<LectureScreen> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
+    VideosProvider videosProvider = Provider.of(context);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -40,7 +55,11 @@ class _LectureScreenState extends State<LectureScreen> {
                     height: (height / 10) * 7,
                     viewportFraction: 0.999999, // FIXME dirty hack to achieve pre-loading of previous/next page
                     autoPlay: false,
-                    enlargeCenterPage: true
+                    enlargeCenterPage: true,
+                    initialPage: 0,
+                    onPageChanged: (int index, CarouselPageChangedReason reason) {
+                      videosProvider.currentVideo = index;
+                    }
                 ),
                 itemCount: videoList.length,
                 itemBuilder: (BuildContext context, int itemIndex) =>
@@ -91,8 +110,8 @@ class _LectureScreenState extends State<LectureScreen> {
                   35,
                   iconContainerWidth: 80, // extra container size for aligning rectangular icon correctly
                   func: () => setState(() {
-                  autoModeOn = autoModeOn ? false : true;
-                  }),
+                      autoModeOn = autoModeOn ? false : true;
+                    })
               ),
               _buildButton(
                   (loopModeOn ? ColorsLectary.red : ColorsLectary.darkBlue),
@@ -124,6 +143,7 @@ class _LectureScreenState extends State<LectureScreen> {
                   70,
                   func: () => setState(() {
                     int rndPage = random.nextInt(videoList.length);
+                    videosProvider.currentVideo = rndPage;
                     carouselController.jumpToPage(rndPage);
                   })
               ),

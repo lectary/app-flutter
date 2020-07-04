@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 class LectaryVideoPlayer extends StatefulWidget {
@@ -23,6 +25,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   Future<void> _initializeVideoPlayerFuture;
 
   bool isVideoFinished = false;
+  bool isAutoModeFinished = false;
 
   @override
   void initState() {
@@ -62,6 +65,8 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    VideosProvider videosProvider = Provider.of(context);
+
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
@@ -71,6 +76,17 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
           widget.slowMode ? _controller.setSpeed(widget.slowModeSpeed) : _controller.setSpeed(1);
 
           widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
+
+          // pauses video if its running but not the current one
+          if (videosProvider.currentVideo != widget.videoIndex) {
+            isAutoModeFinished = false;
+            _controller.pause();
+            _controller.seekTo(Duration.zero);
+          // else auto start video and use bool switch for avoiding looping
+          } else if (widget.autoMode && !isAutoModeFinished) {
+            _controller.play();
+            isAutoModeFinished = true;
+          }
 
           return AspectRatio(
             aspectRatio: 4/3,

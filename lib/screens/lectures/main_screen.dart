@@ -4,6 +4,7 @@ import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
+import 'package:provider/provider.dart';
 
 
 class LectureMainScreen extends StatefulWidget {
@@ -35,10 +36,13 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
           ],
         ),
         drawer: Theme(
-    data: lectaryThemeLight(),
-    child: MainDrawer(),
+          data: lectaryThemeLight(),
+          child: MainDrawer(),
         ),
-        body: lecturesAvailable ? LectureScreen() : LectureNotAvailableScreen(),
+        body: ChangeNotifierProvider(
+            create: (context) => VideosProvider(),
+            child: lecturesAvailable ? LectureScreen() : LectureNotAvailableScreen()
+        ),
       ),
     );
   }
