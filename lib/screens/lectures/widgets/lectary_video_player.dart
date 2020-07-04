@@ -19,6 +19,8 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   VideoPlayerController _controller;
   Future<void> _initializeVideoPlayerFuture;
 
+  bool isVideoFinished = false;
+
   @override
   void initState() {
     // load video asset and retrieve controller
@@ -31,8 +33,28 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
 
   @override
   void dispose() {
+    _controller.removeListener(_restartVideoListener);
     _controller.dispose();
     super.dispose();
+  }
+
+  /// Listener function for restarting video asynchronously when finished
+  void _restartVideoListener() async {
+    if (isVideoFinished) return;
+
+    if (_controller.value != null) {
+      if ( _controller.value.position >= _controller.value.duration) {
+        isVideoFinished = true;
+
+        if (!_controller.value.isPlaying) {
+          await _controller.seekTo(Duration.zero);
+          await _controller.pause();
+          setState(() {
+            isVideoFinished = false;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -41,6 +63,8 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          _controller.addListener(_restartVideoListener);
+
           return AspectRatio(
             aspectRatio: 4/3,
             child: _buildVideoPlayerWithOverlay(),
