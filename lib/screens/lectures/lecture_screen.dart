@@ -1,15 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:lectary/screens/lectures/widgets/lectary_video_player.dart';
 import 'package:lectary/utils/colors.dart';
-import 'package:video_player/video_player.dart';
 
 
-final List<String> videoList = [
-  'assets/videos/mock_videos/video1.mp4',
-  'assets/videos/mock_videos/video2.mp4',
-  'assets/videos/mock_videos/video3.mp4',
-];
-
+final List<String> videoList = List.generate(500, (index) => 'assets/videos/mock_videos/video${(index%3)+1}.mp4');
 
 class LectureScreen extends StatefulWidget {
   @override
@@ -19,93 +14,55 @@ class LectureScreen extends StatefulWidget {
 class _LectureScreenState extends State<LectureScreen> {
   bool slowModeOn = false;
   bool autoModeOn = false;
-  bool repeatModeOn = false;
+  bool loopModeOn = false;
+
   bool vocableVisible = false;
-
-  VideoPlayerController _controller1;
-  VideoPlayerController _controller2;
-  VideoPlayerController _controller3;
-  Future<void> _initializeVideoPlayerFuture1;
-  Future<void> _initializeVideoPlayerFuture2;
-  Future<void> _initializeVideoPlayerFuture3;
-
-  @override
-  void initState() {
-    // Create and store the VideoPlayerController
-    _controller1 = VideoPlayerController.asset(videoList[0]);
-    _controller2= VideoPlayerController.asset(videoList[1]);
-    _controller3 = VideoPlayerController.asset(videoList[2]);
-
-    _initializeVideoPlayerFuture1 = _controller1.initialize().then((value) => setState(() {}));
-    _controller1.setLooping(true);
-    _controller1.play();
-    _initializeVideoPlayerFuture2 = _controller2.initialize().then((value) => setState(() {}));
-    _controller2.setLooping(true);
-    _controller2.play();
-    _initializeVideoPlayerFuture3 = _controller3.initialize().then((value) => setState(() {}));
-    _controller3.setLooping(true);
-    _controller3.play();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // Ensure disposing of the VideoPlayerController to free up resources.
-    _controller1.dispose();
-    _controller2.dispose();
-    _controller3.dispose();
-
-    super.dispose();
-  }
-
-  Widget _buildVideoFuture(_initializeVideoPlayerFuture, _controller) {
-    return FutureBuilder(
-        future: _initializeVideoPlayerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If the VideoPlayerController has finished initialization, use
-            // the data it provides to limit the aspect ratio of the video.
-            return AspectRatio(
-              aspectRatio: _controller.value.aspectRatio,
-              // Use the VideoPlayer widget to display the video.
-              child: VideoPlayer(_controller),
-            );
-          } else {
-            // If the VideoPlayerController is still initializing, show a
-            // loading spinner.
-            return Center(child: CircularProgressIndicator());
-          }
-        }
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
+    final double height = MediaQuery.of(context).size.height;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Container(
-          child: (vocableVisible ? Text('Vokabel') : Icon(Icons.visibility, size: 80, color: ColorsLectary.green,)),
-        ),
-        // FIXME Videoplayer
-        Container(
-          height: 300,
-          color: Colors.grey,
+        Expanded(
+          flex: 7,
           child: CarouselSlider(
-              options: CarouselOptions(
-              autoPlay: false,
-              enlargeCenterPage: true,
-              ),
-              items: [
-                _buildVideoFuture(_initializeVideoPlayerFuture1, _controller1),
-                _buildVideoFuture(_initializeVideoPlayerFuture2, _controller2),
-                _buildVideoFuture(_initializeVideoPlayerFuture3, _controller3)],
+            options: CarouselOptions(
+                height: (height / 10) * 7,
+                viewportFraction: 0.999999, // FIXME dirty hack to achieve pre-loading of previous/next page
+                autoPlay: false,
+                enlargeCenterPage: true
+            ),
+            items:
+              videoList.map((path) =>
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                          child: vocableVisible
+                              ? Container(
+                            child: Text(path, style: TextStyle(color: ColorsLectary.white),), padding: EdgeInsets.all(10),)
+                              : IconButton(icon: Icon(Icons.visibility, color: ColorsLectary.green,), iconSize: 60,
+                            onPressed: () => setState(() {
+                              vocableVisible = vocableVisible ? false : true;
+                            }),
+                          )
+                      ),
+                      LectaryVideoPlayer(
+                        videoPath: path,
+                        slowMode: slowModeOn,
+                        autoMode: autoModeOn,
+                        loopMode: loopModeOn,
+                      ),
+                    ],
+                  )
+              ).toList()
+          ),
         ),
-        ),
-        /// First button row for setting different video modes
-        Container(
-          height: 60,
+        /// Media Control Area
+        Expanded(
+          flex: 1,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -127,19 +84,19 @@ class _LectureScreenState extends State<LectureScreen> {
                   }),
               ),
               _buildButton(
-                  (repeatModeOn ? ColorsLectary.red : ColorsLectary.darkBlue),
+                  (loopModeOn ? ColorsLectary.red : ColorsLectary.darkBlue),
                   IconData(0xe902, fontFamily: 'icomoon'),
                   35,
                   func: () => setState(() {
-                    repeatModeOn = repeatModeOn ? false : true;
+                    loopModeOn = loopModeOn ? false : true;
                   })
               ),
             ],
           ),
         ),
-        /// second button row for setting different vocable selection (modes)
-        Container(
-          height: 120,
+        /// Learning Area
+        Expanded(
+          flex: 2,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
