@@ -4,6 +4,7 @@ import 'package:video_player/video_player.dart';
 
 class LectaryVideoPlayer extends StatefulWidget {
   final String videoPath;
+  final int videoIndex;
 
   final bool slowMode;
   final bool autoMode;
@@ -11,7 +12,7 @@ class LectaryVideoPlayer extends StatefulWidget {
 
   final double slowModeSpeed = 0.3;
 
-  LectaryVideoPlayer({this.videoPath, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
+  LectaryVideoPlayer({this.videoPath, this.videoIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
 
   @override
   _LectaryVideoPlayerState createState() => _LectaryVideoPlayerState();

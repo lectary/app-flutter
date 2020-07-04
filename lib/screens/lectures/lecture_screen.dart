@@ -1,10 +1,12 @@
+import 'dart:math';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/screens/lectures/widgets/lectary_video_player.dart';
 import 'package:lectary/utils/colors.dart';
 
 
-final List<String> videoList = List.generate(500, (index) => 'assets/videos/mock_videos/video${(index%3)+1}.mp4');
+final List<String> videoList = List.generate(1000, (index) => 'assets/videos/mock_videos/video${(index%3)+1}.mp4');
 
 class LectureScreen extends StatefulWidget {
   @override
@@ -18,6 +20,9 @@ class _LectureScreenState extends State<LectureScreen> {
 
   bool vocableVisible = false;
 
+  CarouselController carouselController = CarouselController();
+  Random random = new Random();
+
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
@@ -27,37 +32,38 @@ class _LectureScreenState extends State<LectureScreen> {
       children: <Widget>[
         Expanded(
           flex: 7,
-          child: CarouselSlider(
+          child: CarouselSlider.builder(
+            carouselController: carouselController,
             options: CarouselOptions(
                 height: (height / 10) * 7,
                 viewportFraction: 0.999999, // FIXME dirty hack to achieve pre-loading of previous/next page
                 autoPlay: false,
                 enlargeCenterPage: true
             ),
-            items:
-              videoList.map((path) =>
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Container(
-                          child: vocableVisible
-                              ? Container(
-                            child: Text(path, style: TextStyle(color: ColorsLectary.white),), padding: EdgeInsets.all(10),)
-                              : IconButton(icon: Icon(Icons.visibility, color: ColorsLectary.green,), iconSize: 60,
-                            onPressed: () => setState(() {
-                              vocableVisible = vocableVisible ? false : true;
-                            }),
-                          )
-                      ),
-                      LectaryVideoPlayer(
-                        videoPath: path,
-                        slowMode: slowModeOn,
-                        autoMode: autoModeOn,
-                        loopMode: loopModeOn,
-                      ),
-                    ],
-                  )
-              ).toList()
+            itemCount: videoList.length,
+            itemBuilder: (BuildContext context, int itemIndex) =>
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                        child: vocableVisible
+                            ? Container(
+                          child: Text("Video #$itemIndex", style: TextStyle(color: ColorsLectary.white),), padding: EdgeInsets.all(10),)
+                            : IconButton(icon: Icon(Icons.visibility, color: ColorsLectary.green,), iconSize: 60,
+                          onPressed: () => setState(() {
+                            vocableVisible = vocableVisible ? false : true;
+                          }),
+                        )
+                    ),
+                    LectaryVideoPlayer(
+                      videoPath: videoList[itemIndex],
+                      videoIndex: itemIndex,
+                      slowMode: slowModeOn,
+                      autoMode: autoModeOn,
+                      loopMode: loopModeOn,
+                    ),
+                  ],
+                ),
           ),
         ),
         /// Media Control Area
@@ -112,7 +118,8 @@ class _LectureScreenState extends State<LectureScreen> {
                   ColorsLectary.violet, Icons.casino,
                   70,
                   func: () => setState(() {
-                    // TODO select vocable randomly
+                    int rndPage = random.nextInt(videoList.length);
+                    carouselController.jumpToPage(rndPage);
                   })
               ),
               _buildButton(
