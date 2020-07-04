@@ -9,6 +9,8 @@ class LectaryVideoPlayer extends StatefulWidget {
   final bool autoMode;
   final bool loopMode;
 
+  final double slowModeSpeed = 0.3;
+
   LectaryVideoPlayer({this.videoPath, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
 
   @override
@@ -64,6 +66,10 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           _controller.addListener(_restartVideoListener);
+
+          widget.slowMode ? _controller.setSpeed(widget.slowModeSpeed) : _controller.setSpeed(1);
+
+          widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
 
           return AspectRatio(
             aspectRatio: 4/3,
