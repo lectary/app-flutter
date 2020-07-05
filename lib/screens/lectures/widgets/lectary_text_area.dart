@@ -18,9 +18,13 @@ class _TextAreaState extends State<TextArea> {
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() {
-          showVocable = showVocable ? false : true;
-        }),
+        onTap: () => {
+          if (widget.hideVocableModeOn) {
+            setState(() {
+              showVocable = showVocable ? false : true;
+            })
+          }
+        },
         child: Container(
             alignment: Alignment.bottomCenter,
             padding: EdgeInsets.all(10),
