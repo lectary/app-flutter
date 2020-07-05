@@ -68,6 +68,7 @@ class _LectureScreenState extends State<LectureScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         TextArea(
+                          itemIndex: itemIndex,
                           hideVocableModeOn: hideVocableModeOn,
                           text: itemIndex.toString(),
                         ),
