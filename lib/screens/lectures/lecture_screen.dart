@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 final List<String> videoList = List.generate(1000, (index) => 'assets/videos/mock_videos/video${(index%3)+1}.mp4');
 
-/// Helper class to keep track of active video page
+/// helper class to keep track of active video page
 class VideosProvider with ChangeNotifier {
   int _currentVideo = 0;
 
@@ -40,8 +40,8 @@ class _LectureScreenState extends State<LectureScreen> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    VideosProvider videosProvider = Provider.of(context);
 
+    /// main widget tree - carousel, media-control-area, learning-area
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -58,11 +58,12 @@ class _LectureScreenState extends State<LectureScreen> {
                     enlargeCenterPage: true,
                     initialPage: 0,
                     onPageChanged: (int index, CarouselPageChangedReason reason) {
-                      videosProvider.currentVideo = index;
+                      Provider.of<VideosProvider>(context, listen: false).currentVideo = index;
                     }
                 ),
                 itemCount: videoList.length,
                 itemBuilder: (BuildContext context, int itemIndex) =>
+                    /// media area - text area with video player
                     Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
@@ -84,68 +85,74 @@ class _LectureScreenState extends State<LectureScreen> {
             ]
           ),
         ),
-        /// Media Control Area
-        Expanded(
-          flex: 1,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _buildButton(
-                  (slowModeOn ? ColorsLectary.yellow : ColorsLectary.darkBlue),
-                  IconData(0xe900, fontFamily: 'icomoon'),
-                  35,
-                  func: () => setState(() {
-                    slowModeOn = slowModeOn ? false : true;
-                  })
-              ),
-              _buildButton(
-                  (autoModeOn ? ColorsLectary.orange : ColorsLectary.darkBlue),
-                  IconData(0xe901, fontFamily: 'icomoon'),
-                  35,
-                  iconContainerWidth: 80, // extra container size for aligning rectangular icon correctly
-                  func: () => setState(() {
-                      autoModeOn = autoModeOn ? false : true;
-                    })
-              ),
-              _buildButton(
-                  (loopModeOn ? ColorsLectary.red : ColorsLectary.darkBlue),
-                  IconData(0xe902, fontFamily: 'icomoon'),
-                  35,
-                  func: () => setState(() {
-                    loopModeOn = loopModeOn ? false : true;
-                  })
-              ),
-            ],
-          ),
-        ),
-        /// Learning Area
-        Expanded(
-          flex: 2,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _buildButton(
-                  ColorsLectary.green,
-                  hideVocableModeOn ? Icons.visibility_off : Icons.visibility,
-                  70,
-                  iconColor: hideVocableModeOn ? ColorsLectary.white : Colors.grey[600],
-                  func: () => setState(() {
-                    hideVocableModeOn = hideVocableModeOn ? false : true;
-                  }),
-              ),
-              _buildButton(
-                  ColorsLectary.violet, Icons.casino,
-                  70,
-                  func: () => setState(() {
-                    int rndPage = random.nextInt(videoList.length);
-                    videosProvider.currentVideo = rndPage;
-                    carouselController.jumpToPage(rndPage);
-                  })
-              ),
-            ],
-          ),
-        ),
+        _buildMediaControlArea(),
+        _buildLearningArea(),
       ],
+    );
+  }
+
+  Widget _buildMediaControlArea() {
+    return Expanded(
+      flex: 1,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildButton(
+              (slowModeOn ? ColorsLectary.yellow : ColorsLectary.darkBlue),
+              IconData(0xe900, fontFamily: 'icomoon'),
+              35,
+              func: () => setState(() {
+                slowModeOn = slowModeOn ? false : true;
+              })
+          ),
+          _buildButton(
+              (autoModeOn ? ColorsLectary.orange : ColorsLectary.darkBlue),
+              IconData(0xe901, fontFamily: 'icomoon'),
+              35,
+              iconContainerWidth: 80, // extra container size for aligning rectangular icon correctly
+              func: () => setState(() {
+                autoModeOn = autoModeOn ? false : true;
+              })
+          ),
+          _buildButton(
+              (loopModeOn ? ColorsLectary.red : ColorsLectary.darkBlue),
+              IconData(0xe902, fontFamily: 'icomoon'),
+              35,
+              func: () => setState(() {
+                loopModeOn = loopModeOn ? false : true;
+              })
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLearningArea() {
+    return Expanded(
+      flex: 2,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildButton(
+            ColorsLectary.green,
+            hideVocableModeOn ? Icons.visibility_off : Icons.visibility,
+            70,
+            iconColor: hideVocableModeOn ? ColorsLectary.white : Colors.grey[600],
+            func: () => setState(() {
+              hideVocableModeOn = hideVocableModeOn ? false : true;
+            }),
+          ),
+          _buildButton(
+              ColorsLectary.violet, Icons.casino,
+              70,
+              func: () => setState(() {
+                int rndPage = random.nextInt(videoList.length);
+                Provider.of<VideosProvider>(context, listen: false).currentVideo = rndPage;
+                carouselController.jumpToPage(rndPage);
+              })
+          ),
+        ],
+      ),
     );
   }
 
@@ -194,6 +201,7 @@ class _LectureScreenState extends State<LectureScreen> {
     ];
   }
 
+  /// common button widget with style, used in the lecture screen
   Expanded _buildButton(color, icon, int size, {Color iconColor=ColorsLectary.white, int iconContainerWidth=0, Function func=emptyFunction}) {
     return Expanded(
       child: FlatButton(
