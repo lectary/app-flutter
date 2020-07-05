@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:lectary/screens/lectures/widgets/lectary_text_area.dart';
 import 'package:lectary/screens/lectures/widgets/lectary_video_player.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +32,7 @@ class _LectureScreenState extends State<LectureScreen> {
   bool slowModeOn = false;
   bool autoModeOn = false;
   bool loopModeOn = false;
-
-  bool vocableVisible = false;
+  bool hideVocableModeOn = false;
 
   CarouselController carouselController = CarouselController();
   Random random = new Random();
@@ -66,15 +66,9 @@ class _LectureScreenState extends State<LectureScreen> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        Container(
-                            child: vocableVisible
-                                ? Container(
-                              child: Text("Video #$itemIndex", style: TextStyle(color: ColorsLectary.white),), padding: EdgeInsets.all(10),)
-                                : IconButton(icon: Icon(Icons.visibility, color: ColorsLectary.green,), iconSize: 60,
-                              onPressed: () => setState(() {
-                                vocableVisible = vocableVisible ? false : true;
-                              }),
-                            )
+                        TextArea(
+                          hideVocableModeOn: hideVocableModeOn,
+                          text: itemIndex.toString(),
                         ),
                         LectaryVideoPlayer(
                           videoPath: videoList[itemIndex],
@@ -132,11 +126,12 @@ class _LectureScreenState extends State<LectureScreen> {
             children: <Widget>[
               _buildButton(
                   ColorsLectary.green,
-                  vocableVisible ? Icons.visibility : Icons.visibility_off,
+                  hideVocableModeOn ? Icons.visibility_off : Icons.visibility,
                   70,
+                  iconColor: hideVocableModeOn ? ColorsLectary.white : Colors.grey[600],
                   func: () => setState(() {
-                    vocableVisible = vocableVisible ? false : true;
-                  })
+                    hideVocableModeOn = hideVocableModeOn ? false : true;
+                  }),
               ),
               _buildButton(
                   ColorsLectary.violet, Icons.casino,
@@ -147,12 +142,6 @@ class _LectureScreenState extends State<LectureScreen> {
                     carouselController.jumpToPage(rndPage);
                   })
               ),
-              _buildButton(
-                  ColorsLectary.lightBlue, Icons.search,
-                  70,
-                  func: () => setState(() {
-                    // TODO search vocable
-                  })),
             ],
           ),
         ),
@@ -205,7 +194,7 @@ class _LectureScreenState extends State<LectureScreen> {
     ];
   }
 
-  Expanded _buildButton(color, icon, int size, {int iconContainerWidth=0, Function func=emptyFunction}) {
+  Expanded _buildButton(color, icon, int size, {Color iconColor=ColorsLectary.white, int iconContainerWidth=0, Function func=emptyFunction}) {
     return Expanded(
       child: FlatButton(
         shape: RoundedRectangleBorder(
@@ -214,7 +203,7 @@ class _LectureScreenState extends State<LectureScreen> {
         color: color,
         child: Container( /// additional container for aligning rectangular icons correctly
           width: iconContainerWidth == 0 ? size.toDouble() : iconContainerWidth.toDouble(),
-          child: Icon(icon, size: size.toDouble(), color: ColorsLectary.white),
+          child: Icon(icon, size: size.toDouble(), color: iconColor),
         ),
         onPressed: func,
       ),
