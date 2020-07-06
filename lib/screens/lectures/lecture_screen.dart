@@ -3,10 +3,7 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:lectary/screens/lectures/widgets/picture_viewer.dart';
-import 'package:lectary/screens/lectures/widgets/lectary_text_area.dart';
-import 'package:lectary/screens/lectures/widgets/lectary_video_player.dart';
-import 'package:lectary/screens/lectures/widgets/text_viewer.dart';
+import 'package:lectary/screens/lectures/widgets/media_viewer.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -30,11 +27,11 @@ class TextItem extends MediaItem {
   TextItem({String text, String media}) : super(text, media);
 }
 
-final mediaList = List<MediaItem>.generate(20, (index) => index % 3 == 0
-    ? VideoItem(text: "Vocable 1", media: 'assets/videos/mock_videos/video1.mp4')
+final mediaList = List<MediaItem>.generate(50, (index) => index % 3 == 0
+    ? VideoItem(text: "Media #$index - Vocable 1", media: 'assets/videos/mock_videos/video1.mp4')
     : (index % 3 == 1
-    ? PictureItem(text: "Vocable 2", media: 'assets/pictures/mock_pictures/mushroom.jpg')
-    : TextItem(text: "Vocable 3", media: "Vocabulario"))
+    ? PictureItem(text: "Media #$index - Mushroom", media: 'assets/pictures/mock_pictures/mushroom.jpg')
+    : TextItem(text: "Media #$index - Vocable", media: "Vocabulario"))
 );
 
 
@@ -93,44 +90,14 @@ class _LectureScreenState extends State<LectureScreen> {
                 ),
                 itemCount: mediaList.length,
                 itemBuilder: (BuildContext context, int itemIndex) =>
-                    /// media area - text area with video player
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        TextArea(
-                          hideVocableModeOn: hideVocableModeOn,
-                          text: mediaList[itemIndex].text,
-                        ),
-                        mediaList[itemIndex] is VideoItem
-                            ?
-                        LectaryVideoPlayer(
-                          videoPath: mediaList[itemIndex].media,
-                          videoIndex: itemIndex,
-                          slowMode: slowModeOn,
-                          autoMode: autoModeOn,
-                          loopMode: loopModeOn,
-                        )
-                            :
-                        (mediaList[itemIndex] is PictureItem
-                            ?
-                        PictureViewer(
-                              picturePath: mediaList[itemIndex].media,
-                              pictureIndex: itemIndex,
-                              slowMode: slowModeOn,
-                              autoMode: autoModeOn,
-                              loopMode: loopModeOn,
-                        )
-                            :
-                        TextViewer(
-                          content: mediaList[itemIndex].media,
-                          textIndex: itemIndex,
-                          slowMode: slowModeOn,
-                          autoMode: autoModeOn,
-                          loopMode: loopModeOn,
-                        )
-                        )
-                      ],
-                    ),
+                    /// media viewer - types: video, image, text
+                    MediaViewer(
+                        mediaItem: mediaList[itemIndex],
+                        itemIndex: itemIndex,
+                        hideVocableModeOn: hideVocableModeOn,
+                        slowModeOn: slowModeOn,
+                        autoModeOn: autoModeOn,
+                        loopModeOn: loopModeOn),
               ),
               ..._buildCarouselNavigationOverlay(),
             ]

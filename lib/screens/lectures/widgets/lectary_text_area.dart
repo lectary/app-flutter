@@ -30,7 +30,7 @@ class _TextAreaState extends State<TextArea> {
             padding: EdgeInsets.all(10),
             child: widget.hideVocableModeOn && !showVocable
                 ? Icon(Icons.visibility, size: 80, color: ColorsLectary.green,)
-                : Text("Video #${widget.text}", style: TextStyle(fontSize: 28, color: ColorsLectary.white),)
+                : Text(widget.text, style: TextStyle(fontSize: 28, color: ColorsLectary.white),)
         ),
       ),
     );
