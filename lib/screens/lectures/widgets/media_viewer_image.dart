@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PictureViewer extends StatefulWidget {
+class ImageViewer extends StatefulWidget {
   final String picturePath;
   final int pictureIndex;
 
@@ -10,13 +10,13 @@ class PictureViewer extends StatefulWidget {
 
   final double slowModeSpeed = 0.3;
 
-  PictureViewer({this.picturePath, this.pictureIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
+  ImageViewer({this.picturePath, this.pictureIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
 
   @override
-  _PictureViewerState createState() => _PictureViewerState();
+  _ImageViewerState createState() => _ImageViewerState();
 }
 
-class _PictureViewerState extends State<PictureViewer> {
+class _ImageViewerState extends State<ImageViewer> {
   bool showPicture = false;
 
   @override

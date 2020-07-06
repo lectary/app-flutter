@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lectary/screens/lectures/widgets/picture_viewer.dart';
-import 'package:lectary/screens/lectures/widgets/text_viewer.dart';
+import 'package:lectary/screens/lectures/widgets/media_viewer_image.dart';
+import 'package:lectary/screens/lectures/widgets/media_viewer_text.dart';
 
-import 'lectary_text_area.dart';
-import 'lectary_video_player.dart';
+import 'media_viewer_text_area.dart';
+import 'media_viewer_video.dart';
 import '../lecture_screen.dart';
 
 class MediaViewer extends StatelessWidget {
@@ -43,7 +43,7 @@ class MediaViewer extends StatelessWidget {
                 loopMode: loopModeOn,
               )
             : (mediaItem is PictureItem
-                ? PictureViewer(
+                ? ImageViewer(
                     picturePath: mediaItem.media,
                     pictureIndex: itemIndex,
                     slowMode: slowModeOn,
