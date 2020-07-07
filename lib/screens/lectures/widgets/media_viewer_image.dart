@@ -53,6 +53,10 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     VideosProvider videosProvider = Provider.of(context);
 
+    if (!widget.slowMode) {
+      _animationController.reset();
+    }
+
     // if current item is not visible any more, reset animation and hide image
     if (videosProvider.currentVideo != widget.pictureIndex) {
       showPicture = false;
