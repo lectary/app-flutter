@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:lectary/utils/colors.dart';
 
 class ImageViewer extends StatefulWidget {
   final String picturePath;
@@ -16,24 +19,71 @@ class ImageViewer extends StatefulWidget {
   _ImageViewerState createState() => _ImageViewerState();
 }
 
-class _ImageViewerState extends State<ImageViewer> {
+class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin {
   bool showPicture = false;
+
+  AnimationController _animationController;
+  Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 50, end: 0).animate(_animationController)
+    ..addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         setState(() {
+          if (widget.slowMode) {
+            showPicture
+                ? _animationController.reset()
+                : _animationController.forward();
+          }
           showPicture = showPicture ? false : true;
         });
       },
       child: Center(
         child: AspectRatio(
-            aspectRatio: 4/3,
+            aspectRatio: 4 / 3,
             child: showPicture
-                ? Image.asset(widget.picturePath)
-                : Icon(Icons.image, size: 120,)
-        ),
+                ? Stack(children: [
+                    Image.asset(widget.picturePath),
+                    ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaY: _animation.status == AnimationStatus.forward
+                              ? _animation.value
+                              : 0,
+                          sigmaX: _animation.status == AnimationStatus.forward
+                              ? _animation.value
+                              : 0,
+                        ),
+                        child: Container(
+                          color: ColorsLectary.darkBlue.withOpacity(0),
+                        ),
+                      ),
+                    ),
+                  ])
+                : Icon(
+                    Icons.image,
+                    size: 120,
+                  )),
       ),
     );
   }
