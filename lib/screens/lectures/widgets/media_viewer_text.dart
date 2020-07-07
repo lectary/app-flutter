@@ -22,6 +22,7 @@ class TextViewer extends StatefulWidget {
 class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
   bool showText = false;
   bool isAutoModeFinished = false;
+  bool readyForAutoMode = false;
 
   AnimationController _animationController;
   Animation<int> _characterCount;
@@ -70,14 +71,15 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
       _animationController.reset();
       finalContent = widget.content;
     }
-
     // if current item is not visible any more, reset animation and hide text
     if (carouselStateProvider.currentItemIndex != widget.mediaIndex) {
       showText = false;
       _resetAnimation();
       isAutoModeFinished = false;
+      // check-variable for ensuring that autoMode starts only on swipe in
+      readyForAutoMode = widget.autoMode ? true : false;
       // else start animation and show text automatically and use bool switch for avoiding looping
-    } else if (widget.autoMode && !isAutoModeFinished) {
+    } else if (widget.autoMode && readyForAutoMode && !isAutoModeFinished) {
       showText = true;
       _animationController.forward();
       isAutoModeFinished = true;

@@ -25,6 +25,7 @@ class ImageViewer extends StatefulWidget {
 class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin {
   bool showPicture = false;
   bool isAutoModeFinished = false;
+  bool readyForAutoMode = false;
 
   AnimationController _animationController;
   Animation<double> _animation;
@@ -56,22 +57,22 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
     if (!widget.slowMode) {
       _animationController.reset();
     }
-
     // if current item is not visible any more, reset animation and hide image
     if (carouselStateProvider.currentItemIndex != widget.mediaIndex) {
       showPicture = false;
       _animationController.reset();
       isAutoModeFinished = false;
+      // check-variable for ensuring that autoMode starts only on swipe in
+      readyForAutoMode = widget.autoMode ? true : false;
       // else show image (and in case of slow mode start animation) automatically
       // and use bool switch for avoiding looping
-    } else if (widget.autoMode && !isAutoModeFinished) {
+    } else if (widget.autoMode && readyForAutoMode && !isAutoModeFinished) {
       if (widget.slowMode) {
         _animationController.forward();
       }
       showPicture = true;
       isAutoModeFinished = true;
     }
-
     return GestureDetector(
       onTap: () {
         setState(() {

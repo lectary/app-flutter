@@ -26,6 +26,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
 
   bool isVideoFinished = false;
   bool isAutoModeFinished = false;
+  bool readyForAutoMode = false;
 
   @override
   void initState() {
@@ -82,12 +83,13 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
             isAutoModeFinished = false;
             _controller.pause();
             _controller.seekTo(Duration.zero);
+            // check-variable for ensuring that autoMode starts only on swipe in
+            readyForAutoMode = widget.autoMode ? true : false;
           // else auto start video and use bool switch for avoiding looping
-          } else if (widget.autoMode && !isAutoModeFinished) {
+          } else if (widget.autoMode && readyForAutoMode && !isAutoModeFinished) {
             _controller.play();
             isAutoModeFinished = true;
           }
-
           return AspectRatio(
             aspectRatio: 4/3,
             child: _buildVideoPlayerWithOverlay(),
