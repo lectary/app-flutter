@@ -65,7 +65,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    VideosProvider videosProvider = Provider.of(context);
+    CarouselStateProvider carouselStateProvider = Provider.of(context);
 
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
@@ -78,7 +78,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
           widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
 
           // pauses video if its running but not the current one
-          if (videosProvider.currentVideo != widget.videoIndex) {
+          if (carouselStateProvider.currentItemIndex != widget.videoIndex) {
             isAutoModeFinished = false;
             _controller.pause();
             _controller.seekTo(Duration.zero);

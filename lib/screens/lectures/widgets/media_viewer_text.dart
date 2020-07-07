@@ -64,7 +64,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    VideosProvider videosProvider = Provider.of(context);
+    CarouselStateProvider carouselStateProvider = Provider.of(context);
 
     if (!widget.slowMode) {
       _animationController.reset();
@@ -72,7 +72,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
     }
 
     // if current item is not visible any more, reset animation and hide text
-    if (videosProvider.currentVideo != widget.textIndex) {
+    if (carouselStateProvider.currentItemIndex != widget.textIndex) {
       showText = false;
       _resetAnimation();
       isAutoModeFinished = false;

@@ -37,14 +37,14 @@ final mediaList = List<MediaItem>.generate(50, (index) => index % 3 == 0
 
 final List<String> videoList = List.generate(1000, (index) => 'assets/videos/mock_videos/video${(index%3)+1}.mp4');
 
-/// helper class to keep track of active video page
-class VideosProvider with ChangeNotifier {
-  int _currentVideo = 0;
+/// helper class to keep track of current item
+class CarouselStateProvider with ChangeNotifier {
+  int _currentItemIndex = 0;
 
-  int get currentVideo => _currentVideo;
+  int get currentItemIndex => _currentItemIndex;
 
-  set currentVideo(int currentVideo) {
-    _currentVideo = currentVideo;
+  set currentItemIndex(int currentItemIndex) {
+    _currentItemIndex = currentItemIndex;
     notifyListeners();
   }
 }
@@ -85,7 +85,7 @@ class _LectureScreenState extends State<LectureScreen> {
                     enlargeCenterPage: true,
                     initialPage: 0,
                     onPageChanged: (int index, CarouselPageChangedReason reason) {
-                      Provider.of<VideosProvider>(context, listen: false).currentVideo = index;
+                      Provider.of<CarouselStateProvider>(context, listen: false).currentItemIndex = index;
                     }
                 ),
                 itemCount: mediaList.length,
@@ -165,7 +165,7 @@ class _LectureScreenState extends State<LectureScreen> {
               70,
               func: () => setState(() {
                 int rndPage = random.nextInt(videoList.length);
-                Provider.of<VideosProvider>(context, listen: false).currentVideo = rndPage;
+                Provider.of<CarouselStateProvider>(context, listen: false).currentItemIndex = rndPage;
                 carouselController.jumpToPage(rndPage);
               })
           ),

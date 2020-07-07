@@ -40,7 +40,7 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
           child: MainDrawer(),
         ),
         body: ChangeNotifierProvider(
-            create: (context) => VideosProvider(),
+            create: (context) => CarouselStateProvider(),
             child: lecturesAvailable ? LectureScreen() : LectureNotAvailableScreen()
         ),
       ),
