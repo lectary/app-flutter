@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:provider/provider.dart';
 
 class TextViewer extends StatefulWidget {
   final String content;
@@ -19,6 +21,7 @@ class TextViewer extends StatefulWidget {
 
 class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
   bool showText = false;
+  bool isAutoModeFinished = false;
 
   AnimationController _animationController;
   Animation<int> _characterCount;
@@ -61,9 +64,23 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    VideosProvider videosProvider = Provider.of(context);
+
     if (!widget.slowMode) {
       _animationController.reset();
       finalContent = widget.content;
+    }
+
+    // if current item is not visible any more, reset animation and hide text
+    if (videosProvider.currentVideo != widget.textIndex) {
+      showText = false;
+      _resetAnimation();
+      isAutoModeFinished = false;
+      // else start animation and show text automatically and use bool switch for avoiding looping
+    } else if (widget.autoMode && !isAutoModeFinished) {
+      showText = true;
+      _animationController.forward();
+      isAutoModeFinished = true;
     }
     return GestureDetector(
       onTap: () {
