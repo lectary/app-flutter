@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:provider/provider.dart';
+
+import '../lecture_screen.dart';
 
 class ImageViewer extends StatefulWidget {
   final String picturePath;
@@ -21,6 +24,7 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin {
   bool showPicture = false;
+  bool isAutoModeFinished = false;
 
   AnimationController _animationController;
   Animation<double> _animation;
@@ -47,6 +51,23 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    VideosProvider videosProvider = Provider.of(context);
+
+    // if current item is not visible any more, reset animation and hide image
+    if (videosProvider.currentVideo != widget.pictureIndex) {
+      showPicture = false;
+      _animationController.reset();
+      isAutoModeFinished = false;
+      // else show image (and in case of slow mode start animation) automatically
+      // and use bool switch for avoiding looping
+    } else if (widget.autoMode && !isAutoModeFinished) {
+      if (widget.slowMode) {
+        _animationController.forward();
+      }
+      showPicture = true;
+      isAutoModeFinished = true;
+    }
+
     return GestureDetector(
       onTap: () {
         setState(() {
