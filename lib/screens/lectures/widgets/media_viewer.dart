@@ -10,7 +10,7 @@ class MediaViewer extends StatelessWidget {
   const MediaViewer({
     Key key,
     @required this.mediaItem,
-    @required this.itemIndex,
+    @required this.mediaIndex,
     @required this.hideVocableModeOn,
     @required this.slowModeOn,
     @required this.autoModeOn,
@@ -18,7 +18,7 @@ class MediaViewer extends StatelessWidget {
   }) : super(key: key);
 
   final MediaItem mediaItem;
-  final int itemIndex;
+  final int mediaIndex;
 
   final bool hideVocableModeOn;
   final bool slowModeOn;
@@ -37,22 +37,22 @@ class MediaViewer extends StatelessWidget {
         mediaItem is VideoItem
             ? LectaryVideoPlayer(
                 videoPath: mediaItem.media,
-                videoIndex: itemIndex,
+                mediaIndex: mediaIndex,
                 slowMode: slowModeOn,
                 autoMode: autoModeOn,
                 loopMode: loopModeOn,
               )
             : (mediaItem is PictureItem
                 ? ImageViewer(
-                    picturePath: mediaItem.media,
-                    pictureIndex: itemIndex,
+                    imagePath: mediaItem.media,
+                    mediaIndex: mediaIndex,
                     slowMode: slowModeOn,
                     autoMode: autoModeOn,
                     loopMode: loopModeOn,
                   )
                 : TextViewer(
                     content: mediaItem.media,
-                    textIndex: itemIndex,
+                    mediaIndex: mediaIndex,
                     slowMode: slowModeOn,
                     autoMode: autoModeOn,
                     loopMode: loopModeOn,

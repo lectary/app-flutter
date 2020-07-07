@@ -6,7 +6,7 @@ import 'package:video_player/video_player.dart';
 
 class LectaryVideoPlayer extends StatefulWidget {
   final String videoPath;
-  final int videoIndex;
+  final int mediaIndex;
 
   final bool slowMode;
   final bool autoMode;
@@ -14,7 +14,7 @@ class LectaryVideoPlayer extends StatefulWidget {
 
   final double slowModeSpeed = 0.3;
 
-  LectaryVideoPlayer({this.videoPath, this.videoIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
+  LectaryVideoPlayer({this.videoPath, this.mediaIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
 
   @override
   _LectaryVideoPlayerState createState() => _LectaryVideoPlayerState();
@@ -78,7 +78,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
           widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
 
           // pauses video if its running but not the current one
-          if (carouselStateProvider.currentItemIndex != widget.videoIndex) {
+          if (carouselStateProvider.currentItemIndex != widget.mediaIndex) {
             isAutoModeFinished = false;
             _controller.pause();
             _controller.seekTo(Duration.zero);

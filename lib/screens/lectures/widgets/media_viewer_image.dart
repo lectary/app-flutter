@@ -7,8 +7,8 @@ import 'package:provider/provider.dart';
 import '../lecture_screen.dart';
 
 class ImageViewer extends StatefulWidget {
-  final String picturePath;
-  final int pictureIndex;
+  final String imagePath;
+  final int mediaIndex;
 
   final bool slowMode;
   final bool autoMode;
@@ -16,7 +16,7 @@ class ImageViewer extends StatefulWidget {
 
   final double slowModeSpeed = 0.3;
 
-  ImageViewer({this.picturePath, this.pictureIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
+  ImageViewer({this.imagePath, this.mediaIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
 
   @override
   _ImageViewerState createState() => _ImageViewerState();
@@ -58,7 +58,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
     }
 
     // if current item is not visible any more, reset animation and hide image
-    if (carouselStateProvider.currentItemIndex != widget.pictureIndex) {
+    if (carouselStateProvider.currentItemIndex != widget.mediaIndex) {
       showPicture = false;
       _animationController.reset();
       isAutoModeFinished = false;
@@ -88,7 +88,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
             aspectRatio: 4 / 3,
             child: showPicture
                 ? Stack(children: [
-                    Image.asset(widget.picturePath),
+                    Image.asset(widget.imagePath),
                     ClipRect(
                       child: BackdropFilter(
                         filter: ImageFilter.blur(

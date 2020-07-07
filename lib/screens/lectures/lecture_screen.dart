@@ -93,7 +93,7 @@ class _LectureScreenState extends State<LectureScreen> {
                     /// media viewer - types: video, image, text
                     MediaViewer(
                         mediaItem: mediaList[itemIndex],
-                        itemIndex: itemIndex,
+                        mediaIndex: itemIndex,
                         hideVocableModeOn: hideVocableModeOn,
                         slowModeOn: slowModeOn,
                         autoModeOn: autoModeOn,

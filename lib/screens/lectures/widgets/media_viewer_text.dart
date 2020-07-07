@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 class TextViewer extends StatefulWidget {
   final String content;
-  final int textIndex;
+  final int mediaIndex;
 
   final bool slowMode;
   final bool autoMode;
@@ -13,7 +13,7 @@ class TextViewer extends StatefulWidget {
 
   final double slowModeSpeed = 0.3;
 
-  TextViewer({this.content, this.textIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
+  TextViewer({this.content, this.mediaIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
 
   @override
   _TextViewerState createState() => _TextViewerState();
@@ -72,7 +72,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
     }
 
     // if current item is not visible any more, reset animation and hide text
-    if (carouselStateProvider.currentItemIndex != widget.textIndex) {
+    if (carouselStateProvider.currentItemIndex != widget.mediaIndex) {
       showText = false;
       _resetAnimation();
       isAutoModeFinished = false;
