@@ -109,7 +109,7 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // children of an package
-  List<Widget> _buildChildren(Lecture lecture) {
+  List<Widget> _buildChildren(Lectures lecture) {
     return <Widget>[
       Divider(height: 1,thickness: 1),
       ListTile(
@@ -131,14 +131,14 @@ class LecturePackageItem extends StatelessWidget {
 
 // models
 class LecturePackage {
-  LecturePackage(this.title, [this.children = const <Lecture>[]]);
+  LecturePackage(this.title, [this.children = const <Lectures>[]]);
 
   final String title;
-  final List<Lecture> children;
+  final List<Lectures> children;
 }
 
-class Lecture {
-  Lecture(this.title);
+class Lectures {
+  Lectures(this.title);
   final String title;
 }
 
@@ -146,23 +146,23 @@ class Lecture {
 final List<LecturePackage> data = <LecturePackage>[
   LecturePackage(
     'Alpen Adria Universität',
-    <Lecture>[
-      Lecture('AAU Lektion 1'),
-      Lecture('AAU Lektion 2'),
-      Lecture('AAU Lektion 3'),
+    <Lectures>[
+      Lectures('AAU Lektion 1'),
+      Lectures('AAU Lektion 2'),
+      Lectures('AAU Lektion 3'),
     ],
   ),
   LecturePackage(
     'Gestu',
-    <Lecture>[
-      Lecture('Architektur'),
+    <Lectures>[
+      Lectures('Architektur'),
     ],
   ),
   LecturePackage(
     'Lectary',
-    <Lecture>[
-      Lecture('Alphabet Buchstaben'),
-      Lecture('Zahlen'),
+    <Lectures>[
+      Lectures('Alphabet Buchstaben'),
+      Lectures('Zahlen'),
     ],
   ),
 ];
