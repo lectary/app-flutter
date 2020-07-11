@@ -1,10 +1,13 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
+import 'package:lectary/providers/lectures_provider.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/models/lecture.dart';
+import 'package:provider/provider.dart';
+
 
 class LectureManagementScreen extends StatefulWidget {
   @override
@@ -13,37 +16,51 @@ class LectureManagementScreen extends StatefulWidget {
 
 class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
-  List<String> items = List<String>.generate(20, (i) => "Lektion $i");
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<LecturesProvider>(context, listen: false).loadLecturesFromServer();
+  }
 
   @override
   Widget build(BuildContext context) {
+    LecturesProvider lecturesProvider = Provider.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).screenManagementTitle),
       ),
       drawer: MainDrawer(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: _generateListView(),
-          ),
-          Divider(height: 1, thickness: 1),
-          Container(
-            height: 60,
-            child: _buildSearchBar(),
-          ),
-        ],
-      ),
+      body: FutureBuilder(
+          future: lecturesProvider.futureLecturesFromServer,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child: _generateListView(snapshot.data),
+                  ),
+                  Divider(height: 1, thickness: 1),
+                  Container(
+                    height: 60,
+                    child: _buildSearchBar(),
+                  ),
+                ],
+              );
+            } else {
+              return Center(child: CircularProgressIndicator(backgroundColor: ColorsLectary.darkBlue,));
+            }
+          }),
     );
   }
 
   // builds a listView with ListTiles based on the generated item-list
-  ListView _generateListView() {
+  ListView _generateListView(List<Lecture> lectures) {
     return ListView.separated(
       padding: EdgeInsets.all(0),
       separatorBuilder: (context, index) => Divider(),
-      itemCount: items.length,
+      itemCount: lectures.length,
       itemBuilder: (context, index) {
         return ListTileTheme(
           iconColor: ColorsLectary.lightBlue,
@@ -52,8 +69,8 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             visible: _checkDownloadStatus(),
             child: Icon(Icons.check_circle),
           ),
-            title: Text("${items[index]}"),
-            trailing: IconButton(onPressed: () => _showLectureMenu(), icon: Icon(Icons.more_horiz))
+            title: Text("${lectures[index].lesson}"),
+            trailing: IconButton(onPressed: () => _showLectureMenu(lectures[index]), icon: Icon(Icons.more_horiz))
         ),
         );
       },
@@ -85,13 +102,13 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     );
   }
 
-  _showLectureMenu() {
+  _showLectureMenu(Lecture lecture) {
     return showModalBottomSheet(
         context: context,
         builder: (context) {
           return Wrap(
             children: <Widget>[
-              _buildLectureInfoWidget(),
+              _buildLectureInfoWidget(lecture),
               Divider(height: 1, thickness: 1),
               _buildButton(Icons.cloud_download, "Herunterladen"),
               Divider(height: 1, thickness: 1),
@@ -103,20 +120,20 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     );
   }
 
-  Container _buildLectureInfoWidget() {
+  Container _buildLectureInfoWidget(Lecture lecture) {
     return Container(
       padding: EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           // TODO replace mock text
-          Text("Lektion: AAU Lektion 4"),
+          Text("Lektion: " + lecture.lesson),
           SizedBox(height: 10),
-          Text("Paket: Alpen Adria Universität"),
+          Text("Paket: " + lecture.pack),
           SizedBox(height: 10),
-          Text("Dateigröße: 7MB"),
+          Text("Dateigröße: " + lecture.fileSize.toString() + " MB"),
           SizedBox(height: 10),
-          Text("Vokabel: 84"),
+          Text("Vokabel: " + lecture.vocableCount.toString()),
         ],
       )
     );
