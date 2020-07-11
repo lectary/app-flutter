@@ -77,44 +77,26 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     );
   }
 
-  bool _checkDownloadStatus() {
-    // TODO connect with real data
-    final random = Random();
-    return random.nextBool();
-  }
-
-  Row _buildSearchBar() {
-    // TODO check for native searchbars
-    return Row(
-      children: <Widget>[
-        SizedBox(width: 15),
-        Icon(Icons.search),
-        SizedBox(width: 10),
-        Expanded( // needed because textField has no intrinsic width, that the row wants to know!
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context).screenManagementSearchHint,
-              border: InputBorder.none
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   _showLectureMenu(Lecture lecture) {
+    LecturesProvider lecturesProvider = Provider.of(context, listen: false);
     return showModalBottomSheet(
         context: context,
-        builder: (context) {
-          return Wrap(
-            children: <Widget>[
-              _buildLectureInfoWidget(lecture),
-              Divider(height: 1, thickness: 1),
-              _buildButton(Icons.cloud_download, "Herunterladen"),
-              Divider(height: 1, thickness: 1),
-              _buildButton(Icons.close, "Abbrechen"),
-              Divider(height: 1, thickness: 1),
-            ],
+        builder: (_) {
+          return ChangeNotifierProvider(
+            create: (context) => lecturesProvider,
+            child: Wrap(
+              children: <Widget>[
+                _buildLectureInfoWidget(lecture),
+                Divider(height: 1, thickness: 1),
+                _buildButton(Icons.cloud_download, "Herunterladen",
+                func: () => Provider.of<LecturesProvider>(context, listen: false).loadLectureFromServer()
+                ),
+                Divider(height: 1, thickness: 1),
+                _buildButton(Icons.close, "Abbrechen",
+                func: () => Navigator.pop(context)),
+                Divider(height: 1, thickness: 1),
+              ],
+            ),
           );
         },
     );
@@ -139,13 +121,38 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     );
   }
 
-  Container _buildButton(icon, text) {
+
+  bool _checkDownloadStatus() {
+    // TODO connect with real data
+    final random = Random();
+    return random.nextBool();
+  }
+
+  Row _buildSearchBar() {
+    // TODO check for native searchbars
+    return Row(
+      children: <Widget>[
+        SizedBox(width: 15),
+        Icon(Icons.search),
+        SizedBox(width: 10),
+        Expanded( // needed because textField has no intrinsic width, that the row wants to know!
+          child: TextField(
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context).screenManagementSearchHint,
+                border: InputBorder.none
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Container _buildButton(icon, text, {Function func=emptyFunction}) {
     return Container(
       height: 50, // TODO maybe better use relative values via expanded?
       child: RaisedButton(
-
         onPressed: () {
-          // TODO perform action
+          func();
         },
         child: Container(
           child: Row(
@@ -159,5 +166,6 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
       )
     );
   }
+  static emptyFunction() {}
 
 }
