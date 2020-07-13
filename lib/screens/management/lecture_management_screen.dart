@@ -72,22 +72,30 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
       itemBuilder: (context, index) {
         return ListTileTheme(
           iconColor: ColorsLectary.lightBlue,
-            child: ListTile(
-            leading: Visibility(
-            visible: _checkDownloadStatus(),
-            child: Icon(Icons.check_circle),
-          ),
-            title: Text("${lectures[index].lesson}"),
-            trailing: IconButton(onPressed: () => _showLectureMenu(index), icon: Icon(Icons.more_horiz))
-        ),
+          child: ListTile(
+              leading: _getIconForLectureStatus(lectures[index].lectureStatus),
+              title: Text("${lectures[index].lesson}"),
+              trailing: IconButton(
+                  onPressed: () => _showLectureMenu(index),
+                  icon: Icon(Icons.more_horiz))),
         );
       },
     );
   }
 
-  bool _checkDownloadStatus() {
-    final random = Random();
-    return random.nextBool();
+  Widget _getIconForLectureStatus(LectureStatus lectureStatus) {
+    switch (lectureStatus) {
+      case LectureStatus.downloading:
+        return CircularProgressIndicator(backgroundColor: ColorsLectary.lightBlue,);
+      case LectureStatus.persisted:
+        return Icon(Icons.check_circle);
+      case LectureStatus.removed:
+        return Icon(Icons.error, color: ColorsLectary.red,);
+      case LectureStatus.updateAvailable:
+        return Icon(Icons.loop);
+      default:
+        return Icon(null);
+    }
   }
 
   _showLectureMenu(int index) {
