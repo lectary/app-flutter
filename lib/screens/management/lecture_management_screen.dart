@@ -19,39 +19,47 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<LecturesProvider>(context, listen: false).loadLecturesFromServer();
+    /// Callback for loading lectures on first frame once the layout is finished completely
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      Provider.of<LecturesProvider>(context, listen: false).loadLecturesFromServer()
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    LecturesProvider lecturesProvider = Provider.of(context);
+    final lecturesProvider = Provider.of<LecturesProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).screenManagementTitle),
       ),
       drawer: MainDrawer(),
-      body: FutureBuilder(
-          future: lecturesProvider.futureLecturesFromServer,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    child: _generateListView(snapshot.data),
-                  ),
-                  Divider(height: 1, thickness: 1),
-                  Container(
-                    height: 60,
-                    child: _buildSearchBar(),
-                  ),
-                ],
-              );
-            } else {
-              return Center(child: CircularProgressIndicator(backgroundColor: ColorsLectary.darkBlue,));
-            }
-          }),
+      body: (() {
+        switch (lecturesProvider.status) {
+          case Status.loading:
+            return Center(child: CircularProgressIndicator(backgroundColor: ColorsLectary.darkBlue,));
+
+          case Status.completed:
+            return lecturesProvider.lectureList.isEmpty
+                ? null
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Expanded(
+                        child: _generateListView(lecturesProvider.lectureList),
+                      ),
+                      Divider(height: 1, thickness: 1),
+                      Container(
+                        height: 60,
+                        child: _buildSearchBar(),
+                      ),
+                    ],
+                  );
+
+          case Status.error:
+            return Center(child: Text("Network errors"));
+        }
+      } ()),
     );
   }
 
@@ -70,15 +78,20 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             child: Icon(Icons.check_circle),
           ),
             title: Text("${lectures[index].lesson}"),
-            trailing: IconButton(onPressed: () => _showLectureMenu(lectures[index]), icon: Icon(Icons.more_horiz))
+            trailing: IconButton(onPressed: () => _showLectureMenu(index), icon: Icon(Icons.more_horiz))
         ),
         );
       },
     );
   }
 
-  _showLectureMenu(Lecture lecture) {
-    LecturesProvider lecturesProvider = Provider.of(context, listen: false);
+  bool _checkDownloadStatus() {
+    final random = Random();
+    return random.nextBool();
+  }
+
+  _showLectureMenu(int index) {
+    final lecturesProvider = Provider.of<LecturesProvider>(context, listen: false);
     return showModalBottomSheet(
         context: context,
         builder: (_) {
@@ -86,10 +99,10 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             create: (context) => lecturesProvider,
             child: Wrap(
               children: <Widget>[
-                _buildLectureInfoWidget(lecture),
+                _buildLectureInfoWidget(lecturesProvider.lectureList[index]),
                 Divider(height: 1, thickness: 1),
                 _buildButton(Icons.cloud_download, "Herunterladen",
-                func: () => Provider.of<LecturesProvider>(context, listen: false).loadLectureFromServer()
+                func: () => lecturesProvider.loadSingleLectureFromServer(index)
                 ),
                 Divider(height: 1, thickness: 1),
                 _buildButton(Icons.close, "Abbrechen",
@@ -119,13 +132,6 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         ],
       )
     );
-  }
-
-
-  bool _checkDownloadStatus() {
-    // TODO connect with real data
-    final random = Random();
-    return random.nextBool();
   }
 
   Row _buildSearchBar() {

@@ -1,8 +1,13 @@
 import 'dart:developer';
 
+enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvailable }
+
 /// Model class representing a lecture pack
 class Lecture {
   int id;
+
+  /// Used for showing corresponding info icons in the lecture list
+  LectureStatus lectureStatus = LectureStatus.notPersisted;
 
   /// Lecture pack properties (.zip)
   final String fileName;
