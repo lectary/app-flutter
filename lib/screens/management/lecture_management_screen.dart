@@ -1,11 +1,11 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
-import 'package:lectary/providers/lectures_provider.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/models/lecture.dart';
+import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
@@ -21,13 +21,13 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     super.initState();
     /// Callback for loading lectures on first frame once the layout is finished completely
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-      Provider.of<LecturesProvider>(context, listen: false).loadLecturesFromServer()
+      Provider.of<LectureViewModel>(context, listen: false).loadLectures()
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final lecturesProvider = Provider.of<LecturesProvider>(context);
+    final lectureViewModel = Provider.of<LectureViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -35,18 +35,18 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
       ),
       drawer: MainDrawer(),
       body: (() {
-        switch (lecturesProvider.status) {
+        switch (lectureViewModel.status) {
           case Status.loading:
             return Center(child: CircularProgressIndicator(backgroundColor: ColorsLectary.darkBlue,));
 
           case Status.completed:
-            return lecturesProvider.lectureList.isEmpty
+            return lectureViewModel.lectureList.isEmpty
                 ? null
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Expanded(
-                        child: _generateListView(lecturesProvider.lectureList),
+                        child: _generateListView(lectureViewModel.lectureList),
                       ),
                       Divider(height: 1, thickness: 1),
                       Container(
@@ -99,7 +99,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   }
 
   _showLectureMenu(int index) {
-    final lecturesProvider = Provider.of<LecturesProvider>(context, listen: false);
+    final lecturesProvider = Provider.of<LectureViewModel>(context, listen: false);
     return showModalBottomSheet(
         context: context,
         builder: (_) {
