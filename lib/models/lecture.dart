@@ -2,6 +2,7 @@ import 'dart:developer';
 
 enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvailable }
 
+
 /// Model class representing a lecture pack
 class Lecture {
   int id;
@@ -19,7 +20,7 @@ class Lecture {
   String lesson; // mandatory
   String lang; // mandatory
   String audio;
-  String date;
+  DateTime date;
   int sort;
   
   Lecture({this.fileName, this.fileSize, this.vocableCount,
@@ -31,7 +32,6 @@ class Lecture {
     Map<String, dynamic> metaInfo;
     try {
       metaInfo = _extractMetaInformation(fileName);
-
     } catch(e) {
       log("Extracting:" + e.toString());
     }
@@ -44,7 +44,7 @@ class Lecture {
       lang: metaInfo.remove("LANG"),
       audio: metaInfo.containsKey("AUDIO") ? metaInfo.remove("AUDIO") : null,
       date: metaInfo.containsKey("DATE") ? metaInfo.remove("DATE") : null,
-      sort: metaInfo.containsKey("SORT") ? int.parse(metaInfo.remove("SORT")) : null,
+      sort: metaInfo.containsKey("SORT") ? metaInfo.remove("SORT") : null,
     );
   }
 
@@ -63,14 +63,12 @@ class Lecture {
       String metaInfoType = metaInfo.split("--")[0];
       String metaInfoValue = metaInfo.split("--")[1];
 
-      // TODO de-asciify
-
       switch(metaInfoType) {
         case "PACK":
-          result.putIfAbsent("PACK", () => metaInfoValue);
+          result.putIfAbsent("PACK", () => _deAsciify(metaInfoValue));
           break;
         case "LESSON":
-          result.putIfAbsent("LESSON", () => metaInfoValue);
+          result.putIfAbsent("LESSON", () => _deAsciify(metaInfoValue));
           break;
         case "LANG":
           result.putIfAbsent("LANG", () => metaInfoValue);
@@ -79,13 +77,25 @@ class Lecture {
           result.putIfAbsent("AUDIO", () => metaInfoValue);
           break;
         case "DATE":
-          result.putIfAbsent("DATE", () => metaInfoValue);
+          result.putIfAbsent("DATE", () => DateTime.parse(metaInfoValue));
           break;
         case "SORT":
-          result.putIfAbsent("SORT", () => metaInfoValue);
+          result.putIfAbsent("SORT", () => int.parse(metaInfoValue));
           break;
       }
     }
+    return result;
+  }
+
+  String _deAsciify(String asciifiedString) {
+    String result = asciifiedString;
+
+    // TODO add all cases
+    result = result.replaceAll("_-", "-");
+    result = result.replaceAll("__", " ");
+    result = result.replaceAll("_VS", "/");
+    result = result.replaceAll("_ae", "ä");
+
     return result;
   }
 
