@@ -37,10 +37,10 @@ class LectureViewModel with ChangeNotifier {
       log("loaded local lectures");
 
       _lectureList = _mergeLectureLists(remoteList, localList);
+
       _status = Status.completed;
       notifyListeners();
     } catch(e) {
-      log(e.toString());
       _status = Status.error;
       _message = e.toString();
       notifyListeners();
