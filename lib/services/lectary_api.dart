@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:lectary/models/lecture.dart';
 
 class LectaryApi {
-  String lecturesApiUrl = "https://lectary.net/l4/info.php";
+  String lectaryApiUrl = "https://lectary.net/l4/info.php";
 
   Future<List<Lecture>> fetchLectures() async {
-    final response = await http.get(lecturesApiUrl);
+    final response = await http.get(lectaryApiUrl);
 
     if (response.statusCode == 200) {
       List<Lecture> resultList;
