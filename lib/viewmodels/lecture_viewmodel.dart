@@ -11,10 +11,11 @@ class LectureViewModel with ChangeNotifier {
 
   List<Lecture> _lectureList = List();
   Status _status = Status.completed;
+  String _message;
 
   List<Lecture> get lectureList => _lectureList;
   Status get status => _status;
-
+  String get message => _message;
 
   Future<void> loadLectures() async {
     _status = Status.loading;
@@ -41,6 +42,7 @@ class LectureViewModel with ChangeNotifier {
     } catch(e) {
       log(e.toString());
       _status = Status.error;
+      _message = e.toString();
       notifyListeners();
     }
 

@@ -57,7 +57,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                   );
 
           case Status.error:
-            return Center(child: Text("Network errors"));
+            return Center(child: Text(lectureViewModel.message));
         }
       } ()),
     );
