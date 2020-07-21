@@ -87,7 +87,7 @@ class Lecture {
     return result;
   }
 
-  String _deAsciify(String asciifiedString) {
+  static String _deAsciify(String asciifiedString) {
     String result = asciifiedString;
 
     // TODO add all cases
