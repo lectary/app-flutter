@@ -31,7 +31,7 @@ class Utils {
           result.putIfAbsent("AUDIO", () => metaInfoValue);
           break;
         case "DATE":
-          result.putIfAbsent("DATE", () => DateTime.parse(metaInfoValue));
+          result.putIfAbsent("DATE", () => metaInfoValue);
           break;
         case "SORT":
           result.putIfAbsent("SORT", () => int.parse(metaInfoValue));
