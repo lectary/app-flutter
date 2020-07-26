@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:lectary/data/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
-import 'package:lectary/screens/management/lecture_management_screen.dart';
+import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/lecture_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class MainDrawer extends StatelessWidget {
-
-  final List<String> items = List<String>.generate(20, (i) => "Lektion $i");
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class MainDrawer extends StatelessWidget {
           Expanded(
             flex: 8,
             child: Container(
-              child: _generateListView(),
+              child: _generateListView(context),
             ),
           ),
           Divider(height: 1, thickness: 1),
@@ -72,14 +73,31 @@ class MainDrawer extends StatelessWidget {
   }
 
   // builds a listView with ListTiles based on the generated item-list
-  ListView _generateListView() {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(height: 1,thickness: 1),
-      padding: EdgeInsets.all(0),
-      itemCount: data.length+1,
-      itemBuilder: (context, index) {
-        if (index==0) return ListTile(title: Text("Alle Vokabel"));
-        return LecturePackageItem(data[index-1], context);
+  Widget _generateListView(BuildContext context) {
+    final viewModel = Provider.of<LectureViewModel>(context);
+    return StreamBuilder<List<LecturePackage>>(
+      stream: viewModel.localLectures,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data.isNotEmpty) {
+            return ListView.separated(
+                separatorBuilder: (context, index) =>
+                    Divider(height: 1, thickness: 1),
+                padding: EdgeInsets.all(0),
+                itemCount: snapshot.data.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == 0) return ListTile(title: Text("Alle Vokabel"));
+                  return LecturePackageItem(snapshot.data[index-1], context);
+                }
+            );
+          } else {
+            return Center(
+              child: Text("Keine offline Lektionen vorhanden!"),
+            );
+          }
+        } else {
+          return CircularProgressIndicator();
+        }
       }
     );
   }
@@ -109,11 +127,11 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // children of an package
-  List<Widget> _buildChildren(Lectures lecture) {
+  List<Widget> _buildChildren(Lecture lecture) {
     return <Widget>[
       Divider(height: 1,thickness: 1),
       ListTile(
-        title: Text(lecture.title),
+        title: Text(lecture.lesson),
         onTap: () => {
           Scaffold.of(context).showSnackBar(SnackBar(
             content: Text("Tapped!"),
@@ -128,41 +146,3 @@ class LecturePackageItem extends StatelessWidget {
     return _buildTiles(entry);
   }
 }
-
-// models
-class LecturePackage {
-  LecturePackage(this.title, [this.children = const <Lectures>[]]);
-
-  final String title;
-  final List<Lectures> children;
-}
-
-class Lectures {
-  Lectures(this.title);
-  final String title;
-}
-
-// MOCK DATA
-final List<LecturePackage> data = <LecturePackage>[
-  LecturePackage(
-    'Alpen Adria Universität',
-    <Lectures>[
-      Lectures('AAU Lektion 1'),
-      Lectures('AAU Lektion 2'),
-      Lectures('AAU Lektion 3'),
-    ],
-  ),
-  LecturePackage(
-    'Gestu',
-    <Lectures>[
-      Lectures('Architektur'),
-    ],
-  ),
-  LecturePackage(
-    'Lectary',
-    <Lectures>[
-      Lectures('Alphabet Buchstaben'),
-      Lectures('Zahlen'),
-    ],
-  ),
-];
