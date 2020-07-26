@@ -1,10 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:lectary/data/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
-import 'package:lectary/models/lecture.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -40,13 +40,13 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             return Center(child: CircularProgressIndicator(backgroundColor: ColorsLectary.darkBlue,));
 
           case Status.completed:
-            return lectureViewModel.lectureList.isEmpty
+            return lectureViewModel.availableLectures.isEmpty
                 ? null
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Expanded(
-                        child: _generateListView(lectureViewModel.lectureList),
+                        child: _generateListView(lectureViewModel.availableLectures),
                       ),
                       Divider(height: 1, thickness: 1),
                       Container(
@@ -107,7 +107,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             create: (context) => lecturesProvider,
             child: Wrap(
               children: <Widget>[
-                _buildLectureInfoWidget(lecturesProvider.lectureList[index]),
+                _buildLectureInfoWidget(lecturesProvider.availableLectures[index]),
                 Divider(height: 1, thickness: 1),
                 _buildButton(Icons.cloud_download, "Herunterladen",
                 func: () => lecturesProvider.loadSingleLectureFromServer(index)

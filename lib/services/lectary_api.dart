@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart' as http;
-import 'package:lectary/models/lecture.dart';
+import 'package:lectary/data/entities/lecture.dart';
 
 class LectaryApi {
   String lectaryApiUrl = "https://lectary.net/l4/info.php";
