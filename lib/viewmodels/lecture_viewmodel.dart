@@ -14,11 +14,11 @@ enum Status { loading, error, completed }
 class LectureViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
 
-  List<Lecture> _availableLectures = List();
+  List<LecturePackage> _availableLectures = List();
   Status _status = Status.completed;
   String _message;
 
-  List<Lecture> get availableLectures => _availableLectures;
+  List<LecturePackage> get availableLectures => _availableLectures;
   Status get status => _status;
   String get message => _message;
 
@@ -28,10 +28,10 @@ class LectureViewModel with ChangeNotifier {
       : _lectureRepository = lectureRepository
   {
     localLectures = _lectureRepository.watchAllLectures()
-        .map((list) => groupLecturesByPack(list));
+        .map((list) => _groupLecturesByPack(list));
   }
 
-  List<LecturePackage> groupLecturesByPack(List<Lecture> lectureList) {
+  List<LecturePackage> _groupLecturesByPack(List<Lecture> lectureList) {
     final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
     List<LecturePackage> packList = List();
     lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
@@ -54,7 +54,8 @@ class LectureViewModel with ChangeNotifier {
       List<Lecture> localList = await _lectureRepository.loadLecturesLocal();
       log("loaded local lectures");
 
-      _availableLectures = _mergeLectureLists(remoteList, localList);
+      final mergedLectureList = _mergeLectureLists(remoteList, localList);
+      _availableLectures = _groupLecturesByPack(mergedLectureList);
 
       _status = Status.completed;
       notifyListeners();
