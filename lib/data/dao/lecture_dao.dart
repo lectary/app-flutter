@@ -5,7 +5,10 @@ import 'package:lectary/data/entities/lecture.dart';
 abstract class LectureDao {
 
   @Query("SELECT * FROM lectures")
-  Stream<List<Lecture>> findAllLectures();
+  Stream<List<Lecture>> watchAllLectures();
+
+  @Query("SELECT * FROM lectures")
+  Future<List<Lecture>> findAllLectures();
 
   @insert
   Future<void> insertLecture(Lecture lecture);
