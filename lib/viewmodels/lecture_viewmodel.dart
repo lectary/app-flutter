@@ -55,7 +55,10 @@ class LectureViewModel with ChangeNotifier {
       log("loaded local lectures");
 
       final mergedLectureList = _mergeLectureLists(remoteList, localList);
-      _availableLectures = _groupLecturesByPack(mergedLectureList);
+      final groupedLectureList = _groupLecturesByPack(mergedLectureList);
+      groupedLectureList.sort((p1, p2) => p1.title.toLowerCase().compareTo(p2.title.toLowerCase()));
+      groupedLectureList.forEach((pack) => pack.children.sort((l1, l2) => l1.lesson.toLowerCase().compareTo(l2.lesson.toLowerCase())));
+      _availableLectures = groupedLectureList;
 
       _status = Status.completed;
       notifyListeners();
@@ -88,25 +91,25 @@ class LectureViewModel with ChangeNotifier {
       }
     });
 
-    resultList.sort((e1, e2) => e1.lesson.toLowerCase().compareTo(e2.lesson.toLowerCase()));
-
     return resultList;
   }
 
-  Future<void> loadSingleLectureFromServer(int lectureIndex) async {
-    _availableLectures[lectureIndex].lectureStatus = LectureStatus.downloading;
+  Future<void> downloadAndSaveLecture(Lecture lecture) async {
+    int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
+    int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+
+    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
 
-    // TODO unzip
-    File lectureFile = await _lectureRepository.downloadLecture(_availableLectures[lectureIndex]);
+    File lectureFile = await _lectureRepository.downloadLecture(lecture);
 
+    // TODO unzip
 
     // TODO persist
     List<Vocable> vocableList = List();
     _lectureRepository.saveVocables(vocableList);
 
-
-    _availableLectures[lectureIndex].lectureStatus = LectureStatus.persisted;
+    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
     notifyListeners();
   }
 }

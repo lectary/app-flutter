@@ -165,7 +165,7 @@ class LecturePackageItem extends StatelessWidget {
               _buildButton(Icons.cloud_download, "Herunterladen",
                   func: () {
                     Navigator.pop(context);
-                    lecturesProvider.loadSingleLectureFromServer(lecture);
+                    lecturesProvider.downloadAndSaveLecture(lecture);
                   }
               ),
               Divider(height: 1, thickness: 1),
