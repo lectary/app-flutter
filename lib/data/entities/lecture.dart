@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:floor/floor.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:lectary/utils/utils.dart';
 
 enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvailable }
@@ -43,12 +44,12 @@ class Lecture {
 
   Lecture(
       {this.id,
-      this.fileName,
-      this.fileSize,
-      this.vocableCount,
-      this.pack,
-      this.lesson,
-      this.lang,
+      @required this.fileName,
+      @required this.fileSize,
+      @required this.vocableCount,
+      @required this.pack,
+      @required this.lesson,
+      @required this.lang,
       this.audio,
       this.date,
       this.sort});
