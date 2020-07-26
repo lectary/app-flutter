@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
+import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
@@ -64,7 +65,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   }
 
   // builds a listView with ListTiles based on the generated item-list
-  ListView _generateListView(List<Lecture> lectures) {
+  ListView _generateListView(List<LecturePackage> lectures) {
     return ListView.separated(
       padding: EdgeInsets.all(0),
       separatorBuilder: (context, index) => Divider(),
@@ -72,76 +73,9 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
       itemBuilder: (context, index) {
         return ListTileTheme(
           iconColor: ColorsLectary.lightBlue,
-          child: ListTile(
-              leading: _getIconForLectureStatus(lectures[index].lectureStatus),
-              title: Text("${lectures[index].lesson}"),
-              trailing: IconButton(
-                  onPressed: () => _showLectureMenu(index),
-                  icon: Icon(Icons.more_horiz))),
+          child: LecturePackageItem(lectures[index], context),
         );
       },
-    );
-  }
-
-  Widget _getIconForLectureStatus(LectureStatus lectureStatus) {
-    switch (lectureStatus) {
-      case LectureStatus.downloading:
-        return CircularProgressIndicator(backgroundColor: ColorsLectary.lightBlue,);
-      case LectureStatus.persisted:
-        return Icon(Icons.check_circle);
-      case LectureStatus.removed:
-        return Icon(Icons.error, color: ColorsLectary.red,);
-      case LectureStatus.updateAvailable:
-        return Icon(Icons.loop);
-      default:
-        return Icon(null);
-    }
-  }
-
-  _showLectureMenu(int index) {
-    final lecturesProvider = Provider.of<LectureViewModel>(context, listen: false);
-    return showModalBottomSheet(
-        context: context,
-        builder: (_) {
-          return ChangeNotifierProvider(
-            create: (context) => lecturesProvider,
-            child: Wrap(
-              children: <Widget>[
-                _buildLectureInfoWidget(lecturesProvider.availableLectures[index]),
-                Divider(height: 1, thickness: 1),
-                _buildButton(Icons.cloud_download, "Herunterladen",
-                func: () {
-                  Navigator.pop(context);
-                  lecturesProvider.loadSingleLectureFromServer(index);
-                }
-                ),
-                Divider(height: 1, thickness: 1),
-                _buildButton(Icons.close, "Abbrechen",
-                func: () => Navigator.pop(context)),
-                Divider(height: 1, thickness: 1),
-              ],
-            ),
-          );
-        },
-    );
-  }
-
-  Container _buildLectureInfoWidget(Lecture lecture) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          // TODO replace mock text
-          Text("Lektion: " + lecture.lesson),
-          SizedBox(height: 10),
-          Text("Paket: " + lecture.pack),
-          SizedBox(height: 10),
-          Text("Dateigröße: " + lecture.fileSize.toString() + " MB"),
-          SizedBox(height: 10),
-          Text("Vokabel: " + lecture.vocableCount.toString()),
-        ],
-      )
     );
   }
 
@@ -163,26 +97,130 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
       ],
     );
   }
+}
+
+
+class LecturePackageItem extends StatelessWidget {
+  const LecturePackageItem(this.entry, this.context);
+
+  final LecturePackage entry;
+  final BuildContext context;
+
+  // root level
+  Widget _buildTiles(LecturePackage pack) {
+    if (pack.children.isEmpty) return ListTile(title: Text(pack.title));
+    List<Widget> childs = List<Widget>();
+    childs.add(Container(
+        padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+        alignment: Alignment.centerLeft,
+        child: Text(pack.title, style: Theme.of(context).textTheme.caption))
+    );
+    pack.children.map(_buildChildren).forEach((element) {childs.addAll(element);});
+
+    Column column = Column(
+        children: childs
+    );
+    return column;
+  }
+
+  // children of an package
+  List<Widget> _buildChildren(Lecture lecture) {
+    return <Widget>[
+      Divider(height: 1,thickness: 1),
+      ListTile(
+          leading: _getIconForLectureStatus(lecture.lectureStatus),
+          title: Text("${lecture.lesson}"),
+          trailing: IconButton(
+              onPressed: () => _showLectureMenu(lecture),
+              icon: Icon(Icons.more_horiz))),
+    ];
+  }
+
+  Widget _getIconForLectureStatus(LectureStatus lectureStatus) {
+    switch (lectureStatus) {
+      case LectureStatus.downloading:
+        return CircularProgressIndicator(backgroundColor: ColorsLectary.lightBlue,);
+      case LectureStatus.persisted:
+        return Icon(Icons.check_circle);
+      case LectureStatus.removed:
+        return Icon(Icons.error, color: ColorsLectary.red,);
+      case LectureStatus.updateAvailable:
+        return Icon(Icons.loop);
+      default:
+        return Icon(null);
+    }
+  }
+
+  _showLectureMenu(Lecture lecture) {
+    final lecturesProvider = Provider.of<LectureViewModel>(context, listen: false);
+    return showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return ChangeNotifierProvider(
+          create: (context) => lecturesProvider,
+          child: Wrap(
+            children: <Widget>[
+              _buildLectureInfoWidget(lecture),
+              Divider(height: 1, thickness: 1),
+              _buildButton(Icons.cloud_download, "Herunterladen",
+                  func: () {
+                    Navigator.pop(context);
+                    lecturesProvider.loadSingleLectureFromServer(lecture);
+                  }
+              ),
+              Divider(height: 1, thickness: 1),
+              _buildButton(Icons.close, "Abbrechen",
+                  func: () => Navigator.pop(context)),
+              Divider(height: 1, thickness: 1),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Container _buildLectureInfoWidget(Lecture lecture) {
+    return Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // TODO replace mock text
+            Text("Lektion: " + lecture.lesson),
+            SizedBox(height: 10),
+            Text("Paket: " + lecture.pack),
+            SizedBox(height: 10),
+            Text("Dateigröße: " + lecture.fileSize.toString() + " MB"),
+            SizedBox(height: 10),
+            Text("Vokabel: " + lecture.vocableCount.toString()),
+          ],
+        )
+    );
+  }
 
   Container _buildButton(icon, text, {Function func=emptyFunction}) {
     return Container(
-      height: 50, // TODO maybe better use relative values via expanded?
-      child: RaisedButton(
-        onPressed: () {
-          func();
-        },
-        child: Container(
-          child: Row(
-            children: <Widget>[
-              Icon(icon, color: ColorsLectary.lightBlue,),
-              SizedBox(width: 10), // spacer
-              Text(text),
-            ],
+        height: 50, // TODO maybe better use relative values via expanded?
+        child: RaisedButton(
+          onPressed: () {
+            func();
+          },
+          child: Container(
+            child: Row(
+              children: <Widget>[
+                Icon(icon, color: ColorsLectary.lightBlue,),
+                SizedBox(width: 10), // spacer
+                Text(text),
+              ],
+            ),
           ),
-        ),
-      )
+        )
     );
   }
   static emptyFunction() {}
 
+  @override
+  Widget build(BuildContext context) {
+    return _buildTiles(entry);
+  }
 }
