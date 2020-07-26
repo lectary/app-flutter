@@ -110,7 +110,10 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                 _buildLectureInfoWidget(lecturesProvider.availableLectures[index]),
                 Divider(height: 1, thickness: 1),
                 _buildButton(Icons.cloud_download, "Herunterladen",
-                func: () => lecturesProvider.loadSingleLectureFromServer(index)
+                func: () {
+                  Navigator.pop(context);
+                  lecturesProvider.loadSingleLectureFromServer(index);
+                }
                 ),
                 Divider(height: 1, thickness: 1),
                 _buildButton(Icons.close, "Abbrechen",

@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:lectary/data/entities/lecture.dart';
+import 'package:lectary/data/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lecture_package.dart';
 
@@ -95,7 +97,15 @@ class LectureViewModel with ChangeNotifier {
     notifyListeners();
 
     // TODO unzip
+    File lectureFile = await _lectureRepository.downloadLecture(_availableLectures[lectureIndex]);
+
 
     // TODO persist
+    List<Vocable> vocableList = List();
+    _lectureRepository.saveVocables(vocableList);
+
+
+    _availableLectures[lectureIndex].lectureStatus = LectureStatus.persisted;
+    notifyListeners();
   }
 }
