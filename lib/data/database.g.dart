@@ -82,7 +82,7 @@ class _$LectureDatabase extends LectureDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lang` TEXT NOT NULL, `audio` TEXT, `date` TEXT, `sort` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `vocable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `vocable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -175,9 +175,15 @@ class _$LectureDao extends LectureDao {
   final DeletionAdapter<Lecture> _lectureDeletionAdapter;
 
   @override
-  Stream<List<Lecture>> findAllLectures() {
+  Stream<List<Lecture>> watchAllLectures() {
     return _queryAdapter.queryListStream('SELECT * FROM lectures',
         queryableName: 'lectures', isView: false, mapper: _lecturesMapper);
+  }
+
+  @override
+  Future<List<Lecture>> findAllLectures() async {
+    return _queryAdapter.queryList('SELECT * FROM lectures',
+        mapper: _lecturesMapper);
   }
 
   @override
