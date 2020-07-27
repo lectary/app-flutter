@@ -3,7 +3,7 @@ import 'package:lectary/data/entities/lecture.dart';
 import 'package:lectary/models/media_type_enum.dart';
 
 @Entity(
-    tableName: "vocable",
+    tableName: "vocables",
     foreignKeys: [
       ForeignKey(
         childColumns: ["lecture_id"],
