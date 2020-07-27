@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/data/database.dart';
 import 'package:lectary/data/entities/lecture.dart';
@@ -15,6 +17,15 @@ class LectureRepository {
 
   Future<List<Lecture>> loadLecturesRemote() async {
     return await _lectaryApi.fetchLectures();
+  }
+
+  Future<File> downloadLecture(Lecture lecture) async {
+    return _lectaryApi.downloadLectureZip(lecture);
+  }
+
+  Future<void> saveVocables(List<Vocable> vocableList) async {
+    // TODO implement
+    return null;
   }
 
   Stream<List<Lecture>> watchAllLectures() {

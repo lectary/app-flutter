@@ -4,7 +4,7 @@ enum MediaType {
 
 MediaType getMediaTypeFromString(String typeAsString) {
   for (MediaType element in MediaType.values) {
-    if (element.toString() == typeAsString) {
+    if (element.toString() == "MediaType." + typeAsString) {
       return element;
     }
   }

@@ -1,24 +1,33 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/entities/lecture.dart';
+import 'package:lectary/data/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lecture_package.dart';
 
 import 'package:collection/collection.dart';
+import 'package:lectary/models/media_type_enum.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum Status { loading, error, completed }
 
 class LectureViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
 
-  List<Lecture> _availableLectures = List();
+  List<LecturePackage> _availableLectures = List();
   Status _status = Status.completed;
   String _message;
 
-  List<Lecture> get availableLectures => _availableLectures;
+  List<LecturePackage> get availableLectures => _availableLectures;
   Status get status => _status;
   String get message => _message;
+
+  List<Vocable> _currentVocables = List();
+  List<Vocable> get currentVocables => _currentVocables;
 
   Stream<List<LecturePackage>> localLectures;
 
@@ -26,10 +35,10 @@ class LectureViewModel with ChangeNotifier {
       : _lectureRepository = lectureRepository
   {
     localLectures = _lectureRepository.watchAllLectures()
-        .map((list) => groupLecturesByPack(list));
+        .map((list) => _groupLecturesByPack(list));
   }
 
-  List<LecturePackage> groupLecturesByPack(List<Lecture> lectureList) {
+  List<LecturePackage> _groupLecturesByPack(List<Lecture> lectureList) {
     final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
     List<LecturePackage> packList = List();
     lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
@@ -52,7 +61,11 @@ class LectureViewModel with ChangeNotifier {
       List<Lecture> localList = await _lectureRepository.loadLecturesLocal();
       log("loaded local lectures");
 
-      _availableLectures = _mergeLectureLists(remoteList, localList);
+      final mergedLectureList = _mergeLectureLists(remoteList, localList);
+      final groupedLectureList = _groupLecturesByPack(mergedLectureList);
+      groupedLectureList.sort((p1, p2) => p1.title.toLowerCase().compareTo(p2.title.toLowerCase()));
+      groupedLectureList.forEach((pack) => pack.children.sort((l1, l2) => l1.lesson.toLowerCase().compareTo(l2.lesson.toLowerCase())));
+      _availableLectures = groupedLectureList;
 
       _status = Status.completed;
       notifyListeners();
@@ -85,17 +98,78 @@ class LectureViewModel with ChangeNotifier {
       }
     });
 
-    resultList.sort((e1, e2) => e1.lesson.toLowerCase().compareTo(e2.lesson.toLowerCase()));
-
     return resultList;
   }
 
-  Future<void> loadSingleLectureFromServer(int lectureIndex) async {
-    _availableLectures[lectureIndex].lectureStatus = LectureStatus.downloading;
+  Future<void> downloadAndSaveLecture(Lecture lecture) async {
+    int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
+    int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+
+    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
 
-    // TODO unzip
+    File lectureFile = await _lectureRepository.downloadLecture(lecture);
+
+    // TODO unzip and get lecture id before
+    int lectureId = 0;
+    List<Vocable> vocables = await _extractAndSaveZipFile(lectureId, lectureFile);
 
     // TODO persist
+
+    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
+    notifyListeners();
+  }
+
+  Future<List<Vocable>> _extractAndSaveZipFile(int lectureId, File zipFile) async {
+    var bytes = zipFile.readAsBytesSync();
+    Archive archive = ZipDecoder().decodeBytes(bytes);
+
+    List<Vocable> vocables = List();
+
+    String dir = (await getApplicationDocumentsDirectory()).path;
+
+    for (ArchiveFile file in archive) {
+      // file.name holds archive name plus actual filename
+      String fileName = '$dir/${file.name}';
+
+      if (file.isFile) {
+        String vocable = file.name.substring(file.name.indexOf('/')+1, file.name.indexOf('.'));
+        String extension = file.name.substring(file.name.indexOf('.')+1, file.name.length).toUpperCase();
+
+        // TODO refactor to act purely as a check/validation
+        MediaType mediaType = getMediaTypeFromString(extension);
+
+        // save to a local file
+        File outFile = File(fileName);
+        outFile = await outFile.create(recursive: true);
+        await outFile.writeAsBytes(file.content);
+
+        // construct model class
+        // TODO review: save file path as content in general (not the content text directly in case of txt-file)
+        String content;
+        switch (mediaType) {
+          case MediaType.JPG:
+          case MediaType.MP4:
+          case MediaType.PNG:
+            content = file.name;
+            break;
+          case MediaType.TXT:
+            content = utf8.decode(file.content);
+            break;
+        }
+        vocables.add(Vocable(
+          lectureId: lectureId,
+          vocable: vocable,
+          media: content,
+          mediaType: mediaType.toString(),
+          vocableProgress: 0,
+        ));
+      } else {
+        log("Found a non-file: " + file.name);
+      }
+    }
+    vocables.forEach((e) => log("Vocable: ${e.vocable}\nmedia: ${e.media}\nmedia-type: ${e.mediaType}"));
+
+    return vocables;
   }
 }

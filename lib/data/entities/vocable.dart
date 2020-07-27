@@ -1,4 +1,5 @@
 import 'package:floor/floor.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:lectary/data/entities/lecture.dart';
 import 'package:lectary/models/media_type_enum.dart';
 
@@ -33,9 +34,9 @@ class Vocable {
 
   Vocable(
       {this.id,
-      this.lectureId,
-      this.vocable,
-      this.mediaType,
-      this.media,
-      this.vocableProgress});
+      @required this.lectureId,
+      @required this.vocable,
+      @required this.mediaType,
+      @required this.media,
+      @required this.vocableProgress});
 }
