@@ -62,6 +62,8 @@ class _$LectureDatabase extends LectureDatabase {
 
   LectureDao _lectureDaoInstance;
 
+  VocableDao _vocableDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -82,7 +84,7 @@ class _$LectureDatabase extends LectureDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lang` TEXT NOT NULL, `audio` TEXT, `date` TEXT, `sort` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `vocable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `vocables` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -93,6 +95,11 @@ class _$LectureDatabase extends LectureDatabase {
   @override
   LectureDao get lectureDao {
     return _lectureDaoInstance ??= _$LectureDao(database, changeListener);
+  }
+
+  @override
+  VocableDao get vocableDao {
+    return _vocableDaoInstance ??= _$VocableDao(database, changeListener);
   }
 }
 
@@ -187,8 +194,14 @@ class _$LectureDao extends LectureDao {
   }
 
   @override
-  Future<void> insertLecture(Lecture lecture) async {
-    await _lectureInsertionAdapter.insert(lecture, OnConflictStrategy.abort);
+  Future<void> deleteAllLectures() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM lectures');
+  }
+
+  @override
+  Future<int> insertLecture(Lecture lecture) {
+    return _lectureInsertionAdapter.insertAndReturnId(
+        lecture, OnConflictStrategy.abort);
   }
 
   @override
@@ -199,5 +212,96 @@ class _$LectureDao extends LectureDao {
   @override
   Future<void> deleteLecture(Lecture lecture) async {
     await _lectureDeletionAdapter.delete(lecture);
+  }
+}
+
+class _$VocableDao extends VocableDao {
+  _$VocableDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _vocableInsertionAdapter = InsertionAdapter(
+            database,
+            'vocables',
+            (Vocable item) => <String, dynamic>{
+                  'id': item.id,
+                  'lecture_id': item.lectureId,
+                  'vocable': item.vocable,
+                  'media_type': item.mediaType,
+                  'media': item.media,
+                  'vocable_progress': item.vocableProgress
+                }),
+        _vocableUpdateAdapter = UpdateAdapter(
+            database,
+            'vocables',
+            ['id'],
+            (Vocable item) => <String, dynamic>{
+                  'id': item.id,
+                  'lecture_id': item.lectureId,
+                  'vocable': item.vocable,
+                  'media_type': item.mediaType,
+                  'media': item.media,
+                  'vocable_progress': item.vocableProgress
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  static final _vocablesMapper = (Map<String, dynamic> row) => Vocable(
+      id: row['id'] as int,
+      lectureId: row['lecture_id'] as int,
+      vocable: row['vocable'] as String,
+      mediaType: row['media_type'] as String,
+      media: row['media'] as String,
+      vocableProgress: row['vocable_progress'] as int);
+
+  final InsertionAdapter<Vocable> _vocableInsertionAdapter;
+
+  final UpdateAdapter<Vocable> _vocableUpdateAdapter;
+
+  @override
+  Future<List<Vocable>> findAllVocables() async {
+    return _queryAdapter.queryList('SELECT * FROM vocables',
+        mapper: _vocablesMapper);
+  }
+
+  @override
+  Future<List<Vocable>> findVocablesByLectureId(int lectureId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM vocables WHERE lecture_id = ?',
+        arguments: <dynamic>[lectureId],
+        mapper: _vocablesMapper);
+  }
+
+  @override
+  Future<List<Vocable>> findVocablesByLecturePack(String lecturePack) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM vocables JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ?',
+        arguments: <dynamic>[lecturePack],
+        mapper: _vocablesMapper);
+  }
+
+  @override
+  Future<void> deleteVocablesByLectureId(int lectureId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM vocables WHERE lecture_id = ?',
+        arguments: <dynamic>[lectureId]);
+  }
+
+  @override
+  Future<void> deleteAllVocables() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM vocables');
+  }
+
+  @override
+  Future<List<int>> insertVocables(List<Vocable> vocables) {
+    return _vocableInsertionAdapter.insertListAndReturnIds(
+        vocables, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateVocable(Vocable vocable) async {
+    await _vocableUpdateAdapter.update(vocable, OnConflictStrategy.abort);
   }
 }
