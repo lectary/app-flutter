@@ -24,7 +24,7 @@ class LectureRepository {
     return _lectureDatabase.lectureDao.findAllLectures();
   }
 
-  Future<void> insertLecture(Lecture lecture) {
+  Future<int> insertLecture(Lecture lecture) {
     return _lectureDatabase.lectureDao.insertLecture(lecture);
   }
 

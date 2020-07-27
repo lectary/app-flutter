@@ -11,11 +11,14 @@ abstract class LectureDao {
   Future<List<Lecture>> findAllLectures();
 
   @insert
-  Future<void> insertLecture(Lecture lecture);
+  Future<int> insertLecture(Lecture lecture);
 
   @update
   Future<void> updateLecture(Lecture lecture);
 
   @delete
   Future<void> deleteLecture(Lecture lecture);
+
+  @Query("DELETE FROM lectures")
+  Future<void> deleteAllLectures();
 }
