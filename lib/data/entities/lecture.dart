@@ -40,9 +40,10 @@ class Lecture {
 
   String audio;
 
+  @ColumnInfo(nullable: false)
   String date;
 
-  int sort;
+  String sort;
 
   Lecture(
       {this.id,
@@ -73,8 +74,8 @@ class Lecture {
       lesson: metaInfo.remove("LESSON"),
       lang: metaInfo.remove("LANG"),
       audio: metaInfo.containsKey("AUDIO") ? metaInfo.remove("AUDIO") : null,
-      date: metaInfo.containsKey("DATE") ? metaInfo.remove("DATE") : null,
-      sort: metaInfo.containsKey("SORT") ? metaInfo.remove("SORT") : null,
+      date: metaInfo.containsKey("DATE") ? metaInfo.remove("DATE") : Utils.currentDate(),
+      sort: metaInfo.containsKey("SORT") ? Utils.fillWithLeadingZeros(metaInfo.remove("SORT")) : null,
     );
   }
 }

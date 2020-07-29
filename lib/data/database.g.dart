@@ -82,7 +82,7 @@ class _$LectureDatabase extends LectureDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lang` TEXT NOT NULL, `audio` TEXT, `date` TEXT, `sort` INTEGER)');
+            'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lang` TEXT NOT NULL, `audio` TEXT, `date` TEXT NOT NULL, `sort` TEXT)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `vocables` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
@@ -173,7 +173,7 @@ class _$LectureDao extends LectureDao {
       lang: row['lang'] as String,
       audio: row['audio'] as String,
       date: row['date'] as String,
-      sort: row['sort'] as int);
+      sort: row['sort'] as String);
 
   final InsertionAdapter<Lecture> _lectureInsertionAdapter;
 
