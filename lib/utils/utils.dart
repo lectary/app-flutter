@@ -34,7 +34,7 @@ class Utils {
           result.putIfAbsent("DATE", () => metaInfoValue);
           break;
         case "SORT":
-          result.putIfAbsent("SORT", () => int.parse(metaInfoValue));
+          result.putIfAbsent("SORT", () => metaInfoValue);
           break;
       }
     }
@@ -52,5 +52,15 @@ class Utils {
     result = result.replaceAll("_ae", "ä");
 
     return result;
+  }
+  
+  /// Returns current date in the format 'yyyy-MM-dd'
+  static String currentDate() {
+    return DateTime.now().toIso8601String().split('T')[0];
+  }
+
+  static String fillWithLeadingZeros(String string) {
+    final int maxLength = 5;
+    return string.padLeft(maxLength, '0');
   }
 }
