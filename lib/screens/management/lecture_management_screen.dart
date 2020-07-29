@@ -28,40 +28,49 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final lectureViewModel = Provider.of<LectureViewModel>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).screenManagementTitle),
       ),
       drawer: MainDrawer(),
-      body: (() {
-        switch (lectureViewModel.status) {
-          case Status.loading:
-            return Center(child: CircularProgressIndicator(backgroundColor: ColorsLectary.darkBlue,));
-
-          case Status.completed:
-            return lectureViewModel.availableLectures.isEmpty
-                ? null
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Expanded(
-                        child: _generateListView(lectureViewModel.availableLectures),
-                      ),
-                      Divider(height: 1, thickness: 1),
-                      Container(
-                        height: 60,
-                        child: _buildSearchBar(),
-                      ),
-                    ],
-                  );
-
-          case Status.error:
-            return Center(child: Text(lectureViewModel.message));
-        }
-      } ()),
+      body: _buildBody(),
     );
+  }
+
+  Widget _buildBody() {
+    final lectureViewModel = Provider.of<LectureViewModel>(context);
+
+    switch (lectureViewModel.status) {
+      case Status.loading:
+        return Center(
+            child: CircularProgressIndicator(
+          backgroundColor: ColorsLectary.darkBlue,
+        ));
+
+      case Status.completed:
+        return lectureViewModel.availableLectures.isEmpty
+            ? null
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child:
+                        _generateListView(lectureViewModel.availableLectures),
+                  ),
+                  Divider(height: 1, thickness: 1),
+                  Container(
+                    height: 60,
+                    child: _buildSearchBar(),
+                  ),
+                ],
+              );
+
+      case Status.error:
+        return Center(child: Text(lectureViewModel.message));
+
+      default:
+        return Container();
+    }
   }
 
   // builds a listView with ListTiles based on the generated item-list
