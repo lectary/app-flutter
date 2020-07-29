@@ -15,6 +15,8 @@ class Lecture {
   /// Used for showing corresponding info icons in the lecture management list
   @ignore
   LectureStatus lectureStatus = LectureStatus.notPersisted;
+  @ignore
+  String fileNameUpdate;
 
   /// Lecture pack properties (.zip)
   @ColumnInfo(name: "file_name", nullable: false)
