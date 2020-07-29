@@ -162,12 +162,7 @@ class LecturePackageItem extends StatelessWidget {
             children: <Widget>[
               _buildLectureInfoWidget(lecture),
               Divider(height: 1, thickness: 1),
-              _buildButton(Icons.cloud_download, "Herunterladen",
-                  func: () {
-                    Navigator.pop(context);
-                    lecturesProvider.downloadAndSaveLecture(lecture);
-                  }
-              ),
+              _buildButtonForLectureStatus(lecture, lecturesProvider),
               Divider(height: 1, thickness: 1),
               _buildButton(Icons.close, "Abbrechen",
                   func: () => Navigator.pop(context)),
@@ -177,6 +172,32 @@ class LecturePackageItem extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget _buildButtonForLectureStatus(Lecture lecture, LectureViewModel lectureViewModel) {
+      switch (lecture.lectureStatus) {
+        case LectureStatus.notPersisted:
+          return _buildButton(Icons.cloud_download, "Herunterladen",
+              func: () {
+                Navigator.pop(context);
+                lectureViewModel.downloadAndSaveLecture(lecture);
+              });
+        case LectureStatus.persisted:
+        case LectureStatus.removed:
+          return _buildButton(Icons.delete, "Löschen",
+              func: () {
+                Navigator.pop(context);
+                lectureViewModel.deleteLecture(lecture);
+              });
+        case LectureStatus.updateAvailable:
+          return _buildButton(Icons.loop, "Aktualisieren",
+              func: () {
+                Navigator.pop(context);
+                lectureViewModel.updateLecture(lecture);
+              });
+        default:
+          return Container();
+      }
   }
 
   Container _buildLectureInfoWidget(Lecture lecture) {
