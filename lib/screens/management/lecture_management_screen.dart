@@ -65,17 +65,23 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   }
 
   // builds a listView with ListTiles based on the generated item-list
-  ListView _generateListView(List<LecturePackage> lectures) {
-    return ListView.separated(
-      padding: EdgeInsets.all(0),
-      separatorBuilder: (context, index) => Divider(),
-      itemCount: lectures.length,
-      itemBuilder: (context, index) {
-        return ListTileTheme(
-          iconColor: ColorsLectary.lightBlue,
-          child: LecturePackageItem(lectures[index], context),
-        );
+  Widget _generateListView(List<LecturePackage> lectures) {
+    return RefreshIndicator(
+      color: ColorsLectary.lightBlue,
+      onRefresh: () async {
+        Provider.of<LectureViewModel>(context, listen: false).loadLectures();
       },
+      child: ListView.separated(
+        padding: EdgeInsets.all(0),
+        separatorBuilder: (context, index) => Divider(),
+        itemCount: lectures.length,
+        itemBuilder: (context, index) {
+          return ListTileTheme(
+            iconColor: ColorsLectary.lightBlue,
+            child: LecturePackageItem(lectures[index], context),
+          );
+        },
+      ),
     );
   }
 
