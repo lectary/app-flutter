@@ -10,7 +10,7 @@ enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvaila
 @Entity(tableName: "lectures")
 class Lecture {
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  int id;
 
   /// Used for showing corresponding info icons in the lecture management list
   @ignore
@@ -18,13 +18,13 @@ class Lecture {
 
   /// Lecture pack properties (.zip)
   @ColumnInfo(name: "file_name", nullable: false)
-  final String fileName;
+  String fileName;
 
   @ColumnInfo(name: "file_size", nullable: false)
-  final int fileSize;
+  int fileSize;
 
   @ColumnInfo(name: "vocable_count", nullable: false)
-  final int vocableCount;
+  int vocableCount;
 
   /// Possible meta information
   @ColumnInfo(nullable: false)

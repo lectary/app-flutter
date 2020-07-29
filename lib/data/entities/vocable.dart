@@ -15,22 +15,22 @@ import 'package:lectary/models/media_type_enum.dart';
 )
 class Vocable {
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  int id;
 
   @ColumnInfo(name: "lecture_id", nullable: false)
-  final int lectureId;
+  int lectureId;
 
   @ColumnInfo(nullable: false)
-  final String vocable;
+  String vocable;
 
   @ColumnInfo(name: "media_type", nullable: false)
-  final String mediaType;
+  String mediaType;
 
   @ColumnInfo(nullable: false)
-  final String media; // can contain a path to the video or image or the text content
+  String media; // can contain a path to the video or image or the text content
   
   @ColumnInfo(name: "vocable_progress", nullable: false)
-  final int vocableProgress;
+  int vocableProgress;
 
   Vocable(
       {this.id,
