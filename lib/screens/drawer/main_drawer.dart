@@ -74,9 +74,8 @@ class MainDrawer extends StatelessWidget {
 
   // builds a listView with ListTiles based on the generated item-list
   Widget _generateListView(BuildContext context) {
-    final viewModel = Provider.of<LectureViewModel>(context);
     return StreamBuilder<List<LecturePackage>>(
-      stream: viewModel.localLectures,
+      stream: Provider.of<LectureViewModel>(context, listen: false).loadLocalLecturesAsStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data.isNotEmpty) {

@@ -29,17 +29,12 @@ class LectureViewModel with ChangeNotifier {
   List<Vocable> _currentVocables = List();
   List<Vocable> get currentVocables => _currentVocables;
 
-  Stream<List<LecturePackage>> localLectures;
-
   LectureViewModel({@required lectureRepository})
-      : _lectureRepository = lectureRepository
-  {
-    loadLocalLectures();
-  }
+      : _lectureRepository = lectureRepository;
 
-  loadLocalLectures() {
-    localLectures = _lectureRepository.watchAllLectures()
-        .map((list) => _groupLecturesByPack(list));
+
+  Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
+    return _lectureRepository.watchAllLectures().map((list) => _groupLecturesByPack(list));
   }
 
   List<LecturePackage> _groupLecturesByPack(List<Lecture> lectureList) {
