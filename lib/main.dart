@@ -6,12 +6,12 @@ import 'package:lectary/screens/about/about_screen.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
-import 'package:lectary/services/lectary_api.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-import 'data/database.dart';
+import 'data/api/lectary_api.dart';
+import 'data/db/database.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

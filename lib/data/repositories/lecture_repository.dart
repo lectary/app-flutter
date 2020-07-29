@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:lectary/data/database.dart';
-import 'package:lectary/data/entities/lecture.dart';
-import 'package:lectary/data/entities/vocable.dart';
-import 'package:lectary/services/lectary_api.dart';
+import 'package:lectary/data/api/lectary_api.dart';
+import 'package:lectary/data/db/database.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
+import 'package:lectary/data/db/entities/vocable.dart';
 
 /// Repository class for encapsulating data access independent of the source
 class LectureRepository {

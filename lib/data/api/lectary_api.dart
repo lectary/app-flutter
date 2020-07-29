@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:lectary/data/entities/lecture.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LectaryApi {

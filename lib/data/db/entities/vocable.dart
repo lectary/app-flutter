@@ -1,7 +1,7 @@
 import 'package:floor/floor.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:lectary/data/entities/lecture.dart';
-import 'package:lectary/models/media_type_enum.dart';
+import 'package:flutter/material.dart';
+
+import 'lecture.dart';
 
 @Entity(
     tableName: "vocables",

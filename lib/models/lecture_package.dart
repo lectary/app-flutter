@@ -1,4 +1,4 @@
-import 'package:lectary/data/entities/lecture.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
 
 /// Helper model class containing lectures grouped by pack
 class LecturePackage {

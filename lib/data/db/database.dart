@@ -41,7 +41,8 @@ class DatabaseProvider {
 
   /// insert mock data
   final callback = Callback(onOpen: (database) {
-    database.delete("lectures");
+    //database.delete("vocables");
+    //database.delete("lectures");
     final lectures = List<Map<String, dynamic>>.of({
       {
         "file_name":
@@ -76,7 +77,7 @@ class DatabaseProvider {
     });
 
     lectures.forEach((lecture) {
-      database.insert("lectures", lecture);
+      //database.insert("lectures", lecture);
     });
   });
 }

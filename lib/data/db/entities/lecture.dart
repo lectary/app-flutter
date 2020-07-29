@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:floor/floor.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:lectary/utils/utils.dart';
 
 enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvailable }

@@ -4,8 +4,8 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
-import 'package:lectary/data/entities/lecture.dart';
-import 'package:lectary/data/entities/vocable.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
+import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lecture_package.dart';
 
