@@ -44,12 +44,6 @@ class LectureViewModel with ChangeNotifier {
     return packList;
   }
 
-  /*@override
-  void dispose() {
-    _lectureRepository.dispose();
-    super.dispose();
-  }*/
-
   Future<void> loadLectures() async {
     _status = Status.loading;
     notifyListeners();
@@ -76,23 +70,36 @@ class LectureViewModel with ChangeNotifier {
   }
 
   List<Lecture> _mergeLectureLists(List<Lecture> remoteList, List<Lecture> localList) {
-    List<Lecture> resultList = remoteList;
+    List<Lecture> resultList = List();
 
-    resultList.forEach((remote) {
-      localList.forEach((local) {
-        if (remote.lesson == local.lesson) {
-          if (DateTime.parse(remote.date).isBefore(DateTime.parse(local.date))) {
-            remote.lectureStatus = LectureStatus.updateAvailable;
+    // comparing local with remote list and adding all local persisted lectures to the result list and checking if updates are available (i.e. identical lecture with never date)
+    localList.forEach((local) {
+      remoteList.forEach((remote) {
+        if (local.pack == remote.pack && local.lesson == remote.lesson) {
+          if (DateTime.parse(local.date).isBefore(DateTime.parse(remote.date))) {
+            local.lectureStatus = LectureStatus.updateAvailable;
+            local.fileNameUpdate = remote.fileName;
+            resultList.add(local);
           } else {
-            remote.lectureStatus = LectureStatus.persisted;
+            local.lectureStatus = LectureStatus.persisted;
+            resultList.add(local);
           }
         }
       });
     });
 
+    // check if any local lectures are outdated (i.e. not available remotely anymore)
     localList.forEach((e1) {
-      if (resultList.any((e2) => e1.lesson == e2.lesson) == false) {
+      if (remoteList.any((e2) => e1.pack == e2.pack && e1.lesson == e2.lesson) == false) {
         e1.lectureStatus = LectureStatus.removed;
+        resultList.add(e1);
+      }
+    });
+
+    // add all remaining and not persisted lectures available remotely
+    remoteList.forEach((e1) {
+      if (localList.any((e2) => e1.pack == e2.pack && e1.lesson == e2.lesson) == false) {
+        e1.lectureStatus = LectureStatus.notPersisted;
         resultList.add(e1);
       }
     });
@@ -135,6 +142,8 @@ class LectureViewModel with ChangeNotifier {
     notifyListeners();
 
     await deleteLecture(lecture);
+    lecture.fileName = lecture.fileNameUpdate;
+    lecture.fileNameUpdate = null;
     await downloadAndSaveLecture(lecture);
 
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
