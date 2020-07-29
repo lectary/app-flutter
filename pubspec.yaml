@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^0.1.3
 
 dev_dependencies:
+  test:
   flutter_test:
     sdk: flutter
   floor_generator: ^0.14.0
