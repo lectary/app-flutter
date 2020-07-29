@@ -34,6 +34,10 @@ class LectureViewModel with ChangeNotifier {
   LectureViewModel({@required lectureRepository})
       : _lectureRepository = lectureRepository
   {
+    loadLocalLectures();
+  }
+
+  loadLocalLectures() {
     localLectures = _lectureRepository.watchAllLectures()
         .map((list) => _groupLecturesByPack(list));
   }
@@ -111,16 +115,61 @@ class LectureViewModel with ChangeNotifier {
     File lectureFile = await _lectureRepository.downloadLecture(lecture);
 
     // TODO unzip and get lecture id before
-    int lectureId = 0;
-    List<Vocable> vocables = await _extractAndSaveZipFile(lectureId, lectureFile);
+    List<Vocable> vocables;
+    try {
+      vocables = await _extractAndSaveZipFile(lectureFile);
+    } catch(e) {
+      // TODO error handling
+    }
 
     // TODO persist
+    int newId = await _lectureRepository.insertLecture(lecture);
+    vocables.forEach((element) => element.lectureId = newId);
+    await _lectureRepository.insertVocables(vocables);
+
+    _availableLectures[indexPack].children[indexLecture].id = newId;
+    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
+    notifyListeners();
+  }
+
+  Future<void> updateLecture(Lecture lecture) async {
+    int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
+    int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+
+    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
+    notifyListeners();
+
+    await deleteLecture(lecture);
+    await downloadAndSaveLecture(lecture);
 
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
     notifyListeners();
   }
 
-  Future<List<Vocable>> _extractAndSaveZipFile(int lectureId, File zipFile) async {
+  Future<void> deleteLecture(Lecture lecture) async {
+    int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
+    int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+
+    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
+    notifyListeners();
+
+    await _deleteMediaFiles(lecture);
+    await _lectureRepository.deleteVocablesByLectureId(lecture.id);
+    await _lectureRepository.deleteLecture(lecture);
+
+    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
+    notifyListeners();
+  }
+
+  Future<void> _deleteMediaFiles(Lecture lecture) async {
+    String dir = (await getApplicationDocumentsDirectory()).path;
+
+    final dirName = lecture.fileName.split('.')[0];
+    final lectureDir = Directory(dir + '/' + dirName);
+    lectureDir.deleteSync(recursive: true);
+  }
+
+  Future<List<Vocable>> _extractAndSaveZipFile(File zipFile) async {
     var bytes = zipFile.readAsBytesSync();
     Archive archive = ZipDecoder().decodeBytes(bytes);
 
@@ -158,7 +207,7 @@ class LectureViewModel with ChangeNotifier {
             break;
         }
         vocables.add(Vocable(
-          lectureId: lectureId,
+          lectureId: null,
           vocable: vocable,
           media: content,
           mediaType: mediaType.toString(),
