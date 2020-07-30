@@ -39,4 +39,9 @@ class Vocable {
       @required this.mediaType,
       @required this.media,
       @required this.vocableProgress});
+
+  @override
+  String toString() {
+    return 'Vocable{id: $id, lectureId: $lectureId, vocable: $vocable, mediaType: $mediaType, media: $media, vocableProgress: $vocableProgress}';
+  }
 }

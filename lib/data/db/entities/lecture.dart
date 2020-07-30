@@ -78,4 +78,9 @@ class Lecture {
       sort: metaInfo.containsKey("SORT") ? Utils.fillWithLeadingZeros(metaInfo.remove("SORT")) : null,
     );
   }
+
+  @override
+  String toString() {
+    return 'Lecture{id: $id, lectureStatus: $lectureStatus, fileNameUpdate: $fileNameUpdate, fileName: $fileName, fileSize: $fileSize, vocableCount: $vocableCount, pack: $pack, lesson: $lesson, lang: $lang, audio: $audio, date: $date, sort: $sort}';
+  }
 }
