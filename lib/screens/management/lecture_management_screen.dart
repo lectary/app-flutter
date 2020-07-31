@@ -48,7 +48,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
       case Status.completed:
         return lectureViewModel.availableLectures.isEmpty
-            ? null
+            ? Container()
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
