@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
+import 'package:lectary/screens/drawer/widgets/lecture_package_item.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -86,7 +87,7 @@ class MainDrawer extends StatelessWidget {
                 itemCount: snapshot.data.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) return ListTile(title: Text("Alle Vokabel"));
-                  return LecturePackageItem(snapshot.data[index-1], context);
+                  return LecturePackageItem(context, snapshot.data[index-1]);
                 }
             );
           } else {
@@ -99,49 +100,5 @@ class MainDrawer extends StatelessWidget {
         }
       }
     );
-  }
-}
-
-class LecturePackageItem extends StatelessWidget {
-  const LecturePackageItem(this.entry, this.context);
-
-  final LecturePackage entry;
-  final BuildContext context;
-
-  // root level
-  Widget _buildTiles(LecturePackage pack) {
-    if (pack.children.isEmpty) return ListTile(title: Text(pack.title));
-    List<Widget> childs = List<Widget>();
-    childs.add(Container(
-        padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
-        alignment: Alignment.centerLeft,
-        child: Text(pack.title, style: Theme.of(context).textTheme.caption))
-    );
-    pack.children.map(_buildChildren).forEach((element) {childs.addAll(element);});
-
-    Column column = Column(
-        children: childs
-    );
-    return column;
-  }
-
-  // children of an package
-  List<Widget> _buildChildren(Lecture lecture) {
-    return <Widget>[
-      Divider(height: 1,thickness: 1),
-      ListTile(
-        title: Text(lecture.lesson),
-        onTap: () => {
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text("Tapped!"),
-          ))
-        },
-      ),
-    ];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _buildTiles(entry);
   }
 }
