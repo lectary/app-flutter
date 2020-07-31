@@ -11,6 +11,8 @@ import 'package:lectary/models/lecture_package.dart';
 
 import 'package:collection/collection.dart';
 import 'package:lectary/models/media_type_enum.dart';
+import 'package:lectary/utils/exceptions/media_type_exception.dart';
+import 'package:lectary/utils/utils.dart';
 import 'package:path_provider/path_provider.dart';
 
 enum Status { loading, error, completed }
@@ -116,15 +118,17 @@ class LectureViewModel with ChangeNotifier {
 
     File lectureFile = await _lectureRepository.downloadLecture(lecture);
 
-    // TODO unzip and get lecture id before
     List<Vocable> vocables;
     try {
       vocables = await _extractAndSaveZipFile(lectureFile);
     } catch(e) {
       // TODO error handling
+      log(e.toString());
+      _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
+      notifyListeners();
+      return;
     }
 
-    // TODO persist
     int newId = await _lectureRepository.insertLecture(lecture);
     vocables.forEach((element) => element.lectureId = newId);
     await _lectureRepository.insertVocables(vocables);
@@ -174,54 +178,58 @@ class LectureViewModel with ChangeNotifier {
   }
 
   Future<List<Vocable>> _extractAndSaveZipFile(File zipFile) async {
+    // read zip file and decode archive
     var bytes = zipFile.readAsBytesSync();
     Archive archive = ZipDecoder().decodeBytes(bytes);
 
-    List<Vocable> vocables = List();
+    // validate archive
+    Utils.validateArchive(zipFile, archive);
 
+    // get the path to the device's application directory
     String dir = (await getApplicationDocumentsDirectory()).path;
 
+    List<Vocable> vocables = List();
+
     for (ArchiveFile file in archive) {
+      if (!file.isFile) continue;
+
       // file.name holds archive name plus actual filename
       String fileName = '$dir/${file.name}';
 
-      if (file.isFile) {
-        String vocable = file.name.substring(file.name.indexOf('/')+1, file.name.indexOf('.'));
-        String extension = file.name.substring(file.name.indexOf('.')+1, file.name.length).toUpperCase();
+      // extract file extension for file validation and the filename representing the vocable
+      String vocable = Utils.extractFileName(file.name);
+      String extension = Utils.extractFileExtension(file.name);
 
-        // TODO refactor to act purely as a check/validation
-        MediaType mediaType = getMediaTypeFromString(extension);
+      // check whether media types are all valid
+      MediaType mediaType = MediaType.fromString(extension);
 
-        // save to a local file
-        File outFile = File(fileName);
-        outFile = await outFile.create(recursive: true);
-        await outFile.writeAsBytes(file.content);
+      // save media file locally
+      File outFile = File(fileName);
+      outFile = await outFile.create(recursive: true);
+      await outFile.writeAsBytes(file.content);
 
-        // construct model class
-        // TODO review: save file path as content in general (not the content text directly in case of txt-file)
-        String content;
-        switch (mediaType) {
-          case MediaType.JPG:
-          case MediaType.MP4:
-          case MediaType.PNG:
-            content = file.name;
-            break;
-          case MediaType.TXT:
-            content = utf8.decode(file.content);
-            break;
-        }
-        vocables.add(Vocable(
-          lectureId: null,
-          vocable: vocable,
-          media: content,
-          mediaType: mediaType.toString(),
-          vocableProgress: 0,
-        ));
-      } else {
-        log("Found a non-file: " + file.name);
+      // construct model class
+      // TODO review: save file path as content in general (not the content text directly in case of txt-file)
+      String content;
+      switch (mediaType) {
+        case MediaType.JPG:
+        case MediaType.MP4:
+        case MediaType.PNG:
+          content = file.name;
+          break;
+        case MediaType.TXT:
+          content = utf8.decode(file.content);
+          break;
       }
+      vocables.add(Vocable(
+        lectureId: null,
+        vocable: vocable,
+        media: content,
+        mediaType: mediaType.toString(),
+        vocableProgress: 0,
+      ));
     }
-    vocables.forEach((e) => log("Vocable: ${e.vocable}\nmedia: ${e.media}\nmedia-type: ${e.mediaType}"));
+    vocables.forEach((voc) => log(voc.toString()));
 
     return vocables;
   }
