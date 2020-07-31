@@ -1,15 +1,92 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:archive/archive.dart';
+import 'package:lectary/models/media_type_enum.dart';
+import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
+import 'package:lectary/utils/exceptions/media_type_exception.dart';
+
+/// Helper class with multiple
 class Utils {
 
+  /// Validates whether the archive structure is valid in regards of the following conditions:
+  /// 1) nested directories are not allowed
+  /// 2) the name of the inner directory must match the outer archive name
+  /// 3) only file-types of type MediaType are allowed
+  /// returns [True] if validation was successful
+  /// throws [ArchiveStructureException] on error
+  static bool validateArchive(File zipFile, Archive archive) {
+    String dirName = Utils.extractFileName(zipFile.path);
+
+    // check conditions and directory structure for and by every file in archive,
+    // since it seems that there is no consistent way
+    // of receiving information about the directory structure
+    for (ArchiveFile file in archive) {
+      // replacing windows path divider to unix' one
+      String filename = file.name.replaceAll('\\', '/');
+      if (!file.isFile) continue;
+      // check if there are nested directories by splitting filename by path divider '/'
+      if (filename.split('/').length > 2)
+        throw new ArchiveStructureException(
+            "Wrong archive structure: $filename");
+      // check if inner directory name matches zip-filename
+      if (dirName != Utils.extractDirName(filename))
+        throw new ArchiveStructureException(
+            "Inner directory name should be equal the archive name!\nZipArchive: $dirName <-> directory: $filename");
+      // check if archive consists only of valid file types
+      try {
+        String extension = Utils.extractFileExtension(filename);
+        MediaType.fromString(extension);
+      } on MediaTypeException catch (e) {
+        throw new ArchiveStructureException(e.toString());
+      }
+    }
+
+    return true;
+  }
+
+  /// extracts the filename out of an file path
+  static String extractFileName(String filename) {
+    // replace all windows backslash with normal slash
+    filename = filename.replaceAll('\\', '/');
+    if (filename.isEmpty) return "";
+    return filename.contains('.')
+        ? filename.substring(
+            filename.lastIndexOf('/') + 1, filename.lastIndexOf('.'))
+        : filename.substring(filename.lastIndexOf('/') + 1);
+  }
+
+  /// extracts the most inner directory name out of an file path
+  static String extractDirName(String filename) {
+    // replace all windows backslash with normal slash
+    filename = filename.replaceAll('\\', '/');
+    if (!filename.contains('/')) return "";
+    return filename.split('/')[filename.split('/').length - 2];
+  }
+
+  /// extracts the file extension out of an file path
+  static String extractFileExtension(String filename) {
+    return filename.substring(filename.lastIndexOf('.') + 1);
+  }
+
+  /// extracts the meta information out of an lecture filename
+  /// returns a [Map] with the meta information
+  /// returns [LectureException] if mandatory meta information are missing
   static Map<String, dynamic> extractMetaInformation(String fileName) {
     Map<String, dynamic> result = Map();
 
     String fileWithoutType = fileName.split(".zip")[0];
     if (!fileWithoutType.contains("PACK") || !fileWithoutType.contains("LESSON") || !fileWithoutType.contains("LANG")) {
-      // throw new Exception("File has not mandatory meta information!") //FIXME ignore temp due to miss-formatted test cases
       // TODO add mechanic to send error message to server for informing about wrong packages?
       log("File has not mandatory meta information! File: " + fileWithoutType);
+      //FIXME ignore temp due to miss-formatted test cases
+      /*throw new LectureException("File has not mandatory meta information!\n"
+          "Missing:"
+          "${!fileWithoutType.contains("PACK") ? " PACK " : ""}"
+          "${!fileWithoutType.contains("LESSON") ? " LESSON " : ""}"
+          "${!fileWithoutType.contains("LANG") ? " LANG " : ""}"
+      );
+      */
     }
 
     List<String> metaInfos = fileWithoutType.split("---");
@@ -41,7 +118,7 @@ class Utils {
     return result;
   }
 
-
+  /// Returns a string where all asciified parts are replaced with the corresponding characters
   static String _deAsciify(String asciifiedString) {
     String text = asciifiedString;
 
@@ -125,11 +202,12 @@ class Utils {
     return text;
   }
   
-  /// Returns current date in the format 'yyyy-MM-dd'
+  /// Returns the current date in the ISO-8601 format 'yyyy-MM-dd'
   static String currentDate() {
     return DateTime.now().toIso8601String().split('T')[0];
   }
 
+  /// Returns a string filled with leading zeros up to a length of 5
   static String fillWithLeadingZeros(String string) {
     final int maxLength = 5;
     return string.padLeft(maxLength, '0');
