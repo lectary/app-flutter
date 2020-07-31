@@ -12,21 +12,20 @@ import 'package:lectary/models/lecture_package.dart';
 import 'package:collection/collection.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
+import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:path_provider/path_provider.dart';
-
-enum Status { loading, error, completed }
 
 class LectureViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
 
   List<LecturePackage> _availableLectures = List();
-  Status _status = Status.completed;
-  String _message;
+  Status _lectureListLoadingStatus = Status.completed;
+  String _lectureListLoadingErrorMessage;
 
   List<LecturePackage> get availableLectures => _availableLectures;
-  Status get status => _status;
-  String get message => _message;
+  Status get lectureListLoadingStatus => _lectureListLoadingStatus;
+  String get lectureListLoadingErrorMessage => _lectureListLoadingErrorMessage;
 
   List<Vocable> _currentVocables = List();
   List<Vocable> get currentVocables => _currentVocables;
@@ -47,7 +46,7 @@ class LectureViewModel with ChangeNotifier {
   }
 
   Future<void> loadLectures() async {
-    _status = Status.loading;
+    _lectureListLoadingStatus = Status.loading;
     notifyListeners();
 
     try {
@@ -62,11 +61,11 @@ class LectureViewModel with ChangeNotifier {
       groupedLectureList.forEach((pack) => pack.children.sort((l1, l2) => l1.lesson.toLowerCase().compareTo(l2.lesson.toLowerCase())));
       _availableLectures = groupedLectureList;
 
-      _status = Status.completed;
+      _lectureListLoadingStatus = Status.completed;
       notifyListeners();
     } catch(e) {
-      _status = Status.error;
-      _message = e.toString();
+      _lectureListLoadingStatus = Status.error;
+      _lectureListLoadingErrorMessage = e.toString();
       notifyListeners();
     }
   }
@@ -109,7 +108,7 @@ class LectureViewModel with ChangeNotifier {
     return resultList;
   }
 
-  Future<void> downloadAndSaveLecture(Lecture lecture) async {
+  Future<Response> downloadAndSaveLecture(Lecture lecture) async {
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
     int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
 
@@ -126,7 +125,7 @@ class LectureViewModel with ChangeNotifier {
       log(e.toString());
       _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
       notifyListeners();
-      return;
+      return Response.error(e.toString());
     }
 
     int newId = await _lectureRepository.insertLecture(lecture);
@@ -136,6 +135,7 @@ class LectureViewModel with ChangeNotifier {
     _availableLectures[indexPack].children[indexLecture].id = newId;
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
     notifyListeners();
+    return Response.completed();
   }
 
   Future<void> updateLecture(Lecture lecture) async {

@@ -4,6 +4,7 @@ import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +39,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   Widget _buildBody() {
     final lectureViewModel = Provider.of<LectureViewModel>(context);
 
-    switch (lectureViewModel.status) {
+    switch (lectureViewModel.lectureListLoadingStatus) {
       case Status.loading:
         return Center(
             child: CircularProgressIndicator(
@@ -64,7 +65,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
               );
 
       case Status.error:
-        return Center(child: Text(lectureViewModel.message));
+        return Center(child: Text(lectureViewModel.lectureListLoadingErrorMessage));
 
       default:
         return Container();
@@ -187,13 +188,56 @@ class LecturePackageItem extends StatelessWidget {
     );
   }
 
+  Future<void> _showMyDialog(String errorMessage) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Upps...'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Leider ist beim Download der Lektion ein Fehler aufgetreten!'),
+                Divider(),
+                Text(errorMessage),
+                Divider(),
+                Text("Sie können den Fehler an das Lectary Team melden, damit dieser behoben werden kann."),
+                FlatButton(
+                  child: Text(
+                    'Fehler melden',
+                    style: TextStyle(color: ColorsLectary.lightBlue),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Schließen', style: TextStyle(color: ColorsLectary.lightBlue),),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildButtonForLectureStatus(Lecture lecture, LectureViewModel lectureViewModel) {
       switch (lecture.lectureStatus) {
         case LectureStatus.notPersisted:
           return _buildButton(Icons.cloud_download, "Herunterladen",
-              func: () {
+              func: () async {
                 Navigator.pop(context);
-                lectureViewModel.downloadAndSaveLecture(lecture);
+                Response response = await lectureViewModel.downloadAndSaveLecture(lecture);
+                if (response.status == Status.error) {
+                  _showMyDialog(response.message);
+                }
               });
         case LectureStatus.persisted:
         case LectureStatus.removed:
