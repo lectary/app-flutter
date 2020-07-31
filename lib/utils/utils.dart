@@ -25,9 +25,10 @@ class Utils {
     for (ArchiveFile file in archive) {
       // replacing windows path divider to unix' one
       String filename = file.name.replaceAll('\\', '/');
+      if (!file.isFile) continue;
+      // check if there are media files without a name i.e. missing vocable
       if (Utils.extractFileName(filename).isEmpty)
         throw new ArchiveStructureException("File without filename found");
-      if (!file.isFile) continue;
       // check if there are nested directories by splitting filename by path divider '/'
       if (filename.split('/').length > 2)
         throw new ArchiveStructureException(
