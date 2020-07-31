@@ -13,6 +13,7 @@ class Utils {
   /// 1) nested directories are not allowed
   /// 2) the name of the inner directory must match the outer archive name
   /// 3) only file-types of type MediaType are allowed
+  /// 4) media files must have a filename (i.e. representing the vocable)
   /// returns [True] if validation was successful
   /// throws [ArchiveStructureException] on error
   static bool validateArchive(File zipFile, Archive archive) {
@@ -24,6 +25,8 @@ class Utils {
     for (ArchiveFile file in archive) {
       // replacing windows path divider to unix' one
       String filename = file.name.replaceAll('\\', '/');
+      if (Utils.extractFileName(filename).isEmpty)
+        throw new ArchiveStructureException("File without filename found");
       if (!file.isFile) continue;
       // check if there are nested directories by splitting filename by path divider '/'
       if (filename.split('/').length > 2)

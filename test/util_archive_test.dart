@@ -132,5 +132,28 @@ void main() {
         expect(e.toString().contains("Inner directory name should be equal"), isTrue);
       }
     });
+
+    test('Test6 - should throw exception due file without a filename', () {
+      final String dirName = 'dir-name';
+      Directory invalidDirWrongName = Directory(testDirPath + '/' + dirName);
+      invalidDirWrongName.createSync(recursive: true);
+      File(testDirPath + '/' + dirName + '/' + '.txt').createSync();
+
+      var encoder = ZipFileEncoder();
+      encoder.create(testDirPath + '/' + baseDir + '.zip');
+      encoder.addDirectory(invalidDirWrongName, includeDirName: true);
+      encoder.close();
+
+      File zipFile = File(testDirPath + '/' + baseDir + '.zip');
+      Archive archive = ZipDecoder().decodeBytes(zipFile.readAsBytesSync());
+
+      try {
+        Utils.validateArchive(zipFile, archive);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<ArchiveStructureException>());
+        expect(e.toString().contains("File without filename found"), isTrue);
+      }
+    });
   });
 }
