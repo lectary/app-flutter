@@ -68,6 +68,27 @@ void main() async {
     });
   });
 
+  group('Date extraction util | ', () {
+    test('Test1 - successful extraction of date meta info', () {
+      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03.zip";
+      String newDate = Utils.extractDateFromLectureFilename(lectureFileName);
+      expect(newDate, "2020-03-03");
+    });
+
+    test('Test2 - return empty string on missing date meta info', () {
+      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE.zip";
+      String newDate = Utils.extractDateFromLectureFilename(lectureFileName);
+      expect(newDate, "");
+    });
+
+    test('Test3 - return empty string on invalid filename', () {
+      String lectureFileName = "randomString";
+      String newDate = Utils.extractDateFromLectureFilename(lectureFileName);
+      expect(newDate, "");
+    });
+  });
+
+
   test('file extension should get extracted out of full filename', () {
     String fileName = "test1.com/test2/file.mp4";
     String extension = Utils.extractFileExtension(fileName);

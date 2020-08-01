@@ -73,6 +73,14 @@ class Utils {
     return filename.substring(filename.lastIndexOf('.') + 1);
   }
 
+  /// extracts the date meta info
+  /// returns an empty string if filename is invalid or date meta info is missing
+  static String extractDateFromLectureFilename(String lectureFilename) {
+    if (!lectureFilename.contains('.') || !lectureFilename.contains('DATE')) return "";
+    List<String> metaInfo = lectureFilename.split('.')[0].split('---');
+    return metaInfo.firstWhere((element) => element.contains("DATE")).split('--')[1];
+  }
+
   /// extracts the meta information out of an lecture filename
   /// returns a [Map] with the meta information
   /// returns [LectureException] if mandatory meta information are missing
