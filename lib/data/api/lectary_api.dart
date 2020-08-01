@@ -4,17 +4,16 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:lectary/data/db/entities/lecture.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/exceptions/no_internet_exception.dart';
 import 'package:lectary/utils/exceptions/server_response_exception.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LectaryApi {
-  String lectaryApiUrl = "https://lectary.net/l4/";
-
   Future<List<Lecture>> fetchLectures() async {
     http.Response response;
     try {
-      response = await http.get(lectaryApiUrl + "info.php");
+      response = await http.get(Constants.lectaryApiUrl + Constants.lectaryApiLectureOverviewEndpoint);
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -41,7 +40,7 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(lectaryApiUrl + lecture.fileName);
+      response = await http.get(Constants.lectaryApiUrl + lecture.fileName);
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
