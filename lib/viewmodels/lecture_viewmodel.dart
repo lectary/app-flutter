@@ -118,7 +118,6 @@ class LectureViewModel with ChangeNotifier {
     try {
       vocables = await _extractAndSaveZipFile(lectureFile);
     } catch(e) {
-      // TODO error handling
       log(e.toString());
       _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
       notifyListeners();

@@ -4,35 +4,33 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:lectary/data/db/entities/lecture.dart';
+import 'package:lectary/utils/exceptions/no_internet_exception.dart';
+import 'package:lectary/utils/exceptions/server_response_exception.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LectaryApi {
   String lectaryApiUrl = "https://lectary.net/l4/";
 
   Future<List<Lecture>> fetchLectures() async {
+    http.Response response;
     try {
-      final response = await http.get(lectaryApiUrl + "info.php");
+      response = await http.get(lectaryApiUrl + "info.php");
+    } on SocketException {
+      throw NoInternetException("No internet! Check your connection!");
+    }
 
-      if (response.statusCode == 200) {
-        List<Lecture> resultList;
+    if (response.statusCode == 200) {
+      List<Lecture> resultList;
 
-        Map<String, dynamic> rawResponse = json.decode(response.body);
-        List<dynamic> lessons = rawResponse['lesson'];
-        log("Lessons: " + rawResponse.toString());
+      Map<String, dynamic> rawResponse = json.decode(response.body);
+      List<dynamic> lessons = rawResponse['lesson'];
+      log("Lessons: " + rawResponse.toString());
 
-        try {
-          resultList = lessons.map((element) => Lecture.fromJson(element)).toList();
-        }catch(e) {
-          log("Mapping failed:" + e.toString());
-        }
-
-        return resultList;
-      } else {
-        throw Exception(response.statusCode.toString() + " - Server refused fetching lectures!");
-      }
-    } catch(e) {
-      log(e.toString());
-      throw Exception("Network error!");
+      resultList = lessons.map((element) => Lecture.fromJson(element)).where((element) => element != null).toList();
+      return resultList;
+    } else {
+      throw ServerResponseException(
+          "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
     }
   }
 
@@ -41,18 +39,20 @@ class LectaryApi {
 
     String dir = (await getTemporaryDirectory()).path;
 
+    http.Response response;
     try {
-      final response = await http.get(lectaryApiUrl + lecture.fileName);
-      if (response.statusCode != 200) {
-        log("Failed to download lecture with status code ${response.statusCode}");
-        throw Exception(response.statusCode.toString() + " - Server refused fetching lectures!");
-      }
+      response = await http.get(lectaryApiUrl + lecture.fileName);
+    } on SocketException {
+      throw NoInternetException("No internet! Check your connection!");
+    }
+
+    if (response.statusCode == 200) {
       File file = File('$dir/${lecture.fileName}');
       await file.writeAsBytes(response.bodyBytes);
       return file;
-    } catch(e) {
-      log("Failed to download lecture with exception: " + e.toString());
-      throw Exception("Network error!\n" + e.toString());
+    } else {
+      throw ServerResponseException(
+          "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
     }
   }
 }

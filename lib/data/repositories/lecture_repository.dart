@@ -23,11 +23,6 @@ class LectureRepository {
     return _lectaryApi.downloadLectureZip(lecture);
   }
 
-  Future<void> saveVocables(List<Vocable> vocableList) async {
-    // TODO implement
-    return null;
-  }
-
   Stream<List<Lecture>> watchAllLectures() {
     return _lectureDatabase.lectureDao.watchAllLectures();
   }

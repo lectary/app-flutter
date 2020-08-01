@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
+import 'package:lectary/utils/exceptions/lecture_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
 enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvailable }
@@ -58,13 +59,16 @@ class Lecture {
       this.sort});
 
   /// Deserialization from json
+  /// returns [Lecture] on successful deserialization
+  /// returns [Null] on [LectureException] i.e. when mandatory meta information are missing
   factory Lecture.fromJson(Map<String, dynamic> json) {
     String fileName = json['fileName'];
     Map<String, dynamic> metaInfo;
     try {
       metaInfo = Utils.extractMetaInformation(fileName);
-    } catch(e) {
-      log("Extracting:" + e.toString());
+    } on LectureException catch(e) {
+      log("Invalid lecture: " + e.toString());
+      return null;
     }
     return Lecture(
       fileName: fileName,

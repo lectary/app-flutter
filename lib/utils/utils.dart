@@ -6,6 +6,8 @@ import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
 
+import 'exceptions/lecture_exception.dart';
+
 /// Helper class with multiple
 class Utils {
 
@@ -97,8 +99,8 @@ class Utils {
           "${!fileWithoutType.contains("PACK") ? " PACK " : ""}"
           "${!fileWithoutType.contains("LESSON") ? " LESSON " : ""}"
           "${!fileWithoutType.contains("LANG") ? " LANG " : ""}"
-      );
-      */
+      );*/
+
     }
 
     List<String> metaInfos = fileWithoutType.split("---");
