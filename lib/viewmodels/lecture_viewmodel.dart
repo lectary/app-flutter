@@ -20,12 +20,10 @@ class LectureViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
 
   List<LecturePackage> _availableLectures = List();
-  Status _lectureListLoadingStatus = Status.completed;
-  String _lectureListLoadingErrorMessage;
+  Response _lectureListResponse = Response.completed();
 
   List<LecturePackage> get availableLectures => _availableLectures;
-  Status get lectureListLoadingStatus => _lectureListLoadingStatus;
-  String get lectureListLoadingErrorMessage => _lectureListLoadingErrorMessage;
+  Response get lectureListResponse => _lectureListResponse;
 
   List<Vocable> _currentVocables = List();
   List<Vocable> get currentVocables => _currentVocables;
@@ -46,7 +44,7 @@ class LectureViewModel with ChangeNotifier {
   }
 
   Future<void> loadLectures() async {
-    _lectureListLoadingStatus = Status.loading;
+    _lectureListResponse = Response.loading("fetching lectures from server");
     notifyListeners();
 
     try {
@@ -61,11 +59,10 @@ class LectureViewModel with ChangeNotifier {
       groupedLectureList.forEach((pack) => pack.children.sort((l1, l2) => l1.lesson.toLowerCase().compareTo(l2.lesson.toLowerCase())));
       _availableLectures = groupedLectureList;
 
-      _lectureListLoadingStatus = Status.completed;
+      _lectureListResponse = Response.completed();
       notifyListeners();
     } catch(e) {
-      _lectureListLoadingStatus = Status.error;
-      _lectureListLoadingErrorMessage = e.toString();
+      _lectureListResponse = Response.error(e.toString());
       notifyListeners();
     }
   }
@@ -139,15 +136,21 @@ class LectureViewModel with ChangeNotifier {
   }
 
   Future<void> updateLecture(Lecture lecture) async {
+    log("updating " + lecture.toString());
+
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
     int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
 
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
 
-    await deleteLecture(lecture);
+    await _deleteMediaFiles(lecture);
+    await _lectureRepository.deleteVocablesByLectureId(lecture.id);
+    await _lectureRepository.deleteLecture(lecture);
     lecture.fileName = lecture.fileNameUpdate;
     lecture.fileNameUpdate = null;
+    String newDate = Utils.extractDateFromLectureFilename(lecture.fileName);
+    lecture.date = newDate;
     await downloadAndSaveLecture(lecture);
 
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
@@ -155,6 +158,8 @@ class LectureViewModel with ChangeNotifier {
   }
 
   Future<void> deleteLecture(Lecture lecture) async {
+    log("deleting " + lecture.toString());
+
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
     int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
 

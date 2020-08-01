@@ -39,7 +39,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   Widget _buildBody() {
     final lectureViewModel = Provider.of<LectureViewModel>(context);
 
-    switch (lectureViewModel.lectureListLoadingStatus) {
+    switch (lectureViewModel.lectureListResponse.status) {
       case Status.loading:
         return Center(
             child: CircularProgressIndicator(
@@ -65,7 +65,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
               );
 
       case Status.error:
-        return Center(child: Text(lectureViewModel.lectureListLoadingErrorMessage));
+        return Center(child: Text(lectureViewModel.lectureListResponse.message));
 
       default:
         return Container();
