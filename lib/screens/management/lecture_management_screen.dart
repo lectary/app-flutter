@@ -65,7 +65,22 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
               );
 
       case Status.error:
-        return Center(child: Text(lectureViewModel.lectureListResponse.message));
+        return RefreshIndicator(
+          color: ColorsLectary.lightBlue,
+          onRefresh: () async {
+            Provider.of<LectureViewModel>(context, listen: false)
+                .loadLectures();
+          },
+          // refreshIndicator needs a scrollable child widget
+          // using stack with listView to retain center position of error text
+          // TODO review and maybe find better solution
+          child: Stack(
+            children: <Widget>[
+              ListView(),
+              Center(child: Text(lectureViewModel.lectureListResponse.message)),
+            ],
+          ),
+        );
 
       default:
         return Container();
