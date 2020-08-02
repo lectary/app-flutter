@@ -4,6 +4,7 @@ import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/management/widgets/lecture_package_item.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -41,10 +42,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
     switch (lectureViewModel.availableLectureStatus.status) {
       case Status.loading:
-        return Center(
-            child: CircularProgressIndicator(
-          backgroundColor: ColorsLectary.darkBlue,
-        ));
+        return Center(child: CircularProgressIndicator());
 
       case Status.completed:
         return lectureViewModel.availableLectures.isEmpty
@@ -97,8 +95,59 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
       child: ListView.separated(
         padding: EdgeInsets.all(0),
         separatorBuilder: (context, index) => Divider(),
-        itemCount: lectures.length,
+        itemCount: lectures.length + 1,
         itemBuilder: (context, index) {
+          if (index == lectures.length) {
+            return Column(
+              children: <Widget>[
+                Divider(
+                  height: 0,
+                  thickness: 10,
+                ),
+                ListTileTheme(
+                  iconColor: ColorsLectary.red,
+                  textColor: ColorsLectary.red,
+                  child: ListTile(
+                    leading: Icon(Icons.delete_forever),
+                    title: Text("Alle Lektionen löschen"),
+                    onTap: () =>
+                        showDialog<void>(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Möchten Sie wirklich alle Lektionen löschen?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text(
+                                'Abbrechen',
+                                style: TextStyle(color: ColorsLectary.lightBlue),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            FlatButton(
+                              child: Text(
+                                'Alle Löschen',
+                                style: TextStyle(color: ColorsLectary.red),
+                              ),
+                              onPressed: () async {
+                                //TODO review loading state
+                                Dialogs.showLoadingDialog(context);
+                                await Provider.of<LectureViewModel>(context, listen: false).deleteAllLectures();
+                                Navigator.popUntil(context, ModalRoute.withName('/'));
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
           return ListTileTheme(
             iconColor: ColorsLectary.lightBlue,
             child: LecturePackageItem(context, lectures[index]),
@@ -127,3 +176,4 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     );
   }
 }
+
