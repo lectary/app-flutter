@@ -58,6 +58,22 @@ class Lecture {
       this.date,
       this.sort});
 
+  @ignore
+  Lecture.clone(Lecture lecture) {
+    this.id = lecture.id;
+    this.lectureStatus = lecture.lectureStatus;
+    this.fileNameUpdate = lecture.fileNameUpdate;
+    this.fileName = lecture.fileName;
+    this.fileSize = lecture.fileSize;
+    this.vocableCount = lecture.vocableCount;
+    this.pack = lecture.pack;
+    this.lesson = lecture.lesson;
+    this.lang = lecture.lang;
+    this.audio = lecture.audio;
+    this.date = lecture.date;
+    this.sort = lecture.sort;
+  }
+
   /// Deserialization from json
   /// returns [Lecture] on successful deserialization
   /// returns [Null] on [LectureException] i.e. when mandatory meta information are missing
