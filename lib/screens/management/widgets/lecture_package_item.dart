@@ -99,15 +99,21 @@ class LecturePackageItem extends StatelessWidget {
       case LectureStatus.persisted:
       case LectureStatus.removed:
         return _buildButton(Icons.delete, "Löschen",
-            func: () {
+            func: () async {
               Navigator.pop(context);
-              lectureViewModel.deleteLecture(lecture);
+              Response response = await lectureViewModel.deleteLecture(lecture);
+              if (response.status == Status.error) {
+                _showMyDialog(response.message);
+              }
             });
       case LectureStatus.updateAvailable:
         return _buildButton(Icons.loop, "Aktualisieren",
-            func: () {
+            func: () async {
               Navigator.pop(context);
-              lectureViewModel.updateLecture(lecture);
+              Response response = await lectureViewModel.updateLecture(lecture);
+              if (response.status == Status.error) {
+                _showMyDialog(response.message);
+              }
             });
       default:
         return Container();
