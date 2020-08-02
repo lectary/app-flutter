@@ -61,10 +61,23 @@ class LectureViewModel with ChangeNotifier {
       List<Lecture> localList = await _lectureRepository.loadLecturesLocal();
       log("loaded local lectures");
 
-      final mergedLectureList = _mergeLectureLists(remoteList, localList);
-      final groupedLectureList = _groupLecturesByPack(mergedLectureList);
+      List<Lecture> mergedLectureList = _mergeLectureLists(remoteList, localList);
+
+      // 1) sort lessons with SORT-meta info by SORT
+      List<Lecture> lecturesWithSortMeta = mergedLectureList.where((lecture) => lecture.sort != null).toList();
+      lecturesWithSortMeta.sort((l1, l2) => l1.sort.compareTo(l2.sort));
+      // 2) sort lessons without SORT-meta info lexicographic by lesson
+      List<Lecture> lecturesWithoutSortMeta = mergedLectureList.where((lecture) => lecture.sort == null).toList();
+      lecturesWithoutSortMeta.sort((l1, l2) => l1.lesson.toLowerCase().compareTo(l2.lesson.toLowerCase()));
+
+      // merge both sorted lists and group by lecture pack
+      List<Lecture> allLectures = lecturesWithSortMeta;
+      allLectures.addAll(lecturesWithoutSortMeta);
+      List<LecturePackage> groupedLectureList = _groupLecturesByPack(allLectures);
+
+      // 3) sort lexicographic by packs
       groupedLectureList.sort((p1, p2) => p1.title.toLowerCase().compareTo(p2.title.toLowerCase()));
-      groupedLectureList.forEach((pack) => pack.children.sort((l1, l2) => l1.lesson.toLowerCase().compareTo(l2.lesson.toLowerCase())));
+
       _availableLectures = groupedLectureList;
 
       _availableLectureStatus = Response.completed();
