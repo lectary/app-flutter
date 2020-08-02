@@ -39,7 +39,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   Widget _buildBody() {
     final lectureViewModel = Provider.of<LectureViewModel>(context);
 
-    switch (lectureViewModel.lectureListResponse.status) {
+    switch (lectureViewModel.availableLectureStatus.status) {
       case Status.loading:
         return Center(
             child: CircularProgressIndicator(
@@ -77,7 +77,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
           child: Stack(
             children: <Widget>[
               ListView(),
-              Center(child: Text(lectureViewModel.lectureListResponse.message)),
+              Center(child: Text(lectureViewModel.availableLectureStatus.message)),
             ],
           ),
         );

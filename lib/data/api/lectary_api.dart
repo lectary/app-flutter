@@ -34,8 +34,6 @@ class LectaryApi {
   }
 
   Future<File> downloadLectureZip(Lecture lecture) async {
-    log("downloading " + lecture.lesson);
-
     String dir = (await getTemporaryDirectory()).path;
 
     http.Response response;
