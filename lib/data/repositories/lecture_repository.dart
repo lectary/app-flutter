@@ -43,6 +43,10 @@ class LectureRepository {
     return _lectureDatabase.lectureDao.deleteLecture(lecture);
   }
 
+  Future<void> deleteAllLectures() {
+    return _lectureDatabase.lectureDao.deleteAllLectures();
+  }
+
   Future<List<Vocable>> findAllVocables() {
     return _lectureDatabase.vocableDao.findAllVocables();
   }

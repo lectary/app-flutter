@@ -253,6 +253,17 @@ class LectureViewModel with ChangeNotifier {
     }
   }
 
+  /// Deletes all lectures, vocables and corresponding media files
+  /// returns an empty [Future]
+  Future<void> deleteAllLectures() async {
+    // TODO remove - only for testing purpose
+    await Future.delayed(Duration(seconds: 2));
+    List<Lecture> lectures = await _lectureRepository.loadLecturesLocal();
+    await Future.forEach(lectures, (lecture) => _deleteMediaFiles(lecture));
+    await _lectureRepository.deleteAllVocables();
+    await _lectureRepository.deleteAllLectures();
+  }
+
   /// Deletes media files related to the lecture
   /// Returns a [Future]
   Future<void> _deleteMediaFiles(Lecture lecture) async {
