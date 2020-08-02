@@ -258,8 +258,11 @@ class LectureViewModel with ChangeNotifier {
   Future<void> deleteAllLectures() async {
     // TODO remove - only for testing purpose
     await Future.delayed(Duration(seconds: 2));
+    log("querying all lectures");
     List<Lecture> lectures = await _lectureRepository.loadLecturesLocal();
+    log("deleting all media files");
     await Future.forEach(lectures, (lecture) => _deleteMediaFiles(lecture));
+    log("deleting database entries");
     await _lectureRepository.deleteAllVocables();
     await _lectureRepository.deleteAllLectures();
   }
