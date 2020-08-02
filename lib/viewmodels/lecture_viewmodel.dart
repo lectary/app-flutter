@@ -11,7 +11,6 @@ import 'package:lectary/models/lecture_package.dart';
 
 import 'package:collection/collection.dart';
 import 'package:lectary/models/media_type_enum.dart';
-import 'package:lectary/utils/exceptions/media_type_exception.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:path_provider/path_provider.dart';
@@ -106,36 +105,37 @@ class LectureViewModel with ChangeNotifier {
   }
 
   Future<Response> downloadAndSaveLecture(Lecture lecture) async {
+    log("downloading lecture: ${lecture.toString()}");
+
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
     int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
 
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
 
-    File lectureFile = await _lectureRepository.downloadLecture(lecture);
-
-    List<Vocable> vocables;
     try {
-      vocables = await _extractAndSaveZipFile(lectureFile);
+      File lectureFile = await _lectureRepository.downloadLecture(lecture);
+      List<Vocable> vocables = await _extractAndSaveZipFile(lectureFile);
+      int newId = await _lectureRepository.insertLecture(lecture);
+      vocables.forEach((element) => element.lectureId = newId);
+      await _lectureRepository.insertVocables(vocables);
+
+      _availableLectures[indexPack].children[indexLecture].id = newId;
+      _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
+      notifyListeners();
+
+      return Response.completed();
     } catch(e) {
-      log(e.toString());
+      log("downloading lecture failed: ${e.toString()}");
       _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
       notifyListeners();
+
       return Response.error(e.toString());
     }
-
-    int newId = await _lectureRepository.insertLecture(lecture);
-    vocables.forEach((element) => element.lectureId = newId);
-    await _lectureRepository.insertVocables(vocables);
-
-    _availableLectures[indexPack].children[indexLecture].id = newId;
-    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
-    notifyListeners();
-    return Response.completed();
   }
 
-  Future<void> updateLecture(Lecture lecture) async {
-    log("updating " + lecture.toString());
+  Future<Response> updateLecture(Lecture lecture) async {
+    log("updating lecture: ${lecture.toString()}");
 
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
     int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
@@ -143,21 +143,52 @@ class LectureViewModel with ChangeNotifier {
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
 
-    await _deleteMediaFiles(lecture);
-    await _lectureRepository.deleteVocablesByLectureId(lecture.id);
-    await _lectureRepository.deleteLecture(lecture);
+    Lecture oldLecture = Lecture.clone(lecture);
+
+    // updating object values for downloading and saving
+    lecture.id = null;
     lecture.fileName = lecture.fileNameUpdate;
     lecture.fileNameUpdate = null;
     String newDate = Utils.extractDateFromLectureFilename(lecture.fileName);
     lecture.date = newDate;
-    await downloadAndSaveLecture(lecture);
 
-    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
-    notifyListeners();
+    try {
+      log("downloading new lecture: ${lecture.toString()}");
+      File lectureFile = await _lectureRepository.downloadLecture(lecture);
+      List<Vocable> vocables = await _extractAndSaveZipFile(lectureFile);
+
+      log("deleting old lecture: ${oldLecture.toString()}");
+      await _deleteMediaFiles(oldLecture);
+      await _lectureRepository.deleteVocablesByLectureId(oldLecture.id);
+      await _lectureRepository.deleteLecture(oldLecture);
+
+      log("saving new lecture: ${lecture.toString()}");
+      int newId = await _lectureRepository.insertLecture(lecture);
+      vocables.forEach((element) => element.lectureId = newId);
+      await _lectureRepository.insertVocables(vocables);
+
+      _availableLectures[indexPack].children[indexLecture].id = newId;
+      _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
+      notifyListeners();
+
+      return Response.completed();
+    } catch(e) {
+      log("updating lecture failed: ${e.toString()}");
+      // resetting object values
+      lecture.id = oldLecture.id;
+      lecture.fileName = oldLecture.fileName;
+      lecture.fileNameUpdate = oldLecture.fileNameUpdate;
+      lecture.date = oldLecture.date;
+
+      _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.updateAvailable;
+      notifyListeners();
+
+      return Response.error(e.toString());
+    }
   }
 
-  Future<void> deleteLecture(Lecture lecture) async {
-    log("deleting " + lecture.toString());
+  Future<Response> deleteLecture(Lecture lecture) async {
+    log("deleting lecture: ${lecture.toString()}");
 
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
     int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
@@ -165,12 +196,19 @@ class LectureViewModel with ChangeNotifier {
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
 
-    await _deleteMediaFiles(lecture);
-    await _lectureRepository.deleteVocablesByLectureId(lecture.id);
-    await _lectureRepository.deleteLecture(lecture);
+    try {
+      await _deleteMediaFiles(lecture);
+      await _lectureRepository.deleteVocablesByLectureId(lecture.id);
+      await _lectureRepository.deleteLecture(lecture);
 
-    _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
-    notifyListeners();
+      _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
+      notifyListeners();
+
+      return Response.completed();
+    } catch(e) {
+      log("deleting lecture failed: ${e.toString()}");
+      return Response.error(e.toString());
+    }
   }
 
   Future<void> _deleteMediaFiles(Lecture lecture) async {
