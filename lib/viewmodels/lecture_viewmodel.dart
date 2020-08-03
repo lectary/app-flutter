@@ -11,6 +11,7 @@ import 'package:lectary/models/lecture_package.dart';
 
 import 'package:collection/collection.dart';
 import 'package:lectary/models/media_type_enum.dart';
+import 'package:lectary/utils/exceptions/no_internet_exception.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,6 +24,9 @@ class LectureViewModel with ChangeNotifier {
   // represents the loading status of fetching available lectures
   Response _availableLectureStatus = Response.completed();
   Response get availableLectureStatus => _availableLectureStatus;
+
+  bool _availableLectureOffline = false;
+  bool get availableLectureOffline => _availableLectureOffline;
 
   // holds all lectures that are available (persisted and remote ones)
   List<LecturePackage> _availableLectures = List();
@@ -56,12 +60,22 @@ class LectureViewModel with ChangeNotifier {
     notifyListeners();
 
     try {
-      List<Lecture> remoteList = await _lectureRepository.loadLecturesRemote();
-      log("loaded remote lectures");
       List<Lecture> localList = await _lectureRepository.loadLecturesLocal();
       log("loaded local lectures");
 
-      List<Lecture> mergedLectureList = _mergeLectureLists(remoteList, localList);
+      List<Lecture> remoteList;
+      List<Lecture> mergedLectureList;
+      try {
+        remoteList = await _lectureRepository.loadLecturesRemote();
+        log("loaded remote lectures");
+        _availableLectureOffline = false;
+        mergedLectureList = _mergeLectureLists(remoteList, localList);
+      } on NoInternetException {
+        log("no internet connection");
+        _availableLectureOffline = true;
+        mergedLectureList = localList;
+        mergedLectureList.forEach((lecture) => lecture.lectureStatus = LectureStatus.persisted);
+      }
 
       // 1) sort lessons with SORT-meta info by SORT
       List<Lecture> lecturesWithSortMeta = mergedLectureList.where((lecture) => lecture.sort != null).toList();
