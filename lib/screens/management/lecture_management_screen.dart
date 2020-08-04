@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
@@ -17,6 +18,9 @@ class LectureManagementScreen extends StatefulWidget {
 
 class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
+  TextEditingController textEditingController = TextEditingController();
+  FocusNode focus = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -33,8 +37,23 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         title: Text(AppLocalizations.of(context).screenManagementTitle),
       ),
       drawer: MainDrawer(),
-      body: _buildBody(),
-    );
+      body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: _buildBody(),
+            ),
+            Column(
+              children: <Widget>[
+                Divider(height: 1, thickness: 1),
+                Container(
+                  height: 60,
+                  child: _buildSearchBar(),
+                ),
+              ],
+            )
+          ],
+        ));
   }
 
   Widget _buildBody() {
@@ -46,21 +65,8 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
       case Status.completed:
         return lectureViewModel.availableLectures.isEmpty
-            ? Container()
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    child:
-                        _generateListView(lectureViewModel.availableLectures),
-                  ),
-                  Divider(height: 1, thickness: 1),
-                  Container(
-                    height: 60,
-                    child: _buildSearchBar(),
-                  ),
-                ],
-              );
+            ? Center(child: Text("Keine Lektionen gefunden."))
+            : _generateListView(lectureViewModel.availableLectures);
 
       case Status.error:
         return RefreshIndicator(
@@ -158,7 +164,6 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   }
 
   Row _buildSearchBar() {
-    // TODO check for native searchbars
     return Row(
       children: <Widget>[
         SizedBox(width: 15),
@@ -166,12 +171,35 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         SizedBox(width: 10),
         Expanded( // needed because textField has no intrinsic width, that the row wants to know!
           child: TextField(
+            onTap: () => setState(() {}),
+            onChanged: (value) {
+              Provider.of<LectureViewModel>(context, listen: false).filterLectureList(value);
+            },
+            focusNode: focus,
+            controller: textEditingController,
             decoration: InputDecoration(
                 hintText: AppLocalizations.of(context).screenManagementSearchHint,
                 border: InputBorder.none
             ),
           ),
         ),
+        Visibility(
+          visible: textEditingController.text.isNotEmpty ? true : false,
+          child: IconButton(
+            onPressed: () {
+              textEditingController.clear();
+              Provider.of<LectureViewModel>(context, listen: false).filterLectureList("");
+            },
+            icon: Icon(Icons.cancel),
+          ),
+        ),
+        Visibility(
+          visible: focus.hasFocus ? true : false,
+          child: FlatButton(
+            onPressed: () => FocusScope.of(context).unfocus(),
+            child: Text("Cancel", style: TextStyle(color: ColorsLectary.lightBlue),),
+          ),
+        )
       ],
     );
   }
