@@ -110,10 +110,10 @@ class Utils {
 
       switch(metaInfoType) {
         case "PACK":
-          result.putIfAbsent("PACK", () => _deAsciify(metaInfoValue));
+          result.putIfAbsent("PACK", () => deAsciify(metaInfoValue));
           break;
         case "LESSON":
-          result.putIfAbsent("LESSON", () => _deAsciify(metaInfoValue));
+          result.putIfAbsent("LESSON", () => deAsciify(metaInfoValue));
           break;
         case "LANG":
           result.putIfAbsent("LANG", () => metaInfoValue);
@@ -133,7 +133,7 @@ class Utils {
   }
 
   /// Returns a string where all asciified parts are replaced with the corresponding characters
-  static String _deAsciify(String asciifiedString) {
+  static String deAsciify(String asciifiedString) {
     String text = asciifiedString;
 
     // 2020-04-19
