@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/api/lectary_api.dart';
 import 'package:lectary/data/db/database.dart';
+import 'package:lectary/data/db/entities/abstract.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
+import 'package:lectary/models/lectary_overview.dart';
 
 /// Repository class for encapsulating data access independent of the source
 class LectureRepository {
@@ -15,12 +17,16 @@ class LectureRepository {
       : _lectaryApi = lectaryApi,
         _lectureDatabase = lectureDatabase;
 
-  Future<List<Lecture>> loadLecturesRemote() async {
-    return await _lectaryApi.fetchLectures();
+  Future<LectaryData> loadLectaryData() async {
+    return await _lectaryApi.fetchLectaryData();
   }
 
   Future<File> downloadLecture(Lecture lecture) async {
     return _lectaryApi.downloadLectureZip(lecture);
+  }
+
+  Future<File> downloadAbstract(Abstract abstract) async {
+    return _lectaryApi.downloadAbstractFile(abstract);
   }
 
   Stream<List<Lecture>> watchAllLectures() {
