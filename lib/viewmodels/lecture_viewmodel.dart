@@ -4,9 +4,12 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
+import 'package:lectary/data/db/entities/abstract.dart';
+import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
+import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/models/lecture_package.dart';
 
 import 'package:collection/collection.dart';
@@ -56,7 +59,20 @@ class LectureViewModel with ChangeNotifier {
     notifyListeners();
 
     try {
-      List<Lecture> remoteList = await _lectureRepository.loadLecturesRemote();
+      LectaryData lectaryData = await _lectureRepository.loadLectaryData();
+
+      List<Abstract> abstracts = lectaryData.abstracts;
+      // TODO merge and check with local ones
+      for (int i=0; i < abstracts.length; i++) {
+        File file = await _lectureRepository.downloadAbstract(abstracts[i]);
+        String abstract = file.readAsStringSync();
+        abstract = abstract.replaceAll("\n", "");
+        abstracts[i].text = abstract;
+      }
+
+      // TODO save codings and download on lecture download
+
+      List<Lecture> remoteList = lectaryData.lessons;
       log("loaded remote lectures");
       List<Lecture> localList = await _lectureRepository.loadLecturesLocal();
       log("loaded local lectures");
@@ -77,6 +93,11 @@ class LectureViewModel with ChangeNotifier {
 
       // 3) sort lexicographic by packs
       groupedLectureList.sort((p1, p2) => p1.title.toLowerCase().compareTo(p2.title.toLowerCase()));
+
+      // add abstracts
+      abstracts.forEach((abstract) {
+        groupedLectureList.firstWhere((pack) => pack.title == abstract.pack).abstract = abstract.text;
+      });
 
       _availableLectures = groupedLectureList;
 
