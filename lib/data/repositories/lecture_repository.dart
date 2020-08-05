@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/data/api/lectary_api.dart';
 import 'package:lectary/data/db/database.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
+import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/lectary_overview.dart';
@@ -21,6 +22,13 @@ class LectureRepository {
     return await _lectaryApi.fetchLectaryData();
   }
 
+  Future<void> dispose() async {
+    await _lectureDatabase.close();
+  }
+
+  ///////////////////
+  // Lectures
+  ///////////////////
   Future<File> downloadLecture(Lecture lecture) async {
     return _lectaryApi.downloadLectureZip(lecture);
   }
@@ -53,6 +61,9 @@ class LectureRepository {
     return _lectureDatabase.lectureDao.deleteAllLectures();
   }
 
+  ///////////////////
+  // Vocables
+  ///////////////////
   Future<List<Vocable>> findAllVocables() {
     return _lectureDatabase.vocableDao.findAllVocables();
   }
@@ -81,7 +92,64 @@ class LectureRepository {
     return _lectureDatabase.vocableDao.deleteAllVocables();
   }
 
-  Future<void> dispose() async {
-    await _lectureDatabase.close();
+  ///////////////////
+  // Abstracts
+  ///////////////////
+  Future<List<Abstract>> findAllAbstracts() {
+    return _lectureDatabase.abstractDao.findAllAbstracts();
+  }
+
+  Future<int> insertAbstract(Abstract abstract) {
+    return _lectureDatabase.abstractDao.insertAbstract(abstract);
+  }
+
+  Future<void> updateAbstract(Abstract abstract) {
+    return _lectureDatabase.abstractDao.updateAbstract(abstract);
+  }
+
+  Future<void> deleteAbstract(Abstract abstract) {
+    return _lectureDatabase.abstractDao.deleteAbstract(abstract);
+  }
+
+  ///////////////////
+  // Codings
+  ///////////////////
+  Future<List<Coding>> findAllCodings() {
+    return _lectureDatabase.codingDao.findAllCodings();
+  }
+
+  Future<int> insertCoding(Coding coding) {
+    return _lectureDatabase.codingDao.insertCoding(coding);
+  }
+
+  Future<void> updateCoding(Coding coding) {
+    return _lectureDatabase.codingDao.updateCoding(coding);
+  }
+
+  Future<void> deleteCoding(Coding coding) {
+    return _lectureDatabase.codingDao.deleteCoding(coding);
+  }
+
+  ///////////////////
+  // CodingEntries
+  ///////////////////
+  Future<List<CodingEntry>> findAllCodingEntries() {
+    return _lectureDatabase.codingDao.findAllCodingEntries();
+  }
+
+  Future<List<int>> insertCodingEntries(List<CodingEntry> codingEntries) {
+    return _lectureDatabase.codingDao.insertCodingEntries(codingEntries);
+  }
+
+  Future<void> updateCodingEntry(CodingEntry codingEntry) {
+    return _lectureDatabase.codingDao.updateCodingEntry(codingEntry);
+  }
+
+  Future<void> deleteCodingEntriesByCodingId(int codingId) {
+    return _lectureDatabase.codingDao.deleteCodingEntriesByCodingId(codingId);
+  }
+
+  Future<void> deleteAllCodingEntries() {
+    return _lectureDatabase.codingDao.deleteAllCodingEntries();
   }
 }
