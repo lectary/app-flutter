@@ -64,6 +64,10 @@ class _$LectureDatabase extends LectureDatabase {
 
   VocableDao _vocableDaoInstance;
 
+  AbstractDao _abstractDaoInstance;
+
+  CodingDao _codingDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
@@ -85,6 +89,12 @@ class _$LectureDatabase extends LectureDatabase {
             'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lang` TEXT NOT NULL, `audio` TEXT, `date` TEXT NOT NULL, `sort` TEXT)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `vocables` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `abstracts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `pack` TEXT NOT NULL, `text` TEXT NOT NULL, `date` TEXT NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `codings` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `lang` TEXT NOT NULL, `date` TEXT NOT NULL)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `coding_entries` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `coding_id` INTEGER NOT NULL, `char` TEXT NOT NULL, `ascii` TEXT NOT NULL, FOREIGN KEY (`coding_id`) REFERENCES `codings` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -100,6 +110,16 @@ class _$LectureDatabase extends LectureDatabase {
   @override
   VocableDao get vocableDao {
     return _vocableDaoInstance ??= _$VocableDao(database, changeListener);
+  }
+
+  @override
+  AbstractDao get abstractDao {
+    return _abstractDaoInstance ??= _$AbstractDao(database, changeListener);
+  }
+
+  @override
+  CodingDao get codingDao {
+    return _codingDaoInstance ??= _$CodingDao(database, changeListener);
   }
 }
 
@@ -303,5 +323,217 @@ class _$VocableDao extends VocableDao {
   @override
   Future<void> updateVocable(Vocable vocable) async {
     await _vocableUpdateAdapter.update(vocable, OnConflictStrategy.abort);
+  }
+}
+
+class _$AbstractDao extends AbstractDao {
+  _$AbstractDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _abstractInsertionAdapter = InsertionAdapter(
+            database,
+            'abstracts',
+            (Abstract item) => <String, dynamic>{
+                  'id': item.id,
+                  'file_name': item.fileName,
+                  'pack': item.pack,
+                  'text': item.text,
+                  'date': item.date
+                }),
+        _abstractUpdateAdapter = UpdateAdapter(
+            database,
+            'abstracts',
+            ['id'],
+            (Abstract item) => <String, dynamic>{
+                  'id': item.id,
+                  'file_name': item.fileName,
+                  'pack': item.pack,
+                  'text': item.text,
+                  'date': item.date
+                }),
+        _abstractDeletionAdapter = DeletionAdapter(
+            database,
+            'abstracts',
+            ['id'],
+            (Abstract item) => <String, dynamic>{
+                  'id': item.id,
+                  'file_name': item.fileName,
+                  'pack': item.pack,
+                  'text': item.text,
+                  'date': item.date
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  static final _abstractsMapper = (Map<String, dynamic> row) => Abstract(
+      id: row['id'] as int,
+      fileName: row['file_name'] as String,
+      pack: row['pack'] as String,
+      text: row['text'] as String,
+      date: row['date'] as String);
+
+  final InsertionAdapter<Abstract> _abstractInsertionAdapter;
+
+  final UpdateAdapter<Abstract> _abstractUpdateAdapter;
+
+  final DeletionAdapter<Abstract> _abstractDeletionAdapter;
+
+  @override
+  Future<List<Abstract>> findAllAbstracts() async {
+    return _queryAdapter.queryList('SELECT * FROM abstracts',
+        mapper: _abstractsMapper);
+  }
+
+  @override
+  Future<int> insertAbstract(Abstract abstract) {
+    return _abstractInsertionAdapter.insertAndReturnId(
+        abstract, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateAbstract(Abstract abstract) async {
+    await _abstractUpdateAdapter.update(abstract, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteAbstract(Abstract abstract) async {
+    await _abstractDeletionAdapter.delete(abstract);
+  }
+}
+
+class _$CodingDao extends CodingDao {
+  _$CodingDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _codingInsertionAdapter = InsertionAdapter(
+            database,
+            'codings',
+            (Coding item) => <String, dynamic>{
+                  'id': item.id,
+                  'file_name': item.fileName,
+                  'lang': item.lang,
+                  'date': item.date
+                }),
+        _codingEntryInsertionAdapter = InsertionAdapter(
+            database,
+            'coding_entries',
+            (CodingEntry item) => <String, dynamic>{
+                  'id': item.id,
+                  'coding_id': item.codingId,
+                  'char': item.char,
+                  'ascii': item.ascii
+                }),
+        _codingUpdateAdapter = UpdateAdapter(
+            database,
+            'codings',
+            ['id'],
+            (Coding item) => <String, dynamic>{
+                  'id': item.id,
+                  'file_name': item.fileName,
+                  'lang': item.lang,
+                  'date': item.date
+                }),
+        _codingEntryUpdateAdapter = UpdateAdapter(
+            database,
+            'coding_entries',
+            ['id'],
+            (CodingEntry item) => <String, dynamic>{
+                  'id': item.id,
+                  'coding_id': item.codingId,
+                  'char': item.char,
+                  'ascii': item.ascii
+                }),
+        _codingDeletionAdapter = DeletionAdapter(
+            database,
+            'codings',
+            ['id'],
+            (Coding item) => <String, dynamic>{
+                  'id': item.id,
+                  'file_name': item.fileName,
+                  'lang': item.lang,
+                  'date': item.date
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  static final _codingsMapper = (Map<String, dynamic> row) => Coding(
+      id: row['id'] as int,
+      fileName: row['file_name'] as String,
+      lang: row['lang'] as String,
+      date: row['date'] as String);
+
+  static final _coding_entriesMapper = (Map<String, dynamic> row) =>
+      CodingEntry(
+          id: row['id'] as int,
+          codingId: row['coding_id'] as int,
+          char: row['char'] as String,
+          ascii: row['ascii'] as String);
+
+  final InsertionAdapter<Coding> _codingInsertionAdapter;
+
+  final InsertionAdapter<CodingEntry> _codingEntryInsertionAdapter;
+
+  final UpdateAdapter<Coding> _codingUpdateAdapter;
+
+  final UpdateAdapter<CodingEntry> _codingEntryUpdateAdapter;
+
+  final DeletionAdapter<Coding> _codingDeletionAdapter;
+
+  @override
+  Future<List<Coding>> findAllCodings() async {
+    return _queryAdapter.queryList('SELECT * FROM codings',
+        mapper: _codingsMapper);
+  }
+
+  @override
+  Future<List<CodingEntry>> findAllCodingEntries() async {
+    return _queryAdapter.queryList('SELECT * FROM coding_entries',
+        mapper: _coding_entriesMapper);
+  }
+
+  @override
+  Future<void> deleteCodingEntriesByCodingId(int codingId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM coding_entries WHERE coding_id = ?',
+        arguments: <dynamic>[codingId]);
+  }
+
+  @override
+  Future<void> deleteAllCodingEntries() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM coding_entries');
+  }
+
+  @override
+  Future<int> insertCoding(Coding coding) {
+    return _codingInsertionAdapter.insertAndReturnId(
+        coding, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<List<int>> insertCodingEntries(List<CodingEntry> codingEntries) {
+    return _codingEntryInsertionAdapter.insertListAndReturnIds(
+        codingEntries, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateCoding(Coding coding) async {
+    await _codingUpdateAdapter.update(coding, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateCodingEntry(CodingEntry codingEntry) async {
+    await _codingEntryUpdateAdapter.update(
+        codingEntry, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteCoding(Coding coding) async {
+    await _codingDeletionAdapter.delete(coding);
   }
 }

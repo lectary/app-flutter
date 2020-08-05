@@ -75,7 +75,7 @@ class Coding {
 
 
 @Entity(
-  tableName: "coding_entry",
+  tableName: "coding_entries",
   foreignKeys: [
     ForeignKey(
         childColumns: ["coding_id"], parentColumns: ["id"], entity: Coding)
