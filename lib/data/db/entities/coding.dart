@@ -5,10 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:lectary/utils/exceptions/coding_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
+enum CodingStatus { notPersisted, persisted, removed, updateAvailable }
+
 @Entity(tableName: "codings")
 class Coding {
   @PrimaryKey(autoGenerate: true)
   int id;
+
+  @ignore
+  CodingStatus codingStatus;
+  @ignore
+  String fileNameUpdate;
 
   @ColumnInfo(name: "file_name", nullable: false)
   String fileName;

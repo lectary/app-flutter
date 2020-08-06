@@ -5,10 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:lectary/utils/exceptions/abstract_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
+
+enum AbstractStatus { notPersisted, persisted, removed, updateAvailable }
+
 @Entity(tableName: "abstracts")
 class Abstract {
   @PrimaryKey(autoGenerate: true)
   int id;
+
+  @ignore
+  AbstractStatus abstractStatus;
+  @ignore
+  String fileNameUpdate;
 
   @ColumnInfo(name: "file_name", nullable: false)
   String fileName;
