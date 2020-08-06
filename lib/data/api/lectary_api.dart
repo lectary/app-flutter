@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:lectary/data/db/entities/abstract.dart';
+import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/utils/constants.dart';
@@ -61,6 +62,26 @@ class LectaryApi {
 
     if (response.statusCode == 200) {
       File file = File('$dir/${abstract.fileName}');
+      await file.writeAsBytes(response.bodyBytes);
+      return file;
+    } else {
+      throw ServerResponseException(
+          "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
+    }
+  }
+
+  Future<File> downloadCodingFile(Coding coding) async {
+    String dir = (await getTemporaryDirectory()).path;
+
+    http.Response response;
+    try {
+      response = await http.get(Constants.lectaryApiUrl + coding.fileName);
+    } on SocketException {
+      throw NoInternetException("No internet! Check your connection!");
+    }
+
+    if (response.statusCode == 200) {
+      File file = File('$dir/${coding.fileName}');
       await file.writeAsBytes(response.bodyBytes);
       return file;
     } else {

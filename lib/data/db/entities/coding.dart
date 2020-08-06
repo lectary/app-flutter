@@ -78,6 +78,10 @@ class Coding {
     return result;
   }
 
+  @override
+  String toString() {
+    return 'Coding{id: $id, codingStatus: $codingStatus, fileNameUpdate: $fileNameUpdate, fileName: $fileName, lang: $lang, date: $date}';
+  }
 }
 
 

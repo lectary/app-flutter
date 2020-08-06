@@ -33,10 +33,6 @@ class LectureRepository {
     return _lectaryApi.downloadLectureZip(lecture);
   }
 
-  Future<File> downloadAbstract(Abstract abstract) async {
-    return _lectaryApi.downloadAbstractFile(abstract);
-  }
-
   Stream<List<Lecture>> watchAllLectures() {
     return _lectureDatabase.lectureDao.watchAllLectures();
   }
@@ -95,6 +91,10 @@ class LectureRepository {
   ///////////////////
   // Abstracts
   ///////////////////
+  Future<File> downloadAbstract(Abstract abstract) async {
+    return _lectaryApi.downloadAbstractFile(abstract);
+  }
+
   Future<List<Abstract>> findAllAbstracts() {
     return _lectureDatabase.abstractDao.findAllAbstracts();
   }
@@ -114,6 +114,10 @@ class LectureRepository {
   ///////////////////
   // Codings
   ///////////////////
+  Future<File> downloadCoding(Coding coding) async {
+    return _lectaryApi.downloadCodingFile(coding);
+  }
+
   Future<List<Coding>> findAllCodings() {
     return _lectureDatabase.codingDao.findAllCodings();
   }
