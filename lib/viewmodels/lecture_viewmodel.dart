@@ -61,23 +61,11 @@ class LectureViewModel with ChangeNotifier {
     try {
       LectaryData lectaryData = await _lectureRepository.loadLectaryData();
 
-      List<Abstract> abstracts = lectaryData.abstracts;
-      // TODO merge and check with local ones
-      for (int i=0; i < abstracts.length; i++) {
-        File file = await _lectureRepository.downloadAbstract(abstracts[i]);
-        String abstract = file.readAsStringSync();
-        abstract = abstract.replaceAll("\n", "");
-        abstracts[i].text = abstract;
-      }
-
-      // TODO save codings and download on lecture download
-
       List<Lecture> remoteList = lectaryData.lessons;
-      log("loaded remote lectures");
       List<Lecture> localList = await _lectureRepository.loadLecturesLocal();
-      log("loaded local lectures");
 
       List<Lecture> mergedLectureList = _mergeLectureLists(remoteList, localList);
+      log("loaded lectures");
 
       // 1) sort lessons with SORT-meta info by SORT
       List<Lecture> lecturesWithSortMeta = mergedLectureList.where((lecture) => lecture.sort != null).toList();
@@ -94,8 +82,35 @@ class LectureViewModel with ChangeNotifier {
       // 3) sort lexicographic by packs
       groupedLectureList.sort((p1, p2) => p1.title.toLowerCase().compareTo(p2.title.toLowerCase()));
 
-      // add abstracts
-      abstracts.forEach((abstract) {
+      // load remote and local abstracts
+      List<Abstract> remoteAbstracts = lectaryData.abstracts;
+      List<Abstract> localAbstracts = await _lectureRepository.findAllAbstracts();
+
+      // merge, check and download/update/deleted abstracts
+      List<Abstract> mergedAbstracts = mergeAndCheckAbstracts(localAbstracts, remoteAbstracts);
+      await Future.forEach(mergedAbstracts, (abstract) async {
+        switch(abstract.abstractStatus) {
+          case AbstractStatus.notPersisted:
+            log("downloading new abstract");
+            await _downloadAndSaveAbstract(abstract);
+            break;
+          case AbstractStatus.updateAvailable:
+            log("updating abstract");
+            await _updateAbstract(abstract);
+            break;
+          case AbstractStatus.removed:
+            log("deleting abstract");
+            await _deleteAbstract(abstract);
+            break;
+          case AbstractStatus.persisted:
+          default:
+            break;
+        }
+      });
+
+      // add abstracts to packs
+      List<Abstract> availableAbstracts = await _lectureRepository.findAllAbstracts();
+      availableAbstracts.forEach((abstract) {
         groupedLectureList.firstWhere((pack) => pack.title == abstract.pack).abstract = abstract.text;
       });
 
@@ -355,5 +370,70 @@ class LectureViewModel with ChangeNotifier {
     vocables.forEach((voc) => log(voc.toString()));
 
     return vocables;
+  }
+
+
+  /// Merges and validates the stati of two lists of [Abstract]
+  /// returns a list of [Abstract] with the corresponding [AbstractStatus]
+  List<Abstract> mergeAndCheckAbstracts(List<Abstract> localList, List<Abstract> remoteList) {
+    List<Abstract> resultList = List();
+
+    // comparing local with remote list and adding all local persisted lectures to the result list and checking if updates are available (i.e. identical lecture with never date)
+    localList.forEach((local) {
+      remoteList.forEach((remote) {
+        if (local.pack == remote.pack) {
+          if (DateTime.parse(local.date).isBefore(DateTime.parse(remote.date))) {
+            local.abstractStatus = AbstractStatus.updateAvailable;
+            local.fileNameUpdate = remote.fileName;
+            resultList.add(local);
+          } else {
+            local.abstractStatus = AbstractStatus.persisted;
+            resultList.add(local);
+          }
+        }
+      });
+    });
+
+    // check if any local lectures are outdated (i.e. not available remotely anymore)
+    localList.forEach((e1) {
+      if (remoteList.any((e2) => e1.pack == e2.pack) == false) {
+        e1.abstractStatus = AbstractStatus.removed;
+        resultList.add(e1);
+      }
+    });
+
+    // add all remaining and not persisted lectures available remotely
+    remoteList.forEach((remote) {
+      if (localList.any((local) => remote.pack == local.pack) == false) {
+        remote.abstractStatus = AbstractStatus.notPersisted;
+        resultList.add(remote);
+      }
+    });
+
+    return resultList;
+  }
+
+  Future<void> _downloadAndSaveAbstract(Abstract abstract) async {
+    File file = await _lectureRepository.downloadAbstract(abstract);
+    String text = file.readAsStringSync();
+    text = text.replaceAll("\n", "");
+    abstract.text = text;
+    await _lectureRepository.insertAbstract(abstract);
+  }
+
+  Future<void> _updateAbstract(Abstract abstract) async {
+    abstract.fileName = abstract.fileNameUpdate;
+    abstract.fileNameUpdate = null;
+    String newDate = Utils.extractDateFromLectureFilename(abstract.fileName);
+    abstract.date = newDate;
+    File file = await _lectureRepository.downloadAbstract(abstract);
+    String text = file.readAsStringSync();
+    text = text.replaceAll("\n", "");
+    abstract.text = text;
+    await _lectureRepository.updateAbstract(abstract);
+  }
+
+  Future<void> _deleteAbstract(Abstract abstract) async {
+    await _lectureRepository.deleteAbstract(abstract);
   }
 }
