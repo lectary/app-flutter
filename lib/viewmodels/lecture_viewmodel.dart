@@ -30,7 +30,9 @@ class LectureViewModel with ChangeNotifier {
 
   // holds all lectures that are available (persisted and remote ones)
   List<LecturePackage> _availableLectures = List();
-  List<LecturePackage> get availableLectures => _availableLectures;
+  // holds all filtered lectures by reference from _availableLectures
+  List<LecturePackage> _filteredLectures = List();
+  List<LecturePackage> get availableLectures => _filteredLectures;
 
   // holds all persisted lectures
   List<Vocable> _currentVocables = List();
@@ -93,6 +95,8 @@ class LectureViewModel with ChangeNotifier {
       groupedLectureList.sort((p1, p2) => p1.title.toLowerCase().compareTo(p2.title.toLowerCase()));
 
       _availableLectures = groupedLectureList;
+      // assignment by reference
+      _filteredLectures = _availableLectures;
 
       _availableLectureStatus = Response.completed();
       notifyListeners();
@@ -276,7 +280,6 @@ class LectureViewModel with ChangeNotifier {
     List<Lecture> lectures = await _lectureRepository.loadLecturesLocal();
     log("deleting all media files");
     await Future.forEach(lectures, (lecture) => _deleteMediaFiles(lecture));
-    log("deleting database entries");
     await _lectureRepository.deleteAllVocables();
     await _lectureRepository.deleteAllLectures();
   }
@@ -348,5 +351,23 @@ class LectureViewModel with ChangeNotifier {
     vocables.forEach((voc) => log(voc.toString()));
 
     return vocables;
+  }
+
+  /// Filters the [List] of available [Lecture] by a [String]
+  /// Filters by pack and lesson of [Lecture]
+  /// Creates a temporary list with the filtered elements as references to the original list elements of
+  /// [_availableLectures] and assigns it by reference again to [_filteredLectures] and notifies listeners
+  /// Operations on the original list [_availableLectures] will therefore also affect the corresponding elements in [_filteredLectures]
+  void filterLectureList(String filter) {
+    List<Lecture> tempListLectures = List();
+    _availableLectures.forEach((pack) => pack.children.forEach((lecture) {
+          if (lecture.pack.toLowerCase().contains(filter.toLowerCase()) ||
+              lecture.lesson.toLowerCase().contains(filter.toLowerCase())) {
+            tempListLectures.add(lecture);
+          }
+        }));
+    List<LecturePackage> tempListPacks = _groupLecturesByPack(tempListLectures);
+    _filteredLectures = tempListPacks;
+    notifyListeners();
   }
 }
