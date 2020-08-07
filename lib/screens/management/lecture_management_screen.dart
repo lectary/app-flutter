@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
@@ -19,6 +18,7 @@ class LectureManagementScreen extends StatefulWidget {
 class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
   TextEditingController textEditingController = TextEditingController();
+  // needed to control screen focus, i.e. handle the keyboard
   FocusNode focus = FocusNode();
 
   @override
@@ -64,7 +64,9 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         return Center(child: CircularProgressIndicator());
 
       case Status.completed:
+        // build list of widgets in the body
         List<Widget> bodyWidgets = List();
+        // check if widgets for offline-mode are needed
         if (lectureViewModel.availableLectureOffline) {
           bodyWidgets.add(Container(
             color: ColorsLectary.red,
@@ -78,6 +80,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             ),
           ));
         }
+        // add lecture-list-view to body widget list
         bodyWidgets.addAll({
           Expanded(
             child: _generateListView(lectureViewModel.availableLectures),
@@ -143,6 +146,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         separatorBuilder: (context, index) => Divider(),
         itemCount: lectures.length + 1,
         itemBuilder: (context, index) {
+          // special last listTile with the option to delete all lectures
           if (index == lectures.length) {
             return Column(
               children: <Widget>[
@@ -194,6 +198,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
               ],
             );
           }
+          // regular listTile for lectures
           return ListTileTheme(
             iconColor: ColorsLectary.lightBlue,
             child: LecturePackageItem(context, lectures[index]),
