@@ -46,10 +46,10 @@ class LectureViewModel with ChangeNotifier {
       : _lectureRepository = lectureRepository;
 
 
-  /// Loads all available local and remote api-data, i.e. [Lecture], [Abstract], [Coding] that can be used
+  /// Loads all available local and remote api-data, i.e. [Lecture], [Abstract], [Coding]
   /// Returns a [Future] and indicates its loading status via a separate variable [_availableLectureStatus] of type [Response]
-  Future<void> loadLectures() async {
-    _availableLectureStatus = Response.loading("fetching lectures from server");
+  Future<void> loadLectaryData() async {
+    _availableLectureStatus = Response.loading("loading data from server");
     notifyListeners();
 
     try {
@@ -57,52 +57,34 @@ class LectureViewModel with ChangeNotifier {
 
       List<Lecture> remoteList = lectaryData.lessons;
       List<Lecture> localList = await _lectureRepository.loadLecturesLocal();
-
       List<Lecture> mergedLectureList = _mergeLectureLists(remoteList, localList);
-      log("loaded lectures");
 
+      // Sorting
       // 1) sort lessons with SORT-meta info by SORT
       List<Lecture> lecturesWithSortMeta = mergedLectureList.where((lecture) => lecture.sort != null).toList();
       lecturesWithSortMeta.sort((l1, l2) => l1.sort.compareTo(l2.sort));
       // 2) sort lessons without SORT-meta info lexicographic by lesson
       List<Lecture> lecturesWithoutSortMeta = mergedLectureList.where((lecture) => lecture.sort == null).toList();
       lecturesWithoutSortMeta.sort((l1, l2) => l1.lesson.toLowerCase().compareTo(l2.lesson.toLowerCase()));
-
       // merge both sorted lists and group by lecture pack
       List<Lecture> allLectures = lecturesWithSortMeta;
       allLectures.addAll(lecturesWithoutSortMeta);
       List<LecturePackage> groupedLectureList = _groupLecturesByPack(allLectures);
-
       // 3) sort lexicographic by packs
       groupedLectureList.sort((p1, p2) => p1.title.toLowerCase().compareTo(p2.title.toLowerCase()));
+
+      _availableLectures = groupedLectureList;
+      log("loaded lectures");
 
       // load remote and local abstracts
       List<Abstract> remoteAbstracts = lectaryData.abstracts;
       List<Abstract> localAbstracts = await _lectureRepository.findAllAbstracts();
 
-      // merge, check and download/update/deleted abstracts
+      // merge, check status, progress abstracts
       List<Abstract> mergedAbstracts = mergeAndCheckAbstracts(localAbstracts, remoteAbstracts);
-      await Future.forEach(mergedAbstracts, (abstract) async {
-        switch(abstract.abstractStatus) {
-          case AbstractStatus.notPersisted:
-            log("downloading new abstract");
-            await _downloadAndSaveAbstract(abstract);
-            break;
-          case AbstractStatus.updateAvailable:
-            log("updating abstract");
-            await _updateAbstract(abstract);
-            break;
-          case AbstractStatus.removed:
-            log("deleting abstract");
-            await _deleteAbstract(abstract);
-            break;
-          case AbstractStatus.persisted:
-          default:
-            break;
-        }
-      });
+      await _progressAbstracts(mergedAbstracts);
 
-      // add abstracts to packs
+      // load again all persisted abstracts and add them to the corresponding packs
       List<Abstract> availableAbstracts = await _lectureRepository.findAllAbstracts();
       availableAbstracts.forEach((abstract) {
         groupedLectureList.firstWhere((pack) => pack.title == abstract.pack).abstract = abstract.text;
@@ -111,14 +93,10 @@ class LectureViewModel with ChangeNotifier {
 
       List<Coding> localCodings = await _lectureRepository.findAllCodings();
       List<Coding> remoteCodings = lectaryData.codings;
-
       List<Coding> mergedCodings = mergeAndCheckCodings(localCodings, remoteCodings);
-      log("loaded codings: ${mergedCodings.toString()}");
-      mergedCodings.where((coding) => coding.codingStatus == CodingStatus.updateAvailable).toList().map((coding) => _updateCoding(coding));
-      mergedCodings.where((coding) => coding.codingStatus == CodingStatus.removed).toList().map((coding) => _deleteCoding(coding));
+      await _progressCodings(mergedCodings);
       _availableCodings = mergedCodings;
-
-      _availableLectures = groupedLectureList;
+      log("loaded codings");
 
       _availableLectureStatus = Response.completed();
       notifyListeners();
@@ -127,6 +105,7 @@ class LectureViewModel with ChangeNotifier {
       notifyListeners();
     }
   }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   ////// LECTURES ////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +118,7 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Groups a lecture list by the lecture pack
-  /// returns a [List] of [LecturePackage]
+  /// Returns a [List] of [LecturePackage]
   List<LecturePackage> _groupLecturesByPack(List<Lecture> lectureList) {
     final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
     List<LecturePackage> packList = List();
@@ -188,7 +167,7 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Download and persist a lecture
-  /// returns [Response] as a Future, with the corresponding [Status] set, reflecting success or failure
+  /// Returns [Response] as a Future, with the corresponding [Status] set, reflecting success or failure
   Future<Response> downloadAndSaveLecture(Lecture lecture) async {
     log("downloading lecture: ${lecture.toString()}");
 
@@ -238,11 +217,10 @@ class LectureViewModel with ChangeNotifier {
     }
   }
 
-
   /// Updates a lecture
   /// The lecture-update is first downloaded and extracted for validation, then the old lecture is deleted
   /// and the new lecture saved.
-  /// returns [Response] as a Future, with the corresponding [Status] set, reflecting success or failure
+  /// Returns [Response] as a Future, with the corresponding [Status] set, reflecting success or failure
   Future<Response> updateLecture(Lecture lecture) async {
     log("updating lecture: ${lecture.toString()}");
 
@@ -348,7 +326,7 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Deletes all lectures, vocables and corresponding media files
-  /// returns an empty [Future]
+  /// Returns a [Future] of type [Void]
   Future<void> deleteAllLectures() async {
     // TODO remove - only for testing purpose
     await Future.delayed(Duration(seconds: 2));
@@ -362,7 +340,7 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Deletes media files related to the lecture
-  /// Returns a [Future]
+  /// Returns a [Future] of type [Void]
   Future<void> _deleteMediaFiles(Lecture lecture) async {
     String dir = (await getApplicationDocumentsDirectory()).path;
 
@@ -436,7 +414,7 @@ class LectureViewModel with ChangeNotifier {
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Merges and validates the stati of two lists of [Abstract]
-  /// returns a list of [Abstract] with the corresponding [AbstractStatus]
+  /// Returns a list of [Abstract] with the corresponding [AbstractStatus]
   @visibleForTesting
   List<Abstract> mergeAndCheckAbstracts(List<Abstract> localList, List<Abstract> remoteList) {
     List<Abstract> resultList = List();
@@ -476,9 +454,34 @@ class LectureViewModel with ChangeNotifier {
     return resultList;
   }
 
+  /// Progresses a list of available [Abstract]
+  /// Downloads, updates or deletes an [Abstract] corresponding to its [AbstractStatus]
+  /// Returns a [Future] of type [Void]
+  Future<void> _progressAbstracts(List<Abstract> mergedAbstracts) async {
+    await Future.forEach(mergedAbstracts, (abstract) async {
+      switch(abstract.abstractStatus) {
+        case AbstractStatus.notPersisted:
+          log("downloading new abstract");
+          await _downloadAndSaveAbstract(abstract);
+          break;
+        case AbstractStatus.updateAvailable:
+          log("updating abstract");
+          await _updateAbstract(abstract);
+          break;
+        case AbstractStatus.removed:
+          log("deleting abstract");
+          await _deleteAbstract(abstract);
+          break;
+        case AbstractStatus.persisted:
+        default:
+          break;
+      }
+    });
+  }
+
   /// Downloads and saves an [Abstract]
-  /// returns a [Future] with [Void]
-  /// throws [AbstractException] on error
+  /// Returns a [Future] of type [Void]
+  /// Throws [AbstractException] on error
   Future<void> _downloadAndSaveAbstract(Abstract abstract) async {
     File file = await _lectureRepository.downloadAbstract(abstract);
     String text = file.readAsStringSync();
@@ -488,8 +491,8 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Updates an [Abstract]
-  /// returns a [Future] with [Void]
-  /// throws [AbstractException] on error
+  /// Returns a [Future] of type [Void]
+  /// Throws [AbstractException] on error
   Future<void> _updateAbstract(Abstract abstract) async {
     try {
       abstract.fileName = abstract.fileNameUpdate;
@@ -507,8 +510,8 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Deletes an [Abstract]
-  /// returns a [Future] with [Void]
-  /// throws [AbstractException] on error
+  /// Returns a [Future] of type [Void]
+  /// Throws [AbstractException] on error
   Future<void> _deleteAbstract(Abstract abstract) async {
     try {
       await _lectureRepository.deleteAbstract(abstract);
@@ -523,7 +526,7 @@ class LectureViewModel with ChangeNotifier {
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// Merges and validates the stati of two lists of [Coding]
-  /// returns a list of [Coding] with the corresponding [CodingStatus]
+  /// Returns a list of [Coding] with the corresponding [CodingStatus]
   @visibleForTesting
   List<Coding> mergeAndCheckCodings(List<Coding> localList, List<Coding> remoteList) {
     List<Coding> resultList = List();
@@ -563,6 +566,27 @@ class LectureViewModel with ChangeNotifier {
     return resultList;
   }
 
+  /// Progresses a list of  [Coding]
+  /// Updates or removes a [Coding] corresponding to its [CodingStatus]
+  /// Returns a [Future] of type [Void]
+  Future<void> _progressCodings(List<Coding> mergedCodings) async {
+    await Future.forEach(mergedCodings, (coding) async {
+      switch(coding.codingStatus) {
+        case CodingStatus.updateAvailable:
+          await _updateCoding(coding);
+          break;
+        case CodingStatus.removed:
+          await _deleteCoding(coding);
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  /// Downloads and saves a [Coding]
+  /// Returns a [Future] of type [Void]
+  /// Throws [CodingException] on error
   Future<void> _downloadAndSaveCoding(Coding coding) async {
     log("downloading coding: $coding");
     try{
@@ -579,8 +603,8 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Updates a [Coding]
-  /// returns a [Future] with [Void]
-  /// throws [CodingException] on error
+  /// Returns a [Future] of type [Void]
+  /// Throws [CodingException] on error
   Future<void> _updateCoding(Coding coding) async {
     log("updating coding: $coding");
     try {
@@ -602,8 +626,8 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Deletes a [Coding]
-  /// returns a [Future] with [Void]
-  /// throws [CodingException] on error
+  /// Returns a [Future] of type [Void]
+  /// Throws [CodingException] on error
   Future<void> _deleteCoding(Coding coding) async {
     log("deleting coding: $coding");
     try {
@@ -616,7 +640,7 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Extracts the content of a json [File] containing the list of [CodingEntry]
-  /// returns a [List] of [CodingEntry] on success or [Null] on error
+  /// Returns a [List] of [CodingEntry] on success or [Null] on error
   @visibleForTesting
   List<CodingEntry> extractCodingEntries(File jsonFile) {
     // read and decode json file

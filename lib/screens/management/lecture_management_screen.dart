@@ -22,7 +22,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     super.initState();
     /// Callback for loading lectures on first frame once the layout is finished completely
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-      Provider.of<LectureViewModel>(context, listen: false).loadLectures()
+      Provider.of<LectureViewModel>(context, listen: false).loadLectaryData()
     );
   }
 
@@ -67,7 +67,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
           color: ColorsLectary.lightBlue,
           onRefresh: () async {
             Provider.of<LectureViewModel>(context, listen: false)
-                .loadLectures();
+                .loadLectaryData();
           },
           // refreshIndicator needs a scrollable child widget
           // using stack with listView to retain center position of error text
@@ -90,7 +90,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     return RefreshIndicator(
       color: ColorsLectary.lightBlue,
       onRefresh: () async {
-        Provider.of<LectureViewModel>(context, listen: false).loadLectures();
+        Provider.of<LectureViewModel>(context, listen: false).loadLectaryData();
       },
       child: ListView.separated(
         padding: EdgeInsets.all(0),
