@@ -181,17 +181,7 @@ class LectureViewModel with ChangeNotifier {
 
     // Check if additional coding files are needed
     try {
-      List<String> langs = lecture.lang.split("-");
-      List<String> foreignCodings = langs.where((lang) => !lang.contains("DE") && !lang.contains("EN")).toList();
-      log("additional codings needed for languages: ${foreignCodings.toString()}");
-      await Future.forEach(foreignCodings, (lang) async {
-        Coding coding = _availableCodings.firstWhere((element) => element.lang == lang && element.codingStatus == CodingStatus.notPersisted, orElse: () => null);
-        if (coding != null) {
-          await _downloadAndSaveCoding(coding);
-        } else {
-          log("needed coding for lang: $lang is not available or already persisted!");
-        }
-      });
+      await _checkNeedForCoding(lecture);
     } catch(e) {
       log("downloading coding failed: ${e.toString()}");
     }
@@ -293,18 +283,7 @@ class LectureViewModel with ChangeNotifier {
 
     // Check if coding needs to be deleted
     try {
-      List<String> langs = lecture.lang.split("-");
-      List<String> foreignCodings = langs.where((lang) => !lang.contains("DE") && !lang.contains("EN")).toList();
-      if (foreignCodings.isNotEmpty) {
-        for (String fc in foreignCodings) {
-          List<Lecture> lecturesThatNeedCoding = List();
-          _availableLectures.forEach((pack) =>
-              lecturesThatNeedCoding.addAll(pack.children.where((lec) => lec.id != lecture.id && lec.lectureStatus == LectureStatus.persisted && lec.lang.contains(fc))));
-          if (lecturesThatNeedCoding.isEmpty) {
-            _deleteCoding(_availableCodings.where((element) => element.lang == fc).first);
-          }
-        }
-      }
+      _checkDeletingOfCoding(lecture);
     } catch(e) {
       log("error when deleting coding: ${e.toString()}");
     }
@@ -586,6 +565,41 @@ class LectureViewModel with ChangeNotifier {
           break;
       }
     });
+  }
+
+  /// Checks if a [Lecture] needs additional [Coding] and downloads it
+  /// Returns a [Future] of type [Void]
+  Future<void> _checkNeedForCoding(Lecture lecture) async {
+    List<String> langs = lecture.lang.split("-");
+    List<String> foreignCodings = langs.where((lang) => !lang.contains("DE") && !lang.contains("EN")).toList();
+    log("additional codings needed for languages: ${foreignCodings.toString()}");
+
+    await Future.forEach(foreignCodings, (lang) async {
+      Coding coding = _availableCodings.firstWhere((element) => element.lang == lang && element.codingStatus == CodingStatus.notPersisted, orElse: () => null);
+      if (coding != null) {
+        await _downloadAndSaveCoding(coding);
+      } else {
+        log("needed coding for lang: $lang is not available or already persisted!");
+      }
+    });
+  }
+
+  /// Checks if a [Coding] is still needed after deleting a [Lecture] and deletes it
+  void _checkDeletingOfCoding(Lecture lecture) {
+    List<String> langs = lecture.lang.split("-");
+    List<String> foreignCodings = langs.where((lang) => !lang.contains("DE") && !lang.contains("EN")).toList();
+    if (foreignCodings.isNotEmpty) {
+      for (String fc in foreignCodings) {
+        List<Lecture> lecturesThatNeedCoding = List();
+        // retrieve all persisted lectures with the corresponding language besides the passed one
+        _availableLectures.forEach((pack) =>
+            lecturesThatNeedCoding.addAll(pack.children.where((lec) => lec.id != lecture.id && lec.lectureStatus == LectureStatus.persisted && lec.lang.contains(fc))));
+        if (lecturesThatNeedCoding.isEmpty) {
+          log("coding no longer needed");
+          _deleteCoding(_availableCodings.where((element) => element.lang == fc).first);
+        }
+      }
+    }
   }
 
   /// Downloads and saves a [Coding]
