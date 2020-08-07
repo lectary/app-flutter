@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/utils/colors.dart';
@@ -55,23 +54,18 @@ class LecturePackageItem extends StatelessWidget {
         return Wrap(
           children: <Widget>[
             abstractText != null
-                ? Center(
+                ? Container(
+                    padding: EdgeInsets.only(left: 10, right: 10),
                     child: Html(
-                    data: abstractText,
-                      style: {
-                        "p": Style(
-                        padding: EdgeInsets.all(0),
-                        margin: EdgeInsets.all(0),
-                        ),
+                      data: abstractText,
+                      onLinkTap: (url) async {
+                        if (await canLaunch(url)) {
+                          await launch(url);
+                        } else {
+                          log('Could not launch url: $url of abstract: $abstractText');
+                        }
                       },
-                    onLinkTap: (url) async {
-                      if (await canLaunch(url)) {
-                        await launch(url);
-                      } else {
-                        throw 'Could not launch $url';
-                      }
-                    },
-                  ))
+                    ))
                 : Center(child: Text("No description")),
             Divider(height: 1, thickness: 1),
             _buildButton(Icons.close, "Abbrechen",
