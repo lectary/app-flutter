@@ -105,5 +105,6 @@ class CodingEntry {
   @ColumnInfo(nullable: false)
   String ascii;
 
-  CodingEntry({this.id, this.codingId, this.char, this.ascii});
+  CodingEntry(
+      {this.id, this.codingId, @required this.char, @required this.ascii});
 }

@@ -496,8 +496,21 @@ class _$CodingDao extends CodingDao {
   }
 
   @override
+  Future<void> deleteAllCodings() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM codings');
+  }
+
+  @override
   Future<List<CodingEntry>> findAllCodingEntries() async {
     return _queryAdapter.queryList('SELECT * FROM coding_entries',
+        mapper: _coding_entriesMapper);
+  }
+
+  @override
+  Future<List<CodingEntry>> findAllCodingEntriesByCodingId(int codingId) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM coding_entries WHERE coding_id = ?',
+        arguments: <dynamic>[codingId],
         mapper: _coding_entriesMapper);
   }
 

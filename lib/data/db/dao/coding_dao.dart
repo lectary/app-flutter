@@ -16,10 +16,16 @@ abstract class CodingDao {
   @delete
   Future<void> deleteCoding(Coding coding);
 
+  @Query("DELETE FROM codings")
+  Future<void> deleteAllCodings();
+
 
 
   @Query("SELECT * FROM coding_entries")
   Future<List<CodingEntry>> findAllCodingEntries();
+
+  @Query("SELECT * FROM coding_entries WHERE coding_id = :codingId")
+  Future<List<CodingEntry>> findAllCodingEntriesByCodingId(int codingId);
 
   @insert
   Future<List<int>> insertCodingEntries(List<CodingEntry> codingEntries);

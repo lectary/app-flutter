@@ -134,11 +134,19 @@ class LectureRepository {
     return _lectureDatabase.codingDao.deleteCoding(coding);
   }
 
+  Future<void> deleteAllCoding() {
+    return _lectureDatabase.codingDao.deleteAllCodings();
+  }
+
   ///////////////////
   // CodingEntries
   ///////////////////
   Future<List<CodingEntry>> findAllCodingEntries() {
     return _lectureDatabase.codingDao.findAllCodingEntries();
+  }
+
+  Future<List<CodingEntry>> findAllCodingEntriesByCodingId(int codingId) {
+    return _lectureDatabase.codingDao.findAllCodingEntriesByCodingId(codingId);
   }
 
   Future<List<int>> insertCodingEntries(List<CodingEntry> codingEntries) {
