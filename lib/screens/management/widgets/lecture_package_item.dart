@@ -1,10 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
+
+import 'package:url_launcher/url_launcher.dart';
 
 class LecturePackageItem extends StatelessWidget {
   const LecturePackageItem(this.context, this.entry);
@@ -21,10 +27,18 @@ class LecturePackageItem extends StatelessWidget {
   Widget _buildTiles(LecturePackage pack) {
     if (pack.children.isEmpty) return ListTile(title: Text(pack.title));
     List<Widget> childs = List<Widget>();
-    childs.add(Container(
-        padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+    childs.add(
+      Container(
+        //padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
         alignment: Alignment.centerLeft,
-        child: Text(pack.title, style: Theme.of(context).textTheme.caption))
+        //child: Text(pack.title, style: Theme.of(context).textTheme.caption))
+        child: ListTile(
+          title: Text(pack.title, style: Theme.of(context).textTheme.caption),
+          trailing: IconButton(
+              onPressed: () => _showAbstract(pack.abstract),
+              icon: Icon(Icons.more_horiz)),
+        ),
+      ),
     );
     pack.children.map(_buildChildren).forEach((element) {childs.addAll(element);});
 
@@ -32,6 +46,40 @@ class LecturePackageItem extends StatelessWidget {
         children: childs
     );
     return column;
+  }
+
+  _showAbstract(String abstractText) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return Wrap(
+          children: <Widget>[
+            abstractText != null
+                ? Center(
+                    child: Html(
+                    data: abstractText,
+                      style: {
+                        "p": Style(
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        ),
+                      },
+                    onLinkTap: (url) async {
+                      if (await canLaunch(url)) {
+                        await launch(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
+                    },
+                  ))
+                : Center(child: Text("No description")),
+            Divider(height: 1, thickness: 1),
+            _buildButton(Icons.close, "Abbrechen",
+                func: () => Navigator.pop(context)),
+          ],
+        );
+      },
+    );
   }
 
   // children of an package

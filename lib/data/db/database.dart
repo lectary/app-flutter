@@ -1,8 +1,12 @@
 // required package imports
 import 'dart:async';
 import 'package:floor/floor.dart';
+import 'package:lectary/data/db/entities/abstract.dart';
+import 'package:lectary/data/db/entities/coding.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
+import 'dao/abstract_dao.dart';
+import 'dao/coding_dao.dart';
 import 'dao/lecture_dao.dart';
 import 'dao/vocable_dao.dart';
 import 'entities/lecture.dart';
@@ -10,10 +14,12 @@ import 'entities/vocable.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 1, entities: [Lecture, Vocable])
+@Database(version: 1, entities: [Lecture, Vocable, Abstract, Coding, CodingEntry])
 abstract class LectureDatabase extends FloorDatabase {
   LectureDao get lectureDao;
   VocableDao get vocableDao;
+  AbstractDao get abstractDao;
+  CodingDao get codingDao;
 }
 
 class DatabaseProvider {

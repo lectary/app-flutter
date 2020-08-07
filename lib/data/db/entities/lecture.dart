@@ -36,8 +36,15 @@ class Lecture {
   @ColumnInfo(nullable: false)
   String lesson;
 
-  @ColumnInfo(nullable: false)
-  String lang;
+  // used for sorting
+  @ColumnInfo(name: "lesson_sort", nullable: false)
+  String lessonSort;
+
+  @ColumnInfo(name: "lang_media", nullable: false)
+  String langMedia;
+
+  @ColumnInfo(name: "lang_vocable", nullable: false)
+  String langVocable;
 
   String audio;
 
@@ -53,7 +60,9 @@ class Lecture {
       @required this.vocableCount,
       @required this.pack,
       @required this.lesson,
-      @required this.lang,
+      @required this.lessonSort,
+      @required this.langMedia,
+      @required this.langVocable,
       this.audio,
       this.date,
       this.sort});
@@ -68,7 +77,9 @@ class Lecture {
     this.vocableCount = lecture.vocableCount;
     this.pack = lecture.pack;
     this.lesson = lecture.lesson;
-    this.lang = lecture.lang;
+    this.lessonSort = lecture.lessonSort;
+    this.langMedia = lecture.langMedia;
+    this.langVocable = lecture.langVocable;
     this.audio = lecture.audio;
     this.date = lecture.date;
     this.sort = lecture.sort;
@@ -92,7 +103,9 @@ class Lecture {
       vocableCount: json['vocableCount'],
       pack: metaInfo.remove("PACK"),
       lesson: metaInfo.remove("LESSON"),
-      lang: metaInfo.remove("LANG"),
+      lessonSort: metaInfo.remove("LESSON-SORT"),
+      langMedia: metaInfo.remove("LANG-MEDIA"),
+      langVocable: metaInfo.remove("LANG-VOCABLE"),
       audio: metaInfo.containsKey("AUDIO") ? metaInfo.remove("AUDIO") : null,
       date: metaInfo.containsKey("DATE") ? metaInfo.remove("DATE") : Utils.currentDate(),
       sort: metaInfo.containsKey("SORT") ? Utils.fillWithLeadingZeros(metaInfo.remove("SORT")) : null,
@@ -101,6 +114,6 @@ class Lecture {
 
   @override
   String toString() {
-    return 'Lecture{id: $id, lectureStatus: $lectureStatus, fileNameUpdate: $fileNameUpdate, fileName: $fileName, fileSize: $fileSize, vocableCount: $vocableCount, pack: $pack, lesson: $lesson, lang: $lang, audio: $audio, date: $date, sort: $sort}';
+    return 'Lecture{id: $id, lectureStatus: $lectureStatus, fileNameUpdate: $fileNameUpdate, fileName: $fileName, fileSize: $fileSize, vocableCount: $vocableCount, pack: $pack, lesson: $lesson, lessonSort: $lessonSort, langMedia: $langMedia, langVocable: $langVocable, audio: $audio, date: $date, sort: $sort}';
   }
 }

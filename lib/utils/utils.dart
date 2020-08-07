@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
@@ -10,6 +11,24 @@ import 'exceptions/lecture_exception.dart';
 
 /// Helper class with multiple
 class Utils {
+
+  static int customCompareTo(String a, String b) {
+    a = replaceForSort(a);
+    b = replaceForSort(b);
+    return a.compareTo(b);
+  }
+
+  static String replaceForSort(String text) {
+    text = text.replaceAll("ü", 'uzzzz');
+    text = text.replaceAll("Ü", 'uzzzz');
+    text = text.replaceAll("Ä", 'azzzz');
+    text = text.replaceAll("ä", 'azzzz');
+    text = text.replaceAll("ö", 'ozzzz');
+    text = text.replaceAll("Ö", 'ozzzz');
+    text = text.replaceAll("St.", 'Sanktzzzz');
+    text = text.toLowerCase();
+    return text;
+  }
 
   /// Validates whether the archive structure is valid in regards of the following conditions:
   /// 1) nested directories are not allowed
@@ -72,15 +91,24 @@ class Utils {
 
   /// extracts the file extension out of an file path
   static String extractFileExtension(String filename) {
+    if (!filename.contains('.')) return "";
+    int indexDot = filename.lastIndexOf('.');
+    int indexLastPath = filename.lastIndexOf('/');
+    if (indexLastPath > indexDot) return "";
     return filename.substring(filename.lastIndexOf('.') + 1);
   }
 
   /// extracts the date meta info
   /// returns an empty string if filename is invalid or date meta info is missing
-  static String extractDateFromLectureFilename(String lectureFilename) {
-    if (!lectureFilename.contains('.') || !lectureFilename.contains('DATE')) return "";
-    List<String> metaInfo = lectureFilename.split('.')[0].split('---');
-    return metaInfo.firstWhere((element) => element.contains("DATE")).split('--')[1];
+  static String extractDateMetaInfoFromFilename(String filename) {
+    if (!filename.contains('.') || !filename.contains('DATE')) return "";
+    List<String> filenameSplit = filename.split('.');
+    if (filenameSplit.length != 2) return "";
+    List<String> metaInfo = filenameSplit[0].split('---');
+    if (metaInfo.length == 0) return "";
+    List<String> dateSplit = metaInfo.firstWhere((element) => element.contains("DATE")).split('--');
+    if (dateSplit.length != 2) return "";
+    return dateSplit[1];
   }
 
   /// extracts the meta information out of an lecture filename
@@ -114,13 +142,20 @@ class Utils {
 
       switch(metaInfoType) {
         case "PACK":
-          result.putIfAbsent("PACK", () => _deAsciify(metaInfoValue));
+          result.putIfAbsent("PACK", () => deAsciify(metaInfoValue));
           break;
         case "LESSON":
-          result.putIfAbsent("LESSON", () => _deAsciify(metaInfoValue));
+          String lesson = deAsciify(metaInfoValue);
+          result.putIfAbsent("LESSON", () => lesson);
+          result.putIfAbsent("LESSON-SORT", () => replaceForSort(lesson));
           break;
         case "LANG":
-          result.putIfAbsent("LANG", () => metaInfoValue);
+          List<String> langs = metaInfoValue.split("-");
+          if (langs.length != 2) {
+            throw new LectureException("Malformed LANG meta info: $metaInfoValue");
+          }
+          result.putIfAbsent("LANG-MEDIA", () => langs[0]);
+          result.putIfAbsent("LANG-VOCABLE", () => langs[1]);
           break;
         case "AUDIO":
           result.putIfAbsent("AUDIO", () => metaInfoValue);
@@ -137,7 +172,7 @@ class Utils {
   }
 
   /// Returns a string where all asciified parts are replaced with the corresponding characters
-  static String _deAsciify(String asciifiedString) {
+  static String deAsciify(String asciifiedString, {List<CodingEntry> codingEntries}) {
     String text = asciifiedString;
 
     // 2020-04-19
@@ -216,6 +251,12 @@ class Utils {
     text = text.replaceAll("_VAR7", " (Variante 7)");
     text = text.replaceAll("_VAR8", " (Variante 8)");
     text = text.replaceAll("_VAR9", " (Variante 9)");
+
+    if (codingEntries != null) {
+      codingEntries.forEach((entry) {
+        text = text.replaceAll(entry.ascii, entry.char);
+      });
+    }
 
     return text;
   }
