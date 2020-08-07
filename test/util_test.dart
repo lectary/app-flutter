@@ -1,3 +1,4 @@
+import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/lecture_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
@@ -253,5 +254,41 @@ void main() async {
     expect(sort3, "00001");
     expect(sort4, "00001");
     expect(sort5, "00001");
+  });
+
+  test('Sorting Test', () {
+    String string1 = "Azzuri";
+    String string2 = "Ä";
+    String string3 = "St.Pölten";
+    String string4 = "Sankt";
+    String string5 = "Ozeanaut";
+    String string6 = "ö";
+    String string7 = "ss";
+    String string8 = "ß";
+
+    List<String> listToSort = List.of({
+      string6,
+      string5,
+      string1,
+      string8,
+      string4,
+      string3,
+      string7,
+      string2
+    });
+    List<String> sortedList = List.of({
+      string1,
+      string2,
+      string5,
+      string6,
+      string4,
+      string3,
+      string7,
+      string8,
+    });
+
+    listToSort.sort((a, b) => Utils.customCompareTo(a, b));
+
+    expect(listToSort.toString(), sortedList.toString());
   });
 }
