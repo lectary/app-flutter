@@ -26,6 +26,7 @@ class LectureViewModel with ChangeNotifier {
 
   // holds all lectures that are available (persisted and remote ones)
   List<LecturePackage> _availableLectures = List();
+  // holds all filtered lectures by reference from _availableLectures
   List<LecturePackage> _filteredLectures = List();
   List<LecturePackage> get availableLectures => _filteredLectures;
 
@@ -80,6 +81,7 @@ class LectureViewModel with ChangeNotifier {
       groupedLectureList.sort((p1, p2) => p1.title.toLowerCase().compareTo(p2.title.toLowerCase()));
 
       _availableLectures = groupedLectureList;
+      // assignment by reference
       _filteredLectures = _availableLectures;
 
       _availableLectureStatus = Response.completed();
@@ -337,7 +339,11 @@ class LectureViewModel with ChangeNotifier {
     return vocables;
   }
 
-
+  /// Filters the [List] of available [Lecture] by a [String]
+  /// Filters by pack and lesson of [Lecture]
+  /// Creates a temporary list with the filtered elements as references to the original list elements of
+  /// [_availableLectures] and assigns it by reference again to [_filteredLectures] and notifies listeners
+  /// Operations on the original list [_availableLectures] will therefore also affect the corresponding elements in [_filteredLectures]
   void filterLectureList(String filter) {
     List<Lecture> tempListLectures = List();
     _availableLectures.forEach((pack) => pack.children.forEach((lecture) {
