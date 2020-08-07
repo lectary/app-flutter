@@ -1,11 +1,10 @@
-import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/lecture_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:test/test.dart';
 
-void main() async {
+void main() {
   group('extracting meta info', () {
     test('Test1 - successful extraction', () {
       String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03.zip";
@@ -14,6 +13,7 @@ void main() async {
       Map<String, dynamic> expectedMap = Map.of({
         "PACK": "Testung",
         "LESSON": "Ölfarben",
+        "LESSON-SORT": "ozzzzlfarben",
         "LANG-MEDIA": "OGS",
         "LANG-VOCABLE": "DE",
         "DATE": "2020-03-03",
