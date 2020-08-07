@@ -23,6 +23,10 @@ class Vocable {
   @ColumnInfo(nullable: false)
   String vocable;
 
+  // used for sorting
+  @ColumnInfo(name: "vocable_sort", nullable: false)
+  String vocableSort;
+
   @ColumnInfo(name: "media_type", nullable: false)
   String mediaType;
 
@@ -36,12 +40,13 @@ class Vocable {
       {this.id,
       @required this.lectureId,
       @required this.vocable,
+      @required this.vocableSort,
       @required this.mediaType,
       @required this.media,
       @required this.vocableProgress});
 
   @override
   String toString() {
-    return 'Vocable{id: $id, lectureId: $lectureId, vocable: $vocable, mediaType: $mediaType, media: $media, vocableProgress: $vocableProgress}';
+    return 'Vocable{id: $id, lectureId: $lectureId, vocable: $vocable, vocableSort: $vocableSort, mediaType: $mediaType, media: $media, vocableProgress: $vocableProgress}';
   }
 }

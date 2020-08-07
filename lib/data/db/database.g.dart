@@ -86,9 +86,9 @@ class _$LectureDatabase extends LectureDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lang_media` TEXT NOT NULL, `lang_vocable` TEXT NOT NULL, `audio` TEXT, `date` TEXT NOT NULL, `sort` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lesson_sort` TEXT NOT NULL, `lang_media` TEXT NOT NULL, `lang_vocable` TEXT NOT NULL, `audio` TEXT, `date` TEXT NOT NULL, `sort` TEXT)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `vocables` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `vocables` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `vocable_sort` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `abstracts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `pack` TEXT NOT NULL, `text` TEXT NOT NULL, `date` TEXT NOT NULL)');
         await database.execute(
@@ -136,6 +136,7 @@ class _$LectureDao extends LectureDao {
                   'vocable_count': item.vocableCount,
                   'pack': item.pack,
                   'lesson': item.lesson,
+                  'lesson_sort': item.lessonSort,
                   'lang_media': item.langMedia,
                   'lang_vocable': item.langVocable,
                   'audio': item.audio,
@@ -154,6 +155,7 @@ class _$LectureDao extends LectureDao {
                   'vocable_count': item.vocableCount,
                   'pack': item.pack,
                   'lesson': item.lesson,
+                  'lesson_sort': item.lessonSort,
                   'lang_media': item.langMedia,
                   'lang_vocable': item.langVocable,
                   'audio': item.audio,
@@ -172,6 +174,7 @@ class _$LectureDao extends LectureDao {
                   'vocable_count': item.vocableCount,
                   'pack': item.pack,
                   'lesson': item.lesson,
+                  'lesson_sort': item.lessonSort,
                   'lang_media': item.langMedia,
                   'lang_vocable': item.langVocable,
                   'audio': item.audio,
@@ -193,6 +196,7 @@ class _$LectureDao extends LectureDao {
       vocableCount: row['vocable_count'] as int,
       pack: row['pack'] as String,
       lesson: row['lesson'] as String,
+      lessonSort: row['lesson_sort'] as String,
       langMedia: row['lang_media'] as String,
       langVocable: row['lang_vocable'] as String,
       audio: row['audio'] as String,
@@ -257,6 +261,7 @@ class _$VocableDao extends VocableDao {
                   'id': item.id,
                   'lecture_id': item.lectureId,
                   'vocable': item.vocable,
+                  'vocable_sort': item.vocableSort,
                   'media_type': item.mediaType,
                   'media': item.media,
                   'vocable_progress': item.vocableProgress
@@ -269,6 +274,7 @@ class _$VocableDao extends VocableDao {
                   'id': item.id,
                   'lecture_id': item.lectureId,
                   'vocable': item.vocable,
+                  'vocable_sort': item.vocableSort,
                   'media_type': item.mediaType,
                   'media': item.media,
                   'vocable_progress': item.vocableProgress
@@ -284,6 +290,7 @@ class _$VocableDao extends VocableDao {
       id: row['id'] as int,
       lectureId: row['lecture_id'] as int,
       vocable: row['vocable'] as String,
+      vocableSort: row['vocable_sort'] as String,
       mediaType: row['media_type'] as String,
       media: row['media'] as String,
       vocableProgress: row['vocable_progress'] as int);

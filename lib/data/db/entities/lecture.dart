@@ -36,6 +36,10 @@ class Lecture {
   @ColumnInfo(nullable: false)
   String lesson;
 
+  // used for sorting
+  @ColumnInfo(name: "lesson_sort", nullable: false)
+  String lessonSort;
+
   @ColumnInfo(name: "lang_media", nullable: false)
   String langMedia;
 
@@ -56,6 +60,7 @@ class Lecture {
       @required this.vocableCount,
       @required this.pack,
       @required this.lesson,
+      @required this.lessonSort,
       @required this.langMedia,
       @required this.langVocable,
       this.audio,
@@ -72,6 +77,7 @@ class Lecture {
     this.vocableCount = lecture.vocableCount;
     this.pack = lecture.pack;
     this.lesson = lecture.lesson;
+    this.lessonSort = lecture.lessonSort;
     this.langMedia = lecture.langMedia;
     this.langVocable = lecture.langVocable;
     this.audio = lecture.audio;
@@ -97,6 +103,7 @@ class Lecture {
       vocableCount: json['vocableCount'],
       pack: metaInfo.remove("PACK"),
       lesson: metaInfo.remove("LESSON"),
+      lessonSort: metaInfo.remove("LESSON-SORT"),
       langMedia: metaInfo.remove("LANG-MEDIA"),
       langVocable: metaInfo.remove("LANG-VOCABLE"),
       audio: metaInfo.containsKey("AUDIO") ? metaInfo.remove("AUDIO") : null,
@@ -107,6 +114,6 @@ class Lecture {
 
   @override
   String toString() {
-    return 'Lecture{id: $id, lectureStatus: $lectureStatus, fileNameUpdate: $fileNameUpdate, fileName: $fileName, fileSize: $fileSize, vocableCount: $vocableCount, pack: $pack, lesson: $lesson, langMedia: $langMedia, langVocable: $langVocable, audio: $audio, date: $date, sort: $sort}';
+    return 'Lecture{id: $id, lectureStatus: $lectureStatus, fileNameUpdate: $fileNameUpdate, fileName: $fileName, fileSize: $fileSize, vocableCount: $vocableCount, pack: $pack, lesson: $lesson, lessonSort: $lessonSort, langMedia: $langMedia, langVocable: $langVocable, audio: $audio, date: $date, sort: $sort}';
   }
 }
