@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
@@ -152,7 +153,7 @@ class Utils {
   }
 
   /// Returns a string where all asciified parts are replaced with the corresponding characters
-  static String deAsciify(String asciifiedString) {
+  static String deAsciify(String asciifiedString, {List<CodingEntry> codingEntries}) {
     String text = asciifiedString;
 
     // 2020-04-19
@@ -231,6 +232,12 @@ class Utils {
     text = text.replaceAll("_VAR7", " (Variante 7)");
     text = text.replaceAll("_VAR8", " (Variante 8)");
     text = text.replaceAll("_VAR9", " (Variante 9)");
+
+    if (codingEntries != null) {
+      codingEntries.forEach((entry) {
+        text = text.replaceAll(entry.ascii, entry.char);
+      });
+    }
 
     return text;
   }
