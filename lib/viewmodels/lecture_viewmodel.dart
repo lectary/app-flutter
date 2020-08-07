@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -14,6 +15,8 @@ import 'package:lectary/models/lecture_package.dart';
 
 import 'package:collection/collection.dart';
 import 'package:lectary/models/media_type_enum.dart';
+import 'package:lectary/utils/exceptions/abstract_exception.dart';
+import 'package:lectary/utils/exceptions/coding_exception.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,36 +26,27 @@ import 'package:path_provider/path_provider.dart';
 class LectureViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
 
-  // represents the loading status of fetching available lectures
+  /// represents the loading status of fetching available lectures via [Response]
   Response _availableLectureStatus = Response.completed();
   Response get availableLectureStatus => _availableLectureStatus;
 
-  // holds all lectures that are available (persisted and remote ones)
+  /// contains all [LecturePackage] that are available (persisted and remote ones)
   List<LecturePackage> _availableLectures = List();
   List<LecturePackage> get availableLectures => _availableLectures;
 
-  // holds all persisted lectures
+  /// contains all persisted [Vocable]
   List<Vocable> _currentVocables = List();
   List<Vocable> get currentVocables => _currentVocables;
 
+  /// contains all available (local and remote) [Coding]
+  List<Coding> _availableCodings = List();
+
+  /// Constructor with passed in [LectureRepository]
   LectureViewModel({@required lectureRepository})
       : _lectureRepository = lectureRepository;
 
 
-  Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
-    return _lectureRepository.watchAllLectures().map((list) => _groupLecturesByPack(list));
-  }
-
-  /// Groups a lecture list by the lecture pack
-  /// returns a [List] of [LecturePackage]
-  List<LecturePackage> _groupLecturesByPack(List<Lecture> lectureList) {
-    final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
-    List<LecturePackage> packList = List();
-    lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
-    return packList;
-  }
-
-  /// Loads all available lectures that can be used
+  /// Loads all available local and remote api-data, i.e. [Lecture], [Abstract], [Coding] that can be used
   /// Returns a [Future] and indicates its loading status via a separate variable [_availableLectureStatus] of type [Response]
   Future<void> loadLectures() async {
     _availableLectureStatus = Response.loading("fetching lectures from server");
@@ -113,6 +107,16 @@ class LectureViewModel with ChangeNotifier {
       availableAbstracts.forEach((abstract) {
         groupedLectureList.firstWhere((pack) => pack.title == abstract.pack).abstract = abstract.text;
       });
+      log("loaded abstracts");
+
+      List<Coding> localCodings = await _lectureRepository.findAllCodings();
+      List<Coding> remoteCodings = lectaryData.codings;
+
+      List<Coding> mergedCodings = mergeAndCheckCodings(localCodings, remoteCodings);
+      log("loaded codings: ${mergedCodings.toString()}");
+      mergedCodings.where((coding) => coding.codingStatus == CodingStatus.updateAvailable).toList().map((coding) => _updateCoding(coding));
+      mergedCodings.where((coding) => coding.codingStatus == CodingStatus.removed).toList().map((coding) => _deleteCoding(coding));
+      _availableCodings = mergedCodings;
 
       _availableLectures = groupedLectureList;
 
@@ -122,6 +126,25 @@ class LectureViewModel with ChangeNotifier {
       _availableLectureStatus = Response.error(e.toString());
       notifyListeners();
     }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  ////// LECTURES ////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /// Auto updating [Stream] by the floor database, containing all local persisted [Lecture]
+  /// grouped as [LecturePackage]
+  Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
+    return _lectureRepository.watchAllLectures().map((list) => _groupLecturesByPack(list));
+  }
+
+  /// Groups a lecture list by the lecture pack
+  /// returns a [List] of [LecturePackage]
+  List<LecturePackage> _groupLecturesByPack(List<Lecture> lectureList) {
+    final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
+    List<LecturePackage> packList = List();
+    lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
+    return packList;
   }
 
   /// Merges the remote and local lecture list
@@ -177,6 +200,23 @@ class LectureViewModel with ChangeNotifier {
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
 
+    // Check if additional coding files are needed
+    try {
+      List<String> langs = lecture.lang.split("-");
+      List<String> foreignCodings = langs.where((lang) => !lang.contains("DE") && !lang.contains("EN")).toList();
+      log("additional codings needed for languages: ${foreignCodings.toString()}");
+      await Future.forEach(foreignCodings, (lang) async {
+        Coding coding = _availableCodings.firstWhere((element) => element.lang == lang && element.codingStatus == CodingStatus.notPersisted, orElse: () => null);
+        if (coding != null) {
+          await _downloadAndSaveCoding(coding);
+        } else {
+          log("needed coding for lang: $lang is not available or already persisted!");
+        }
+      });
+    } catch(e) {
+      log("downloading coding failed: ${e.toString()}");
+    }
+
     try {
       File lectureFile = await _lectureRepository.downloadLecture(lecture); // download lecture and save zip temporary as file
       List<Vocable> vocables = await _extractAndSaveZipFile(lectureFile); // extract zip and save content
@@ -220,7 +260,7 @@ class LectureViewModel with ChangeNotifier {
     lecture.id = null;
     lecture.fileName = lecture.fileNameUpdate;
     lecture.fileNameUpdate = null;
-    String newDate = Utils.extractDateFromLectureFilename(lecture.fileName);
+    String newDate = Utils.extractDateMetaInfoFromFilename(lecture.fileName);
     lecture.date = newDate;
 
     try {
@@ -272,6 +312,24 @@ class LectureViewModel with ChangeNotifier {
     // update LectureStatus and notify listeners for updating UI
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
+
+    // Check if coding needs to be deleted
+    try {
+      List<String> langs = lecture.lang.split("-");
+      List<String> foreignCodings = langs.where((lang) => !lang.contains("DE") && !lang.contains("EN")).toList();
+      if (foreignCodings.isNotEmpty) {
+        for (String fc in foreignCodings) {
+          List<Lecture> lecturesThatNeedCoding = List();
+          _availableLectures.forEach((pack) =>
+              lecturesThatNeedCoding.addAll(pack.children.where((lec) => lec.id != lecture.id && lec.lectureStatus == LectureStatus.persisted && lec.lang.contains(fc))));
+          if (lecturesThatNeedCoding.isEmpty) {
+            _deleteCoding(_availableCodings.where((element) => element.lang == fc).first);
+          }
+        }
+      }
+    } catch(e) {
+      log("error when deleting coding: ${e.toString()}");
+    }
 
     try {
       // delete media files and database entries
@@ -367,14 +425,19 @@ class LectureViewModel with ChangeNotifier {
         vocableProgress: 0,
       ));
     }
-    vocables.forEach((voc) => log(voc.toString()));
+    //vocables.forEach((voc) => log(voc.toString()));
 
     return vocables;
   }
 
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  ////// ABSTRACTS ///////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
   /// Merges and validates the stati of two lists of [Abstract]
   /// returns a list of [Abstract] with the corresponding [AbstractStatus]
+  @visibleForTesting
   List<Abstract> mergeAndCheckAbstracts(List<Abstract> localList, List<Abstract> remoteList) {
     List<Abstract> resultList = List();
 
@@ -413,6 +476,9 @@ class LectureViewModel with ChangeNotifier {
     return resultList;
   }
 
+  /// Downloads and saves an [Abstract]
+  /// returns a [Future] with [Void]
+  /// throws [AbstractException] on error
   Future<void> _downloadAndSaveAbstract(Abstract abstract) async {
     File file = await _lectureRepository.downloadAbstract(abstract);
     String text = file.readAsStringSync();
@@ -421,19 +487,153 @@ class LectureViewModel with ChangeNotifier {
     await _lectureRepository.insertAbstract(abstract);
   }
 
+  /// Updates an [Abstract]
+  /// returns a [Future] with [Void]
+  /// throws [AbstractException] on error
   Future<void> _updateAbstract(Abstract abstract) async {
-    abstract.fileName = abstract.fileNameUpdate;
-    abstract.fileNameUpdate = null;
-    String newDate = Utils.extractDateFromLectureFilename(abstract.fileName);
-    abstract.date = newDate;
-    File file = await _lectureRepository.downloadAbstract(abstract);
-    String text = file.readAsStringSync();
-    text = text.replaceAll("\n", "");
-    abstract.text = text;
-    await _lectureRepository.updateAbstract(abstract);
+    try {
+      abstract.fileName = abstract.fileNameUpdate;
+      abstract.fileNameUpdate = null;
+      String newDate = Utils.extractDateMetaInfoFromFilename(abstract.fileName);
+      abstract.date = newDate;
+      File file = await _lectureRepository.downloadAbstract(abstract);
+      String text = file.readAsStringSync();
+      text = text.replaceAll("\n", "");
+      abstract.text = text;
+      await _lectureRepository.updateAbstract(abstract);
+    } catch(e) {
+      throw AbstractException("Updating abstract: $abstract failed: ${abstract.toString()}");
+    }
   }
 
+  /// Deletes an [Abstract]
+  /// returns a [Future] with [Void]
+  /// throws [AbstractException] on error
   Future<void> _deleteAbstract(Abstract abstract) async {
-    await _lectureRepository.deleteAbstract(abstract);
+    try {
+      await _lectureRepository.deleteAbstract(abstract);
+    } catch(e) {
+      throw AbstractException("Deleting abstract: $abstract failed: ${e.toString()}");
+    }
   }
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  ////// CODINGS /////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /// Merges and validates the stati of two lists of [Coding]
+  /// returns a list of [Coding] with the corresponding [CodingStatus]
+  @visibleForTesting
+  List<Coding> mergeAndCheckCodings(List<Coding> localList, List<Coding> remoteList) {
+    List<Coding> resultList = List();
+
+    // comparing local with remote list and adding all local persisted lectures to the result list and checking if updates are available (i.e. identical lecture with never date)
+    localList.forEach((local) {
+      remoteList.forEach((remote) {
+        if (local.lang == remote.lang) {
+          if (DateTime.parse(local.date).isBefore(DateTime.parse(remote.date))) {
+            local.codingStatus = CodingStatus.updateAvailable;
+            local.fileNameUpdate = remote.fileName;
+            resultList.add(local);
+          } else {
+            local.codingStatus = CodingStatus.persisted;
+            resultList.add(local);
+          }
+        }
+      });
+    });
+
+    // check if any local lectures are outdated (i.e. not available remotely anymore)
+    localList.forEach((e1) {
+      if (remoteList.any((e2) => e1.lang == e2.lang) == false) {
+        e1.codingStatus = CodingStatus.removed;
+        resultList.add(e1);
+      }
+    });
+
+    // add all remaining and not persisted lectures available remotely
+    remoteList.forEach((remote) {
+      if (localList.any((local) => remote.lang == local.lang) == false) {
+        remote.codingStatus = CodingStatus.notPersisted;
+        resultList.add(remote);
+      }
+    });
+
+    return resultList;
+  }
+
+  Future<void> _downloadAndSaveCoding(Coding coding) async {
+    log("downloading coding: $coding");
+    try{
+      File file = await _lectureRepository.downloadCoding(coding);
+      List<CodingEntry> codingEntries = await _extractCodingEntries(file);
+      int newId = await _lectureRepository.insertCoding(coding);
+      codingEntries.forEach((entry) => entry.codingId = newId);
+      await _lectureRepository.insertCodingEntries(codingEntries);
+      _availableCodings.firstWhere((element) => element.lang == coding.lang).id = newId;
+      _availableCodings.firstWhere((element) => element.lang == coding.lang).codingStatus = CodingStatus.persisted;
+    } catch(e) {
+      throw CodingException("Downloading coding: $coding failed: ${e.toString()}");
+    }
+  }
+
+  /// Updates a [Coding]
+  /// returns a [Future] with [Void]
+  /// throws [CodingException] on error
+  Future<void> _updateCoding(Coding coding) async {
+    log("updating coding: $coding");
+    try {
+      await _lectureRepository.deleteCodingEntriesByCodingId(coding.id);
+      coding.fileName = coding.fileNameUpdate;
+      coding.fileNameUpdate = null;
+      String newDate = Utils.extractDateMetaInfoFromFilename(coding.fileName);
+      coding.date = newDate;
+      File file = await _lectureRepository.downloadCoding(coding);
+      List<CodingEntry> newCodingEntries = _extractCodingEntries(file);
+      await _lectureRepository.updateCoding(coding);
+      newCodingEntries.forEach((entry) => entry.codingId = coding.id);
+      await _lectureRepository.insertCodingEntries(newCodingEntries);
+      _availableCodings.firstWhere((element) => element.lang == coding.lang).codingStatus = CodingStatus.persisted;
+    } catch(e) {
+      throw CodingException("Updating coding: $coding failed: ${e.toString()}");
+    }
+    // TODO update all vocables
+  }
+
+  /// Deletes a [Coding]
+  /// returns a [Future] with [Void]
+  /// throws [CodingException] on error
+  Future<void> _deleteCoding(Coding coding) async {
+    log("deleting coding: $coding");
+    try {
+      await _lectureRepository.deleteCodingEntriesByCodingId(coding.id);
+      await _lectureRepository.deleteCoding(coding);
+      _availableCodings.firstWhere((element) => element.lang == coding.lang).codingStatus = CodingStatus.notPersisted;
+    } catch(e) {
+      throw CodingException("Deleting coding: $coding failed: ${e.toString()}");
+    }
+  }
+
+  /// Extracts the content of a json [File] containing the list of [CodingEntry]
+  /// returns a [List] of [CodingEntry] on success or [Null] on error
+  List<CodingEntry> _extractCodingEntries(File jsonFile) {
+    // read and decode json file
+    String jsonString = jsonFile.readAsStringSync();
+    try {
+      List<dynamic> jsonData = json.decode(jsonString);
+
+      List<CodingEntry> codingEntries = jsonData
+          .map((entry) =>
+          CodingEntry(char: entry["char"], ascii: entry["asciify"]))
+          .where((element) => element != null)
+          .toList();
+
+      return codingEntries;
+    } catch(e) {
+      log("extracting coding entries from json failed: ${e.toString()}");
+      return null;
+    }
+  }
+
 }
