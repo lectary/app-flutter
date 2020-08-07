@@ -196,7 +196,12 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         Visibility(
           visible: focus.hasFocus ? true : false,
           child: FlatButton(
-            onPressed: () => FocusScope.of(context).unfocus(),
+            onPressed: () {
+              final FocusScopeNode currentScope = FocusScope.of(context);
+              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                FocusManager.instance.primaryFocus.unfocus();
+              }
+            },
             child: Text("Cancel", style: TextStyle(color: ColorsLectary.lightBlue),),
           ),
         )
