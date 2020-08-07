@@ -91,7 +91,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                 color: ColorsLectary.lightBlue,
                 onRefresh: () async {
                   Provider.of<LectureViewModel>(context, listen: false)
-                      .loadLectures();
+                      .loadLectaryData();
                 },
                 // refreshIndicator needs a scrollable child widget
                 // using stack with listView to retain center position of error text
