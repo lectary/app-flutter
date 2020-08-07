@@ -218,6 +218,14 @@ class _$LectureDao extends LectureDao {
   }
 
   @override
+  Future<List<Lecture>> findAllLecturesWithLang(String lang) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM lectures WHERE lang_vocable = ?',
+        arguments: <dynamic>[lang],
+        mapper: _lecturesMapper);
+  }
+
+  @override
   Future<void> deleteAllLectures() async {
     await _queryAdapter.queryNoReturn('DELETE FROM lectures');
   }

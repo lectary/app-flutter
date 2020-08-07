@@ -41,6 +41,10 @@ class LectureRepository {
     return _lectureDatabase.lectureDao.findAllLectures();
   }
 
+  Future<List<Lecture>> findAllLecturesWithLang(String lang) {
+    return _lectureDatabase.lectureDao.findAllLecturesWithLang(lang);
+  }
+
   Future<int> insertLecture(Lecture lecture) {
     return _lectureDatabase.lectureDao.insertLecture(lecture);
   }
