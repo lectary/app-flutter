@@ -72,15 +72,24 @@ class Utils {
 
   /// extracts the file extension out of an file path
   static String extractFileExtension(String filename) {
+    if (!filename.contains('.')) return "";
+    int indexDot = filename.lastIndexOf('.');
+    int indexLastPath = filename.lastIndexOf('/');
+    if (indexLastPath > indexDot) return "";
     return filename.substring(filename.lastIndexOf('.') + 1);
   }
 
   /// extracts the date meta info
   /// returns an empty string if filename is invalid or date meta info is missing
-  static String extractDateFromLectureFilename(String lectureFilename) {
-    if (!lectureFilename.contains('.') || !lectureFilename.contains('DATE')) return "";
-    List<String> metaInfo = lectureFilename.split('.')[0].split('---');
-    return metaInfo.firstWhere((element) => element.contains("DATE")).split('--')[1];
+  static String extractDateMetaInfoFromFilename(String filename) {
+    if (!filename.contains('.') || !filename.contains('DATE')) return "";
+    List<String> filenameSplit = filename.split('.');
+    if (filenameSplit.length != 2) return "";
+    List<String> metaInfo = filenameSplit[0].split('---');
+    if (metaInfo.length == 0) return "";
+    List<String> dateSplit = metaInfo.firstWhere((element) => element.contains("DATE")).split('--');
+    if (dateSplit.length != 2) return "";
+    return dateSplit[1];
   }
 
   /// extracts the meta information out of an lecture filename

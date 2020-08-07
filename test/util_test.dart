@@ -66,33 +66,70 @@ void main() async {
       String extractedDirName = Utils.extractDirName(filename);
       expect(extractedDirName, "");
     });
+
+    test('Test6 - successful on filenames with only one path separator', () {
+      String filename = "dir1/file.random";
+      String extractedDirName = Utils.extractDirName(filename);
+      expect(extractedDirName, "dir1");
+    });
   });
 
   group('Date extraction util | ', () {
     test('Test1 - successful extraction of date meta info', () {
       String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03.zip";
-      String newDate = Utils.extractDateFromLectureFilename(lectureFileName);
+      String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
       expect(newDate, "2020-03-03");
     });
 
     test('Test2 - return empty string on missing date meta info', () {
       String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE.zip";
-      String newDate = Utils.extractDateFromLectureFilename(lectureFileName);
+      String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
       expect(newDate, "");
     });
 
     test('Test3 - return empty string on invalid filename', () {
       String lectureFileName = "randomString";
-      String newDate = Utils.extractDateFromLectureFilename(lectureFileName);
+      String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
+      expect(newDate, "");
+    });
+
+    test('Test4 - return empty string on invalid filename but with file extension', () {
+      String lectureFileName = ".zip";
+      String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
+      expect(newDate, "");
+    });
+
+    test('Test5 - return empty string on invalid filename with malformed date info', () {
+      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE-2020-03-03.zip";
+      String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
+      expect(newDate, "");
+    });
+
+    test('Test6 - return empty string on invalid filename with malformed meta info separation', () {
+      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE--DATE--2020-03-03.zip";
+      String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
       expect(newDate, "");
     });
   });
 
+  group('ExtractingFileExtension', () {
+    test('Test1 - file extension should get extracted out of full filename', () {
+      String fileName = "test1.com/test2/file.mp4";
+      String extension = Utils.extractFileExtension(fileName);
+      expect(extension, "mp4");
+    });
 
-  test('file extension should get extracted out of full filename', () {
-    String fileName = "test1.com/test2/file.mp4";
-    String extension = Utils.extractFileExtension(fileName);
-    expect(extension, "mp4");
+    test('Test2 - should return empty string with a path without a file', () {
+      String fileName = "test1/test2/";
+      String extension = Utils.extractFileExtension(fileName);
+      expect(extension, "");
+    });
+
+    test('Test3 - should return empty string with a path without a file but with a dot', () {
+      String fileName = "test1.com/test2/";
+      String extension = Utils.extractFileExtension(fileName);
+      expect(extension, "");
+    });
   });
 
   group('MediaType conversion |', () {
