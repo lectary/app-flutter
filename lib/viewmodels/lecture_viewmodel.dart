@@ -130,7 +130,22 @@ class LectureViewModel with ChangeNotifier {
   /// Auto updating [Stream] by the floor database, containing all local persisted [Lecture]
   /// grouped as [LecturePackage]
   Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
-    return _lectureRepository.watchAllLectures().map((list) => _groupLecturesByPack(list));
+    return _lectureRepository.watchAllLectures().map((list) {
+      // Sorting
+      // 1) sort lessons with SORT-meta info by SORT
+      List<Lecture> lecturesWithSortMeta = list.where((lecture) => lecture.sort != null).toList();
+      lecturesWithSortMeta.sort((l1, l2) => l1.sort.compareTo(l2.sort));
+      // 2) sort lessons without SORT-meta info lexicographic by lesson
+      List<Lecture> lecturesWithoutSortMeta = list.where((lecture) => lecture.sort == null).toList();
+      lecturesWithoutSortMeta.sort((l1, l2) => Utils.customCompareTo(l1.lesson, l2.lesson));
+      // merge both sorted lists and group by lecture pack
+      List<Lecture> allLectures = lecturesWithSortMeta;
+      allLectures.addAll(lecturesWithoutSortMeta);
+      List<LecturePackage> groupedLectureList = _groupLecturesByPack(allLectures);
+      // 3) sort lexicographic by packs
+      groupedLectureList.sort((p1, p2) => Utils.customCompareTo(p1.title, p2.title));
+      return groupedLectureList;
+    });
   }
 
   /// Groups a lecture list by the lecture pack
