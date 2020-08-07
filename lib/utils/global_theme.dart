@@ -10,6 +10,7 @@ ThemeData lectaryThemeLight() {
 
     primaryColor: ColorsLectary.white,
     brightness: Brightness.light,
+    accentColor: ColorsLectary.lightBlue,
 
     primaryIconTheme: base.primaryIconTheme.copyWith(color: ColorsLectary.lightBlue),
     iconTheme: base.iconTheme.copyWith(color: ColorsLectary.lightBlue),
