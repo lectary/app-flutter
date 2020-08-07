@@ -89,24 +89,29 @@ class Utils {
   static Map<String, dynamic> extractMetaInformation(String fileName) {
     Map<String, dynamic> result = Map();
 
+    if (!fileName.contains(".zip"))
+      throw new LectureException("Missing .zip ending in filename: $fileName");
     String fileWithoutType = fileName.split(".zip")[0];
     if (!fileWithoutType.contains("PACK") || !fileWithoutType.contains("LESSON") || !fileWithoutType.contains("LANG")) {
       // TODO add mechanic to send error message to server for informing about wrong packages?
       log("File has not mandatory meta information! File: " + fileWithoutType);
-      //FIXME ignore temp due to miss-formatted test cases
-      /*throw new LectureException("File has not mandatory meta information!\n"
+      throw new LectureException("File has not mandatory meta information!\n"
           "Missing:"
           "${!fileWithoutType.contains("PACK") ? " PACK " : ""}"
           "${!fileWithoutType.contains("LESSON") ? " LESSON " : ""}"
           "${!fileWithoutType.contains("LANG") ? " LANG " : ""}"
-      );*/
+      );
 
     }
 
     List<String> metaInfos = fileWithoutType.split("---");
     for (String metaInfo in metaInfos) {
-      String metaInfoType = metaInfo.split("--")[0];
-      String metaInfoValue = metaInfo.split("--")[1];
+      List<String> split = metaInfo.split("--");
+      if (split.length != 2) {
+        throw new LectureException("Malformed meta info: $metaInfo of lecture $fileName");
+      }
+      String metaInfoType = split[0];
+      String metaInfoValue = split[1];
 
       switch(metaInfoType) {
         case "PACK":
