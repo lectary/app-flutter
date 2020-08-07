@@ -45,21 +45,52 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         return Center(child: CircularProgressIndicator());
 
       case Status.completed:
+        List<Widget> bodyWidgets = List();
+        if (lectureViewModel.availableLectureOffline) {
+          bodyWidgets.add(Container(
+            color: ColorsLectary.red,
+            padding: EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("No internet connection!"),
+                Text("OFFLINE MODUS", style: TextStyle(fontSize: 20),),
+              ],
+            ),
+          ));
+        }
+        bodyWidgets.addAll({
+          Expanded(
+            child: _generateListView(lectureViewModel.availableLectures),
+          ),
+          Divider(height: 1, thickness: 1),
+          Container(
+            height: 60,
+            child: _buildSearchBar(),
+          ),
+        });
         return lectureViewModel.availableLectures.isEmpty
-            ? Container()
+            ? RefreshIndicator(
+                color: ColorsLectary.lightBlue,
+                onRefresh: () async {
+                  Provider.of<LectureViewModel>(context, listen: false)
+                      .loadLectures();
+                },
+                // refreshIndicator needs a scrollable child widget
+                // using stack with listView to retain center position of error text
+                // TODO review and maybe find better solution
+                child: Stack(
+                  children: <Widget>[
+                    ListView(),
+                    Center(
+                      child: Text("Keine Lektionen verfügbar."),
+                    ),
+                  ],
+                ),
+              )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                    child:
-                        _generateListView(lectureViewModel.availableLectures),
-                  ),
-                  Divider(height: 1, thickness: 1),
-                  Container(
-                    height: 60,
-                    child: _buildSearchBar(),
-                  ),
-                ],
+                children: bodyWidgets,
               );
 
       case Status.error:
@@ -75,7 +106,8 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
           child: Stack(
             children: <Widget>[
               ListView(),
-              Center(child: Text(lectureViewModel.availableLectureStatus.message)),
+              Center(
+                  child: Text(lectureViewModel.availableLectureStatus.message)),
             ],
           ),
         );
