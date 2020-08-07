@@ -86,7 +86,7 @@ class _$LectureDatabase extends LectureDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lang` TEXT NOT NULL, `audio` TEXT, `date` TEXT NOT NULL, `sort` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lang_media` TEXT NOT NULL, `lang_vocable` TEXT NOT NULL, `audio` TEXT, `date` TEXT NOT NULL, `sort` TEXT)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `vocables` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
         await database.execute(
@@ -136,7 +136,8 @@ class _$LectureDao extends LectureDao {
                   'vocable_count': item.vocableCount,
                   'pack': item.pack,
                   'lesson': item.lesson,
-                  'lang': item.lang,
+                  'lang_media': item.langMedia,
+                  'lang_vocable': item.langVocable,
                   'audio': item.audio,
                   'date': item.date,
                   'sort': item.sort
@@ -153,7 +154,8 @@ class _$LectureDao extends LectureDao {
                   'vocable_count': item.vocableCount,
                   'pack': item.pack,
                   'lesson': item.lesson,
-                  'lang': item.lang,
+                  'lang_media': item.langMedia,
+                  'lang_vocable': item.langVocable,
                   'audio': item.audio,
                   'date': item.date,
                   'sort': item.sort
@@ -170,7 +172,8 @@ class _$LectureDao extends LectureDao {
                   'vocable_count': item.vocableCount,
                   'pack': item.pack,
                   'lesson': item.lesson,
-                  'lang': item.lang,
+                  'lang_media': item.langMedia,
+                  'lang_vocable': item.langVocable,
                   'audio': item.audio,
                   'date': item.date,
                   'sort': item.sort
@@ -190,7 +193,8 @@ class _$LectureDao extends LectureDao {
       vocableCount: row['vocable_count'] as int,
       pack: row['pack'] as String,
       lesson: row['lesson'] as String,
-      lang: row['lang'] as String,
+      langMedia: row['lang_media'] as String,
+      langVocable: row['lang_vocable'] as String,
       audio: row['audio'] as String,
       date: row['date'] as String,
       sort: row['sort'] as String);
