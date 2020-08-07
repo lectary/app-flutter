@@ -12,6 +12,24 @@ import 'exceptions/lecture_exception.dart';
 /// Helper class with multiple
 class Utils {
 
+  static int customCompareTo(String a, String b) {
+    a = replaceForSort(a);
+    b = replaceForSort(b);
+    return a.compareTo(b);
+  }
+
+  static String replaceForSort(String text) {
+    text = text.replaceAll("ü", 'uzzzz');
+    text = text.replaceAll("Ü", 'uzzzz');
+    text = text.replaceAll("Ä", 'azzzz');
+    text = text.replaceAll("ä", 'azzzz');
+    text = text.replaceAll("ö", 'ozzzz');
+    text = text.replaceAll("Ö", 'ozzzz');
+    text = text.replaceAll("St.", 'Sanktzzzz');
+    text = text.toLowerCase();
+    return text;
+  }
+
   /// Validates whether the archive structure is valid in regards of the following conditions:
   /// 1) nested directories are not allowed
   /// 2) the name of the inner directory must match the outer archive name
@@ -128,7 +146,9 @@ class Utils {
           result.putIfAbsent("PACK", () => deAsciify(metaInfoValue));
           break;
         case "LESSON":
-          result.putIfAbsent("LESSON", () => deAsciify(metaInfoValue));
+          String lesson = deAsciify(metaInfoValue);
+          result.putIfAbsent("LESSON", () => lesson);
+          result.putIfAbsent("LESSON-SORT", () => replaceForSort(lesson));
           break;
         case "LANG":
           List<String> langs = metaInfoValue.split("-");
