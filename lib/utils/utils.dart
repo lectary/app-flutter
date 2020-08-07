@@ -130,7 +130,12 @@ class Utils {
           result.putIfAbsent("LESSON", () => deAsciify(metaInfoValue));
           break;
         case "LANG":
-          result.putIfAbsent("LANG", () => metaInfoValue);
+          List<String> langs = metaInfoValue.split("-");
+          if (langs.length != 2) {
+            throw new LectureException("Malformed LANG meta info: $metaInfoValue");
+          }
+          result.putIfAbsent("LANG-MEDIA", () => langs[0]);
+          result.putIfAbsent("LANG-VOCABLE", () => langs[1]);
           break;
         case "AUDIO":
           result.putIfAbsent("AUDIO", () => metaInfoValue);
