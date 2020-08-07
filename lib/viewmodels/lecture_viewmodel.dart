@@ -567,7 +567,7 @@ class LectureViewModel with ChangeNotifier {
     log("downloading coding: $coding");
     try{
       File file = await _lectureRepository.downloadCoding(coding);
-      List<CodingEntry> codingEntries = await _extractCodingEntries(file);
+      List<CodingEntry> codingEntries = await extractCodingEntries(file);
       int newId = await _lectureRepository.insertCoding(coding);
       codingEntries.forEach((entry) => entry.codingId = newId);
       await _lectureRepository.insertCodingEntries(codingEntries);
@@ -590,7 +590,7 @@ class LectureViewModel with ChangeNotifier {
       String newDate = Utils.extractDateMetaInfoFromFilename(coding.fileName);
       coding.date = newDate;
       File file = await _lectureRepository.downloadCoding(coding);
-      List<CodingEntry> newCodingEntries = _extractCodingEntries(file);
+      List<CodingEntry> newCodingEntries = extractCodingEntries(file);
       await _lectureRepository.updateCoding(coding);
       newCodingEntries.forEach((entry) => entry.codingId = coding.id);
       await _lectureRepository.insertCodingEntries(newCodingEntries);
@@ -617,7 +617,8 @@ class LectureViewModel with ChangeNotifier {
 
   /// Extracts the content of a json [File] containing the list of [CodingEntry]
   /// returns a [List] of [CodingEntry] on success or [Null] on error
-  List<CodingEntry> _extractCodingEntries(File jsonFile) {
+  @visibleForTesting
+  List<CodingEntry> extractCodingEntries(File jsonFile) {
     // read and decode json file
     String jsonString = jsonFile.readAsStringSync();
     try {
