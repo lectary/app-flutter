@@ -84,6 +84,10 @@ class LectureRepository {
     return _lectureDatabase.vocableDao.updateVocable(vocable);
   }
 
+  Future<void >updateVocables(List<Vocable> vocables) {
+    return _lectureDatabase.vocableDao.updateVocables(vocables);
+  }
+
   Future<void> deleteVocablesByLectureId(int lectureId) {
     return _lectureDatabase.vocableDao.deleteVocablesByLectureId(lectureId);
   }

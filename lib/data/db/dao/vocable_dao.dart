@@ -19,6 +19,9 @@ abstract class VocableDao {
   @update
   Future<void> updateVocable(Vocable vocable);
 
+  @update
+  Future<void> updateVocables(List<Vocable> vocables);
+
   @Query("DELETE FROM vocables WHERE lecture_id = :lectureId")
   Future<void> deleteVocablesByLectureId(int lectureId);
 

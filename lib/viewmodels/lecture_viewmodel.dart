@@ -578,7 +578,7 @@ class LectureViewModel with ChangeNotifier {
     await Future.forEach(mergedCodings, (coding) async {
       switch(coding.codingStatus) {
         case CodingStatus.updateAvailable:
-          await _updateCoding(coding);
+          await updateCoding(coding);
           break;
         case CodingStatus.removed:
           await _deleteCoding(coding);
@@ -652,31 +652,46 @@ class LectureViewModel with ChangeNotifier {
   /// Updates a [Coding]
   /// Returns a [Future] of type [Void]
   /// Throws [CodingException] on error
-  Future<void> _updateCoding(Coding coding) async {
+  @visibleForTesting
+  Future<void> updateCoding(Coding coding) async {
     log("updating coding: $coding");
     List<CodingEntry> newCodingEntries;
     try {
       await _lectureRepository.deleteCodingEntriesByCodingId(coding.id);
+      // update coding infos
       coding.fileName = coding.fileNameUpdate;
       coding.fileNameUpdate = null;
       String newDate = Utils.extractDateMetaInfoFromFilename(coding.fileName);
       coding.date = newDate;
+      // download new coding and extract content
       File file = await _lectureRepository.downloadCoding(coding);
       newCodingEntries = extractCodingEntries(file);
       await _lectureRepository.updateCoding(coding);
       newCodingEntries.forEach((entry) => entry.codingId = coding.id);
       await _lectureRepository.insertCodingEntries(newCodingEntries);
-      _availableCodings.firstWhere((element) => element.lang == coding.lang).codingStatus = CodingStatus.persisted;
+      // set coding status in corresponding coding
+      Coding cod = _availableCodings.firstWhere((element) => element.lang == coding.lang, orElse: () => null);
+      if (cod != null) {
+        cod.codingStatus = CodingStatus.persisted;
+      }
     } catch(e) {
       log("Updating coding: $coding failed: ${e.toString()}");
     }
-    // TODO tests needed
+
+    // update all vocables
     try {
+      // query all vocables from lectures that use the coding language
       List<Lecture> lecturesWithCoding = await _lectureRepository.findAllLecturesWithLang(coding.lang);
-      List<Vocable> vocablesToUpdate = lecturesWithCoding.map((lecture) async {
-        await _lectureRepository.findVocablesByLectureId(lecture.id);
-      }).cast<Vocable>().toList();
+      List<List<Vocable>> results = await Future.wait(
+          lecturesWithCoding.map((lecture) async =>
+            await _lectureRepository.findVocablesByLectureId(lecture.id)
+          )
+      );
+      // deAsciify all found vocables and update db
+      List<Vocable> vocablesToUpdate = List();
+      results.forEach((element) => vocablesToUpdate.addAll(element));
       vocablesToUpdate.forEach((voc) => voc.vocable = Utils.deAsciify(voc.vocable, codingEntries: newCodingEntries));
+      await _lectureRepository.updateVocables(vocablesToUpdate);
     } catch(e) {
       log("Failed to update vocables with coding ${coding.toString()}");
     }

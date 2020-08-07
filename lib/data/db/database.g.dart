@@ -336,6 +336,11 @@ class _$VocableDao extends VocableDao {
   Future<void> updateVocable(Vocable vocable) async {
     await _vocableUpdateAdapter.update(vocable, OnConflictStrategy.abort);
   }
+
+  @override
+  Future<void> updateVocables(List<Vocable> vocables) async {
+    await _vocableUpdateAdapter.updateList(vocables, OnConflictStrategy.abort);
+  }
 }
 
 class _$AbstractDao extends AbstractDao {
