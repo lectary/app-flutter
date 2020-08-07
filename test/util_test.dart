@@ -1,9 +1,86 @@
 import 'package:lectary/models/media_type_enum.dart';
+import 'package:lectary/utils/exceptions/lecture_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:test/test.dart';
 
 void main() async {
+  group('extracting meta info', () {
+    test('Test1 - successful extraction', () {
+      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03.zip";
+      Map<String, dynamic> metaInfos = Utils.extractMetaInformation(zipFile);
+
+      Map<String, dynamic> expectedMap = Map.of({
+        "PACK": "Testung",
+        "LESSON": "Ölfarben",
+        "LANG-MEDIA": "OGS",
+        "LANG-VOCABLE": "DE",
+        "DATE": "2020-03-03",
+      });
+      expect(metaInfos, expectedMap);
+    });
+
+    test('Test2 - missing zip ending', () {
+      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03";
+      try {
+        Utils.extractMetaInformation(zipFile);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<LectureException>());
+        expect(e.toString().contains("Missing .zip"), isTrue);
+      }
+    });
+
+    test('Test3 - missing mandatory meta info', () {
+      String zipFile1 = "LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03.zip";
+      try {
+        Utils.extractMetaInformation(zipFile1);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<LectureException>());
+        expect(e.toString().contains("Missing: PACK"), isTrue);
+      }
+      String zipFile2 = "PACK--Testung---LANG--OGS-DE---DATE--2020-03-03.zip";
+      try {
+        Utils.extractMetaInformation(zipFile2);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<LectureException>());
+        expect(e.toString().contains("Missing: LESSON"), isTrue);
+      }
+      String zipFile3 = "PACK--Testung---LESSON--_Oelfarben---DATE--2020-03-03.zip";
+      try {
+        Utils.extractMetaInformation(zipFile3);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<LectureException>());
+        expect(e.toString().contains("Missing: LANG"), isTrue);
+      }
+    });
+
+    test('Test4 - malformed lang with only one language', () {
+      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS---DATE--2020-03-03.zip";
+      try {
+        Utils.extractMetaInformation(zipFile);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<LectureException>());
+        expect(e.toString().contains("Malformed LANG meta info"), isTrue);
+      }
+    });
+
+    test('Test5 - malformed lang with invalid separator', () {
+      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS+DE---DATE--2020-03-03.zip";
+      try {
+        Utils.extractMetaInformation(zipFile);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<LectureException>());
+        expect(e.toString(), "Malformed LANG meta info: OGS+DE");
+      }
+    });
+  });
+
   group('extracting filename of filepath |', () {
     test('Test1 - successful extraction with slash as path separator', () {
       String zipFile = "test1.com/test2/fileName.zip";
