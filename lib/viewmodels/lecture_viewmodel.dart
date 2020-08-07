@@ -483,11 +483,15 @@ class LectureViewModel with ChangeNotifier {
   /// Returns a [Future] of type [Void]
   /// Throws [AbstractException] on error
   Future<void> _downloadAndSaveAbstract(Abstract abstract) async {
-    File file = await _lectureRepository.downloadAbstract(abstract);
-    String text = file.readAsStringSync();
-    text = text.replaceAll("\n", "");
-    abstract.text = text;
-    await _lectureRepository.insertAbstract(abstract);
+    try {
+      File file = await _lectureRepository.downloadAbstract(abstract);
+      String text = file.readAsStringSync();
+      text = text.replaceAll("\n", "");
+      abstract.text = text;
+      await _lectureRepository.insertAbstract(abstract);
+    } catch(e) {
+      log("Downloading abstract: $abstract failed: ${e.toString()}");
+    }
   }
 
   /// Updates an [Abstract]
@@ -505,7 +509,7 @@ class LectureViewModel with ChangeNotifier {
       abstract.text = text;
       await _lectureRepository.updateAbstract(abstract);
     } catch(e) {
-      throw AbstractException("Updating abstract: $abstract failed: ${abstract.toString()}");
+      log("Updating abstract: $abstract failed: ${abstract.toString()}");
     }
   }
 
@@ -516,7 +520,7 @@ class LectureViewModel with ChangeNotifier {
     try {
       await _lectureRepository.deleteAbstract(abstract);
     } catch(e) {
-      throw AbstractException("Deleting abstract: $abstract failed: ${e.toString()}");
+      log("Deleting abstract: $abstract failed: ${e.toString()}");
     }
   }
 
@@ -591,14 +595,14 @@ class LectureViewModel with ChangeNotifier {
     log("downloading coding: $coding");
     try{
       File file = await _lectureRepository.downloadCoding(coding);
-      List<CodingEntry> codingEntries = await extractCodingEntries(file);
+      List<CodingEntry> codingEntries = extractCodingEntries(file);
       int newId = await _lectureRepository.insertCoding(coding);
       codingEntries.forEach((entry) => entry.codingId = newId);
       await _lectureRepository.insertCodingEntries(codingEntries);
       _availableCodings.firstWhere((element) => element.lang == coding.lang).id = newId;
       _availableCodings.firstWhere((element) => element.lang == coding.lang).codingStatus = CodingStatus.persisted;
     } catch(e) {
-      throw CodingException("Downloading coding: $coding failed: ${e.toString()}");
+      log("Downloading coding: $coding failed: ${e.toString()}");
     }
   }
 
@@ -620,7 +624,7 @@ class LectureViewModel with ChangeNotifier {
       await _lectureRepository.insertCodingEntries(newCodingEntries);
       _availableCodings.firstWhere((element) => element.lang == coding.lang).codingStatus = CodingStatus.persisted;
     } catch(e) {
-      throw CodingException("Updating coding: $coding failed: ${e.toString()}");
+      log("Updating coding: $coding failed: ${e.toString()}");
     }
     // TODO update all vocables
   }
@@ -635,7 +639,7 @@ class LectureViewModel with ChangeNotifier {
       await _lectureRepository.deleteCoding(coding);
       _availableCodings.firstWhere((element) => element.lang == coding.lang).codingStatus = CodingStatus.notPersisted;
     } catch(e) {
-      throw CodingException("Deleting coding: $coding failed: ${e.toString()}");
+      log("Deleting coding: $coding failed: ${e.toString()}");
     }
   }
 
@@ -656,8 +660,7 @@ class LectureViewModel with ChangeNotifier {
 
       return codingEntries;
     } catch(e) {
-      log("extracting coding entries from json failed: ${e.toString()}");
-      return null;
+     throw CodingException("extracting coding entries from json failed: ${e.toString()}");
     }
   }
 
