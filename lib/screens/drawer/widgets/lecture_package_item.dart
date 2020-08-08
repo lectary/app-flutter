@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/lecture_package.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class LecturePackageItem extends StatelessWidget {
   const LecturePackageItem(this.context, this.entry);
@@ -15,7 +17,14 @@ class LecturePackageItem extends StatelessWidget {
     childs.add(Container(
         padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
         alignment: Alignment.centerLeft,
-        child: Text(pack.title, style: Theme.of(context).textTheme.caption))
+        child: ListTile(
+          title: Text(pack.title, style: Theme.of(context).textTheme.caption),
+          onTap: () {
+            Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfPackage(pack);
+            Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+          },
+        ))
     );
     pack.children.map(_buildChildren).forEach((element) {childs.addAll(element);});
 
@@ -31,10 +40,10 @@ class LecturePackageItem extends StatelessWidget {
       Divider(height: 1,thickness: 1),
       ListTile(
         title: Text(lecture.lesson),
-        onTap: () => {
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text("Tapped!"),
-          ))
+        onTap: () {
+          Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfLecture(lecture);
+          Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
+          Navigator.popUntil(context, ModalRoute.withName('/'));
         },
       ),
     ];

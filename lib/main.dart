@@ -7,6 +7,7 @@ import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +40,11 @@ class LectaryApp extends StatelessWidget {
         ChangeNotifierProxyProvider<LectureRepository, LectureViewModel>(
           update: (context, lectureRepository, lectureViewModel) =>
               LectureViewModel(lectureRepository: lectureRepository),
+          create: (BuildContext context) { return null; },
+        ),
+        ChangeNotifierProxyProvider<LectureRepository, CarouselViewModel>(
+          update: (context, lectureRepository, carouselViewModel) =>
+              CarouselViewModel(lectureRepository: lectureRepository),
           create: (BuildContext context) { return null; },
         )
       ],

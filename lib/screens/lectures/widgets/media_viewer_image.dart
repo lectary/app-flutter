@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -88,7 +89,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
             aspectRatio: 4 / 3,
             child: showPicture
                 ? Stack(children: [
-                    Image.asset(widget.imagePath),
+                    Image.file(File(widget.imagePath)),
                     ClipRect(
                       child: BackdropFilter(
                         filter: ImageFilter.blur(

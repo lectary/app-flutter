@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
@@ -31,7 +33,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   @override
   void initState() {
     // load video asset and retrieve controller
-    _controller = VideoPlayerController.asset(widget.videoPath);
+    _controller = VideoPlayerController.file(File(widget.videoPath));
     // init controller content and show first frame via setState()
     _initializeVideoPlayerFuture = _controller.initialize().then((_) => setState((){}));
 

@@ -9,16 +9,6 @@ import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-final mediaList = List<MediaItem>.generate(50, (index) => index % 3 == 0
-    ? VideoItem(text: "Media #$index - Vocable 1", media: 'assets/videos/mock_videos/video1.mp4')
-    : (index % 3 == 1
-    ? PictureItem(text: "Media #$index - Mushroom", media: 'assets/pictures/mock_pictures/mushroom.jpg')
-    : TextItem(text: "Media #$index - Vocable", media: "Vocabulario"))
-);
-
-
-final List<String> videoList = List.generate(1000, (index) => 'assets/videos/mock_videos/video${(index%3)+1}.mp4');
-
 
 class LectureScreen extends StatefulWidget {
   @override
@@ -37,6 +27,7 @@ class _LectureScreenState extends State<LectureScreen> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
+    final model = Provider.of<CarouselViewModel>(context);
 
     /// main widget tree - carousel, media-control-area, learning-area
     return Column(
@@ -58,11 +49,11 @@ class _LectureScreenState extends State<LectureScreen> {
                       Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = index;
                     }
                 ),
-                itemCount: mediaList.length,
+                itemCount: model.currentMediaItems.length,
                 itemBuilder: (BuildContext context, int itemIndex) =>
                     /// media viewer - types: video, image, text
                     MediaViewer(
-                        mediaItem: mediaList[itemIndex],
+                        mediaItem: model.currentMediaItems[itemIndex],
                         mediaIndex: itemIndex,
                         hideVocableModeOn: hideVocableModeOn,
                         slowModeOn: slowModeOn,
@@ -134,7 +125,7 @@ class _LectureScreenState extends State<LectureScreen> {
               ColorsLectary.violet, Icons.casino,
               70,
               func: () => setState(() {
-                int rndPage = random.nextInt(videoList.length);
+                int rndPage = random.nextInt(Provider.of<CarouselViewModel>(context).currentMediaItems.length);
                 Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = rndPage;
                 carouselController.jumpToPage(rndPage);
               })

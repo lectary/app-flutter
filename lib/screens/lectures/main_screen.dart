@@ -15,9 +15,6 @@ class LectureMainScreen extends StatefulWidget {
 
 class _LectureMainScreenState extends State<LectureMainScreen> {
 
-  // ToDo connect with API
-  bool lecturesAvailable = false;
-
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -25,25 +22,14 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context).appTitle),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.change_history),
-                onPressed: () {
-                  setState(() {
-                    lecturesAvailable = lecturesAvailable ? false : true;
-                  });
-                }
-            ),
-          ],
         ),
         drawer: Theme(
           data: lectaryThemeLight(),
           child: MainDrawer(),
         ),
-        body: ChangeNotifierProvider(
-            create: (context) => CarouselViewModel(),
-            child: lecturesAvailable ? LectureScreen() : LectureNotAvailableScreen()
-        ),
+        body: Provider.of<CarouselViewModel>(context).lecturesAvailable
+            ? LectureScreen()
+            : LectureNotAvailableScreen(),
       ),
     );
   }

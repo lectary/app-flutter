@@ -3,9 +3,12 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:lectary/data/db/entities/coding.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
+import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
+import 'package:collection/collection.dart';
 
 import 'exceptions/lecture_exception.dart';
 
@@ -28,6 +31,15 @@ class Utils {
     text = text.replaceAll("St.", 'Sanktzzzz');
     text = text.toLowerCase();
     return text;
+  }
+
+  /// Groups a lecture list by the lecture pack
+  /// Returns a [List] of [LecturePackage]
+  static List<LecturePackage> groupLecturesByPack(List<Lecture> lectureList) {
+    final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
+    List<LecturePackage> packList = List();
+    lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
+    return packList;
   }
 
   /// Validates whether the archive structure is valid in regards of the following conditions:

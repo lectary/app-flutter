@@ -13,7 +13,6 @@ import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/models/lecture_package.dart';
 
-import 'package:collection/collection.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/abstract_exception.dart';
 import 'package:lectary/utils/exceptions/coding_exception.dart';
@@ -83,7 +82,7 @@ class LectureViewModel with ChangeNotifier {
       // merge both sorted lists and group by lecture pack
       List<Lecture> allLectures = lecturesWithSortMeta;
       allLectures.addAll(lecturesWithoutSortMeta);
-      List<LecturePackage> groupedLectureList = _groupLecturesByPack(allLectures);
+      List<LecturePackage> groupedLectureList = Utils.groupLecturesByPack(allLectures);
       // 3) sort lexicographic by packs
       groupedLectureList.sort((p1, p2) => Utils.customCompareTo(p1.title, p2.title));
 
@@ -126,36 +125,6 @@ class LectureViewModel with ChangeNotifier {
   ////////////////////////////////////////////////////////////////////////////////////////////////
   ////// LECTURES ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////////////
-
-  /// Auto updating [Stream] by the floor database, containing all local persisted [Lecture]
-  /// grouped as [LecturePackage]
-  Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
-    return _lectureRepository.watchAllLectures().map((list) {
-      // Sorting
-      // 1) sort lessons with SORT-meta info by SORT
-      List<Lecture> lecturesWithSortMeta = list.where((lecture) => lecture.sort != null).toList();
-      lecturesWithSortMeta.sort((l1, l2) => l1.sort.compareTo(l2.sort));
-      // 2) sort lessons without SORT-meta info lexicographic by lesson
-      List<Lecture> lecturesWithoutSortMeta = list.where((lecture) => lecture.sort == null).toList();
-      lecturesWithoutSortMeta.sort((l1, l2) => Utils.customCompareTo(l1.lesson, l2.lesson));
-      // merge both sorted lists and group by lecture pack
-      List<Lecture> allLectures = lecturesWithSortMeta;
-      allLectures.addAll(lecturesWithoutSortMeta);
-      List<LecturePackage> groupedLectureList = _groupLecturesByPack(allLectures);
-      // 3) sort lexicographic by packs
-      groupedLectureList.sort((p1, p2) => Utils.customCompareTo(p1.title, p2.title));
-      return groupedLectureList;
-    });
-  }
-
-  /// Groups a lecture list by the lecture pack
-  /// Returns a [List] of [LecturePackage]
-  List<LecturePackage> _groupLecturesByPack(List<Lecture> lectureList) {
-    final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
-    List<LecturePackage> packList = List();
-    lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
-    return packList;
-  }
 
   /// Merges the remote and local lecture list
   /// Returns a list of [Lecture] containing all locally persisted and remote available lectures with the corresponding [LectureStatus]
@@ -423,7 +392,7 @@ class LectureViewModel with ChangeNotifier {
         case MediaType.JPG:
         case MediaType.MP4:
         case MediaType.PNG:
-          content = file.name;
+          content = fileName;
           break;
         case MediaType.TXT:
           content = utf8.decode(file.content);
@@ -454,7 +423,7 @@ class LectureViewModel with ChangeNotifier {
             tempListLectures.add(lecture);
           }
         }));
-    List<LecturePackage> tempListPacks = _groupLecturesByPack(tempListLectures);
+    List<LecturePackage> tempListPacks = Utils.groupLecturesByPack(tempListLectures);
     _filteredLectures = tempListPacks;
     notifyListeners();
   }
