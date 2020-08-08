@@ -3,29 +3,11 @@ import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:lectary/models/media_item.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
-
-abstract class MediaItem {
-  final String text;
-  final String media;
-
-  MediaItem(this.text, this.media);
-}
-
-class VideoItem extends MediaItem {
-  VideoItem({String text, String media}) : super(text, media);
-}
-
-class PictureItem extends MediaItem {
-  PictureItem({String text, String media}) : super(text, media);
-
-}
-
-class TextItem extends MediaItem {
-  TextItem({String text, String media}) : super(text, media);
-}
 
 final mediaList = List<MediaItem>.generate(50, (index) => index % 3 == 0
     ? VideoItem(text: "Media #$index - Vocable 1", media: 'assets/videos/mock_videos/video1.mp4')
@@ -36,18 +18,6 @@ final mediaList = List<MediaItem>.generate(50, (index) => index % 3 == 0
 
 
 final List<String> videoList = List.generate(1000, (index) => 'assets/videos/mock_videos/video${(index%3)+1}.mp4');
-
-/// helper class to keep track of current item
-class CarouselStateProvider with ChangeNotifier {
-  int _currentItemIndex = 0;
-
-  int get currentItemIndex => _currentItemIndex;
-
-  set currentItemIndex(int currentItemIndex) {
-    _currentItemIndex = currentItemIndex;
-    notifyListeners();
-  }
-}
 
 
 class LectureScreen extends StatefulWidget {
@@ -85,7 +55,7 @@ class _LectureScreenState extends State<LectureScreen> {
                     enlargeCenterPage: true,
                     initialPage: 0,
                     onPageChanged: (int index, CarouselPageChangedReason reason) {
-                      Provider.of<CarouselStateProvider>(context, listen: false).currentItemIndex = index;
+                      Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = index;
                     }
                 ),
                 itemCount: mediaList.length,
@@ -165,7 +135,7 @@ class _LectureScreenState extends State<LectureScreen> {
               70,
               func: () => setState(() {
                 int rndPage = random.nextInt(videoList.length);
-                Provider.of<CarouselStateProvider>(context, listen: false).currentItemIndex = rndPage;
+                Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = rndPage;
                 carouselController.jumpToPage(rndPage);
               })
           ),

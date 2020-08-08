@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -66,7 +66,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    CarouselStateProvider carouselStateProvider = Provider.of(context);
+    CarouselViewModel carouselViewModel = Provider.of(context);
 
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
@@ -79,7 +79,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
           widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
 
           // pauses video if its running but not the current one
-          if (carouselStateProvider.currentItemIndex != widget.mediaIndex) {
+          if (carouselViewModel.currentItemIndex != widget.mediaIndex) {
             isAutoModeFinished = false;
             _controller.pause();
             _controller.seekTo(Duration.zero);

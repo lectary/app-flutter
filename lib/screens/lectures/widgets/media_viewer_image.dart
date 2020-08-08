@@ -2,9 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
-
-import '../lecture_screen.dart';
 
 class ImageViewer extends StatefulWidget {
   final String imagePath;
@@ -52,13 +51,13 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    CarouselStateProvider carouselStateProvider = Provider.of(context);
+    CarouselViewModel carouselViewModel = Provider.of(context);
 
     if (!widget.slowMode) {
       _animationController.reset();
     }
     // if current item is not visible any more, reset animation and hide image
-    if (carouselStateProvider.currentItemIndex != widget.mediaIndex) {
+    if (carouselViewModel.currentItemIndex != widget.mediaIndex) {
       showPicture = false;
       _animationController.reset();
       isAutoModeFinished = false;

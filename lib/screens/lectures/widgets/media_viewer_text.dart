@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class TextViewer extends StatefulWidget {
@@ -65,14 +65,14 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    CarouselStateProvider carouselStateProvider = Provider.of(context);
+    CarouselViewModel carouselViewModel = Provider.of(context);
 
     if (!widget.slowMode) {
       _animationController.reset();
       finalContent = widget.content;
     }
     // if current item is not visible any more, reset animation and hide text
-    if (carouselStateProvider.currentItemIndex != widget.mediaIndex) {
+    if (carouselViewModel.currentItemIndex != widget.mediaIndex) {
       showText = false;
       _resetAnimation();
       isAutoModeFinished = false;

@@ -4,6 +4,7 @@ import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
@@ -40,7 +41,7 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
           child: MainDrawer(),
         ),
         body: ChangeNotifierProvider(
-            create: (context) => CarouselStateProvider(),
+            create: (context) => CarouselViewModel(),
             child: lecturesAvailable ? LectureScreen() : LectureNotAvailableScreen()
         ),
       ),
