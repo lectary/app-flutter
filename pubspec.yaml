@@ -37,6 +37,7 @@ dependencies:
       url: https://github.com/JONA-Cureambit/plugins.git
       path: packages/video_player
   carousel_slider: ^2.1.0
+  shared_preferences: ^0.5.8
 
 
   # The following adds the Cupertino Icons font to your application.
