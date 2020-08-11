@@ -5,15 +5,28 @@ import 'package:lectary/utils/colors.dart';
 class SearchBar extends StatefulWidget {
   final TextEditingController textEditingController;
   final FocusNode focusNode;
+  final bool initOpen;
   final Function filterFunction;
 
-  SearchBar({this.textEditingController, this.focusNode, this.filterFunction, Key key}) : super(key: key);
+  SearchBar({this.textEditingController, this.focusNode, this.initOpen=false, this.filterFunction, Key key}) : super(key: key);
 
   @override
   _SearchBarState createState() => _SearchBarState();
 }
 
 class _SearchBarState extends State<SearchBar> {
+  @override
+  void initState() {
+    if (widget.initOpen) {
+      // open keyboard after widget is built
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(widget.focusNode);
+        setState(() {});
+      });
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

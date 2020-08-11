@@ -4,6 +4,7 @@ import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/about/about_screen.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
+import 'package:lectary/screens/lectures/vocable_search_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
@@ -63,6 +64,7 @@ class LectaryApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => LectureMainScreen(),
+          '/search': (context) => VocableSearchScreen(),
           '/lectureManagement': (context) => LectureManagementScreen(),
           '/settings': (context) => SettingsScreen(),
           '/about': (context) => AboutScreen(),

@@ -19,10 +19,13 @@ class CarouselViewModel with ChangeNotifier {
   /// used for indicating lecture selection switch to rebuild carousel
   bool selectionDidUpdate = false;
 
-  List<Vocable> _currentVocables = List();
-  List<Vocable> get currentVocables => _currentVocables;
   List<MediaItem> _currentMediaItems = List();
-  List<MediaItem> get currentMediaItems => _currentMediaItems;
+  set currentMediaItems(List<MediaItem> list) {
+    _currentMediaItems = list;
+    _filteredMediaItems = list;
+  }
+  List<MediaItem> _filteredMediaItems = List();
+  List<MediaItem> get currentMediaItems => _filteredMediaItems;
 
   String _selectionTitle = "";
   String get selectionTitle => _selectionTitle;
@@ -88,7 +91,7 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadAllVocables() async {
     List<Vocable> allVocables = await _lectureRepository.findAllVocables();
-    _currentMediaItems = _transformVocablesToMediaItems(allVocables);
+    currentMediaItems = _transformVocablesToMediaItems(allVocables);
     _currentItemIndex = 0;
     _selectionTitle = "Alle Vokabel";
     selectionDidUpdate = true;
@@ -100,7 +103,7 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadVocablesOfLecture(Lecture lecture) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
-    _currentMediaItems = _transformVocablesToMediaItems(vocables);
+    currentMediaItems = _transformVocablesToMediaItems(vocables);
     _currentItemIndex = 0;
     _selectionTitle = lecture.lesson;
     selectionDidUpdate = true;
@@ -112,7 +115,7 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadVocablesOfPackage(LecturePackage pack) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
-    _currentMediaItems = _transformVocablesToMediaItems(vocables);
+    currentMediaItems = _transformVocablesToMediaItems(vocables);
     _currentItemIndex = 0;
     _selectionTitle = pack.title;
     selectionDidUpdate = true;
@@ -145,5 +148,21 @@ class CarouselViewModel with ChangeNotifier {
           break;
       }
     }).toList();
+  }
+
+  /// Filters the [List] of available [Vocable] by a [String]
+  /// Filters vocable-name of [Vocable]
+  /// Creates a temporary list with the filtered elements as references to the original list elements of
+  /// [_currentMediaItems] and assigns it by reference again to [_filteredMediaItems] and notifies listeners
+  /// Operations on the original list [_currentMediaItems] will therefore also affect the corresponding elements in [_filteredMediaItems]
+  void filterVocables(String filter) {
+    List<MediaItem> tempListVocables = List();
+    _currentMediaItems.forEach((item) {
+      if (item.text.toLowerCase().contains(filter.toLowerCase())) {
+        tempListVocables.add(item);
+      }
+    });
+    _filteredMediaItems = tempListVocables;
+    notifyListeners();
   }
 }
