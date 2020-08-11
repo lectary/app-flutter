@@ -20,7 +20,7 @@ class LectureNotAvailableScreen extends StatelessWidget {
             ),
             SizedBox(height: 10,), // separator
             RaisedButton(
-              onPressed: (){},
+              onPressed: () => Navigator.pushNamed(context, '/lectureManagement'),
               padding: EdgeInsets.all(15.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),

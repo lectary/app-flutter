@@ -30,8 +30,8 @@ class LectureViewModel with ChangeNotifier {
   Response _availableLectureStatus = Response.completed();
   Response get availableLectureStatus => _availableLectureStatus;
 
-  bool _availableLectureOffline = false;
-  bool get availableLectureOffline => _availableLectureOffline;
+  bool _offlineMode = false;
+  bool get offlineMode => _offlineMode;
 
   /// contains all [LecturePackage] that are available (persisted and remote ones)
   List<LecturePackage> _availableLectures = List();
@@ -59,17 +59,35 @@ class LectureViewModel with ChangeNotifier {
 
     try {
       LectaryData lectaryData;
-      List<Lecture> localList = await _lectureRepository.loadLecturesLocal();
+      // load local persisted data
+      List<Lecture> localLectures = await _lectureRepository.loadLecturesLocal();
+      List<Abstract> localAbstracts = await _lectureRepository.findAllAbstracts();
+      List<Coding> localCodings = await _lectureRepository.findAllCodings();
+
       List<Lecture> mergedLectureList;
+      List<Abstract> mergedAbstracts;
+
       try {
+        // load remote api data
         lectaryData = await _lectureRepository.loadLectaryData();
-        mergedLectureList = _mergeLectureLists(lectaryData.lessons, localList);
-        _availableLectureOffline = false;
+        // merge and check status of lectures
+        mergedLectureList = _mergeLectureLists(localLectures, lectaryData.lessons);
+        // merge, check status and progress abstracts
+        mergedAbstracts = mergeAndCheckAbstracts(localAbstracts, lectaryData.abstracts);
+        await _progressAbstracts(mergedAbstracts);
+        // merge, check status and progress codings
+        List<Coding> mergedCodings = mergeAndCheckCodings(localCodings, lectaryData.codings);
+        await _progressCodings(mergedCodings);
+        _availableCodings = mergedCodings;
+        log("loaded codings");
+        _offlineMode = false;
       } on NoInternetException {
         log("no internet connection");
-        _availableLectureOffline = true;
-        mergedLectureList = localList;
+        mergedLectureList = localLectures;
         mergedLectureList.forEach((lecture) => lecture.lectureStatus = LectureStatus.persisted);
+        mergedAbstracts = localAbstracts;
+        _availableCodings = localCodings;
+        _offlineMode = true;
       }
 
       // Sorting
@@ -91,27 +109,12 @@ class LectureViewModel with ChangeNotifier {
       _filteredLectures = _availableLectures;
       log("loaded lectures");
 
-      // load remote and local abstracts
-      List<Abstract> remoteAbstracts = lectaryData.abstracts;
-      List<Abstract> localAbstracts = await _lectureRepository.findAllAbstracts();
-
-      // merge, check status, progress abstracts
-      List<Abstract> mergedAbstracts = mergeAndCheckAbstracts(localAbstracts, remoteAbstracts);
-      await _progressAbstracts(mergedAbstracts);
-
       // load again all persisted abstracts and add them to the corresponding packs
       List<Abstract> availableAbstracts = await _lectureRepository.findAllAbstracts();
       availableAbstracts.forEach((abstract) {
-        groupedLectureList.firstWhere((pack) => pack.title == abstract.pack).abstract = abstract.text;
+        groupedLectureList.firstWhere((pack) => pack.title == abstract.pack, orElse: () => null)?.abstract = abstract.text;
       });
       log("loaded abstracts");
-
-      List<Coding> localCodings = await _lectureRepository.findAllCodings();
-      List<Coding> remoteCodings = lectaryData.codings;
-      List<Coding> mergedCodings = mergeAndCheckCodings(localCodings, remoteCodings);
-      await _progressCodings(mergedCodings);
-      _availableCodings = mergedCodings;
-      log("loaded codings");
 
       _availableLectureStatus = Response.completed();
       notifyListeners();
@@ -128,7 +131,7 @@ class LectureViewModel with ChangeNotifier {
 
   /// Merges the remote and local lecture list
   /// Returns a list of [Lecture] containing all locally persisted and remote available lectures with the corresponding [LectureStatus]
-  List<Lecture> _mergeLectureLists(List<Lecture> remoteList, List<Lecture> localList) {
+  List<Lecture> _mergeLectureLists(List<Lecture> localList, List<Lecture> remoteList) {
     List<Lecture> resultList = List();
 
     // comparing local with remote list and adding all local persisted lectures to the result list and checking if updates are available (i.e. identical lecture with never date)
@@ -329,15 +332,13 @@ class LectureViewModel with ChangeNotifier {
   /// Deletes all lectures, vocables and corresponding media files
   /// Returns a [Future] of type [Void]
   Future<void> deleteAllLectures() async {
-    // TODO remove - only for testing purpose
-    await Future.delayed(Duration(seconds: 2));
     log("querying all lectures");
     List<Lecture> lectures = await _lectureRepository.loadLecturesLocal();
     log("deleting all media files");
     await Future.forEach(lectures, (lecture) => _deleteMediaFiles(lecture));
     log("deleting database entries");
     await _lectureRepository.deleteAllVocables();
-    await _lectureRepository.deleteAllLectures();
+    await Future.forEach(lectures, (lecture) => _lectureRepository.deleteLecture(lecture));
     await _lectureRepository.deleteAllCodingEntries();
     await _lectureRepository.deleteAllCoding();
   }
@@ -418,12 +419,13 @@ class LectureViewModel with ChangeNotifier {
   void filterLectureList(String filter) {
     List<Lecture> tempListLectures = List();
     _availableLectures.forEach((pack) => pack.children.forEach((lecture) {
-          if (lecture.pack.toLowerCase().contains(filter.toLowerCase()) ||
-              lecture.lesson.toLowerCase().contains(filter.toLowerCase())) {
-            tempListLectures.add(lecture);
-          }
-        }));
+      if (lecture.pack.toLowerCase().contains(filter.toLowerCase()) ||
+          lecture.lesson.toLowerCase().contains(filter.toLowerCase())) {
+        tempListLectures.add(lecture);
+      }
+    }));
     List<LecturePackage> tempListPacks = Utils.groupLecturesByPack(tempListLectures);
+    tempListPacks.forEach((pack) => pack.abstract = _availableLectures.firstWhere((element) => element.title == pack.title).abstract);
     _filteredLectures = tempListPacks;
     notifyListeners();
   }
@@ -703,7 +705,7 @@ class LectureViewModel with ChangeNotifier {
       List<Lecture> lecturesWithCoding = await _lectureRepository.findAllLecturesWithLang(coding.lang);
       List<List<Vocable>> results = await Future.wait(
           lecturesWithCoding.map((lecture) async =>
-            await _lectureRepository.findVocablesByLectureId(lecture.id)
+          await _lectureRepository.findVocablesByLectureId(lecture.id)
           )
       );
       // deAsciify all found vocables and update db
@@ -747,7 +749,7 @@ class LectureViewModel with ChangeNotifier {
 
       return codingEntries;
     } catch(e) {
-     throw CodingException("extracting coding entries from json failed: ${e.toString()}");
+      throw CodingException("extracting coding entries from json failed: ${e.toString()}");
     }
   }
 

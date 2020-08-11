@@ -104,7 +104,7 @@ class MainDrawer extends StatelessWidget {
             );
           }
         } else {
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         }
       }
     );
