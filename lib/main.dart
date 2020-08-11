@@ -9,6 +9,7 @@ import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 import 'data/api/lectary_api.dart';
@@ -31,11 +32,14 @@ class LectaryApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (context) => SettingViewModel(),
+        ),
         Provider.value(value: LectaryApi()),
         ProxyProvider<LectaryApi, LectureRepository>(
           update: (context, lectaryApi, lectureRepository) =>
               LectureRepository(lectaryApi: lectaryApi, lectureDatabase: lectureDatabase),
-          dispose: (context, lectureRepository) => lectureRepository.dispose(),
+          //dispose: (context, lectureRepository) => lectureRepository.dispose(), //TODO-Review: disable for enabling hot reload, maybe reactivate for production?
         ),
         ChangeNotifierProxyProvider<LectureRepository, LectureViewModel>(
           update: (context, lectureRepository, lectureViewModel) =>
