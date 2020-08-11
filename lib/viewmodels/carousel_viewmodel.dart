@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
@@ -12,13 +14,16 @@ import 'package:lectary/utils/utils.dart';
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
 
-  bool _lecturesAvailable = false;
-  bool get lecturesAvailable => _lecturesAvailable;
+
+  bool selectionDidUpdate = false;
 
   List<Vocable> _currentVocables = List();
   List<Vocable> get currentVocables => _currentVocables;
   List<MediaItem> _currentMediaItems = List();
   List<MediaItem> get currentMediaItems => _currentMediaItems;
+
+  String _selectionTitle = "";
+  String get selectionTitle => _selectionTitle;
 
   int _currentItemIndex = 0;
   int get currentItemIndex => _currentItemIndex;
@@ -28,17 +33,29 @@ class CarouselViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  Stream<List<Lecture>> _localLectures;
+
   /// Constructor with passed in [LectureRepository]
   CarouselViewModel({@required lectureRepository})
-      : _lectureRepository = lectureRepository;
+      : _lectureRepository = lectureRepository {
+    _localLectures = _lectureRepository.watchAllLectures();
+    _localLectures.listen((list) {
+      if (list.isEmpty) {
+        _currentMediaItems.clear();
+        _selectionTitle = "";
+        notifyListeners();
+      }
+      if (list.isNotEmpty) {
+        loadAllVocables();
+      }
+    });
+  }
 
 
   /// Auto updating [Stream] by the floor database, containing all local persisted [Lecture]
   /// grouped as [LecturePackage]
   Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
     return _lectureRepository.watchAllLectures().map((list) {
-      _lecturesAvailable = list.isEmpty ? false : true;
-      notifyListeners();
       // Sorting
       // 1) sort lessons with SORT-meta info by SORT
       List<Lecture> lecturesWithSortMeta = list.where((lecture) => lecture.sort != null).toList();
@@ -57,19 +74,39 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   Future<void> loadAllVocables() async {
-    //TODO implement
+    List<Vocable> allVocables = await _lectureRepository.findAllVocables();
+    _currentMediaItems = _transformVocablesToMediaItems(allVocables);
+    _currentItemIndex = 0;
+    _selectionTitle = "Alle Vokabel";
+    selectionDidUpdate = true;
+    notifyListeners();
   }
 
   Future<void> loadVocablesOfLecture(Lecture lecture) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
-    _currentVocables = vocables;
+    _currentMediaItems = _transformVocablesToMediaItems(vocables);
+    _currentItemIndex = 0;
+    _selectionTitle = lecture.lesson;
+    selectionDidUpdate = true;
+    notifyListeners();
+  }
 
-    List<MediaItem> mediaItems = vocables.map((vocable) {
-      switch(MediaType.fromString(vocable.mediaType)) {
+  Future<void> loadVocablesOfPackage(LecturePackage pack) async {
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
+    _currentMediaItems = _transformVocablesToMediaItems(vocables);
+    _currentItemIndex = 0;
+    _selectionTitle = pack.title;
+    selectionDidUpdate = true;
+    notifyListeners();
+  }
+
+  List<MediaItem> _transformVocablesToMediaItems(List<Vocable> vocables) {
+    return vocables.map((vocable) {
+      switch (MediaType.fromString(vocable.mediaType)) {
         case MediaType.MP4:
           return VideoItem(
-            text: vocable.vocable,
-            media: vocable.media
+              text: vocable.vocable,
+              media: vocable.media
           );
           break;
         case MediaType.PNG:
@@ -87,12 +124,5 @@ class CarouselViewModel with ChangeNotifier {
           break;
       }
     }).toList();
-    _currentMediaItems = mediaItems;
-    _lecturesAvailable = true;
-    notifyListeners();
-  }
-
-  Future<void> loadVocablesOfPackage(LecturePackage pack) async {
-    //TODO implement
   }
 }

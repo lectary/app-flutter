@@ -4,13 +4,18 @@ import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/models/media_item.dart';
-import 'package:lectary/screens/lectures/widgets/media_viewer.dart';
+import 'package:lectary/screens/lectures/widgets/carousel.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
 class LectureScreen extends StatefulWidget {
+
+  final List<MediaItem> items;
+
+  LectureScreen({this.items, Key key}) : super(key: key);
+
   @override
   _LectureScreenState createState() => _LectureScreenState();
 }
@@ -20,49 +25,47 @@ class _LectureScreenState extends State<LectureScreen> {
   bool autoModeOn = false;
   bool loopModeOn = false;
   bool hideVocableModeOn = false;
+  UniqueKey _key;
 
   CarouselController carouselController = CarouselController();
   Random random = new Random();
 
+  void _rebuildCarousel() {
+    setState(() {
+      _key = UniqueKey();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    bool selectionDidUpdate = Provider.of<CarouselViewModel>(context).selectionDidUpdate;
+    if (selectionDidUpdate) {
+      Provider.of<CarouselViewModel>(context, listen: false).selectionDidUpdate = false;
+      _rebuildCarousel();
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
-    final model = Provider.of<CarouselViewModel>(context);
-
     /// main widget tree - carousel, media-control-area, learning-area
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Expanded(
           flex: 7,
-          child: Stack(
-            children: [
-              CarouselSlider.builder(
-                carouselController: carouselController,
-                options: CarouselOptions(
-                    height: (height / 10) * 7,
-                    viewportFraction: 0.999999, // FIXME dirty hack to achieve pre-loading of previous/next page
-                    autoPlay: false,
-                    enlargeCenterPage: true,
-                    initialPage: 0,
-                    onPageChanged: (int index, CarouselPageChangedReason reason) {
-                      Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = index;
-                    }
-                ),
-                itemCount: model.currentMediaItems.length,
-                itemBuilder: (BuildContext context, int itemIndex) =>
-                    /// media viewer - types: video, image, text
-                    MediaViewer(
-                        mediaItem: model.currentMediaItems[itemIndex],
-                        mediaIndex: itemIndex,
-                        hideVocableModeOn: hideVocableModeOn,
-                        slowModeOn: slowModeOn,
-                        autoModeOn: autoModeOn,
-                        loopModeOn: loopModeOn),
-              ),
-              ..._buildCarouselNavigationOverlay(),
-            ]
-          ),
+          child: Stack(children: [
+            Carousel(
+              key: _key,
+              items: widget.items,
+              carouselController: carouselController,
+              slowModeOn: slowModeOn,
+              autoModeOn: autoModeOn,
+              loopModeOn: loopModeOn,
+              hideVocableModeOn: hideVocableModeOn,
+            ),
+            ..._buildCarouselNavigationOverlay(),
+          ]),
         ),
         _buildMediaControlArea(),
         _buildLearningArea(),
@@ -125,7 +128,7 @@ class _LectureScreenState extends State<LectureScreen> {
               ColorsLectary.violet, Icons.casino,
               70,
               func: () => setState(() {
-                int rndPage = random.nextInt(Provider.of<CarouselViewModel>(context).currentMediaItems.length);
+                int rndPage = random.nextInt(Provider.of<CarouselViewModel>(context, listen: false).currentMediaItems.length);
                 Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = rndPage;
                 carouselController.jumpToPage(rndPage);
               })
