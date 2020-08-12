@@ -9,10 +9,10 @@ class SettingViewModel with ChangeNotifier {
   static const bool defaultShowMediaOverlay = true;
   static const bool defaultUppercase = false;
   static const String defaultAppLanguage = "DE";
-  static const String defaultLearningLanguage = "OGS";
+  static const String defaultLearningLanguage = "ALLE"; //TODO for testing purposes
 
   static const List<String> appLanguagesList = ["DE", "EN"];
-  static const List<String> learningLanguagesList = ["OGS", "DGS", "EN"];
+  static const List<String> learningLanguagesList = ["ALLE", "OGS", "DGS", "EN"];
 
   static const String _keySettingPlayMediaWithSound = "settingPlayMediaWithSound";
   static const String _keySettingShowVideoTimeline = "settingShowVideoTimeline";

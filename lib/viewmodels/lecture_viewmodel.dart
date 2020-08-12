@@ -19,12 +19,14 @@ import 'package:lectary/utils/exceptions/coding_exception.dart';
 import 'package:lectary/utils/exceptions/no_internet_exception.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/utils/utils.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// ViewModel containing data and methods for the lecture management screen and the drawer
 /// uses [ChangeNotifier] for propagating changes to UI components
 class LectureViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
+  final SettingViewModel _settingViewModel;
 
   /// represents the loading status of fetching available lectures via [Response]
   Response _availableLectureStatus = Response.completed();
@@ -47,8 +49,8 @@ class LectureViewModel with ChangeNotifier {
   List<Coding> _availableCodings = List();
 
   /// Constructor with passed in [LectureRepository]
-  LectureViewModel({@required lectureRepository})
-      : _lectureRepository = lectureRepository;
+  LectureViewModel({@required lectureRepository, @required settingViewModel})
+      : _lectureRepository = lectureRepository, _settingViewModel = settingViewModel;
 
 
   /// Loads all available local and remote api-data, i.e. [Lecture], [Abstract], [Coding]
@@ -165,6 +167,10 @@ class LectureViewModel with ChangeNotifier {
         resultList.add(e1);
       }
     });
+
+    if (_settingViewModel.settingLearningLanguage != "ALLE") {
+      resultList = resultList.where((lecture) => lecture.langMedia == _settingViewModel.settingLearningLanguage).toList();
+    }
 
     return resultList;
   }
