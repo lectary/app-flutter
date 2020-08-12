@@ -32,14 +32,15 @@ class LectaryApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => SettingViewModel(),
-        ),
-        Provider.value(value: LectaryApi()),
+        Provider(create: (context) => LectaryApi()),
         ProxyProvider<LectaryApi, LectureRepository>(
           update: (context, lectaryApi, lectureRepository) =>
               LectureRepository(lectaryApi: lectaryApi, lectureDatabase: lectureDatabase),
           //dispose: (context, lectureRepository) => lectureRepository.dispose(), //TODO-Review: disable for enabling hot reload, maybe reactivate for production?
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SettingViewModel(),
+          lazy: false,
         ),
         ChangeNotifierProxyProvider2<LectureRepository, SettingViewModel, LectureViewModel>(
           update: (context, lectureRepository, settingViewModel, lectureViewModel) =>
