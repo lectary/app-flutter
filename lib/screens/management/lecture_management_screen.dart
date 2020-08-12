@@ -160,39 +160,15 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                   child: ListTile(
                     leading: Icon(Icons.delete_forever),
                     title: Text("Alle Lektionen löschen"),
-                    onTap: () =>
-                        showDialog<void>(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Möchten Sie wirklich alle Lektionen löschen?'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                'Abbrechen',
-                                style: TextStyle(color: ColorsLectary.lightBlue),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text(
-                                'Alle Löschen',
-                                style: TextStyle(color: ColorsLectary.red),
-                              ),
-                              onPressed: () async {
-                                //TODO review loading state
-                                Dialogs.showLoadingDialog(context);
-                                await Provider.of<LectureViewModel>(context, listen: false).deleteAllLectures();
-                                Navigator.popUntil(context, ModalRoute.withName('/'));
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                    onTap: () => Dialogs.showAlertDialog(
+                        context: context,
+                        title: "Möchten Sie wirklich alle Lektionen löschen?",
+                        submitText: "Alle Löschen",
+                        submitFunc: () async {
+                          Dialogs.showLoadingDialog(context);
+                          await Provider.of<LectureViewModel>(context, listen: false).deleteAllLectures();
+                          Navigator.popUntil(context, ModalRoute.withName('/'));
+                        }),
                   ),
                 ),
               ],

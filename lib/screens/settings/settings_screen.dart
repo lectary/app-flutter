@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
 
-    @override
+  @override
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingViewModel>(context);
 
@@ -36,9 +37,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onChanged: (value) => settings.toggleSettingUppercase()),
       ListTile(
           title: Text("Lernfortschritt zurücksetzen"),
-          onTap: () => settings.resetLearningProgress()),
+          onTap: () => Dialogs.showAlertDialog(
+              context: context,
+              title: "Möchten Sie wirklich Ihren gesamten Lernfortschritt zurücksetzen?",
+              submitText: "Zurücksetzen",
+              submitFunc: settings.resetLearningProgress)),
       ListTile(
-        title: Text("App-Language auswählen"),
+        title: Text("App-Sprache auswählen"),
         trailing: DropdownButton(
             value: context.select((SettingViewModel model) => model.settingAppLanguage),
             items: SettingViewModel.appLanguagesList
@@ -55,8 +60,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       ListTile(
-          title: Text("Alle Einstellungen zurücksetzen"),
-          onTap: () => settings.resetAllSettings()),
+        title: Text("Alle Einstellungen zurücksetzen"),
+        onTap: () => Dialogs.showAlertDialog(
+            context: context,
+            title: "Möchten Sie wirklich alle Einstellungen zurücksetzen?",
+            submitText: "Zurücksetzen",
+            submitFunc: settings.resetAllSettings),
+      ),
       ListTile(
           leading: Icon(Icons.info),
           title: Text("Über"),
