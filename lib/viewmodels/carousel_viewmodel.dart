@@ -88,6 +88,7 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadAllVocables() async {
     List<Vocable> allVocables = await _lectureRepository.findAllVocables();
+    _currentVocables = allVocables;
     _currentMediaItems = _transformVocablesToMediaItems(allVocables);
     _currentItemIndex = 0;
     _selectionTitle = "Alle Vokabel";
@@ -100,6 +101,7 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadVocablesOfLecture(Lecture lecture) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
+    _currentVocables = vocables;
     _currentMediaItems = _transformVocablesToMediaItems(vocables);
     _currentItemIndex = 0;
     _selectionTitle = lecture.lesson;
@@ -112,6 +114,7 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadVocablesOfPackage(LecturePackage pack) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
+    _currentVocables = vocables;
     _currentMediaItems = _transformVocablesToMediaItems(vocables);
     _currentItemIndex = 0;
     _selectionTitle = pack.title;
