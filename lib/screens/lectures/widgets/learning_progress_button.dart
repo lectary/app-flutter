@@ -26,57 +26,68 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
   Widget build(BuildContext context) {
     int vocableIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
     int progress = context.select((CarouselViewModel model) => model.currentVocables[vocableIndex].vocableProgress);
-    return Expanded(
-      child: FlatButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(0))),
-        color: widget.color,
-        child: Container(
-          /// additional container for aligning rectangular icons correctly
-          width: widget.size.toDouble(),
-          child: FittedBox(child: _buildIconsForProgress(progress)),
-        ),
-        onPressed: () {
-          Provider.of<CarouselViewModel>(context, listen: false)
-              .currentVocables[vocableIndex]
-              .vocableProgress = (progress + 1) % 3;
-          setState(() {});
-        },
+    return FlatButton(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(0))),
+      color: widget.color,
+      child: Container(
+        /// additional container for aligning rectangular icons correctly
+        width: widget.size.toDouble(),
+        child: FittedBox(child: _buildIconsForProgress(progress)),
       ),
+      onPressed: () {
+        Provider.of<CarouselViewModel>(context, listen: false)
+            .currentVocables[vocableIndex]
+            .vocableProgress = (progress + 1) % 3;
+        setState(() {});
+      },
     );
   }
 
   Widget _buildIconsForProgress(int progress) {
     switch (progress) {
       case 1:
-        return Row(
+        return Column(
           children: [
-            _buildIcon(),
-            _buildIcon()
+            _buildIcon(false),
+            Row(
+              children: [
+                _buildIcon(true),
+                _buildIcon(true)
+              ],
+            )
           ],
         );
       case 2:
         return Column(
           children: [
-            _buildIcon(),
+            _buildIcon(true),
             Row(
               children: [
-                _buildIcon(),
-                _buildIcon()
+                _buildIcon(true),
+                _buildIcon(true)
               ],
             )
           ],
         );
       default:
-        return Row(
+        return Column(
           children: [
-            _buildIcon(),
+            _buildIcon(false),
+            Row(
+              children: [
+                _buildIcon(true),
+                _buildIcon(false)
+              ],
+            )
           ],
         );
     }
   }
 
-  Icon _buildIcon() {
-    return Icon(Icons.insert_emoticon, color: ColorsLectary.white);
+  Icon _buildIcon(bool filled) {
+    return filled ?
+     Icon(Icons.insert_emoticon, color: ColorsLectary.white)
+        : Icon(Icons.radio_button_unchecked, color: ColorsLectary.white);
   }
 }

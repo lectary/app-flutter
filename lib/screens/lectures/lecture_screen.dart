@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/models/media_item.dart';
 import 'package:lectary/screens/lectures/widgets/carousel.dart';
+import 'package:lectary/screens/lectures/widgets/learning_area.dart';
 import 'package:lectary/screens/lectures/widgets/learning_progress_button.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
@@ -134,7 +135,7 @@ class _LectureScreenState extends State<LectureScreen> {
                 carouselController.jumpToPage(rndPage);
               })
           ),
-          LearningProgressButton(size: 70, color: ColorsLectary.lightBlue)
+          LearningProgressButtonAnimation()
         ],
       ),
     );
