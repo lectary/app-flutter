@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
@@ -131,5 +132,19 @@ class CarouselViewModel with ChangeNotifier {
     _currentItemIndex = 0;
     _selectionTitle = pack.title;
     notifyListeners();
+  }
+
+  /// Increases the [Vocable.vocableProgress] of the [Vocable] with the passed index
+  /// Persists the changes in the database
+  /// Returns a [Future] with type [Void]
+  Future<void> increaseVocableProgress(int vocableIndex) async {
+    Vocable vocableToUpdate = _currentVocables[vocableIndex];
+    vocableToUpdate.vocableProgress = (vocableToUpdate.vocableProgress + 1) % 3;
+    notifyListeners();
+    try {
+      await _lectureRepository.updateVocable(vocableToUpdate);
+    } catch (e) {
+      log("Updating progress of vocable: ${_currentVocables[vocableIndex]} failed: ${e.toString()}");
+    }
   }
 }

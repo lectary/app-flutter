@@ -36,10 +36,7 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
         child: FittedBox(child: _buildIconsForProgress(progress)),
       ),
       onPressed: () {
-        Provider.of<CarouselViewModel>(context, listen: false)
-            .currentVocables[vocableIndex]
-            .vocableProgress = (progress + 1) % 3;
-        setState(() {});
+        Provider.of<CarouselViewModel>(context, listen: false).increaseVocableProgress(vocableIndex);
       },
     );
   }
