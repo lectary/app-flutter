@@ -334,6 +334,12 @@ class _$VocableDao extends VocableDao {
   }
 
   @override
+  Future<void> resetAllVocableProgress() async {
+    await _queryAdapter
+        .queryNoReturn('UPDATE vocables SET vocable_progress = 0');
+  }
+
+  @override
   Future<List<int>> insertVocables(List<Vocable> vocables) {
     return _vocableInsertionAdapter.insertListAndReturnIds(
         vocables, OnConflictStrategy.abort);

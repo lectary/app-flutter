@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingViewModel with ChangeNotifier {
@@ -28,9 +29,12 @@ class SettingViewModel with ChangeNotifier {
   String settingAppLanguage = defaultAppLanguage;
   String settingLearningLanguage = defaultLearningLanguage;
 
-  SettingViewModel() {
+  final LectureRepository _lectureRepository;
+
+  SettingViewModel({@required lectureRepository})
+      :_lectureRepository = lectureRepository {
     _loadLocalSettings();
-}
+  }
 
   Future<void> _loadLocalSettings() async {
     log("loading local app settings");
@@ -87,8 +91,9 @@ class SettingViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void resetLearningProgress() {
-    //TODO Implement
+  Future<void> resetLearningProgress() async {
+    await _lectureRepository.resetAllVocableProgress();
+    log("resetted all vocable progress");
   }
 
   Future<void> resetAllSettings() async {

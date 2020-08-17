@@ -27,4 +27,7 @@ abstract class VocableDao {
 
   @Query("DELETE FROM vocables")
   Future<void> deleteAllVocables();
+
+  @Query("UPDATE vocables SET vocable_progress = 0")
+  Future<void> resetAllVocableProgress();
 }

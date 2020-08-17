@@ -38,8 +38,9 @@ class LectaryApp extends StatelessWidget {
               LectureRepository(lectaryApi: lectaryApi, lectureDatabase: lectureDatabase),
           //dispose: (context, lectureRepository) => lectureRepository.dispose(), //TODO-Review: disable for enabling hot reload, maybe reactivate for production?
         ),
-        ChangeNotifierProvider(
-          create: (context) => SettingViewModel(),
+        ChangeNotifierProxyProvider<LectureRepository, SettingViewModel>(
+          update: (context, lectureRepository, settingViewModel) => SettingViewModel(lectureRepository: lectureRepository),
+          create: (BuildContext context) { return null; },
           lazy: false,
         ),
         ChangeNotifierProxyProvider2<LectureRepository, SettingViewModel, LectureViewModel>(
