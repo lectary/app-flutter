@@ -6,6 +6,8 @@ import 'package:lectary/screens/lectures/widgets/carousel.dart';
 import 'package:lectary/screens/lectures/widgets/learning_control_area.dart';
 import 'package:lectary/screens/lectures/widgets/media_control_area.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 
 class LectureScreen extends StatefulWidget {
@@ -21,9 +23,15 @@ class _LectureScreenState extends State<LectureScreen> {
   CarouselController carouselController = CarouselController();
 
   @override
+  void initState() {
+    super.initState();
+    // Setting controller in the viewModel to provide access and navigation possibilities for other screens, i.e. VocableSearchScreen
+    Provider.of<CarouselViewModel>(context, listen: false).carouselController = carouselController;
+  }
+
+  @override
   Widget build(BuildContext context) {
     log("build lecture-screen");
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[

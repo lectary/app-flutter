@@ -31,26 +31,28 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
     return Theme(
       data: lectaryThemeDark(),
       child: Scaffold(
-          resizeToAvoidBottomInset: false, // to avoid bottom overflow when keyboard on search-screen is opened
-          appBar: AppBar(
-            title: GestureDetector(
-                child: Text(context
-                    .select((CarouselViewModel model) => model.selectionTitle)),
-                onTap: () {
-                  Navigator.pushNamed(context, '/search',
-                      arguments:
-                          VocableSearchScreenArguments(openSearch: false));
-                }),
-            actions: [
-              IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/search',
-                        arguments:
-                            VocableSearchScreenArguments(openSearch: true));
-                  }),
-            ],
-          ),
+          resizeToAvoidBottomInset: false,
+          // to avoid bottom overflow when keyboard on search-screen is opened
+          appBar: vocables.isNotEmpty
+              ? AppBar(
+                  title: GestureDetector(
+                      child: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/search',
+                            arguments: VocableSearchScreenArguments(openSearch: false));
+                      }),
+                  actions: [
+                    IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/search',
+                              arguments: VocableSearchScreenArguments(openSearch: true));
+                        }),
+                  ],
+                )
+              : AppBar(
+                  title: Text("Lectary 4"),
+                ),
           drawer: Theme(
             data: lectaryThemeLight(),
             child: MainDrawer(),

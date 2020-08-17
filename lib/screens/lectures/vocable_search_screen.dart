@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
@@ -26,17 +28,27 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
   FocusNode focus = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    /// When opening the search-screen, set the current list of [Vocable]
+    /// as the init filter result
+    final model = Provider.of<CarouselViewModel>(context, listen: false);
+    model.filteredVocables = List.from(model.currentVocables); // create a new list with model.currentVocables
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Retrieving arguments from route
     final VocableSearchScreenArguments args = ModalRoute.of(context).settings.arguments;
+    final model = Provider.of<CarouselViewModel>(context, listen: false);
+    // listen on changes of the list of filtered vocables
     List<Vocable> filteredVocables = context.select((CarouselViewModel model) => model.filteredVocables);
 
     return Theme(
       data: lectaryThemeDark(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(context
-              .select((CarouselViewModel model) => model.selectionTitle)),
+          title: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
           actions: [
             IconButton(
                 icon: Icon(Icons.cancel),
@@ -46,6 +58,8 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                   if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
                     FocusManager.instance.primaryFocus.unfocus();
                   }
+                  // clear filter result and close search-screen
+                  model.filteredVocables.clear();
                   Navigator.pop(context);
                 }),
           ],
@@ -60,13 +74,30 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
             Expanded(
               child: ListView.separated(
                   padding: EdgeInsets.all(0),
-                  separatorBuilder: (context, index) => Divider(
-                        color: ColorsLectary.white,
-                      ),
+                  separatorBuilder: (context, index) => Divider(color: ColorsLectary.white,),
                   itemCount: filteredVocables.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(filteredVocables[index].vocable),
+                    return GestureDetector(
+                        child: ListTile(
+                          title: Text(filteredVocables[index].vocable,),
+                        ),
+                        onTap: () {
+                          if (textEditingController.text.isNotEmpty) {
+                            // if search-term is not empty, a new "virtual"-lecture
+                            // containing the filter results is created and set
+                            log("Created new virtual lecture");
+                            model.selectionTitle = "Suche: " + textEditingController.text;
+                            model.currentVocables = List.from(model.filteredVocables);
+                            // set index corresponding to the tabbed item index where
+                            // the carouselController should jump to after init
+                            model.currentItemIndex = index;
+                          } else {
+                            // Jump to page (vocable) if search-term is empty
+                            model.carouselController.jumpToPage(index);
+                          }
+                          // close search-screen
+                          Navigator.pop(context);
+                        },
                     );
                   }),
             ),

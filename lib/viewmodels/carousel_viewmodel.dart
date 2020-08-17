@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
@@ -6,6 +7,7 @@ import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
+import 'package:lectary/screens/lectures/vocable_search_screen.dart';
 import 'package:lectary/utils/utils.dart';
 
 
@@ -13,6 +15,9 @@ import 'package:lectary/utils/utils.dart';
 /// uses [ChangeNotifier] for propagating changes to UI components
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
+
+  /// Used primarily for jumping to other pages via the [VocableSearchScreen]
+  CarouselController carouselController;
 
   bool _hideVocableModeOn = false;
   bool get hideVocableModeOn => _hideVocableModeOn;
@@ -44,14 +49,29 @@ class CarouselViewModel with ChangeNotifier {
 
   List<Vocable> _currentVocables = List();
   List<Vocable> get currentVocables => _currentVocables;
+  set currentVocables(List<Vocable> value) {
+    _currentVocables = value;
+    notifyListeners();
+  }
 
+  /// A copy of [currentVocables], used for filtering.
+  /// If the filter result will be accepted [filteredVocables] will be assigned
+  /// as new value of [currentVocables], otherwise discarded
   List<Vocable> _filteredVocables = List();
   List<Vocable> get filteredVocables => _filteredVocables;
+  set filteredVocables(List<Vocable> value) {
+    _filteredVocables = value;
+  }
 
+  /// used for displaying the name of the current loaded lecture/package (vocable-list)
   String _selectionTitle = "";
   String get selectionTitle => _selectionTitle;
+  set selectionTitle(String value) {
+    _selectionTitle = value;
+    notifyListeners();
+  }
 
-  /// used in the carousel for keeping track of current item
+  /// used in the carousel for keeping track of the current item/vocable
   int _currentItemIndex = 0;
   int get currentItemIndex => _currentItemIndex;
   set currentItemIndex(int currentItemIndex) {
@@ -111,7 +131,6 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadAllVocables() async {
     _currentVocables = await _lectureRepository.findAllVocables();
-    _filteredVocables = _currentVocables;
     _currentItemIndex = 0;
     _selectionTitle = "Alle Vokabel";
     notifyListeners();
@@ -122,7 +141,6 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadVocablesOfLecture(Lecture lecture) async {
     _currentVocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
-    _filteredVocables = _currentVocables;
     _currentItemIndex = 0;
     _selectionTitle = lecture.lesson;
     notifyListeners();
@@ -133,7 +151,6 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] back to 0.
   Future<void> loadVocablesOfPackage(LecturePackage pack) async {
     _currentVocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
-    _filteredVocables = _currentVocables;
     _currentItemIndex = 0;
     _selectionTitle = pack.title;
     notifyListeners();

@@ -7,12 +7,29 @@ import 'package:provider/provider.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer.dart';
 
 
-class Carousel extends StatelessWidget {
-
+class Carousel extends StatefulWidget {
   final List<Vocable> vocables;
   final CarouselController carouselController;
 
   Carousel({this.vocables, this.carouselController, Key key}) : super(key: key);
+
+  @override
+  _CarouselState createState() => _CarouselState();
+}
+
+class _CarouselState extends State<Carousel> {
+
+  @override
+  void initState() {
+    super.initState();
+    /// Adding callback for jumping to the selected [Vocable] after the [Carousel] is initialized fully and
+    /// the [widget.carouselController] is set properly
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final index = Provider.of<CarouselViewModel>(context, listen: false)
+          .currentItemIndex;
+      if (index != 0) widget.carouselController.jumpToPage(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +37,7 @@ class Carousel extends StatelessWidget {
     final double height = MediaQuery.of(context).size.height;
 
     return CarouselSlider.builder(
-        carouselController: carouselController,
+        carouselController: widget.carouselController,
         options: CarouselOptions(
             height: (height / 10) * 7,
             viewportFraction: 0.999999,
@@ -32,8 +49,8 @@ class Carousel extends StatelessWidget {
               Provider.of<CarouselViewModel>(context, listen: false)
                   .currentItemIndex = index;
             }),
-        itemCount: vocables.length,
+        itemCount: widget.vocables.length,
         itemBuilder: (BuildContext context, int itemIndex) =>
-            MediaViewer(vocable: vocables[itemIndex], vocableIndex: itemIndex));
+            MediaViewer(vocable: widget.vocables[itemIndex], vocableIndex: itemIndex));
   }
 }
