@@ -1,5 +1,6 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:lectary/models/media_item.dart';
+import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
@@ -23,7 +24,8 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<MediaItem> items = context.select((CarouselViewModel model) => model.currentMediaItems);
+    log("build lecture-main-screen");
+    List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
 
     return Theme(
       data: lectaryThemeDark(),
@@ -35,8 +37,8 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
             data: lectaryThemeLight(),
             child: MainDrawer(),
           ),
-          body: items.isNotEmpty
-              ? LectureScreen(items: items)
+          body: vocables.isNotEmpty
+              ? LectureScreen(vocables: vocables)
               : LectureNotAvailableScreen()),
     );
   }
