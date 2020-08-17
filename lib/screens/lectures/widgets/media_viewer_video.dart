@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -36,7 +37,6 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
     _controller = VideoPlayerController.file(File(widget.videoPath));
     // init controller content and show first frame via setState()
     _initializeVideoPlayerFuture = _controller.initialize().then((_) => setState((){}));
-
     super.initState();
   }
 
@@ -69,7 +69,12 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   @override
   Widget build(BuildContext context) {
     CarouselViewModel carouselViewModel = Provider.of(context);
-
+    // Setting volume corresponding to app-setting
+    if (context.select((SettingViewModel model) => model.settingPlayMediaWithSound)) {
+      _controller.setVolume(1);
+    } else {
+      _controller.setVolume(0);
+    }
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
@@ -94,7 +99,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
           }
           return AspectRatio(
             aspectRatio: 4/3,
-            child: _buildVideoPlayerWithOverlay(),
+            child: _buildVideoPlayerWithOverlay(context),
           );
         } else {
           return AspectRatio(
@@ -108,7 +113,9 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
     );
   }
 
-  Widget _buildVideoPlayerWithOverlay() {
+  Widget _buildVideoPlayerWithOverlay(BuildContext context) {
+    bool isOverlayOn = context.select((SettingViewModel model) => model.settingShowMediaOverlay);
+    bool isVideoTimelineOn = context.select((SettingViewModel model) => model.settingShowVideoTimeline);
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -124,7 +131,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
         children: <Widget>[
           VideoPlayer(_controller),
           Visibility(
-            visible: !_controller.value.isPlaying,
+            visible: isOverlayOn && !_controller.value.isPlaying,
             child: Container(
               alignment: Alignment.center,
               child: Opacity(
@@ -133,11 +140,14 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
               ),
             ),
           ),
-          VideoProgressIndicator(_controller, allowScrubbing: false,
-            colors: VideoProgressColors(
-              backgroundColor: Color.fromRGBO(0, 0, 0, 0),
-              bufferedColor: Color.fromRGBO(0, 0, 0, 0),
-              playedColor: ColorsLectary.yellow
+          Visibility(
+            visible: isVideoTimelineOn,
+            child: VideoProgressIndicator(_controller, allowScrubbing: false,
+              colors: VideoProgressColors(
+                backgroundColor: Color.fromRGBO(0, 0, 0, 0),
+                bufferedColor: Color.fromRGBO(0, 0, 0, 0),
+                playedColor: ColorsLectary.yellow
+              ),
             ),
           )
         ],

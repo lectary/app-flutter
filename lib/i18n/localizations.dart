@@ -1,14 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lectary/i18n/localizations_strings.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 /// Class for handling localization resources
 class AppLocalizations {
-  AppLocalizations(this.locale);
+  static bool _settingUppercase;
 
+  AppLocalizations(this.locale);
   final Locale locale;
 
   static AppLocalizations of(BuildContext context) {
+    _settingUppercase = Provider.of<SettingViewModel>(context, listen: false).settingUppercase;
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
@@ -20,7 +24,11 @@ class AppLocalizations {
   };
 
   // Getters for localized values
-  _getValue(String key) => _localizedValues[locale.languageCode][key];
+  _getValue(String key) {
+    return _settingUppercase
+        ? _localizedValues[locale.languageCode][key].toUpperCase()
+        : _localizedValues[locale.languageCode][key];
+  }
 
   String get appTitle => _getValue(AppTitle);
   String get emptyLectures => _getValue(EmptyLectures);
