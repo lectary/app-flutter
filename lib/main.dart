@@ -36,7 +36,7 @@ class LectaryApp extends StatelessWidget {
         ProxyProvider<LectaryApi, LectureRepository>(
           update: (context, lectaryApi, lectureRepository) =>
               LectureRepository(lectaryApi: lectaryApi, lectureDatabase: lectureDatabase),
-          dispose: (context, lectureRepository) => lectureRepository.dispose(),
+          //dispose: (context, lectureRepository) => lectureRepository.dispose(),
         ),
         ChangeNotifierProxyProvider<LectureRepository, LectureViewModel>(
           update: (context, lectureRepository, lectureViewModel) =>

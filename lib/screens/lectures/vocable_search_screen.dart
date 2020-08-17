@@ -1,8 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
-import 'package:lectary/models/media_item.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/global_theme.dart';
@@ -32,7 +29,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
   Widget build(BuildContext context) {
     // Retrieving arguments from route
     final VocableSearchScreenArguments args = ModalRoute.of(context).settings.arguments;
-    List<MediaItem> filteredVocables = context.select((CarouselViewModel model) => model.currentMediaItems);
+    List<Vocable> filteredVocables = context.select((CarouselViewModel model) => model.filteredVocables);
 
     return Theme(
       data: lectaryThemeDark(),
@@ -69,7 +66,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                   itemCount: filteredVocables.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(filteredVocables[index].text),
+                      title: Text(filteredVocables[index].vocable),
                     );
                   }),
             ),
