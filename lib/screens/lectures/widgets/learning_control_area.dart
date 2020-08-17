@@ -45,10 +45,7 @@ class _LearningControlAreaState extends State<LearningControlArea> {
             icon: Icons.casino,
             size: 70,
             func: () {
-              int rndPage = random.nextInt(Provider.of<CarouselViewModel>(context, listen: false)
-                  .currentVocables.length);
-              Provider.of<CarouselViewModel>(context, listen: false)
-                  .currentItemIndex = rndPage;
+              int rndPage = Provider.of<CarouselViewModel>(context, listen: false).chooseRandomVocable();
               widget.carouselController.jumpToPage(rndPage);
             }
           ),

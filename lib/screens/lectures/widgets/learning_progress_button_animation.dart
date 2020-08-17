@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/screens/lectures/widgets/learning_progress_button.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 
 /// Class for handling the [Animation] of showing and hiding the learning-progress-button
@@ -39,6 +41,7 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final model = Provider.of<CarouselViewModel>(context, listen: false);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -79,9 +82,11 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
                     if (_buttonEnabled) {
                       _controller.reverse();
                       _buttonEnabled = false;
+                      model.vocableProgressEnabled = false;
                     } else {
                       _controller.forward();
                       _buttonEnabled = true;
+                      model.vocableProgressEnabled = true;
                     }
                     setState(() {});
                   }),

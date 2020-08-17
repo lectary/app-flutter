@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:math' as math;
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
@@ -14,6 +15,8 @@ import 'package:lectary/utils/utils.dart';
 /// uses [ChangeNotifier] for propagating changes to UI components
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
+
+  bool vocableProgressEnabled = false;
 
   bool _hideVocableModeOn = false;
   bool get hideVocableModeOn => _hideVocableModeOn;
@@ -146,5 +149,13 @@ class CarouselViewModel with ChangeNotifier {
     } catch (e) {
       log("Updating progress of vocable: ${_currentVocables[vocableIndex]} failed: ${e.toString()}");
     }
+  }
+
+  /// Returns the index as [int] of a randomly chosen variable
+  /// If [vocableProgressEnabled] is [True] then the [Vocable.vocableProgress] will be considered
+  int chooseRandomVocable() {
+    int rndPage = Utils.chooseRandomVocable(vocableProgressEnabled, _currentVocables);
+    currentItemIndex = rndPage;
+    return rndPage;
   }
 }

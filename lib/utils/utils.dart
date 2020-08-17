@@ -1,9 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:archive/archive.dart';
 import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
+import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
@@ -283,4 +285,39 @@ class Utils {
     final int maxLength = 5;
     return string.padLeft(maxLength, '0');
   }
+
+  /// Returns the index of one random selected vocable of the passed list of [Vocable]
+  /// If [vocableProgressEnabled] is [True], then the [Vocable.vocableProgress] will
+  /// be considered when choosing a vocable, the better the progress, the rarer a
+  /// vocable will be chosen
+  static int chooseRandomVocable(bool vocableProgressEnabled, List<Vocable> vocables) {
+    math.Random random = new math.Random();
+    int rndPage;
+    if (vocableProgressEnabled) {
+      List<Vocable> distributedVocableList = List();
+      vocables.forEach((voc) {
+        switch(voc.vocableProgress) {
+          case 0:
+            distributedVocableList.add(voc);
+            distributedVocableList.add(voc);
+            distributedVocableList.add(voc);
+            break;
+          case 1:
+            distributedVocableList.add(voc);
+            distributedVocableList.add(voc);
+            break;
+          case 2:
+            distributedVocableList.add(voc);
+            break;
+        }
+      });
+      int rndIndex = random.nextInt(distributedVocableList.length);
+      Vocable vocable = distributedVocableList[rndIndex];
+      rndPage = vocables.indexOf(vocable);
+    } else {
+      rndPage = random.nextInt(vocables.length);
+    }
+    return rndPage;
+  }
+
 }
