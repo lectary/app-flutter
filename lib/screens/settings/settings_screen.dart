@@ -1,7 +1,8 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
+import 'package:lectary/main.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
-import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -47,8 +48,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         trailing: DropdownButton(
             value: context.select((SettingViewModel model) => model.settingAppLanguage),
             items: SettingViewModel.appLanguagesList
-                .map((e) => DropdownMenuItem(child: Text(e), value: e)).toList(),
-            onChanged: (value) => settings.setSettingAppLanguage(value)),
+                .map((e) => DropdownMenuItem(child: Text(e.toUpperCase()), value: e)).toList(),
+            onChanged: (value) async {
+              if (settings.settingAppLanguage != value) {
+                await settings.setSettingAppLanguage(value);
+                log("setting new locale: $value");
+                LocalizedApp.setLocale(context, Locale(value, ''));
+              }
+            }),
       ),
       ListTile(
         title: Text("Lernsprache auswählen"),
@@ -65,7 +72,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             context: context,
             title: "Möchten Sie wirklich alle Einstellungen zurücksetzen?",
             submitText: "Zurücksetzen",
-            submitFunc: settings.resetAllSettings),
+            submitFunc: () async {
+              String oldLang = settings.settingAppLanguage;
+              await settings.resetAllSettings();
+              String newLang = settings.settingAppLanguage;
+              if (oldLang != newLang) {
+                log("setting default locale: $newLang");
+                LocalizedApp.setLocale(context, Locale(settings.settingAppLanguage, ''));
+              }
+            }
+            ),
       ),
       ListTile(
           leading: Icon(Icons.info),

@@ -6,10 +6,10 @@ import 'package:provider/provider.dart';
 
 /// Class for handling localization resources
 class AppLocalizations {
-  static bool _settingUppercase;
-
   AppLocalizations(this.locale);
+
   final Locale locale;
+  static bool _settingUppercase;
 
   static AppLocalizations of(BuildContext context) {
     _settingUppercase = Provider.of<SettingViewModel>(context, listen: false).settingUppercase;
@@ -21,13 +21,15 @@ class AppLocalizations {
   // uses string-mapping defined in localizations_strings.dart
   static Map<String, Map<String, String>> _localizedValues = {
     'de': de,
+    'en': en,
   };
 
   // Getters for localized values
   _getValue(String key) {
+    String value = _localizedValues[locale.languageCode][key] ?? "<no translation>";
     return _settingUppercase
-        ? _localizedValues[locale.languageCode][key].toUpperCase()
-        : _localizedValues[locale.languageCode][key];
+        ? value.toUpperCase()
+        : value;
   }
 
   String get appTitle => _getValue(AppTitle);
@@ -48,7 +50,8 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale('de', 'DE'),
+      Locale('de', ''),
+      Locale('en', ''),
     ];
   }
 
