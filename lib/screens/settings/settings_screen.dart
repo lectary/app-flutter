@@ -59,12 +59,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       ListTile(
         title: Text("Lernsprache auswählen"),
-        trailing: DropdownButton(
-          value: context.select((SettingViewModel model) => model.settingLearningLanguage),
-          items: SettingViewModel.learningLanguagesList
-              .map((e) => DropdownMenuItem(child: Text(e), value: e)).toList(),
-          onChanged: (value) => settings.setSettingLearningLanguage(value),
-        ),
+        trailing: context.select((SettingViewModel model) => model.isUpdatingLanguages)
+            ? CircularProgressIndicator()
+            : DropdownButton(
+                value: context.select((SettingViewModel model) => model.settingLearningLanguage),
+                items: (() {
+                  List<DropdownMenuItem> items = context.select((SettingViewModel model) => model.learningLanguagesList)
+                      .map((e) => DropdownMenuItem(child: Center(child: Text(e)), value: e)).toList();
+                  // adding custom dropdown item for updating languages
+                  items.add(DropdownMenuItem<String>(
+                    child: Column(
+                      children: [
+                        Divider(),
+                        Text("Aktualisieren"),
+                      ],
+                    ),
+                    value: "_update",
+                    onTap: settings.updateLearningLanguages,
+                  ));
+                  return items;
+                })(),
+                onChanged: (value) {
+                  if (value != "_update") {
+                    settings.setSettingLearningLanguage(value);
+                  }
+                }),
       ),
       ListTile(
         title: Text("Alle Einstellungen zurücksetzen"),
