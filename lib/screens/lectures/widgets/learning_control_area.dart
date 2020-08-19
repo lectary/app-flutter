@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:developer' as dev;
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:lectary/screens/lectures/widgets/learning_progress_button_animation.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -44,13 +45,11 @@ class _LearningControlAreaState extends State<LearningControlArea> {
             icon: Icons.casino,
             size: 70,
             func: () {
-              int rndPage = random.nextInt(Provider.of<CarouselViewModel>(context, listen: false)
-                  .currentVocables.length);
-              Provider.of<CarouselViewModel>(context, listen: false)
-                  .currentItemIndex = rndPage;
+              int rndPage = Provider.of<CarouselViewModel>(context, listen: false).chooseRandomVocable();
               widget.carouselController.jumpToPage(rndPage);
             }
-          )
+          ),
+          LearningProgressButtonAnimation()
         ],
       ),
     );
