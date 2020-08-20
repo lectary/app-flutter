@@ -85,6 +85,16 @@ void main() async {
       expect(listElementIconFinder2, findsOneWidget);
       final listElementIconFinder3 = find.byIcon(Icons.subject);
       expect(listElementIconFinder3, findsOneWidget);
+
+      // assert correct search result
+      await tester.enterText(find.byType(TextField), "Baum");
+      await tester.pumpAndSettle();
+
+      final findBaumElement = find.text("Baum");
+      // TODO fix - finds two text-widgets of 'Baum' although only one visible through manual testing ....
+      expect(findBaumElement, findsWidgets);
+      expect(find.byIcon(Icons.subject), findsNothing);
+      expect(find.text("Haus"), findsNothing);
     });
   });
 }

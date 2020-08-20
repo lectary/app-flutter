@@ -28,12 +28,17 @@ class MediaViewer extends StatelessWidget {
     final bool autoModeOn = context.select((CarouselViewModel model) => model.autoModeOn);
     final bool loopModeOn = context.select((CarouselViewModel model) => model.loopModeOn);
 
+    final bool isVirtualLecture = context.select((CarouselViewModel model) => model.isVirtualLecture);
+    final model = Provider.of<CarouselViewModel>(context, listen: false);
+    String lectureName = model.localLectures.firstWhere((lecture) => lecture.id == vocable.lectureId).lesson;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         TextArea(
           hideVocableModeOn: hideVocableModeOn,
-          text: vocable.vocable,
+          text: isVirtualLecture ? vocable.vocable + "\n[$lectureName]"
+          : vocable.vocable,
         ),
         () {
           switch (MediaType.fromString(vocable.mediaType)) {
