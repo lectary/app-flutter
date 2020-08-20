@@ -1,3 +1,4 @@
+// String keys
 const String
     AppTitle = 'app_title',
     EmptyLectures = 'empty_lectures',
@@ -8,11 +9,23 @@ const String
     ScreenManagementTitle = 'screen_management_title',
     ScreenManagementSearchHint ='screen_management_search_hint',
     ScreenSettingsTitle = 'screen_settings_title',
-    ScreenAboutTitle = 'screen_about_title';
+    ScreenAboutTitle = 'screen_about_title',
+    OkUppercase = 'ok_uppercase',
+
+    // about-screen
+    AboutIntroductionPart1 = 'about_introduction_part_1',
+    AboutIntroductionPart2 = 'about_introduction_part_2',
+    AboutContact = 'about_contract',
+    AboutInstruction = 'about_instruction',
+    AboutCredits = 'about_credits',
+    AboutIconCredit = 'about_icon_credit',
+    AboutIconCreationCreditPart1 = 'about_icon_creation_credit_part_1',
+    AboutIconCreationCreditPart2 = 'about_icon_creation_credit_part_2',
+    AboutVersion = 'about_version';
 
 
 
-
+// Language de
 final de = {
   AppTitle: 'Lectary 4',
   EmptyLectures: 'Keine Lektionen vorhanden.',
@@ -24,8 +37,21 @@ final de = {
   ScreenManagementSearchHint: 'Suche',
   ScreenSettingsTitle: 'Einstellungen',
   ScreenAboutTitle: 'Über',
+  OkUppercase: 'OK',
+
+  // about-screen
+  AboutIntroductionPart1: 'Lectary, überall und jederzeit Gebärden und Sprachen lernen. Weitere Informationen zu diesem Projekt finden Sie auf ',
+  AboutIntroductionPart2: 'Wenn Sie Ihre Lernvideos anbieten wollen, setzen Sie sich mit uns in Verbindung.\n\n',
+  AboutContact: 'Fragen, Hinweise, Anregungen bitte an ',
+  AboutInstruction: 'Anleitung: ',
+  AboutCredits: 'Credits: \n\n',
+  AboutIconCredit: 'Icons by : ',
+  AboutIconCreationCreditPart1: 'Icons made by ',
+  AboutIconCreationCreditPart2: 'from ',
+  AboutVersion: 'Version 4 #datum--time',
 };
 
+// Language en
 final en = {
   AppTitle: 'Lectary 4',
 };

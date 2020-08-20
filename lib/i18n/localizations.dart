@@ -42,6 +42,17 @@ class AppLocalizations {
   String get screenManagementSearchHint => _getValue(ScreenManagementSearchHint);
   String get screenSettingsTitle => _getValue(ScreenSettingsTitle);
   String get screenAboutTitle => _getValue(ScreenAboutTitle);
+  String get okUppercase => _getValue(OkUppercase);
+
+  String get aboutIntroductionPart1 => _getValue(AboutIntroductionPart1);
+  String get aboutIntroductionPart2 => _getValue(AboutIntroductionPart2);
+  String get aboutContact => _getValue(AboutContact);
+  String get aboutInstruction => _getValue(AboutInstruction);
+  String get aboutCredits => _getValue(AboutCredits);
+  String get aboutIconCredit => _getValue(AboutIconCredit);
+  String get aboutIconCreationCreditPart1 => _getValue(AboutIconCreationCreditPart1);
+  String get aboutIconCreationCreditPart2 => _getValue(AboutIconCreationCreditPart2);
+  String get aboutVersion => _getValue(AboutVersion);
 }
 
 /// Bridge-class for flutter i18n mechanics and custom i18n resource class.
