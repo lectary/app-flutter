@@ -4,6 +4,7 @@ import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
+import 'package:lectary/screens/lectures/vocable_search_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -30,9 +31,28 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
     return Theme(
       data: lectaryThemeDark(),
       child: Scaffold(
-          appBar: AppBar(
-            title: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
-          ),
+          resizeToAvoidBottomInset: false,
+          // to avoid bottom overflow when keyboard on search-screen is opened
+          appBar: vocables.isNotEmpty
+              ? AppBar(
+                  title: GestureDetector(
+                      child: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/search',
+                            arguments: VocableSearchScreenArguments(openSearch: false));
+                      }),
+                  actions: [
+                    IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/search',
+                              arguments: VocableSearchScreenArguments(openSearch: true));
+                        }),
+                  ],
+                )
+              : AppBar(
+                  title: Text("Lectary 4"),
+                ),
           drawer: Theme(
             data: lectaryThemeLight(),
             child: MainDrawer(),
