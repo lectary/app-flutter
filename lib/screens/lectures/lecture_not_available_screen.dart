@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 
+
+/// Lecture screen if no lectures are available.
+/// Shows a corresponding message and a button linked with the
+/// [LectureManagementScreen]
 class LectureNotAvailableScreen extends StatelessWidget {
   LectureNotAvailableScreen({Key key}) : super(key: key);
 

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
+import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
@@ -10,6 +11,8 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
+/// Lecture main screen responsible for building the [AppBar] and initially
+/// loading all vocables and showing either [LectureScreen] or [LectureNotAvailableScreen]
 class LectureMainScreen extends StatefulWidget {
   @override
   _LectureMainScreenState createState() => _LectureMainScreenState();
@@ -31,8 +34,8 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
     return Theme(
       data: lectaryThemeDark(),
       child: Scaffold(
+        // to avoid bottom overflow when keyboard on search-screen is opened
           resizeToAvoidBottomInset: false,
-          // to avoid bottom overflow when keyboard on search-screen is opened
           appBar: vocables.isNotEmpty
               ? AppBar(
                   title: GestureDetector(
@@ -51,7 +54,7 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
                   ],
                 )
               : AppBar(
-                  title: Text("Lectary 4"),
+                  title: Text(AppLocalizations.of(context).appTitle),
                 ),
           drawer: Theme(
             data: lectaryThemeLight(),

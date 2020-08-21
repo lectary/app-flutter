@@ -9,6 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:lectary/screens/lectures/widgets/custom_button.dart';
 
 
+/// A [Row] of custom button widgets for controlling some functions in the carousel
+/// like visibility of the vocable, navigating to a random vocable and
+/// controlling the learning progress
+/// Sets and listens for changes in the [CarouselViewModel].
 class LearningControlArea extends StatefulWidget {
   final int flex;
   final CarouselController carouselController;
@@ -25,7 +29,8 @@ class _LearningControlAreaState extends State<LearningControlArea> {
   @override
   Widget build(BuildContext context) {
     dev.log("build learning-control-area");
-    final bool hideVocableModeOn = context.select((CarouselViewModel model) => model.hideVocableModeOn);
+    final bool hideVocableModeOn =
+        context.select((CarouselViewModel model) => model.hideVocableModeOn);
 
     return Expanded(
       flex: widget.flex,

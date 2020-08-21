@@ -1,14 +1,13 @@
 // String keys
 const String
+    // titles
     AppTitle = 'app_title',
-    EmptyLectures = 'empty_lectures',
-    MinMaxLectureSizes = 'min_max_lecture_sizes',
-    DownloadAndManageLectures = 'download_and_manage_lectures',
-    ButtonSettings = 'button_settings',
     ScreenManagementTitle = 'screen_management_title',
     ScreenManagementSearchHint ='screen_management_search_hint',
     ScreenSettingsTitle = 'screen_settings_title',
     ScreenAboutTitle = 'screen_about_title',
+
+    // general
     OkUppercase = 'ok_uppercase',
     Cancel = 'cancel',
     Download = 'download',
@@ -21,8 +20,10 @@ const String
     ReportErrorText = 'report_error_text',
     ReportError = 'report_error',
 
+    // error messages
     ErrorDownloadLecture = 'error_download_lecture',
 
+    // lecture-info menu
     LectureInfoLecture = 'lecture_info_lecture',
     LectureInfoPack = 'lecture_info_pack',
     LectureInfoFileSize = 'lecture_info_file_size',
@@ -35,6 +36,11 @@ const String
     DrawerButtonSettings = 'drawer_button_settings',
     DrawerAllVocables = 'drawer_all_vocables',
     DrawerNoLecturesAvailable = 'drawer_no_lectures_available',
+
+    // lecture-screen
+    EmptyLectures = 'empty_lectures',
+    MinMaxLectureSizes = 'min_max_lecture_sizes',
+    DownloadAndManageLectures = 'download_and_manage_lectures',
 
     // lecture-management-screen
     NoLecturesFound = 'no_lectures_found',
@@ -74,15 +80,14 @@ const String
 
 // Language de
 final de = {
+  // titles
   AppTitle: 'Lectary 4',
-  EmptyLectures: 'Keine Lektionen vorhanden.',
-  MinMaxLectureSizes: 'Einzelne Lektionen sind ungefähr 5MB bis 20MB gross.',
-  DownloadAndManageLectures: 'Lektionen herunterladen und verwalten.',
-  ButtonSettings: 'Einstellungen',
   ScreenManagementTitle: 'Lektionen verwalten',
   ScreenManagementSearchHint: 'Suche',
   ScreenSettingsTitle: 'Einstellungen',
   ScreenAboutTitle: 'Über',
+
+  // general
   OkUppercase: 'OK',
   Cancel: 'Abbrechen',
   Download: 'Herunterladen',
@@ -95,8 +100,10 @@ final de = {
   ReportErrorText: 'Sie können den Fehler an das Lectary Team melden, damit dieser behoben werden kann.',
   ReportError: 'Fehler melden',
 
+  // error messages
   ErrorDownloadLecture: 'Leider ist beim Download der Lektion ein Fehler aufgetreten!',
 
+  // lecture-info menu
   LectureInfoLecture: 'Lektion: ',
   LectureInfoPack: 'Paket: ',
   LectureInfoFileSize: 'Dateigröße: ',
@@ -109,6 +116,11 @@ final de = {
   DrawerButtonLectureManagement: 'Lektionen verwalten',
   DrawerAllVocables: 'Alle Vokabel',
   DrawerNoLecturesAvailable: 'Keine offline Lektionen vorhanden!',
+
+  // lecture-screen
+  EmptyLectures: 'Keine Lektionen vorhanden.',
+  MinMaxLectureSizes: 'Einzelne Lektionen sind ungefähr 5MB bis 20MB gross.',
+  DownloadAndManageLectures: 'Lektionen herunterladen und verwalten.',
 
   // lecture-management-screen
   NoLecturesFound: 'Keine Lektionen gefunden.',

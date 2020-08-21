@@ -1,6 +1,10 @@
+import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
 
-/// Enum class
+
+/// Pseudo enum class for the media-type of [Vocable].
+/// Due to the restrictions in functionality of real enum-classes,
+/// this helper class representing the media-type enum is used.
 class MediaType {
   const MediaType._(this._name);
 

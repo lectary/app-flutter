@@ -21,10 +21,12 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
   @override
   void initState() {
     super.initState();
+    // controls the animation and sets its duration
     _controller = AnimationController(
         vsync: this,
         duration: Duration(milliseconds: 500)
     );
+    // defines the kind of animation
     _animation = CurvedAnimation(
       parent: _controller,
       curve: Curves.fastOutSlowIn,
@@ -40,8 +42,12 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     final model = Provider.of<CarouselViewModel>(context, listen: false);
+    double width = MediaQuery.of(context).size.width;
+    // nearly perfectly aligned with the other buttons with this values
+    width = width / 3.333333;
+    final double widthButton = width * 0.91;
+    final double widthControl = width * 0.20;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -54,7 +60,8 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  width: width / 4, // the size needs to be set manually
+                  // the size needs to be set manually
+                  width: widthButton,
                   child: LearningProgressButton(
                       size: 70, color: ColorsLectary.lightBlue),
                 ),
@@ -68,7 +75,7 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
               alignment: Alignment.center,
               child: IconButton(
                   padding: EdgeInsets.all(0.0),
-                  iconSize: 60,
+                  iconSize: widthControl * 2,
                   icon: _buttonEnabled
                       ? Icon(
                           Icons.keyboard_arrow_right,
@@ -79,16 +86,17 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
                           color: ColorsLectary.white,
                         ),
                   onPressed: () {
-                    if (_buttonEnabled) {
-                      _controller.reverse();
-                      _buttonEnabled = false;
-                      model.vocableProgressEnabled = false;
-                    } else {
-                      _controller.forward();
-                      _buttonEnabled = true;
-                      model.vocableProgressEnabled = true;
-                    }
-                    setState(() {});
+                    setState(() {
+                      if (_buttonEnabled) {
+                        _controller.reverse();
+                        _buttonEnabled = false;
+                        model.vocableProgressEnabled = false;
+                      } else {
+                        _controller.forward();
+                        _buttonEnabled = true;
+                        model.vocableProgressEnabled = true;
+                      }
+                    });
                   }),
             ),
           ),

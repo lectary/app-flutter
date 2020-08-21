@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/utils/colors.dart';
@@ -26,6 +24,7 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
   Widget build(BuildContext context) {
     int vocableIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
     int progress = context.select((CarouselViewModel model) => model.currentVocables[vocableIndex].vocableProgress);
+
     return FlatButton(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(0))),
@@ -41,6 +40,8 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
     );
   }
 
+  // returns a column with a nested row with the correct icons corresponding
+  // to the progress, which results in a pyramid like arrangement
   Widget _buildIconsForProgress(int progress) {
     switch (progress) {
       case 1:
@@ -82,6 +83,7 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
     }
   }
 
+  // returns either a circle or smiley widget
   Icon _buildIcon(bool filled) {
     return filled ?
      Icon(Icons.insert_emoticon, color: ColorsLectary.white)

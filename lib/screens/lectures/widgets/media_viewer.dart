@@ -10,6 +10,11 @@ import 'package:lectary/screens/lectures/widgets/media_viewer_text_area.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_video.dart';
 
 
+/// Class responsible for displaying the correct media player corresponding to the
+/// [MediaType] of the [Vocable].
+/// Uses either [LectaryVideoPlayer], [ImageViewer] or [TextViewer].
+/// For the vocable itself, it uses [TextArea].
+/// Listens on [CarouselViewModel] for changes regarding media-modes and vocable visibility.
 class MediaViewer extends StatelessWidget {
   const MediaViewer({
     Key key,
@@ -36,6 +41,7 @@ class MediaViewer extends StatelessWidget {
           text: vocable.vocable,
         ),
         () {
+        // assert that all mediaTypes are valid, otherwise would be filtered before by the models
           switch (MediaType.fromString(vocable.mediaType)) {
             case MediaType.MP4:
               return LectaryVideoPlayer(
@@ -52,7 +58,6 @@ class MediaViewer extends StatelessWidget {
                 mediaIndex: vocableIndex,
                 slowMode: slowModeOn,
                 autoMode: autoModeOn,
-                loopMode: loopModeOn,
               );
             case MediaType.TXT:
               return TextViewer(
@@ -60,7 +65,6 @@ class MediaViewer extends StatelessWidget {
                 mediaIndex: vocableIndex,
                 slowMode: slowModeOn,
                 autoMode: autoModeOn,
-                loopMode: loopModeOn,
               );
           }
         } ()

@@ -12,7 +12,7 @@ class AppLocalizations {
   static bool _settingUppercase;
 
   static AppLocalizations of(BuildContext context) {
-    _settingUppercase = Provider.of<SettingViewModel>(context, listen: false).settingUppercase;
+    _settingUppercase = Provider.of<SettingViewModel>(context).settingUppercase;
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
@@ -32,14 +32,14 @@ class AppLocalizations {
         : value;
   }
 
+  // titles
   String get appTitle => _getValue(AppTitle);
-  String get emptyLectures => _getValue(EmptyLectures);
-  String get minMaxLectureSizes => _getValue(MinMaxLectureSizes);
-  String get downloadAndManageLectures => _getValue(DownloadAndManageLectures);
   String get screenManagementTitle => _getValue(ScreenManagementTitle);
   String get screenManagementSearchHint => _getValue(ScreenManagementSearchHint);
   String get screenSettingsTitle => _getValue(ScreenSettingsTitle);
   String get screenAboutTitle => _getValue(ScreenAboutTitle);
+
+  // general
   String get okUppercase => _getValue(OkUppercase);
   String get cancel => _getValue(Cancel);
   String get download => _getValue(Download);
@@ -52,20 +52,29 @@ class AppLocalizations {
   String get reportErrorText => _getValue(ReportErrorText);
   String get reportError => _getValue(ReportError);
 
+  // error messages
   String get errorDownloadLecture => _getValue(ErrorDownloadLecture);
 
+  // lecture-info menu
   String get lectureInfoLecture => _getValue(LectureInfoLecture);
   String get lectureInfoPack => _getValue(LectureInfoPack);
   String get lectureInfoFileSize => _getValue(LectureInfoFileSize);
   String get lectureInfoVocableCount => _getValue(LectureInfoVocableCount);
   String get lectureInfoFileSizeUnit => _getValue(LectureInfoFileSizeUnit);
 
+  // drawer
   String get drawerHeader => _getValue(DrawerHeader);
   String get drawerButtonLectureManagement => _getValue(DrawerButtonLectureManagement);
   String get drawerButtonSettings => _getValue(DrawerButtonSettings);
   String get drawerAllVocables => _getValue(DrawerAllVocables);
   String get drawerNoLecturesAvailable => _getValue(DrawerNoLecturesAvailable);
 
+  // lecture-screen
+  String get emptyLectures => _getValue(EmptyLectures);
+  String get minMaxLectureSizes => _getValue(MinMaxLectureSizes);
+  String get downloadAndManageLectures => _getValue(DownloadAndManageLectures);
+
+  // lecture-management-screen
   String get noLecturesFound => _getValue(NoLecturesFound);
   String get deleteAllLectures => _getValue(DeleteAllLectures);
   String get deleteAllLecturesQuestion => _getValue(DeleteAllLecturesQuestion);
@@ -75,6 +84,7 @@ class AppLocalizations {
   String get noInternetConnection => _getValue(NoInternetConnection);
   String get offlineMode => _getValue(OfflineMode);
 
+  // setting-screen
   String get settingMediaWithSound => _getValue(SettingMediaWithSound);
   String get settingVideoTimeLine => _getValue(SettingVideoTimeLine);
   String get settingMediaOverlay => _getValue(SettingMediaOverlay);
@@ -86,6 +96,7 @@ class AppLocalizations {
   String get settingResetSettings => _getValue(SettingResetSettings);
   String get settingResetSettingsQuestion => _getValue(SettingResetSettingsQuestion);
 
+  // about-screen
   String get about => _getValue(About);
   String get aboutIntroductionPart1 => _getValue(AboutIntroductionPart1);
   String get aboutIntroductionPart2 => _getValue(AboutIntroductionPart2);

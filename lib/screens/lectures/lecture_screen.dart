@@ -10,6 +10,9 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
+/// Lecture screen in case there are available [Vocable].
+/// Consists of the [Carousel] with its [CarouselNavigationOverlay],
+/// and the two control areas [MediaControlArea] and [LearningControlArea].
 class LectureScreen extends StatefulWidget {
   final List<Vocable> vocables;
 
@@ -32,13 +35,16 @@ class _LectureScreenState extends State<LectureScreen> {
   @override
   Widget build(BuildContext context) {
     log("build lecture-screen");
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Expanded(
           flex: 7,
           child: Stack(children: [
+            // build the carousel with a new UniqueKey, so that it gets rebuilt completely
+            // every time build is called. This will be every time when there are new vocable
+            // loaded. This ensures the carousel-indices are resetted and the videos
+            // are (re)loaded correctly.
             Carousel(
               key: UniqueKey(),
               vocables: widget.vocables,

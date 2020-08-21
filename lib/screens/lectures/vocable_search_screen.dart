@@ -18,6 +18,7 @@ class VocableSearchScreenArguments {
 }
 
 
+/// Screen for searching for [Vocable].
 class VocableSearchScreen extends StatefulWidget {
   @override
   _VocableSearchScreenState createState() => _VocableSearchScreenState();
