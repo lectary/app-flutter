@@ -14,6 +14,7 @@ const String
     Download = 'download',
     Update = 'update',
     Delete = 'delete',
+    Reset = 'reset',
     NoDescription = 'no_description',
     Close = 'close',
     Oops = 'oops',
@@ -45,7 +46,20 @@ const String
     NoInternetConnection = 'no_internet_connection',
     OfflineMode = 'offline_mode',
 
+    // setting-screen
+    SettingMediaWithSound = 'setting_media_with_sound',
+    SettingVideoTimeLine = 'setting_video_timeline',
+    SettingMediaOverlay = 'setting_media_overlay',
+    SettingUppercase = 'setting_uppercase',
+    SettingResetLearningProgress = 'setting_reset_learning_progress',
+    SettingResetLearningProgressQuestion = 'setting_reset_learning_progress_question',
+    SettingChooseAppLanguage = 'setting_choose_app_language',
+    SettingChooseLearningLanguage = 'setting_choose_learning_language',
+    SettingResetSettings = 'setting_reset_settings',
+    SettingResetSettingsQuestion = 'setting_reset_settings_question',
+
     // about-screen
+    About = 'about',
     AboutIntroductionPart1 = 'about_introduction_part_1',
     AboutIntroductionPart2 = 'about_introduction_part_2',
     AboutContact = 'about_contract',
@@ -74,6 +88,7 @@ final de = {
   Download: 'Herunterladen',
   Update: 'Aktualisieren',
   Delete: 'Löschen',
+  Reset: 'Zurücksetzen',
   NoDescription: 'Keine Beschreibung vorhanden.',
   Close: 'Schließen',
   Oops: 'Upps....',
@@ -105,7 +120,20 @@ final de = {
   NoInternetConnection: 'Keine Internetverbindung!',
   OfflineMode: 'OFFLINE MODUS',
 
+  // setting-screen
+  SettingMediaWithSound: 'Medien mit Ton abspielen',
+  SettingVideoTimeLine: 'Video-Zeitleiste anzeigen',
+  SettingMediaOverlay: 'Medien-Overlay anzeigen',
+  SettingUppercase: 'GROSSCHREIBEN',
+  SettingResetLearningProgress: 'Lernfortschritt zurücksetzen',
+  SettingResetLearningProgressQuestion: 'Möchten Sie wirklich Ihren gesamten Lernfortschritt zurücksetzen?',
+  SettingChooseAppLanguage: 'App-Sprache auswählen',
+  SettingChooseLearningLanguage: 'Lernsprache auswählen',
+  SettingResetSettings: 'Alle Einstellungen zurücksetzen',
+  SettingResetSettingsQuestion: 'Möchten Sie wirklich alle Einstellungen zurücksetzen?',
+
   // about-screen
+  About: 'Über',
   AboutIntroductionPart1: 'Lectary, überall und jederzeit Gebärden und Sprachen lernen. Weitere Informationen zu diesem Projekt finden Sie auf ',
   AboutIntroductionPart2: 'Wenn Sie Ihre Lernvideos anbieten wollen, setzen Sie sich mit uns in Verbindung.\n\n',
   AboutContact: 'Fragen, Hinweise, Anregungen bitte an ',

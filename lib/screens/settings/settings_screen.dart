@@ -8,6 +8,7 @@ import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
+/// Setting-screen for changing various application settings
 class SettingsScreen extends StatefulWidget {
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -19,32 +20,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingViewModel>(context);
 
+    // defining the list of settings
     final List<Widget> settingWidgetList = List.of({
       SwitchListTile(
           value: context.select((SettingViewModel model) => model.settingPlayMediaWithSound),
-          title: Text("Medien mit Ton abspielen"),
+          title: Text(AppLocalizations.of(context).settingMediaWithSound),
           onChanged: (value) => settings.toggleSettingPlayMediaWithSound()),
       SwitchListTile(
           value: context.select((SettingViewModel model) => model.settingShowVideoTimeline),
-          title: Text("Video-Zeitleiste anzeigen"),
+          title: Text(AppLocalizations.of(context).settingVideoTimeLine),
           onChanged: (value) => settings.toggleSettingShowVideoTimeline()),
       SwitchListTile(
           value: context.select((SettingViewModel model) => model.settingShowMediaOverlay),
-          title: Text("Medien-Overlay anzeigen"),
+          title: Text(AppLocalizations.of(context).settingMediaOverlay),
           onChanged: (value) => settings.toggleSettingShowMediaOverlay()),
       SwitchListTile(
           value: context.select((SettingViewModel model) => model.settingUppercase),
-          title: Text("GROSSCHREIBEN"),
+          title: Text(AppLocalizations.of(context).settingUppercase),
           onChanged: (value) => settings.toggleSettingUppercase()),
       ListTile(
-          title: Text("Lernfortschritt zurücksetzen"),
+          title: Text(AppLocalizations.of(context).settingResetLearningProgress),
           onTap: () => Dialogs.showAlertDialog(
               context: context,
-              title: "Möchten Sie wirklich Ihren gesamten Lernfortschritt zurücksetzen?",
-              submitText: "Zurücksetzen",
+              title: AppLocalizations.of(context).settingResetLearningProgressQuestion,
+              submitText: AppLocalizations.of(context).reset,
               submitFunc: settings.resetLearningProgress)),
       ListTile(
-        title: Text("App-Sprache auswählen"),
+        title: Text(AppLocalizations.of(context).settingChooseAppLanguage),
         trailing: DropdownButton(
             value: context.select((SettingViewModel model) => model.settingAppLanguage),
             items: SettingViewModel.appLanguagesList
@@ -58,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             }),
       ),
       ListTile(
-        title: Text("Lernsprache auswählen"),
+        title: Text(AppLocalizations.of(context).settingChooseLearningLanguage),
         trailing: context.select((SettingViewModel model) => model.isUpdatingLanguages)
             ? CircularProgressIndicator()
             : DropdownButton(
@@ -71,30 +73,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Column(
                       children: [
                         Divider(),
-                        Text("Aktualisieren"),
+                        Text(AppLocalizations.of(context).update),
                       ],
                     ),
-                    value: "_update",
+                    value: "_update", // special 'key' value for filtering it later
                     onTap: settings.updateLearningLanguages,
                   ));
                   return items;
                 })(),
                 onChanged: (value) {
-                  if (value != "_update") {
+                  if (value != "_update") { // filter the update value
                     settings.setSettingLearningLanguage(value);
                   }
                 }),
       ),
       ListTile(
-        title: Text("Alle Einstellungen zurücksetzen"),
+        title: Text(AppLocalizations.of(context).settingResetSettings),
         onTap: () => Dialogs.showAlertDialog(
             context: context,
-            title: "Möchten Sie wirklich alle Einstellungen zurücksetzen?",
-            submitText: "Zurücksetzen",
+            title: AppLocalizations.of(context).settingResetSettingsQuestion,
+            submitText: AppLocalizations.of(context).reset,
             submitFunc: () async {
               String oldLang = settings.settingAppLanguage;
               await settings.resetAllSettings();
               String newLang = settings.settingAppLanguage;
+              // only switch locale if it actually changed
               if (oldLang != newLang) {
                 log("setting default locale: $newLang");
                 LocalizedApp.setLocale(context, Locale(settings.settingAppLanguage, ''));
@@ -102,14 +105,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             }
             ),
       ),
+      // link to about-screen
       ListTile(
           leading: Icon(Icons.info),
-          title: Text("Über"),
+          title: Text(AppLocalizations.of(context).about),
           onTap: () {
             Navigator.pushNamed(context, '/about');
           }),
     });
 
+    // building body with the listView and the list of setting-widgets
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).screenSettingsTitle),

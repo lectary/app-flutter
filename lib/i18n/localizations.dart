@@ -45,6 +45,7 @@ class AppLocalizations {
   String get download => _getValue(Download);
   String get update => _getValue(Update);
   String get delete => _getValue(Delete);
+  String get reset => _getValue(Reset);
   String get noDescription => _getValue(NoDescription);
   String get close => _getValue(Close);
   String get oops => _getValue(Oops);
@@ -74,6 +75,18 @@ class AppLocalizations {
   String get noInternetConnection => _getValue(NoInternetConnection);
   String get offlineMode => _getValue(OfflineMode);
 
+  String get settingMediaWithSound => _getValue(SettingMediaWithSound);
+  String get settingVideoTimeLine => _getValue(SettingVideoTimeLine);
+  String get settingMediaOverlay => _getValue(SettingMediaOverlay);
+  String get settingUppercase => _getValue(SettingUppercase);
+  String get settingResetLearningProgress => _getValue(SettingResetLearningProgress);
+  String get settingResetLearningProgressQuestion => _getValue(SettingResetLearningProgressQuestion);
+  String get settingChooseAppLanguage => _getValue(SettingChooseAppLanguage);
+  String get settingChooseLearningLanguage => _getValue(SettingChooseLearningLanguage);
+  String get settingResetSettings => _getValue(SettingResetSettings);
+  String get settingResetSettingsQuestion => _getValue(SettingResetSettingsQuestion);
+
+  String get about => _getValue(About);
   String get aboutIntroductionPart1 => _getValue(AboutIntroductionPart1);
   String get aboutIntroductionPart2 => _getValue(AboutIntroductionPart2);
   String get aboutContact => _getValue(AboutContact);
