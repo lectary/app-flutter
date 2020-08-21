@@ -102,7 +102,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
         child: AspectRatio(
             aspectRatio: Constants.aspectRatio,
             child: showPicture
-                ? Stack(children: [
+                ? Stack(alignment: Alignment.bottomCenter, children: [
                     Image.file(File(widget.imagePath)),
                     ClipRect(
                       child: BackdropFilter(

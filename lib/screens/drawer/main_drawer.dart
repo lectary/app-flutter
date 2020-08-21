@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/widgets/lecture_package_item.dart';
+import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/colors.dart';
@@ -49,14 +50,14 @@ class MainDrawer extends StatelessWidget {
               flex: 1,
               icon: Icons.cloud_download,
               text: AppLocalizations.of(context).drawerButtonLectureManagement,
-              routeName: '/lectureManagement'),
+              routeName: LectureManagementScreen.routeName),
           Divider(height: 1, thickness: 1),
           _buildButton(
               context: context,
               flex: 1,
               icon: Icons.settings,
               text: AppLocalizations.of(context).drawerButtonSettings,
-              routeName: '/settings'),
+              routeName: SettingsScreen.routeName),
           Divider(height: 1, thickness: 1),
         ],
       ),
@@ -70,7 +71,7 @@ class MainDrawer extends StatelessWidget {
         child: RaisedButton(
           onPressed: () {
             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-            Navigator.pushNamedAndRemoveUntil(context, routeName, ModalRoute.withName('/'));
+            Navigator.pushNamedAndRemoveUntil(context, routeName, ModalRoute.withName(LectureMainScreen.routeName));
           },
           child: Container(
             child: Row(
@@ -106,7 +107,7 @@ class MainDrawer extends StatelessWidget {
                         onTap: () {
                           Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
                           Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-                          Navigator.popUntil(context, ModalRoute.withName('/'));
+                          Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
                         },
                       );
                     return LecturePackageItem(context, snapshot.data[index - 1]);

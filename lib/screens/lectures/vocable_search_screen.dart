@@ -20,6 +20,8 @@ class VocableSearchScreenArguments {
 
 /// Screen for searching for [Vocable].
 class VocableSearchScreen extends StatefulWidget {
+  static const String routeName  = '/search';
+
   @override
   _VocableSearchScreenState createState() => _VocableSearchScreenState();
 }

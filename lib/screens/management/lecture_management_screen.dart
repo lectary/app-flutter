@@ -3,6 +3,7 @@ import 'package:lectary/data/api/lectary_api.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/widgets/lecture_package_item.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/dialogs.dart';
@@ -16,6 +17,8 @@ import 'package:provider/provider.dart';
 /// Retrieves all available [Lecture] from the [LectaryApi] and displays on success
 /// a [ListView] of [LecturePackage] which are [Lecture] grouped by their package name.
 class LectureManagementScreen extends StatefulWidget {
+  static const String routeName  = '/lectureManagement';
+
   @override
   _LectureManagementScreenState createState() => _LectureManagementScreenState();
 }
@@ -176,7 +179,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                         submitFunc: () async {
                           Dialogs.showLoadingDialog(context: context, text: AppLocalizations.of(context).deletingLectures);
                           await Provider.of<LectureViewModel>(context, listen: false).deleteAllLectures();
-                          Navigator.popUntil(context, ModalRoute.withName('/'));
+                          Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
                         }),
                   ),
                 ),

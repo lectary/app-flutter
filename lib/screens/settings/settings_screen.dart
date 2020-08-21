@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/main.dart';
+import 'package:lectary/screens/about/about_screen.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
@@ -10,6 +11,8 @@ import 'package:provider/provider.dart';
 
 /// Setting-screen for changing various application settings
 class SettingsScreen extends StatefulWidget {
+  static const String routeName  = '/settings';
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -110,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           leading: Icon(Icons.info),
           title: Text(AppLocalizations.of(context).about),
           onTap: () {
-            Navigator.pushNamed(context, '/about');
+            Navigator.pushNamed(context, AboutScreen.routeName);
           }),
     });
 

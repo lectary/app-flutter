@@ -14,6 +14,8 @@ import 'package:provider/provider.dart';
 /// Lecture main screen responsible for building the [AppBar] and initially
 /// loading all vocables and showing either [LectureScreen] or [LectureNotAvailableScreen]
 class LectureMainScreen extends StatefulWidget {
+  static const String routeName  = '/';
+
   @override
   _LectureMainScreenState createState() => _LectureMainScreenState();
 }
@@ -41,14 +43,14 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
                   title: GestureDetector(
                       child: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
                       onTap: () {
-                        Navigator.pushNamed(context, '/search',
+                        Navigator.pushNamed(context, VocableSearchScreen.routeName,
                             arguments: VocableSearchScreenArguments(openSearch: false));
                       }),
                   actions: [
                     IconButton(
                         icon: Icon(Icons.search),
                         onPressed: () {
-                          Navigator.pushNamed(context, '/search',
+                          Navigator.pushNamed(context, VocableSearchScreen.routeName,
                               arguments: VocableSearchScreenArguments(openSearch: true));
                         }),
                   ],

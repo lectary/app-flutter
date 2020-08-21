@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/lecture_package.dart';
+import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +33,7 @@ class LecturePackageItem extends StatelessWidget {
           onTap: () {
             Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfPackage(pack);
             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-            Navigator.popUntil(context, ModalRoute.withName('/'));
+            Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
           },
         ))
     );
@@ -53,7 +54,7 @@ class LecturePackageItem extends StatelessWidget {
         onTap: () {
           Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfLecture(lecture);
           Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-          Navigator.popUntil(context, ModalRoute.withName('/'));
+          Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
         },
       ),
     ];

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
+import 'package:lectary/screens/management/lecture_management_screen.dart';
 
 
 /// Lecture screen if no lectures are available.
@@ -24,7 +25,7 @@ class LectureNotAvailableScreen extends StatelessWidget {
             ),
             SizedBox(height: 10,), // separator
             RaisedButton(
-              onPressed: () => Navigator.pushNamed(context, '/lectureManagement'),
+              onPressed: () => Navigator.pushNamed(context, LectureManagementScreen.routeName),
               padding: EdgeInsets.all(15.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),

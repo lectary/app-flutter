@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/i18n/localizations.dart';
@@ -106,6 +107,9 @@ class _LocalizedAppState extends State<LocalizedApp> {
 
   @override
   Widget build(BuildContext context) {
+    // restricting device orientation
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
     if (locale == null) {
       return CircularProgressIndicator();
     } else {
@@ -123,13 +127,13 @@ class _LocalizedAppState extends State<LocalizedApp> {
             const Locale('en', ''),
           ],
           theme: lectaryThemeLight(),
-          initialRoute: '/',
+          initialRoute: LectureMainScreen.routeName,
           routes: {
-            '/': (context) => LectureMainScreen(),
-            '/search': (context) => VocableSearchScreen(),
-            '/lectureManagement': (context) => LectureManagementScreen(),
-            '/settings': (context) => SettingsScreen(),
-            '/about': (context) => AboutScreen(),
+            LectureMainScreen.routeName: (context) => LectureMainScreen(),
+            VocableSearchScreen.routeName: (context) => VocableSearchScreen(),
+            LectureManagementScreen.routeName : (context) => LectureManagementScreen(),
+            SettingsScreen.routeName: (context) => SettingsScreen(),
+            AboutScreen.routeName: (context) => AboutScreen(),
           }
       );
     }

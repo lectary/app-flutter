@@ -9,6 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 /// About-Screen with credits, links and further information about the application and
 /// the Lectary-team
 class AboutScreen extends StatefulWidget {
+  static const String routeName  = '/about';
+
   @override
   _AboutScreenState createState() => _AboutScreenState();
 }
