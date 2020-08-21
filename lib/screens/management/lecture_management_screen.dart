@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lectary/data/api/lectary_api.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
@@ -11,13 +12,15 @@ import 'package:lectary/widgets/search_bar.dart';
 import 'package:provider/provider.dart';
 
 
+/// Lecture management screen for downloading, updating and deleting [Lecture].
+/// Retrieves all available [Lecture] from the [LectaryApi] and displays on success
+/// a [ListView] of [LecturePackage] which are [Lecture] grouped by their package name.
 class LectureManagementScreen extends StatefulWidget {
   @override
   _LectureManagementScreenState createState() => _LectureManagementScreenState();
 }
 
 class _LectureManagementScreenState extends State<LectureManagementScreen> {
-
   TextEditingController textEditingController = TextEditingController();
   // needed to control screen focus, i.e. handle the keyboard
   FocusNode focus = FocusNode();
@@ -61,6 +64,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         ));
   }
 
+  // builds the body according to the response status
   Widget _buildBody() {
     final lectureViewModel = Provider.of<LectureViewModel>(context);
 
@@ -79,8 +83,8 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text("No internet connection!"),
-                Text("OFFLINE MODUS", style: TextStyle(fontSize: 20),),
+                Text(AppLocalizations.of(context).noInternetConnection),
+                Text(AppLocalizations.of(context).offlineMode, style: TextStyle(fontSize: 20),),
               ],
             ),
           ));
@@ -105,7 +109,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                   children: <Widget>[
                     ListView(),
                     Center(
-                      child: Text("Keine Lektionen gefunden."),
+                      child: Text(AppLocalizations.of(context).noLecturesFound),
                     ),
                   ],
                 ),
@@ -148,8 +152,8 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
       },
       child: ListView.separated(
         padding: EdgeInsets.all(0),
-        separatorBuilder: (context, index) => Divider(),
-        itemCount: lectures.length + 1,
+        separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
+        itemCount: lectures.length + 1, // + 1 due to custom listTile for deleting lectures
         itemBuilder: (context, index) {
           // special last listTile with the option to delete all lectures
           if (index == lectures.length) {
@@ -164,13 +168,13 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                   textColor: ColorsLectary.red,
                   child: ListTile(
                     leading: Icon(Icons.delete_forever),
-                    title: Text("Alle Lektionen löschen"),
+                    title: Text(AppLocalizations.of(context).deleteAllLectures),
                     onTap: () => Dialogs.showAlertDialog(
                         context: context,
-                        title: "Möchten Sie wirklich alle Lektionen löschen?",
-                        submitText: "Alle Löschen",
+                        title: AppLocalizations.of(context).deleteAllLecturesQuestion,
+                        submitText: AppLocalizations.of(context).deleteAll,
                         submitFunc: () async {
-                          Dialogs.showLoadingDialog(context);
+                          Dialogs.showLoadingDialog(context: context, text: AppLocalizations.of(context).deletingLectures);
                           await Provider.of<LectureViewModel>(context, listen: false).deleteAllLectures();
                           Navigator.popUntil(context, ModalRoute.withName('/'));
                         }),

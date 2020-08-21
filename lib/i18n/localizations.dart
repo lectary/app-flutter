@@ -41,6 +41,23 @@ class AppLocalizations {
   String get screenSettingsTitle => _getValue(ScreenSettingsTitle);
   String get screenAboutTitle => _getValue(ScreenAboutTitle);
   String get okUppercase => _getValue(OkUppercase);
+  String get cancel => _getValue(Cancel);
+  String get download => _getValue(Download);
+  String get update => _getValue(Update);
+  String get delete => _getValue(Delete);
+  String get noDescription => _getValue(NoDescription);
+  String get close => _getValue(Close);
+  String get oops => _getValue(Oops);
+  String get reportErrorText => _getValue(ReportErrorText);
+  String get reportError => _getValue(ReportError);
+
+  String get errorDownloadLecture => _getValue(ErrorDownloadLecture);
+
+  String get lectureInfoLecture => _getValue(LectureInfoLecture);
+  String get lectureInfoPack => _getValue(LectureInfoPack);
+  String get lectureInfoFileSize => _getValue(LectureInfoFileSize);
+  String get lectureInfoVocableCount => _getValue(LectureInfoVocableCount);
+  String get lectureInfoFileSizeUnit => _getValue(LectureInfoFileSizeUnit);
 
   String get drawerHeader => _getValue(DrawerHeader);
   String get drawerButtonLectureManagement => _getValue(DrawerButtonLectureManagement);
@@ -48,6 +65,14 @@ class AppLocalizations {
   String get drawerAllVocables => _getValue(DrawerAllVocables);
   String get drawerNoLecturesAvailable => _getValue(DrawerNoLecturesAvailable);
 
+  String get noLecturesFound => _getValue(NoLecturesFound);
+  String get deleteAllLectures => _getValue(DeleteAllLectures);
+  String get deleteAllLecturesQuestion => _getValue(DeleteAllLecturesQuestion);
+  String get deleteAll => _getValue(DeleteAll);
+  String get deletingLectures => _getValue(DeletingLectures);
+
+  String get noInternetConnection => _getValue(NoInternetConnection);
+  String get offlineMode => _getValue(OfflineMode);
 
   String get aboutIntroductionPart1 => _getValue(AboutIntroductionPart1);
   String get aboutIntroductionPart2 => _getValue(AboutIntroductionPart2);

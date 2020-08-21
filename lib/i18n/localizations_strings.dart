@@ -10,6 +10,23 @@ const String
     ScreenSettingsTitle = 'screen_settings_title',
     ScreenAboutTitle = 'screen_about_title',
     OkUppercase = 'ok_uppercase',
+    Cancel = 'cancel',
+    Download = 'download',
+    Update = 'update',
+    Delete = 'delete',
+    NoDescription = 'no_description',
+    Close = 'close',
+    Oops = 'oops',
+    ReportErrorText = 'report_error_text',
+    ReportError = 'report_error',
+
+    ErrorDownloadLecture = 'error_download_lecture',
+
+    LectureInfoLecture = 'lecture_info_lecture',
+    LectureInfoPack = 'lecture_info_pack',
+    LectureInfoFileSize = 'lecture_info_file_size',
+    LectureInfoVocableCount = 'lecture_info_vocable_count',
+    LectureInfoFileSizeUnit = 'lecture_info_file_size_unit',
 
     // drawer
     DrawerHeader = 'drawer_header',
@@ -17,6 +34,16 @@ const String
     DrawerButtonSettings = 'drawer_button_settings',
     DrawerAllVocables = 'drawer_all_vocables',
     DrawerNoLecturesAvailable = 'drawer_no_lectures_available',
+
+    // lecture-management-screen
+    NoLecturesFound = 'no_lectures_found',
+    DeleteAllLectures = 'delete_all_lectures',
+    DeleteAllLecturesQuestion = 'delete_all_lectures_question',
+    DeleteAll = 'delete_all',
+    DeletingLectures = 'deleting_lectures',
+
+    NoInternetConnection = 'no_internet_connection',
+    OfflineMode = 'offline_mode',
 
     // about-screen
     AboutIntroductionPart1 = 'about_introduction_part_1',
@@ -43,6 +70,23 @@ final de = {
   ScreenSettingsTitle: 'Einstellungen',
   ScreenAboutTitle: 'Über',
   OkUppercase: 'OK',
+  Cancel: 'Abbrechen',
+  Download: 'Herunterladen',
+  Update: 'Aktualisieren',
+  Delete: 'Löschen',
+  NoDescription: 'Keine Beschreibung vorhanden.',
+  Close: 'Schließen',
+  Oops: 'Upps....',
+  ReportErrorText: 'Sie können den Fehler an das Lectary Team melden, damit dieser behoben werden kann.',
+  ReportError: 'Fehler melden',
+
+  ErrorDownloadLecture: 'Leider ist beim Download der Lektion ein Fehler aufgetreten!',
+
+  LectureInfoLecture: 'Lektion: ',
+  LectureInfoPack: 'Paket: ',
+  LectureInfoFileSize: 'Dateigröße: ',
+  LectureInfoVocableCount: 'Vokabel: ',
+  LectureInfoFileSizeUnit: ' MB',
 
   // drawer
   DrawerHeader: 'Lectary',
@@ -50,6 +94,16 @@ final de = {
   DrawerButtonLectureManagement: 'Lektionen verwalten',
   DrawerAllVocables: 'Alle Vokabel',
   DrawerNoLecturesAvailable: 'Keine offline Lektionen vorhanden!',
+
+  // lecture-management-screen
+  NoLecturesFound: 'Keine Lektionen gefunden.',
+  DeleteAllLectures: 'Alle Lektionen löschen.',
+  DeleteAllLecturesQuestion: 'Möchten Sie wirklich alle Lektionen löschen?',
+  DeleteAll: 'Alle löschen',
+  DeletingLectures: 'Lösche Lektionen...',
+
+  NoInternetConnection: 'Keine Internetverbindung!',
+  OfflineMode: 'OFFLINE MODUS',
 
   // about-screen
   AboutIntroductionPart1: 'Lectary, überall und jederzeit Gebärden und Sprachen lernen. Weitere Informationen zu diesem Projekt finden Sie auf ',
