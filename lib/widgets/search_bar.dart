@@ -2,13 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/utils/colors.dart';
 
+
+/// Custom searchBar widget.
+/// Opens keyboard and sets focus immediately after initialization if [initOpen] is set to true.
+/// The search bar uses a [TextField] with a [TextEditingController] for listening to text input/changes.
+/// The input text will then be passed to the custom filter function.
 class SearchBar extends StatefulWidget {
   final TextEditingController textEditingController;
   final FocusNode focusNode;
   final bool initOpen;
   final Function filterFunction;
 
-  SearchBar({this.textEditingController, this.focusNode, this.initOpen=false, this.filterFunction, Key key}) : super(key: key);
+  SearchBar(
+      {@required this.textEditingController,
+      @required this.focusNode,
+      this.initOpen = false,
+      @required this.filterFunction,
+      Key key})
+      : super(key: key);
 
   @override
   _SearchBarState createState() => _SearchBarState();
@@ -40,9 +51,7 @@ class _SearchBarState extends State<SearchBar> {
             child: TextField(
               style: TextStyle(color: Colors.black),
               onTap: () => setState(() {}),
-              onChanged: (value) {
-                widget.filterFunction(value);
-              },
+              onChanged: (value) => widget.filterFunction(value),
               focusNode: widget.focusNode,
               controller: widget.textEditingController,
               decoration: InputDecoration(
@@ -65,12 +74,16 @@ class _SearchBarState extends State<SearchBar> {
             visible: widget.focusNode.hasFocus ? true : false,
             child: FlatButton(
               onPressed: () {
+                // clears the focus and closes keyboard
                 final FocusScopeNode currentScope = FocusScope.of(context);
                 if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
                   FocusManager.instance.primaryFocus.unfocus();
                 }
               },
-              child: Text("Cancel", style: TextStyle(color: ColorsLectary.lightBlue),),
+              child: Text(
+                AppLocalizations.of(context).cancel,
+                style: TextStyle(color: ColorsLectary.lightBlue),
+              ),
             ),
           )
         ],
