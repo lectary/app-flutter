@@ -36,13 +36,18 @@ class AppLocalizations {
   String get emptyLectures => _getValue(EmptyLectures);
   String get minMaxLectureSizes => _getValue(MinMaxLectureSizes);
   String get downloadAndManageLectures => _getValue(DownloadAndManageLectures);
-  String get buttonLectureManagement => _getValue(ButtonLectureManagement);
-  String get buttonSettings => _getValue(ButtonSettings);
   String get screenManagementTitle => _getValue(ScreenManagementTitle);
   String get screenManagementSearchHint => _getValue(ScreenManagementSearchHint);
   String get screenSettingsTitle => _getValue(ScreenSettingsTitle);
   String get screenAboutTitle => _getValue(ScreenAboutTitle);
   String get okUppercase => _getValue(OkUppercase);
+
+  String get drawerHeader => _getValue(DrawerHeader);
+  String get drawerButtonLectureManagement => _getValue(DrawerButtonLectureManagement);
+  String get drawerButtonSettings => _getValue(DrawerButtonSettings);
+  String get drawerAllVocables => _getValue(DrawerAllVocables);
+  String get drawerNoLecturesAvailable => _getValue(DrawerNoLecturesAvailable);
+
 
   String get aboutIntroductionPart1 => _getValue(AboutIntroductionPart1);
   String get aboutIntroductionPart2 => _getValue(AboutIntroductionPart2);

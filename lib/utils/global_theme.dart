@@ -17,7 +17,10 @@ ThemeData lectaryThemeLight() {
     primaryIconTheme: base.primaryIconTheme.copyWith(color: ColorsLectary.lightBlue),
     iconTheme: base.iconTheme.copyWith(color: ColorsLectary.lightBlue),
 
-    textTheme: base.textTheme.copyWith(caption: TextStyle(color: ColorsLectary.lightBlue)),
+    textTheme: base.textTheme.copyWith(
+        caption: TextStyle(color: ColorsLectary.lightBlue),
+        headline6: TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
+    ),
   );
 }
 
