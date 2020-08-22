@@ -301,14 +301,15 @@ class _$VocableDao extends VocableDao {
 
   @override
   Future<List<Vocable>> findAllVocables() async {
-    return _queryAdapter.queryList('SELECT * FROM vocables',
+    return _queryAdapter.queryList(
+        'SELECT * FROM vocables ORDER BY vocable_sort ASC',
         mapper: _vocablesMapper);
   }
 
   @override
   Future<List<Vocable>> findVocablesByLectureId(int lectureId) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM vocables WHERE lecture_id = ?',
+        'SELECT * FROM vocables WHERE lecture_id = ? ORDER BY vocable_sort ASC',
         arguments: <dynamic>[lectureId],
         mapper: _vocablesMapper);
   }
@@ -316,7 +317,7 @@ class _$VocableDao extends VocableDao {
   @override
   Future<List<Vocable>> findVocablesByLecturePack(String lecturePack) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM vocables JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ?',
+        'SELECT * FROM vocables JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ? ORDER BY vocable_sort ASC',
         arguments: <dynamic>[lecturePack],
         mapper: _vocablesMapper);
   }

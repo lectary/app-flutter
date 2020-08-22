@@ -44,10 +44,10 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
   Widget build(BuildContext context) {
     final model = Provider.of<CarouselViewModel>(context, listen: false);
     double width = MediaQuery.of(context).size.width;
-    // nearly perfectly aligned with the other buttons with this values
-    width = width / 3.333333;
-    final double widthButton = width * 0.91;
-    final double widthControl = width * 0.20;
+    // used for aligning progress button and button for enabling
+    width = width / 3;
+    final double widthButton = width * 0.8;
+    final double widthControl = width * 0.2;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,

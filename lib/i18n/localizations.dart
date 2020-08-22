@@ -12,7 +12,7 @@ class AppLocalizations {
   static bool _settingUppercase;
 
   static AppLocalizations of(BuildContext context) {
-    _settingUppercase = Provider.of<SettingViewModel>(context).settingUppercase;
+    _settingUppercase = Provider.of<SettingViewModel>(context, listen: false).settingUppercase;
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
