@@ -8,7 +8,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="lectary"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_logo">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
