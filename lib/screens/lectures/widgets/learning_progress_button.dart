@@ -23,7 +23,8 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
   @override
   Widget build(BuildContext context) {
     int vocableIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
-    int progress = context.select((CarouselViewModel model) => model.currentVocables[vocableIndex].vocableProgress);
+    List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
+    int progress = vocables.isNotEmpty ? vocables[vocableIndex].vocableProgress : 0;
 
     return FlatButton(
       shape: RoundedRectangleBorder(
