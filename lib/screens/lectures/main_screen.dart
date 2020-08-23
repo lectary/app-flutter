@@ -21,50 +21,77 @@ class LectureMainScreen extends StatefulWidget {
 }
 
 class _LectureMainScreenState extends State<LectureMainScreen> {
+  Future<List<Vocable>> _vocableFuture;
+  List<Vocable> vocables;
 
   @override
   void initState() {
-    Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
+    _vocableFuture = Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    log("build lecture-main-screen");
-    List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
-
+    log("build lecture-main-screen--theme");
     return Theme(
       data: lectaryThemeDark(),
-      child: Scaffold(
-        // to avoid bottom overflow when keyboard on search-screen is opened
-          resizeToAvoidBottomInset: false,
-          appBar: vocables.isNotEmpty
-              ? AppBar(
-                  title: GestureDetector(
-                      child: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
-                      onTap: () {
-                        Navigator.pushNamed(context, VocableSearchScreen.routeName,
-                            arguments: VocableSearchScreenArguments(openSearch: false));
-                      }),
-                  actions: [
-                    IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: () {
-                          Navigator.pushNamed(context, VocableSearchScreen.routeName,
-                              arguments: VocableSearchScreenArguments(openSearch: true));
-                        }),
-                  ],
-                )
-              : AppBar(
-                  title: Text(AppLocalizations.of(context).appTitle),
-                ),
-          drawer: Theme(
-            data: lectaryThemeLight(),
-            child: MainDrawer(),
-          ),
-          body: vocables.isNotEmpty
-              ? LectureScreen(vocables: vocables)
-              : LectureNotAvailableScreen()),
+      // Future builder will wait till the vocables are loaded initially, then the snapshot
+      // stays the same and we are constantly in the first if-branch. On vocable updates
+      // only the builder function of the FutureBuilder will be called.
+      child: FutureBuilder(
+          future: _vocableFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+              // retrieve current vocable list and keep listening for future changes in the vocable selection
+              vocables = context.select((CarouselViewModel model) => model.currentVocables);
+              log("build lecture-main-screen--lectures");
+              return Scaffold(
+                  // to avoid bottom overflow when keyboard on search-screen is opened
+                  resizeToAvoidBottomInset: false,
+                  appBar: vocables.isNotEmpty
+                      ? AppBar(
+                          title: GestureDetector(
+                              child: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, VocableSearchScreen.routeName,
+                                    arguments: VocableSearchScreenArguments(
+                                        openSearch: false));
+                              }),
+                          actions: [
+                            IconButton(
+                                icon: Icon(Icons.search),
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                      context, VocableSearchScreen.routeName,
+                                      arguments: VocableSearchScreenArguments(
+                                          openSearch: true));
+                                }),
+                          ],
+                        )
+                      : AppBar(title: Text(AppLocalizations.of(context).appTitle),),
+                  drawer: Theme(
+                    data: lectaryThemeLight(),
+                    child: MainDrawer(),
+                  ),
+                  body: vocables.isNotEmpty
+                      ? LectureScreen(vocables: vocables)
+                      : LectureNotAvailableScreen());
+            } else {
+              log("build lecture-main-screen--loading");
+              return Scaffold(
+                  // to avoid bottom overflow when keyboard on search-screen is opened
+                  resizeToAvoidBottomInset: false,
+                  appBar: AppBar(
+                    title: Text(AppLocalizations.of(context).appTitle),
+                  ),
+                  drawer: Theme(
+                    data: lectaryThemeLight(),
+                    child: MainDrawer(),
+                  ),
+                  body: Center(child: CircularProgressIndicator()));
+            }
+          }),
     );
   }
 }

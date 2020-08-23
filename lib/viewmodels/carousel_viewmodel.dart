@@ -85,29 +85,36 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
   Stream<List<Lecture>> _localLectures;
+  StreamSubscription _localLectureStreamSubscription;
 
   /// Listener function for the stream of local persisted lectures used for updating the state of [LectureMainScreen]
-  /// and its child appropriate (e.g. showing [LectureNotAvailableScreen])
-  /// Loads all vocables whenever a new lecture list gets emitted
-  /// Resets [_currentMediaItems] and [_selectionTitle] when no are available or got deleted
+  /// and its child appropriate (e.g. showing [LectureNotAvailableScreen]).
+  /// Loads all vocables when a new lecture list gets emitted and no vocables are currently loaded.
+  /// Resets [_currentVocables] and [_selectionTitle] when no lectures are available or got deleted
   void _localLectureStreamListener(List<Lecture> list) {
     if (list.isEmpty) {
       _currentVocables.clear();
       _selectionTitle = "";
       notifyListeners();
     }
-    if (list.isNotEmpty) {
+    if (list.isNotEmpty && _currentVocables.isEmpty) {
       loadAllVocables();
     }
   }
+
 
   /// Constructor with passed in [LectureRepository]
   CarouselViewModel({@required lectureRepository})
       : _lectureRepository = lectureRepository {
     _localLectures = _lectureRepository.watchAllLectures();
-    _localLectures.listen(_localLectureStreamListener);
+    _localLectureStreamSubscription = _localLectures.listen(_localLectureStreamListener);
   }
 
+  @override
+  void dispose() {
+    _localLectureStreamSubscription.cancel();
+    super.dispose();
+  }
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
   /// grouped as [LecturePackage] and properly sorted
@@ -134,11 +141,13 @@ class CarouselViewModel with ChangeNotifier {
   /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
   /// The vocables are sorted only lexicographically.
-  Future<void> loadAllVocables() async {
+  /// Returns a [Future] with [List] of type [Vocable].
+  Future<List<Vocable>> loadAllVocables() async {
     _currentVocables = await _lectureRepository.findAllVocables();
     _currentItemIndex = 0;
     _selectionTitle = "Alle Vokabel";
     notifyListeners();
+    return _currentVocables;
   }
 
   /// Loads all persisted [Vocable] from the passed [Lecture] and notifies listeners
