@@ -32,7 +32,7 @@ class DatabaseProvider {
 
   Future<LectureDatabase> get db async {
     if (_db == null) {
-      _db = await $FloorLectureDatabase.databaseBuilder('lectures.db')
+      _db = await $FloorLectureDatabase.databaseBuilder('lectary.db')
           .addCallback(callback)
           .build();
     }
@@ -47,43 +47,6 @@ class DatabaseProvider {
 
   /// insert mock data
   final callback = Callback(onOpen: (database) {
-    //database.delete("vocables");
-    //database.delete("lectures");
-    final lectures = List<Map<String, dynamic>>.of({
-      {
-        "file_name":
-            "PACK--Alpen__Adria__Universit_aet---LESSON--AAU__Lektion__4---LANG--OGS-DE---SORT--104---DATE--2019-04-29.zip",
-        "file_size": 5,
-        "vocable_count": 5,
-        "pack": "Alpen Adria Universität",
-        "lesson": "AAU Lektion 4",
-        "date": "2019-04-29",
-        "lang": "test"
-      },
-      {
-        "file_name":
-            "PACK--Alpen__Adria__Universit_aet---LESSON--AAU__Lektion__5---LANG--OGS-DE---SORT--105---DATE--2019-04-29.zip",
-        "file_size": 5,
-        "vocable_count": 5,
-        "pack": "Alpen Adria Universität",
-        "lesson": "AAU Lektion 5",
-        "date": "2019-04-30",
-        "lang": "test"
-      },
-      {
-        "file_name":
-            "PACK--Alpen__Adria__Universit_aet---LESSON--TEST---LANG--OGS-DE---SORT--105---DATE--2019-04-29.zip",
-        "file_size": 5,
-        "vocable_count": 5,
-        "pack": "Alpen Adria Universität",
-        "lesson": "TEST",
-        "date": "2019-04-29",
-        "lang": "test"
-      },
-    });
-
-    lectures.forEach((lecture) {
-      //database.insert("lectures", lecture);
-    });
+    // -----
   });
 }

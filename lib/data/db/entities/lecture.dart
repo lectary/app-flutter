@@ -90,9 +90,9 @@ class Lecture {
   /// returns [Null] on [LectureException] i.e. when mandatory meta information are missing
   factory Lecture.fromJson(Map<String, dynamic> json) {
     String fileName = json['fileName'];
-    Map<String, dynamic> metaInfo;
+    Map<String, dynamic> metaData;
     try {
-      metaInfo = Utils.extractMetaInformation(fileName);
+      metaData = Utils.extractMetaDataFromLectureFile(fileName);
     } on LectureException catch(e) {
       log("Invalid lecture: " + e.toString());
       return null;
@@ -101,14 +101,14 @@ class Lecture {
       fileName: fileName,
       fileSize: json['fileSize'],
       vocableCount: json['vocableCount'],
-      pack: metaInfo.remove("PACK"),
-      lesson: metaInfo.remove("LESSON"),
-      lessonSort: metaInfo.remove("LESSON-SORT"),
-      langMedia: metaInfo.remove("LANG-MEDIA"),
-      langVocable: metaInfo.remove("LANG-VOCABLE"),
-      audio: metaInfo.containsKey("AUDIO") ? metaInfo.remove("AUDIO") : null,
-      date: metaInfo.containsKey("DATE") ? metaInfo.remove("DATE") : Utils.currentDate(),
-      sort: metaInfo.containsKey("SORT") ? Utils.fillWithLeadingZeros(metaInfo.remove("SORT")) : null,
+      pack: metaData.remove("PACK"),
+      lesson: metaData.remove("LESSON"),
+      lessonSort: metaData.remove("LESSON-SORT"),
+      langMedia: metaData.remove("LANG-MEDIA"),
+      langVocable: metaData.remove("LANG-VOCABLE"),
+      audio: metaData.containsKey("AUDIO") ? metaData.remove("AUDIO") : null,
+      date: metaData.containsKey("DATE") ? metaData.remove("DATE") : Utils.currentDate(),
+      sort: metaData.containsKey("SORT") ? Utils.fillWithLeadingZeros(metaData.remove("SORT")) : null,
     );
   }
 

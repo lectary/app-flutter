@@ -50,6 +50,7 @@ class MediaViewer extends StatelessWidget {
                 slowMode: slowModeOn,
                 autoMode: autoModeOn,
                 loopMode: loopModeOn,
+                audio: vocable.audio,
               );
             case MediaType.PNG:
             case MediaType.JPG:

@@ -19,9 +19,11 @@ class LectaryVideoPlayer extends StatefulWidget {
   final bool autoMode;
   final bool loopMode;
 
+  final String audio;
+
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  LectaryVideoPlayer({this.videoPath, this.mediaIndex, this.slowMode, this.autoMode, this.loopMode, Key key}) : super(key: key);
+  LectaryVideoPlayer({this.videoPath, this.mediaIndex, this.slowMode, this.autoMode, this.loopMode, Key key, this.audio}) : super(key: key);
 
   @override
   _LectaryVideoPlayerState createState() => _LectaryVideoPlayerState();
@@ -125,6 +127,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   // custom overlay for the video player displaying a play button and a video timeline
   Widget _buildVideoPlayerWithOverlay(BuildContext context) {
     bool isOverlayOn = context.select((SettingViewModel model) => model.settingShowMediaOverlay);
+    bool isAudioOn = context.select((SettingViewModel model) => model.settingPlayMediaWithSound);
     bool isVideoTimelineOn = context.select((SettingViewModel model) => model.settingShowVideoTimeline);
     return GestureDetector(
       onTap: () {
@@ -142,11 +145,29 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
           VideoPlayer(_controller),
           Visibility(
             visible: isOverlayOn && !_controller.value.isPlaying,
+            child: Stack(
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  child: Opacity(
+                    opacity: 0.3,
+                      child: Icon(Icons.play_circle_filled, size: 120, color: ColorsLectary.white,),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Visibility(
+            visible: isOverlayOn && widget.audio != null,
             child: Container(
-              alignment: Alignment.center,
-              child: Opacity(
-                opacity: 0.3,
-                  child: Icon(Icons.play_circle_filled, size: 120, color: ColorsLectary.white,),
+              margin: EdgeInsets.only(left: 10, bottom: 10),
+              alignment: Alignment.bottomLeft,
+              child: Row(
+                children: [
+                  Icon(isAudioOn ? Icons.volume_up : Icons.volume_off, color: Colors.black,),
+                  Text(" - "),
+                  Text(widget.audio ?? ""),
+                ],
               ),
             ),
           ),

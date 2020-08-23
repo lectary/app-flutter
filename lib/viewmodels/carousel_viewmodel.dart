@@ -133,6 +133,7 @@ class CarouselViewModel with ChangeNotifier {
   /// Loads all persisted [Vocable] and notifies listeners
   /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
+  /// The vocables are sorted only lexicographically.
   Future<void> loadAllVocables() async {
     _currentVocables = await _lectureRepository.findAllVocables();
     _currentItemIndex = 0;
@@ -143,8 +144,21 @@ class CarouselViewModel with ChangeNotifier {
   /// Loads all persisted [Vocable] from the passed [Lecture] and notifies listeners
   /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
+  /// The vocables are sorted lexicographically and by metaData SORT if available.
   Future<void> loadVocablesOfLecture(Lecture lecture) async {
-    _currentVocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
+
+    // sort vocables by sort-metaData if available
+    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
+    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
+    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
+
+    List<Vocable> resultVocables = List.of({
+      ...vocablesWithSort,
+      ...vocablesWithoutSort
+    });
+
+    _currentVocables = resultVocables;
     _currentItemIndex = 0;
     _selectionTitle = lecture.lesson;
     notifyListeners();
@@ -153,8 +167,21 @@ class CarouselViewModel with ChangeNotifier {
   /// Loads all persisted [Vocable] from the passed [LecturePackage] and notifies listeners
   /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
+  /// The vocables are sorted lexicographically and by metaData SORT if available.
   Future<void> loadVocablesOfPackage(LecturePackage pack) async {
-    _currentVocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
+
+    // sort vocables by sort-metaData if available
+    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
+    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
+    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
+
+    List<Vocable> resultVocables = List.of({
+      ...vocablesWithSort,
+      ...vocablesWithoutSort
+    });
+
+    _currentVocables = resultVocables;
     _currentItemIndex = 0;
     _selectionTitle = pack.title;
     notifyListeners();
