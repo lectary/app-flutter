@@ -88,7 +88,7 @@ class _$LectureDatabase extends LectureDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `lectures` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `file_size` INTEGER NOT NULL, `vocable_count` INTEGER NOT NULL, `pack` TEXT NOT NULL, `lesson` TEXT NOT NULL, `lesson_sort` TEXT NOT NULL, `lang_media` TEXT NOT NULL, `lang_vocable` TEXT NOT NULL, `audio` TEXT, `date` TEXT NOT NULL, `sort` TEXT)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `vocables` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `vocable_sort` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `vocables` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `lecture_id` INTEGER NOT NULL, `vocable` TEXT NOT NULL, `vocable_sort` TEXT NOT NULL, `media_type` TEXT NOT NULL, `media` TEXT NOT NULL, `audio` TEXT, `sort` TEXT, `vocable_progress` INTEGER NOT NULL, FOREIGN KEY (`lecture_id`) REFERENCES `lectures` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `abstracts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `file_name` TEXT NOT NULL, `pack` TEXT NOT NULL, `text` TEXT NOT NULL, `date` TEXT NOT NULL)');
         await database.execute(
@@ -264,6 +264,8 @@ class _$VocableDao extends VocableDao {
                   'vocable_sort': item.vocableSort,
                   'media_type': item.mediaType,
                   'media': item.media,
+                  'audio': item.audio,
+                  'sort': item.sort,
                   'vocable_progress': item.vocableProgress
                 }),
         _vocableUpdateAdapter = UpdateAdapter(
@@ -277,6 +279,8 @@ class _$VocableDao extends VocableDao {
                   'vocable_sort': item.vocableSort,
                   'media_type': item.mediaType,
                   'media': item.media,
+                  'audio': item.audio,
+                  'sort': item.sort,
                   'vocable_progress': item.vocableProgress
                 });
 
@@ -293,6 +297,8 @@ class _$VocableDao extends VocableDao {
       vocableSort: row['vocable_sort'] as String,
       mediaType: row['media_type'] as String,
       media: row['media'] as String,
+      audio: row['audio'] as String,
+      sort: row['sort'] as String,
       vocableProgress: row['vocable_progress'] as int);
 
   final InsertionAdapter<Vocable> _vocableInsertionAdapter;
@@ -301,14 +307,15 @@ class _$VocableDao extends VocableDao {
 
   @override
   Future<List<Vocable>> findAllVocables() async {
-    return _queryAdapter.queryList('SELECT * FROM vocables',
+    return _queryAdapter.queryList(
+        'SELECT * FROM vocables ORDER BY vocable_sort ASC',
         mapper: _vocablesMapper);
   }
 
   @override
   Future<List<Vocable>> findVocablesByLectureId(int lectureId) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM vocables WHERE lecture_id = ?',
+        'SELECT * FROM vocables WHERE lecture_id = ? ORDER BY vocable_sort ASC',
         arguments: <dynamic>[lectureId],
         mapper: _vocablesMapper);
   }
@@ -316,7 +323,7 @@ class _$VocableDao extends VocableDao {
   @override
   Future<List<Vocable>> findVocablesByLecturePack(String lecturePack) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM vocables JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ?',
+        'SELECT * FROM vocables JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ? ORDER BY vocable_sort ASC',
         arguments: <dynamic>[lecturePack],
         mapper: _vocablesMapper);
   }
@@ -331,6 +338,12 @@ class _$VocableDao extends VocableDao {
   @override
   Future<void> deleteAllVocables() async {
     await _queryAdapter.queryNoReturn('DELETE FROM vocables');
+  }
+
+  @override
+  Future<void> resetAllVocableProgress() async {
+    await _queryAdapter
+        .queryNoReturn('UPDATE vocables SET vocable_progress = 0');
   }
 
   @override

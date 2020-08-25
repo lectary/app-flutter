@@ -96,6 +96,10 @@ class LectureRepository {
     return _lectureDatabase.vocableDao.deleteAllVocables();
   }
 
+  Future<void> resetAllVocableProgress() {
+    return _lectureDatabase.vocableDao.resetAllVocableProgress();
+  }
+
   ///////////////////
   // Abstracts
   ///////////////////

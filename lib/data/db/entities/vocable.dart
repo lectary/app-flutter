@@ -23,7 +23,7 @@ class Vocable {
   @ColumnInfo(nullable: false)
   String vocable;
 
-  // used for sorting
+  // used for sorting lexicographic
   @ColumnInfo(name: "vocable_sort", nullable: false)
   String vocableSort;
 
@@ -32,6 +32,11 @@ class Vocable {
 
   @ColumnInfo(nullable: false)
   String media; // can contain a path to the video or image or the text content
+
+  // contains the language of the audio or null if no audio is available
+  String audio;
+
+  String sort;
   
   @ColumnInfo(name: "vocable_progress", nullable: false)
   int vocableProgress;
@@ -43,10 +48,12 @@ class Vocable {
       @required this.vocableSort,
       @required this.mediaType,
       @required this.media,
+      this.audio,
+      this.sort,
       @required this.vocableProgress});
 
   @override
   String toString() {
-    return 'Vocable{id: $id, lectureId: $lectureId, vocable: $vocable, vocableSort: $vocableSort, mediaType: $mediaType, media: $media, vocableProgress: $vocableProgress}';
+    return 'Vocable{id: $id, lectureId: $lectureId, vocable: $vocable, vocableSort: $vocableSort, mediaType: $mediaType, media: $media, audio: $audio, sort: $sort, vocableProgress: $vocableProgress}';
   }
 }

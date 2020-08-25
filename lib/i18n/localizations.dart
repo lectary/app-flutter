@@ -1,14 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:lectary/i18n/localizations_strings.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 /// Class for handling localization resources
 class AppLocalizations {
   AppLocalizations(this.locale);
 
   final Locale locale;
+  static bool _settingUppercase;
 
   static AppLocalizations of(BuildContext context) {
+    _settingUppercase = Provider.of<SettingViewModel>(context, listen: false).settingUppercase;
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
@@ -17,21 +21,92 @@ class AppLocalizations {
   // uses string-mapping defined in localizations_strings.dart
   static Map<String, Map<String, String>> _localizedValues = {
     'de': de,
+    'en': en,
   };
 
   // Getters for localized values
-  _getValue(String key) => _localizedValues[locale.languageCode][key];
+  _getValue(String key) {
+    String value = _localizedValues[locale.languageCode][key] ?? "<no translation>";
+    return _settingUppercase
+        ? value.toUpperCase()
+        : value;
+  }
 
+  // titles
   String get appTitle => _getValue(AppTitle);
-  String get emptyLectures => _getValue(EmptyLectures);
-  String get minMaxLectureSizes => _getValue(MinMaxLectureSizes);
-  String get downloadAndManageLectures => _getValue(DownloadAndManageLectures);
-  String get buttonLectureManagement => _getValue(ButtonLectureManagement);
-  String get buttonSettings => _getValue(ButtonSettings);
   String get screenManagementTitle => _getValue(ScreenManagementTitle);
   String get screenManagementSearchHint => _getValue(ScreenManagementSearchHint);
   String get screenSettingsTitle => _getValue(ScreenSettingsTitle);
   String get screenAboutTitle => _getValue(ScreenAboutTitle);
+
+  // general
+  String get okUppercase => _getValue(OkUppercase);
+  String get cancel => _getValue(Cancel);
+  String get download => _getValue(Download);
+  String get update => _getValue(Update);
+  String get delete => _getValue(Delete);
+  String get reset => _getValue(Reset);
+  String get noDescription => _getValue(NoDescription);
+  String get close => _getValue(Close);
+  String get oops => _getValue(Oops);
+  String get reportErrorText => _getValue(ReportErrorText);
+  String get reportError => _getValue(ReportError);
+
+  // error messages
+  String get errorDownloadLecture => _getValue(ErrorDownloadLecture);
+
+  // lecture-info menu
+  String get lectureInfoLecture => _getValue(LectureInfoLecture);
+  String get lectureInfoPack => _getValue(LectureInfoPack);
+  String get lectureInfoFileSize => _getValue(LectureInfoFileSize);
+  String get lectureInfoVocableCount => _getValue(LectureInfoVocableCount);
+  String get lectureInfoFileSizeUnit => _getValue(LectureInfoFileSizeUnit);
+
+  // drawer
+  String get drawerHeader => _getValue(DrawerHeader);
+  String get drawerButtonLectureManagement => _getValue(DrawerButtonLectureManagement);
+  String get drawerButtonSettings => _getValue(DrawerButtonSettings);
+  String get drawerAllVocables => _getValue(DrawerAllVocables);
+  String get drawerNoLecturesAvailable => _getValue(DrawerNoLecturesAvailable);
+
+  // lecture-screen
+  String get emptyLectures => _getValue(EmptyLectures);
+  String get minMaxLectureSizes => _getValue(MinMaxLectureSizes);
+  String get downloadAndManageLectures => _getValue(DownloadAndManageLectures);
+
+  // lecture-management-screen
+  String get noLecturesFound => _getValue(NoLecturesFound);
+  String get deleteAllLectures => _getValue(DeleteAllLectures);
+  String get deleteAllLecturesQuestion => _getValue(DeleteAllLecturesQuestion);
+  String get deleteAll => _getValue(DeleteAll);
+  String get deletingLectures => _getValue(DeletingLectures);
+
+  String get noInternetConnection => _getValue(NoInternetConnection);
+  String get offlineMode => _getValue(OfflineMode);
+
+  // setting-screen
+  String get settingMediaWithSound => _getValue(SettingMediaWithSound);
+  String get settingVideoTimeLine => _getValue(SettingVideoTimeLine);
+  String get settingMediaOverlay => _getValue(SettingMediaOverlay);
+  String get settingUppercase => _getValue(SettingUppercase);
+  String get settingResetLearningProgress => _getValue(SettingResetLearningProgress);
+  String get settingResetLearningProgressQuestion => _getValue(SettingResetLearningProgressQuestion);
+  String get settingChooseAppLanguage => _getValue(SettingChooseAppLanguage);
+  String get settingChooseLearningLanguage => _getValue(SettingChooseLearningLanguage);
+  String get settingResetSettings => _getValue(SettingResetSettings);
+  String get settingResetSettingsQuestion => _getValue(SettingResetSettingsQuestion);
+
+  // about-screen
+  String get about => _getValue(About);
+  String get aboutIntroductionPart1 => _getValue(AboutIntroductionPart1);
+  String get aboutIntroductionPart2 => _getValue(AboutIntroductionPart2);
+  String get aboutContact => _getValue(AboutContact);
+  String get aboutInstruction => _getValue(AboutInstruction);
+  String get aboutCredits => _getValue(AboutCredits);
+  String get aboutIconCredit => _getValue(AboutIconCredit);
+  String get aboutIconCreationCreditPart1 => _getValue(AboutIconCreationCreditPart1);
+  String get aboutIconCreationCreditPart2 => _getValue(AboutIconCreationCreditPart2);
+  String get aboutVersion => _getValue(AboutVersion);
 }
 
 /// Bridge-class for flutter i18n mechanics and custom i18n resource class.
@@ -40,7 +115,8 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale('de', 'DE'),
+      Locale('de', ''),
+      Locale('en', ''),
     ];
   }
 

@@ -2,12 +2,17 @@ import 'dart:math';
 import 'dart:developer' as dev;
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:lectary/screens/lectures/widgets/learning_progress_button_animation.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:lectary/screens/lectures/widgets/custom_button.dart';
 
 
+/// A [Row] of custom button widgets for controlling some functions in the carousel
+/// like visibility of the vocable, navigating to a random vocable and
+/// controlling the learning progress
+/// Sets and listens for changes in the [CarouselViewModel].
 class LearningControlArea extends StatefulWidget {
   final int flex;
   final CarouselController carouselController;
@@ -24,7 +29,8 @@ class _LearningControlAreaState extends State<LearningControlArea> {
   @override
   Widget build(BuildContext context) {
     dev.log("build learning-control-area");
-    final bool hideVocableModeOn = context.select((CarouselViewModel model) => model.hideVocableModeOn);
+    final bool hideVocableModeOn =
+        context.select((CarouselViewModel model) => model.hideVocableModeOn);
 
     return Expanded(
       flex: widget.flex,
@@ -44,13 +50,11 @@ class _LearningControlAreaState extends State<LearningControlArea> {
             icon: Icons.casino,
             size: 70,
             func: () {
-              int rndPage = random.nextInt(Provider.of<CarouselViewModel>(context, listen: false)
-                  .currentVocables.length);
-              Provider.of<CarouselViewModel>(context, listen: false)
-                  .currentItemIndex = rndPage;
+              int rndPage = Provider.of<CarouselViewModel>(context, listen: false).chooseRandomVocable();
               widget.carouselController.jumpToPage(rndPage);
             }
-          )
+          ),
+          LearningProgressButtonAnimation()
         ],
       ),
     );

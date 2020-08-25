@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/drawer/widgets/lecture_package_item.dart';
+import 'package:lectary/screens/lectures/main_screen.dart';
+import 'package:lectary/screens/management/lecture_management_screen.dart';
+import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
-import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
 
+
+/// Drawer screen, handling the navigation and loading of local [Lecture]s
+/// Used for further navigation to [LectureManagementScreen] and [SettingsScreen]
 class MainDrawer extends StatelessWidget {
 
   @override
@@ -17,7 +21,7 @@ class MainDrawer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Container(
-            height: 80, // ToDo replace with relative placement?
+            height: 80, // TODO replace with relative placement?
             child: DrawerHeader(
               margin: EdgeInsets.all(0.0),
               padding: EdgeInsets.all(0.0),
@@ -29,7 +33,7 @@ class MainDrawer extends StatelessWidget {
                     },
                     icon: Icon(Icons.arrow_back_ios),
                   ),
-                  Text("Drawer-Header")
+                  Text(AppLocalizations.of(context).drawerHeader)
                 ],
               ),
             ),
@@ -41,25 +45,33 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           Divider(height: 1, thickness: 1),
-          _buildButton(Icons.cloud_download, AppLocalizations.of(context).buttonLectureManagement,
-              context, '/lectureManagement'),
+          _buildButton(
+              context: context,
+              flex: 1,
+              icon: Icons.cloud_download,
+              text: AppLocalizations.of(context).drawerButtonLectureManagement,
+              routeName: LectureManagementScreen.routeName),
           Divider(height: 1, thickness: 1),
-          _buildButton(Icons.settings, AppLocalizations.of(context).buttonSettings,
-              context, '/settings'),
+          _buildButton(
+              context: context,
+              flex: 1,
+              icon: Icons.settings,
+              text: AppLocalizations.of(context).drawerButtonSettings,
+              routeName: SettingsScreen.routeName),
           Divider(height: 1, thickness: 1),
         ],
       ),
     );
   }
 
-  // creates a max size button with desired icon and text
-  Expanded _buildButton(icon, text, context, route) {
+  /// Creates a horizontal stretched button with passed icon, text and route navigation tapEvent
+  Expanded _buildButton({BuildContext context, int flex, IconData icon, String text, String routeName}) {
     return Expanded(
-        flex: 1,
+        flex: flex,
         child: RaisedButton(
           onPressed: () {
             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-            Navigator.pushNamedAndRemoveUntil(context, route, ModalRoute.withName('/'));
+            Navigator.pushNamedAndRemoveUntil(context, routeName, ModalRoute.withName(LectureMainScreen.routeName));
           },
           child: Container(
             child: Row(
@@ -74,7 +86,9 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
-  // builds a listView with ListTiles based on the generated item-list
+  /// Builds a [ListView] with [ListTile] based on the local persisted lectures, provided
+  /// as [Stream], via a [StreamBuilder]. Retrieves the stream from the viewModel [CarouselViewModel]
+  /// The items of the [ListView] are of type [LecturePackage]
   Widget _generateListView(BuildContext context) {
     return StreamBuilder<List<LecturePackage>>(
       stream: Provider.of<CarouselViewModel>(context, listen: false).loadLocalLecturesAsStream(),
@@ -82,25 +96,25 @@ class MainDrawer extends StatelessWidget {
         if (snapshot.hasData) {
           if (snapshot.data.isNotEmpty) {
             return ListView.separated(
-                  separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
-                  padding: EdgeInsets.all(0),
+                padding: EdgeInsets.all(0),
+                separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
                   itemCount: snapshot.data.length + 1,
                   itemBuilder: (context, index) {
                     if (index == 0)
+                      // extra tile for loading all vocables
                       return ListTile(
-                        title: Text("Alle Vokabel"),
+                        title: Text(AppLocalizations.of(context).drawerAllVocables),
                         onTap: () {
                           Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
                           Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-                          Navigator.popUntil(context, ModalRoute.withName('/'));
+                          Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
                         },
                       );
-                    return LecturePackageItem(
-                        context, snapshot.data[index - 1]);
+                    return LecturePackageItem(context, snapshot.data[index - 1]);
                   });
             } else {
             return Center(
-              child: Text("Keine offline Lektionen vorhanden!"),
+              child: Text(AppLocalizations.of(context).drawerNoLecturesAvailable),
             );
           }
         } else {

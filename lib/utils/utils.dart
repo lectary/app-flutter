@@ -1,26 +1,29 @@
 import 'dart:developer';
 import 'dart:io';
-
+import 'dart:math' as math;
 import 'package:archive/archive.dart';
 import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
+import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
 import 'package:collection/collection.dart';
-
 import 'exceptions/lecture_exception.dart';
 
 /// Helper class with multiple
 class Utils {
 
+  /// Custom compare function which uses [replaceForSort] to replace special
+  /// german letters with equivalent characters used for sorting.
   static int customCompareTo(String a, String b) {
     a = replaceForSort(a);
     b = replaceForSort(b);
     return a.compareTo(b);
   }
 
+  /// Replaces special german characters with placeholder used for sorting.
   static String replaceForSort(String text) {
     text = text.replaceAll("ü", 'uzzzz');
     text = text.replaceAll("Ü", 'uzzzz');
@@ -123,10 +126,11 @@ class Utils {
     return dateSplit[1];
   }
 
-  /// extracts the meta information out of an lecture filename
-  /// returns a [Map] with the meta information
-  /// returns [LectureException] if mandatory meta information are missing
-  static Map<String, dynamic> extractMetaInformation(String fileName) {
+  /// Extracts the meta information out of an [Lecture]] filename.
+  /// Returns a [Map] with the meta data.
+  /// Throws [LectureException] if mandatory meta data is missing
+  /// Used keys {optional}: PACK, LESSON, LESSON-SORT, LANG-MEDIA, LANG-VOCABLE, {AUDIO}, {DATE}, {SORT}
+  static Map<String, dynamic> extractMetaDataFromLectureFile(String fileName) {
     Map<String, dynamic> result = Map();
 
     if (!fileName.contains(".zip"))
@@ -143,11 +147,11 @@ class Utils {
       );
     }
 
-    List<String> metaInfos = fileWithoutType.split("---");
-    for (String metaInfo in metaInfos) {
-      List<String> split = metaInfo.split("--");
+    List<String> metaData = fileWithoutType.split("---");
+    for (String metaDatum in metaData) {
+      List<String> split = metaDatum.split("--");
       if (split.length != 2) {
-        throw new LectureException("Malformed meta info: $metaInfo of lecture $fileName");
+        throw new LectureException("Malformed meta info: $metaDatum of lecture $fileName");
       }
       String metaInfoType = split[0];
       String metaInfoValue = split[1];
@@ -182,6 +186,45 @@ class Utils {
     }
     return result;
   }
+
+  /// Extracts the vocable itself and possible meta data out of an [Vocable] filename.
+  /// Returns a [Map] with the vocable and meta data.
+  /// Used keys {optional}: VOCABLES, {AUDIO}, {SORT}
+  static Map<String, dynamic> extractMetaDataFromVocableFile(String fileName) {
+    Map<String, dynamic> result = Map();
+
+    // check if there are metaData
+    if (fileName.contains("---")) {
+      List<String> metaData = fileName.split("---");
+      // the first one is always the vocable itself
+      result.putIfAbsent("VOCABLE", () => metaData.removeAt(0));
+      for (String metaDatum in metaData) {
+        // extracting metaData
+        List<String> split = metaDatum.split("--");
+        if (split.length != 2) {
+          log("Malformed meta data: $metaDatum of vocable $fileName");
+          // TODO its just a vocable, don't be too restrictive?
+          // throw new VocableException("Malformed meta data: $metaDatum of vocable $fileName");
+        }
+        String metaDatumType = split[0];
+        String metaDatumValue = split[1];
+
+        switch (metaDatumType) {
+          case "AUDIO":
+            result.putIfAbsent("AUDIO", () => metaDatumValue);
+            break;
+          case "SORT":
+            result.putIfAbsent("SORT", () => metaDatumValue);
+            break;
+        }
+      }
+    } else {
+      result.putIfAbsent("VOCABLE", () => fileName);
+    }
+
+    return result;
+  }
+
 
   /// Returns a string where all asciified parts are replaced with the corresponding characters
   static String deAsciify(String asciifiedString, {List<CodingEntry> codingEntries}) {
@@ -282,5 +325,39 @@ class Utils {
   static String fillWithLeadingZeros(String string) {
     final int maxLength = 5;
     return string.padLeft(maxLength, '0');
+  }
+
+  /// Returns the index of one random selected vocable of the passed list of [Vocable]
+  /// If [vocableProgressEnabled] is [True], then the [Vocable.vocableProgress] will
+  /// be considered when choosing a vocable, the better the progress, the rarer a
+  /// vocable will be chosen
+  static int chooseRandomVocable(bool vocableProgressEnabled, List<Vocable> vocables) {
+    math.Random random = new math.Random();
+    int rndPage;
+    if (vocableProgressEnabled) {
+      List<Vocable> distributedVocableList = List();
+      vocables.forEach((voc) {
+        switch(voc.vocableProgress) {
+          case 0:
+            distributedVocableList.add(voc);
+            distributedVocableList.add(voc);
+            distributedVocableList.add(voc);
+            break;
+          case 1:
+            distributedVocableList.add(voc);
+            distributedVocableList.add(voc);
+            break;
+          case 2:
+            distributedVocableList.add(voc);
+            break;
+        }
+      });
+      int rndIndex = random.nextInt(distributedVocableList.length);
+      Vocable vocable = distributedVocableList[rndIndex];
+      rndPage = vocables.indexOf(vocable);
+    } else {
+      rndPage = random.nextInt(vocables.length);
+    }
+    return rndPage;
   }
 }

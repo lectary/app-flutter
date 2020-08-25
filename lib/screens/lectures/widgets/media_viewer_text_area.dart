@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lectary/screens/lectures/widgets/learning_control_area.dart';
 import 'package:lectary/utils/colors.dart';
 
+
+/// Class responsible for displaying the actual textual [Vocable] in the [Carousel] header.
+/// The visibility of the vocable can be controlled by tapping the vocable itself
+/// or via the [LearningControlArea].
 class TextArea extends StatefulWidget {
   final bool hideVocableModeOn;
   final String text;

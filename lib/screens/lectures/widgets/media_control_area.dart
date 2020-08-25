@@ -6,6 +6,9 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
+/// A [Row] of custom button widgets for controlling the different modes of the media
+/// items in the carousel like slowMode, autoStart and autoReplay.
+/// Sets and listens for changes of the modes in the [CarouselViewModel].
 class MediaControlArea extends StatefulWidget {
   final int flex;
 
@@ -16,6 +19,8 @@ class MediaControlArea extends StatefulWidget {
 }
 
 class _MediaControlAreaState extends State<MediaControlArea> {
+
+  @override
   Widget build(BuildContext context) {
     log("build media-control-area");
     final bool slowModeOn = context.select((CarouselViewModel model) => model.slowModeOn);
@@ -29,6 +34,7 @@ class _MediaControlAreaState extends State<MediaControlArea> {
         children: <Widget>[
           CustomButton(
             color: slowModeOn ? ColorsLectary.yellow : ColorsLectary.darkBlue,
+            // custom icon from the asset icon-fonts
             icon: IconData(0xe900, fontFamily: 'icomoon'),
             size: 35,
             func: () =>

@@ -30,13 +30,14 @@ dependencies:
   floor: ^0.14.0
   path_provider: ^1.6.11
   archive: ^2.0.13
-  flutter_html: ^0.11.1
+  flutter_html: ^0.11.1 # no newer version possible due to the used video-player branch
   url_launcher: ^5.5.0
   video_player:
     git:
       url: https://github.com/JONA-Cureambit/plugins.git
       path: packages/video_player
   carousel_slider: ^2.1.0
+  shared_preferences: ^0.5.8
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -45,6 +46,7 @@ dependencies:
 
 dependency_overrides:
   flutter_svg: ^0.18.0
+  analyzer: '0.39.14'
 
 dev_dependencies:
   test: # leave blank
@@ -71,8 +73,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
-    - assets/videos/mock_videos/
-    - assets/pictures/mock_pictures/
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

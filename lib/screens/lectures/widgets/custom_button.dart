@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
 
+
+/// Customized button widget with a special style, used several times
+/// in the lecture screen
 class CustomButton extends StatelessWidget {
   final Color color;
   final IconData icon;
@@ -19,7 +22,6 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// common button widget with style, used in the lecture screen
     return Expanded(
       child: FlatButton(
         shape: RoundedRectangleBorder(
@@ -27,7 +29,6 @@ class CustomButton extends StatelessWidget {
         ),
         color: color,
         child: Container(
-
           /// additional container for aligning rectangular icons correctly
           width: iconContainerWidth == 0 ? size.toDouble() : iconContainerWidth
               .toDouble(),

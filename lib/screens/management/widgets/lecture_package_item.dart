@@ -1,16 +1,22 @@
 import 'dart:developer';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:lectary/data/db/entities/lecture.dart';
+import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:provider/provider.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 
+
+/// Helper class for realizing categorization of [Lecture] by its package name.
+/// Creates for every [LecturePackageItem] one special header [ListTile] and maps
+/// its children list of [Lecture] to a standard [ListTile].
 class LecturePackageItem extends StatelessWidget {
   const LecturePackageItem(this.context, this.entry);
 
@@ -22,17 +28,17 @@ class LecturePackageItem extends StatelessWidget {
     return _buildTiles(entry);
   }
 
-  // root level
+  // builds the header tile for the package and standard tiles for the children
   Widget _buildTiles(LecturePackage pack) {
+    // return when there are no children, although this should never happen
     if (pack.children.isEmpty) return ListTile(title: Text(pack.title));
     List<Widget> childs = List<Widget>();
     childs.add(
       Container(
-        //padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+        height: 70,
         alignment: Alignment.centerLeft,
-        //child: Text(pack.title, style: Theme.of(context).textTheme.caption))
         child: ListTile(
-          title: Text(pack.title, style: Theme.of(context).textTheme.caption),
+          title: Text(pack.title, style: Theme.of(context).textTheme.headline6),
           trailing: IconButton(
               onPressed: () => _showAbstract(pack.abstract),
               icon: Icon(Icons.more_horiz)),
@@ -47,6 +53,7 @@ class LecturePackageItem extends StatelessWidget {
     return column;
   }
 
+  // builds the bottom-modal-sheet for the abstract
   _showAbstract(String abstractText) {
     return showModalBottomSheet(
       context: context,
@@ -57,6 +64,9 @@ class LecturePackageItem extends StatelessWidget {
                 ? Container(
                     padding: EdgeInsets.only(left: 10, right: 10),
                     child: Html(
+                      customTextStyle: (dom.Node node, TextStyle baseStyle) {
+                        return baseStyle.merge(TextStyle(fontSize: 20));
+                      },
                       data: abstractText,
                       onLinkTap: (url) async {
                         if (await canLaunch(url)) {
@@ -66,9 +76,13 @@ class LecturePackageItem extends StatelessWidget {
                         }
                       },
                     ))
-                : Center(child: Text("No description")),
+                : Container(
+                    padding: EdgeInsets.all(10),
+                    child: Center(
+                        child:
+                            Text(AppLocalizations.of(context).noDescription))),
             Divider(height: 1, thickness: 1),
-            _buildButton(Icons.close, "Abbrechen",
+            _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
                 func: () => Navigator.pop(context)),
           ],
         );
@@ -76,19 +90,20 @@ class LecturePackageItem extends StatelessWidget {
     );
   }
 
-  // children of an package
+  // builds the children of an package
   List<Widget> _buildChildren(Lecture lecture) {
     return <Widget>[
       Divider(height: 1,thickness: 1),
       ListTile(
           leading: _getIconForLectureStatus(lecture.lectureStatus),
-          title: Text("${lecture.lesson}"),
+          title: Text(lecture.lesson),
           trailing: IconButton(
               onPressed: () => _showLectureMenu(lecture),
               icon: Icon(Icons.more_horiz))),
     ];
   }
 
+  // return the icon for the corresponding lectureStatus
   Widget _getIconForLectureStatus(LectureStatus lectureStatus) {
     switch (lectureStatus) {
       case LectureStatus.downloading:
@@ -104,6 +119,7 @@ class LecturePackageItem extends StatelessWidget {
     }
   }
 
+  // builds the bottom-modal-sheet for the lecture menu
   _showLectureMenu(Lecture lecture) {
     final lecturesProvider = Provider.of<LectureViewModel>(context, listen: false);
     return showModalBottomSheet(
@@ -117,9 +133,8 @@ class LecturePackageItem extends StatelessWidget {
               Divider(height: 1, thickness: 1),
               _buildButtonForLectureStatus(lecture, lecturesProvider),
               Divider(height: 1, thickness: 1),
-              _buildButton(Icons.close, "Abbrechen",
+              _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
                   func: () => Navigator.pop(context)),
-              Divider(height: 1, thickness: 1),
             ],
           ),
         );
@@ -127,34 +142,44 @@ class LecturePackageItem extends StatelessWidget {
     );
   }
 
+  // builds the correct buttons corresponding to the lecture status
   Widget _buildButtonForLectureStatus(Lecture lecture, LectureViewModel lectureViewModel) {
     switch (lecture.lectureStatus) {
       case LectureStatus.notPersisted:
-        return _buildButton(Icons.cloud_download, "Herunterladen",
+        return _buildButton(icon: Icons.cloud_download, text: AppLocalizations.of(context).download,
             func: () async {
               Navigator.pop(context);
               Response response = await lectureViewModel.downloadAndSaveLecture(lecture);
               if (response.status == Status.error) {
-                _showMyDialog(response.message);
+                Dialogs.showErrorReportDialog(
+                    context: context,
+                    errorContext: AppLocalizations.of(context).errorDownloadLecture,
+                    errorMessage: response.message);
               }
             });
       case LectureStatus.persisted:
       case LectureStatus.removed:
-        return _buildButton(Icons.delete, "Löschen",
+        return _buildButton(icon: Icons.delete, text: AppLocalizations.of(context).delete,
             func: () async {
               Navigator.pop(context);
               Response response = await lectureViewModel.deleteLecture(lecture);
               if (response.status == Status.error) {
-                _showMyDialog(response.message);
+                Dialogs.showErrorReportDialog(
+                    context: context,
+                    errorContext: AppLocalizations.of(context).errorDownloadLecture,
+                    errorMessage: response.message);
               }
             });
       case LectureStatus.updateAvailable:
-        return _buildButton(Icons.loop, "Aktualisieren",
+        return _buildButton(icon: Icons.loop, text: AppLocalizations.of(context).update,
             func: () async {
               Navigator.pop(context);
               Response response = await lectureViewModel.updateLecture(lecture);
               if (response.status == Status.error) {
-                _showMyDialog(response.message);
+                Dialogs.showErrorReportDialog(
+                    context: context,
+                    errorContext: AppLocalizations.of(context).errorDownloadLecture,
+                    errorMessage: response.message);
               }
             });
       default:
@@ -162,72 +187,44 @@ class LecturePackageItem extends StatelessWidget {
     }
   }
 
+  // builds the text part for the lecture menu bottom-modal-sheet
   Container _buildLectureInfoWidget(Lecture lecture) {
     return Container(
         padding: EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // TODO replace mock text
-            Text("Lektion: " + lecture.lesson),
+            Text(
+                AppLocalizations.of(context).lectureInfoLecture +
+                    lecture.lesson,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    .copyWith(fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
-            Text("Paket: " + lecture.pack),
+            Text(AppLocalizations.of(context).lectureInfoPack + lecture.pack,
+                style: Theme.of(context).textTheme.bodyText1),
             SizedBox(height: 10),
-            Text("Dateigröße: " + lecture.fileSize.toString() + " MB"),
+            Text(
+                AppLocalizations.of(context).lectureInfoFileSize +
+                    lecture.fileSize.toString() +
+                    AppLocalizations.of(context).lectureInfoFileSizeUnit,
+                style: Theme.of(context).textTheme.bodyText1),
             SizedBox(height: 10),
-            Text("Vokabel: " + lecture.vocableCount.toString()),
+            Text(
+                AppLocalizations.of(context).lectureInfoVocableCount +
+                    lecture.vocableCount.toString(),
+                style: Theme.of(context).textTheme.bodyText1),
           ],
-        )
-    );
+        ));
   }
 
-  Future<void> _showMyDialog(String errorMessage) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Upps...'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Leider ist beim Download der Lektion ein Fehler aufgetreten!'),
-                Divider(),
-                Text(errorMessage),
-                Divider(),
-                Text("Sie können den Fehler an das Lectary Team melden, damit dieser behoben werden kann."),
-                FlatButton(
-                  child: Text(
-                    'Fehler melden',
-                    style: TextStyle(color: ColorsLectary.lightBlue),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Schließen', style: TextStyle(color: ColorsLectary.lightBlue),),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Container _buildButton(icon, text, {Function func=emptyFunction}) {
+  // builds the buttons
+  Container _buildButton({IconData icon, String text, Function func=emptyFunction}) {
     return Container(
-        height: 50, // TODO maybe better use relative values via expanded?
+        height: 50,
         child: RaisedButton(
-          onPressed: () {
-            func();
-          },
+          onPressed: () => func(),
           child: Container(
             child: Row(
               children: <Widget>[

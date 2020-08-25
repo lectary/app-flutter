@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer.dart';
 
 
+/// Carousel widget responsible for navigating and displaying the [List] of
+/// [Vocable] and playing its media contents like video, image or text.
+/// Uses the package [CarouselSlider].
 class Carousel extends StatefulWidget {
   final List<Vocable> vocables;
   final CarouselController carouselController;
@@ -40,8 +43,9 @@ class _CarouselState extends State<Carousel> {
         carouselController: widget.carouselController,
         options: CarouselOptions(
             height: (height / 10) * 7,
+            // with this value the page before and after is visible, although not
+            // perceptible, which results to a kind of pre-loading
             viewportFraction: 0.999999,
-            // FIXME dirty hack to achieve pre-loading of previous/next page
             autoPlay: false,
             enlargeCenterPage: true,
             initialPage: 0,

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:math' as math;
 import 'dart:collection';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:floor/floor.dart';
@@ -24,6 +26,7 @@ class CarouselViewModel with ChangeNotifier {
 
   bool _hideVocableModeOn = false;
   bool isVirtualLecture = false;
+  bool vocableProgressEnabled = false;
 
   bool get hideVocableModeOn => _hideVocableModeOn;
   set hideVocableModeOn(bool hideVocableModeOn) {
@@ -93,12 +96,14 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
   Stream<List<Lecture>> _localLecturesStream;
+  StreamSubscription _localLectureStreamSubscription;
+
   List<Lecture> localLectures;
 
   /// Listener function for the stream of local persisted lectures used for updating the state of [LectureMainScreen]
-  /// and its child appropriate (e.g. showing [LectureNotAvailableScreen])
-  /// Loads all vocables whenever a new lecture list gets emitted
-  /// Resets [_currentMediaItems] and [_selectionTitle] when no are available or got deleted
+  /// and its child appropriate (e.g. showing [LectureNotAvailableScreen]).
+  /// Loads all vocables when a new lecture list gets emitted and no vocables are currently loaded.
+  /// Resets [_currentVocables] and [_selectionTitle] when no lectures are available or got deleted
   void _localLectureStreamListener(List<Lecture> list) {
     localLectures = list;
     if (list.isEmpty) {
@@ -106,18 +111,24 @@ class CarouselViewModel with ChangeNotifier {
       _selectionTitle = "";
       notifyListeners();
     }
-    if (list.isNotEmpty) {
+    if (list.isNotEmpty && _currentVocables.isEmpty) {
       loadAllVocables();
     }
   }
+
 
   /// Constructor with passed in [LectureRepository]
   CarouselViewModel({@required lectureRepository})
       : _lectureRepository = lectureRepository {
     _localLecturesStream = _lectureRepository.watchAllLectures();
-    _localLecturesStream.listen(_localLectureStreamListener);
+    _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
   }
 
+  @override
+  void dispose() {
+    _localLectureStreamSubscription.cancel();
+    super.dispose();
+  }
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
   /// grouped as [LecturePackage] and properly sorted
@@ -143,26 +154,35 @@ class CarouselViewModel with ChangeNotifier {
   /// Loads all persisted [Vocable] and notifies listeners
   /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
-  Future<void> loadAllVocables() async {
+  /// The vocables are sorted only lexicographically.
+  /// Returns a [Future] with [List] of type [Vocable].
+  Future<List<Vocable>> loadAllVocables() async {
     _currentVocables = await _lectureRepository.findAllVocables();
-    // TODO remove - test data for vocable duplicates
-    // _currentVocables = List.of({
-    //      Vocable(id: 1, lectureId: 1, vocable: "Haus", mediaType: "PNG"),
-    //      Vocable(id: 2, lectureId: 1, vocable: "Haus", mediaType: "TXT"),
-    //      Vocable(id: 3, lectureId: 2, vocable: "Haus", mediaType: "MP4"),
-    //      Vocable(id: 4, lectureId: 3, vocable: "Baum", mediaType: "TXT")
-    //    })
     _currentItemIndex = 0;
     _selectionTitle = "Alle Vokabel";
     isVirtualLecture = false;
     notifyListeners();
+    return _currentVocables;
   }
 
   /// Loads all persisted [Vocable] from the passed [Lecture] and notifies listeners
   /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
+  /// The vocables are sorted lexicographically and by metaData SORT if available.
   Future<void> loadVocablesOfLecture(Lecture lecture) async {
-    _currentVocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
+
+    // sort vocables by sort-metaData if available
+    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
+    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
+    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
+
+    List<Vocable> resultVocables = List.of({
+      ...vocablesWithSort,
+      ...vocablesWithoutSort
+    });
+
+    _currentVocables = resultVocables;
     _currentItemIndex = 0;
     _selectionTitle = lecture.lesson;
     isVirtualLecture = false;
@@ -172,8 +192,21 @@ class CarouselViewModel with ChangeNotifier {
   /// Loads all persisted [Vocable] from the passed [LecturePackage] and notifies listeners
   /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
+  /// The vocables are sorted lexicographically and by metaData SORT if available.
   Future<void> loadVocablesOfPackage(LecturePackage pack) async {
-    _currentVocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
+
+    // sort vocables by sort-metaData if available
+    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
+    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
+    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
+
+    List<Vocable> resultVocables = List.of({
+      ...vocablesWithSort,
+      ...vocablesWithoutSort
+    });
+
+    _currentVocables = resultVocables;
     _currentItemIndex = 0;
     _selectionTitle = pack.title;
     isVirtualLecture = false;
@@ -194,6 +227,28 @@ class CarouselViewModel with ChangeNotifier {
     });
     filteredVocables = tempListVocables;
     notifyListeners();
+  }
+
+  /// Increases the [Vocable.vocableProgress] of the [Vocable] with the passed index
+  /// Persists the changes in the database
+  /// Returns a [Future] with type [Void]
+  Future<void> increaseVocableProgress(int vocableIndex) async {
+    Vocable vocableToUpdate = _currentVocables[vocableIndex];
+    vocableToUpdate.vocableProgress = (vocableToUpdate.vocableProgress + 1) % 3;
+    notifyListeners();
+    try {
+      await _lectureRepository.updateVocable(vocableToUpdate);
+    } catch (e) {
+      log("Updating progress of vocable: ${_currentVocables[vocableIndex]} failed: ${e.toString()}");
+    }
+  }
+
+  /// Returns the index as [int] of a randomly chosen variable
+  /// If [vocableProgressEnabled] is [True] then the [Vocable.vocableProgress] will be considered
+  int chooseRandomVocable() {
+    int rndPage = Utils.chooseRandomVocable(vocableProgressEnabled, _currentVocables);
+    currentItemIndex = rndPage;
+    return rndPage;
   }
 
   int getIndexOfResult(SearchResult searchResult) {
