@@ -74,6 +74,9 @@ class AppLocalizations {
   String get minMaxLectureSizes => _getValue(MinMaxLectureSizes);
   String get downloadAndManageLectures => _getValue(DownloadAndManageLectures);
 
+  // lecture-search-screen
+  String get noVocablesFound => _getValue(NoVocablesFound);
+
   // lecture-management-screen
   String get noLecturesFound => _getValue(NoLecturesFound);
   String get deleteAllLectures => _getValue(DeleteAllLectures);

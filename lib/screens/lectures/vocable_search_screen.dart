@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
+import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/widgets/search_result_package_item.dart';
@@ -53,52 +54,67 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
 
     return Theme(
       data: lectaryThemeDark(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.cancel),
-                onPressed: () {
-                  // clearing focus i.e. closing keyboard
-                  final FocusScopeNode currentScope = FocusScope.of(context);
-                  if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                    FocusManager.instance.primaryFocus.unfocus();
-                  }
-                  // clear filter result and close search-screen
-                  model.filteredVocables.clear();
-                  Navigator.pop(context);
-                }),
-          ],
-        ),
-        drawer: Theme(
-          data: lectaryThemeLight(),
-          child: MainDrawer(),
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ListView.separated(
-                  padding: EdgeInsets.all(0),
-                  separatorBuilder: (context, index) => Divider(height: 1, thickness: 1, color: ColorsLectary.white,),
-                  itemCount: searchResults.length,
-                  itemBuilder: (context, index) {
-                    return SearchResultPackageItem(context, searchResults[index], textEditingController);
+      child: Builder( // used to create a new buildContext from which the above new theme is accessible
+        builder: (BuildContext context) => Scaffold(
+          appBar: AppBar(
+            title: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
+            actions: [
+              IconButton(
+                  icon: Icon(Icons.cancel),
+                  onPressed: () {
+                    // clearing focus i.e. closing keyboard
+                    final FocusScopeNode currentScope = FocusScope.of(context);
+                    if (!currentScope.hasPrimaryFocus &&
+                        currentScope.hasFocus) {
+                      FocusManager.instance.primaryFocus.unfocus();
+                    }
+                    model.filteredVocables.clear(); // clear filter result
+                    model.clearAllLocalVocables(); // clear list of all local vocables which is not needed anymore
+                    Navigator.pop(context); // close search-screen
                   }),
-            ),
-            Column(
-              children: [
-                Divider(height: 1, thickness: 1, color: ColorsLectary.white),
-                SearchBar(
-                  textEditingController: textEditingController,
-                  focusNode: focus,
-                  initOpen: !model.searchForNavigationOnly,
-                  filterFunction: model.searchForNavigationOnly ? model.filterVocablesForNavigation : model.filterVocablesForSearch,
-                )
-              ],
-            )
-          ],
+            ],
+          ),
+          drawer: Theme(
+            data: lectaryThemeLight(),
+            child: MainDrawer(),
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                  child: searchResults.isNotEmpty
+                      ? ListView.separated(
+                          padding: EdgeInsets.all(0),
+                          separatorBuilder: (context, index) => Divider(
+                                height: 1,
+                                thickness: 1,
+                                color: ColorsLectary.white,
+                              ),
+                          itemCount: searchResults.length,
+                          itemBuilder: (context, index) {
+                            return SearchResultPackageItem(context,
+                                searchResults[index], textEditingController);
+                          })
+                      : Center(
+                          child: Text(
+                              AppLocalizations.of(context).noVocablesFound,
+                              style: Theme.of(context).textTheme.subtitle1),
+                        )),
+              Column(
+                children: [
+                  Divider(height: 1, thickness: 1, color: ColorsLectary.white),
+                  SearchBar(
+                    textEditingController: textEditingController,
+                    focusNode: focus,
+                    initOpen: !model.searchForNavigationOnly,
+                    filterFunction: model.searchForNavigationOnly
+                        ? model.filterVocablesForNavigation
+                        : model.filterVocablesForSearch,
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

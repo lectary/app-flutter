@@ -42,6 +42,9 @@ const String
     MinMaxLectureSizes = 'min_max_lecture_sizes',
     DownloadAndManageLectures = 'download_and_manage_lectures',
 
+    // lecture-search-screen
+    NoVocablesFound = 'no_vocables_found',
+
     // lecture-management-screen
     NoLecturesFound = 'no_lectures_found',
     DeleteAllLectures = 'delete_all_lectures',
@@ -121,6 +124,9 @@ final de = {
   EmptyLectures: 'Keine Lektionen vorhanden.',
   MinMaxLectureSizes: 'Einzelne Lektionen sind ungefähr 5MB bis 20MB gross.',
   DownloadAndManageLectures: 'Lektionen herunterladen und verwalten.',
+
+  // lecture-search-screen
+  NoVocablesFound: 'Keine Vokabeln gefunden.',
 
   // lecture-management-screen
   NoLecturesFound: 'Keine Lektionen gefunden.',

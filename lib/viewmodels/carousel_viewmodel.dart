@@ -105,6 +105,13 @@ class CarouselViewModel with ChangeNotifier {
   /// vocables in [_findDuplicatesAndConvert]).
   List<Lecture> localLectures;
 
+  /// Used for global search and loaded when the search is first used.
+  List<Vocable> _allLocalVocables = List();
+
+  void clearAllLocalVocables() async {
+    _allLocalVocables.clear();
+  }
+
   /// Listener function for the stream of local persisted lectures used for updating the state of [LectureMainScreen]
   /// and its child appropriate (e.g. showing [LectureNotAvailableScreen]).
   /// Loads all vocables when a new lecture list gets emitted and no vocables are currently loaded.
@@ -200,7 +207,7 @@ class CarouselViewModel with ChangeNotifier {
   /// If [searchForNavigationOnly] is false and the passed [currentFilter] is
   /// not empty, then a new virtual lecture is created.
   void navigateToVocable(SearchResult searchResult, String currentFilter) {
-    int newIndex = getIndexOfResult(searchResult);
+    int newIndex = _getIndexOfResult(searchResult);
 
     if (currentFilter.isEmpty || searchForNavigationOnly) {
       carouselController.jumpToPage(newIndex);
@@ -242,6 +249,13 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentVocables] and assigns it by reference again to [_filteredVocables] and notifies listeners.
   /// Operations on the original list [_currentVocables] will therefore also affect the corresponding elements in [_filteredVocables]
   Future<void> filterVocablesForSearch(String filter) async {
+    if (_allLocalVocables.isEmpty) {
+      _allLocalVocables = await _lectureRepository.findAllVocables();
+      log("loaded all local vocables");
+
+    }
+
+    // filter the list of current selected vocables
     List<Vocable> localResults = List();
     _currentVocables.forEach((voc) {
       if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
@@ -249,12 +263,13 @@ class CarouselViewModel with ChangeNotifier {
       }
     });
 
-    List<Vocable> allVocables = await _lectureRepository.findAllVocables();
+    // remove all vocables in the global list that are already in the local one
     localResults.forEach((localVoc) =>
-        allVocables.removeWhere((globalVoc) => globalVoc.id == localVoc.id)
+        _allLocalVocables.removeWhere((globalVoc) => globalVoc.id == localVoc.id)
     );
+    // filter remaining vocables in the global list
     List<Vocable> globalResults = List();
-    allVocables.forEach((voc) {
+    _allLocalVocables.forEach((voc) {
       if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
         globalResults.add(voc);
       }
@@ -288,9 +303,14 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Returns the index as [int] of the [Vocable] corresponding to the passed [SearchResult.vocable]
-  int getIndexOfResult(SearchResult searchResult) {
-    Vocable vocable = _filteredVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
-    return _filteredVocables.indexOf(vocable);
+  int _getIndexOfResult(SearchResult searchResult) {
+    if (searchForNavigationOnly) {
+      Vocable vocable = _currentVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
+      return _currentVocables.indexOf(vocable);
+    } else {
+      Vocable vocable = _filteredVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
+      return _filteredVocables.indexOf(vocable);
+    }
   }
 
   /// Sets [isVirtualLecture] to true to indicate depending widgets that there is now a virtual lecture,
