@@ -5,7 +5,7 @@ import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/i18n/localizations.dart';
-import 'package:lectary/screens/lectures/vocable_search_screen.dart';
+import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 
 import 'package:mockito/mockito.dart';

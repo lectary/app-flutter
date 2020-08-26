@@ -40,7 +40,7 @@ class LecturePackageItem extends StatelessWidget {
         child: ListTile(
           title: Text(pack.title, style: Theme.of(context).textTheme.headline6),
           trailing: IconButton(
-              onPressed: () => _showAbstract(pack.abstract),
+              onPressed: () => _showAbstract(pack.title, pack.abstract),
               icon: Icon(Icons.more_horiz)),
         ),
       ),
@@ -54,18 +54,24 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the bottom-modal-sheet for the abstract
-  _showAbstract(String abstractText) {
+  _showAbstract(String packTitle, String abstractText) {
     return showModalBottomSheet(
       context: context,
       builder: (_) {
         return Wrap(
           children: <Widget>[
+            Container(
+                padding: EdgeInsets.all(10),
+                alignment: Alignment.center,
+                child: Text(packTitle,
+                    style: Theme.of(context).textTheme.headline6)),
+            Divider(thickness: 1, height: 1),
             abstractText != null
                 ? Container(
                     padding: EdgeInsets.only(left: 10, right: 10),
                     child: Html(
                       customTextStyle: (dom.Node node, TextStyle baseStyle) {
-                        return baseStyle.merge(TextStyle(fontSize: 20));
+                        return baseStyle.merge(Theme.of(context).textTheme.bodyText1);
                       },
                       data: abstractText,
                       onLinkTap: (url) async {
@@ -79,8 +85,8 @@ class LecturePackageItem extends StatelessWidget {
                 : Container(
                     padding: EdgeInsets.all(10),
                     child: Center(
-                        child:
-                            Text(AppLocalizations.of(context).noDescription))),
+                        child: Text(AppLocalizations.of(context).noDescription,
+                            style: Theme.of(context).textTheme.bodyText1))),
             Divider(height: 1, thickness: 1),
             _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
                 func: () => Navigator.pop(context)),

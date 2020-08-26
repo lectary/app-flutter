@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/media_type_enum.dart';

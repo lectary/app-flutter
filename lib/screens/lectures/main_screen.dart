@@ -5,7 +5,7 @@ import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
-import 'package:lectary/screens/lectures/vocable_search_screen.dart';
+import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';

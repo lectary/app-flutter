@@ -10,7 +10,6 @@ import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
-import 'package:lectary/screens/lectures/vocable_search_screen.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:collection/collection.dart';
 

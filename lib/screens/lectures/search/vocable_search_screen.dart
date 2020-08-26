@@ -3,7 +3,7 @@ import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
-import 'package:lectary/screens/lectures/widgets/search_result_package_item.dart';
+import 'package:lectary/screens/lectures/search/search_result_package_item.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
