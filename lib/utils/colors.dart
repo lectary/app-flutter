@@ -16,6 +16,8 @@ class ColorsLectary {
   static const darkBlue = const Color(0xFF053751);
   static const violet = const Color(0xFFB65DFF);
 
+  static const logoDarkBlue = const Color.fromRGBO(7, 54, 80, 1);
+
   static const MaterialColor whiteSwatch = MaterialColor(0xFFF8F8F8, whiteCodes);
 }
 

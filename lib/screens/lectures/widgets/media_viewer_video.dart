@@ -162,12 +162,20 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
             child: Container(
               margin: EdgeInsets.only(left: 10, bottom: 10),
               alignment: Alignment.bottomLeft,
-              child: Row(
-                children: [
-                  Icon(isAudioOn ? Icons.volume_up : Icons.volume_off, color: Colors.black,),
-                  Text(" - "),
-                  Text(widget.audio ?? ""),
-                ],
+              child: Container(
+                padding: EdgeInsets.only(left: 5, right: 10),
+                decoration: BoxDecoration(
+                  color: ColorsLectary.darkBlue,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(isAudioOn ? Icons.volume_up : Icons.volume_off, color: ColorsLectary.lightBlue,),
+                    Text(" - ", style: TextStyle(color: ColorsLectary.lightBlue),),
+                    Text(widget.audio ?? "", style: TextStyle(color: ColorsLectary.lightBlue),),
+                  ],
+                ),
               ),
             ),
           ),

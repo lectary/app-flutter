@@ -4,6 +4,7 @@ import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/main.dart';
 import 'package:lectary/screens/about/about_screen.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -65,7 +66,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ListTile(
         title: Text(AppLocalizations.of(context).settingChooseLearningLanguage),
         trailing: context.select((SettingViewModel model) => model.isUpdatingLanguages)
-            ? CircularProgressIndicator()
+            ? SizedBox(
+                width: 24, height: 24, child: CircularProgressIndicator())
             : DropdownButton(
                 value: context.select((SettingViewModel model) => model.settingLearningLanguage),
                 items: (() {
@@ -110,7 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       // link to about-screen
       ListTile(
-          leading: Icon(Icons.info),
+          leading: Icon(Icons.info, color: ColorsLectary.lightBlue,),
           title: Text(AppLocalizations.of(context).about),
           onTap: () {
             Navigator.pushNamed(context, AboutScreen.routeName);

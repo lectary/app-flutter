@@ -374,11 +374,18 @@ class CarouselViewModel with ChangeNotifier {
     // grouping the searchResults after lecture id, and then replacing the id
     // with the corresponding lecture name, by a lookup in the list of local lectures
     final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
-    List<SearchResultPackage> searchResultPackageList = List();
+    List<SearchResultPackage> tmpList = List();
+
     groupedByLectureId.forEach((key, value) {
       String lectureName = localLectures.firstWhere((lecture) => lecture.id == key).lesson;
-      searchResultPackageList.add(SearchResultPackage(lectureName, value));
+      tmpList.add(SearchResultPackage(lectureName, value));
     });
+
+    // sorting grouped lists excluding first one
+    List<SearchResultPackage> searchResultPackageList = List();
+    searchResultPackageList.add(tmpList.removeAt(0));
+    tmpList.sort((lec1, lec2) => Utils.customCompareTo(lec1.lectureTitle, lec2.lectureTitle));
+    searchResultPackageList.addAll(tmpList);
 
     return searchResultPackageList;
   }

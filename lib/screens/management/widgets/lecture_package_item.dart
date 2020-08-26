@@ -107,7 +107,8 @@ class LecturePackageItem extends StatelessWidget {
   Widget _getIconForLectureStatus(LectureStatus lectureStatus) {
     switch (lectureStatus) {
       case LectureStatus.downloading:
-        return CircularProgressIndicator();
+        return SizedBox(
+            width: 24, height: 24, child: CircularProgressIndicator());
       case LectureStatus.persisted:
         return Icon(Icons.check_circle);
       case LectureStatus.removed:

@@ -32,6 +32,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).screenAboutTitle),
@@ -41,8 +42,11 @@ class _AboutScreenState extends State<AboutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // TODO exchange with the correct Lectary text-logo
-            Image.asset("assets/images/Logo1_1024x1024.png"),
+            Container(
+              color: ColorsLectary.logoDarkBlue,
+                child: Center(
+                    child: Image.asset("assets/images/logo_1024.png",
+                        height: height / 4, fit: BoxFit.fitHeight))),
             Container(
               padding: EdgeInsets.all(15),
               child: RichText(
