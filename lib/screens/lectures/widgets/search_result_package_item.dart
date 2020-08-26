@@ -1,12 +1,17 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
+
+/// Helper class for realizing categorization of [SearchResult] by [Lecture.lesson].
+/// Creates a special [ListTile] header with the lecture name and maps
+/// its children list of [SearchResult] to a standard [ListTile].
 class SearchResultPackageItem extends StatelessWidget {
   const SearchResultPackageItem(this.context, this.entry, this.textEditingController);
 
@@ -25,13 +30,14 @@ class SearchResultPackageItem extends StatelessWidget {
     List<Widget> childs = List<Widget>();
     childs.add(
       Container(
-        //padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
         alignment: Alignment.centerLeft,
-        //child: Text(pack.title, style: Theme.of(context).textTheme.caption))
         child: Container(
           color: ColorsLectary.white,
           child: ListTile(
-            title: Text(pack.lectureTitle, style: Theme.of(context).textTheme.caption),
+            title: Text(pack.lectureTitle,
+                style: Theme.of(context).textTheme.headline6.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: ColorsLectary.lightBlue)),
           ),
         ),
       ),
@@ -68,21 +74,9 @@ class SearchResultPackageItem extends StatelessWidget {
             })(),
         ),
         onTap: () {
-          int newIndex = model.getIndexOfResult(searchResult);
-          if (textEditingController.text.isNotEmpty) {
-            // if search-term is not empty, a new "virtual"-lecture
-            // containing the filter results is created and set
-            log("Created new virtual lecture");
-            model.selectionTitle = "Suche: " + textEditingController.text;
-            model.createNewVirtualLecture();
-            // set index corresponding to the tabbed item index where
-            // the carouselController should jump to after init
-            //model.currentItemIndex = index;
-            model.currentItemIndex = newIndex;
-          } else {
-            // Jump to page (vocable) if search-term is empty
-            model.carouselController.jumpToPage(newIndex);
-          }
+          // When an vocable is tapped, the carousel navigates to it, and creates
+          // a new virtual lecture if a "real"-search is performed.
+          model.navigateToVocable(searchResult, textEditingController.text);
           // close search-screen
           Navigator.pop(context);
         },

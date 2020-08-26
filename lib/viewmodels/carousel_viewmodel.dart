@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:math' as math;
 import 'dart:collection';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:floor/floor.dart';
@@ -16,38 +15,41 @@ import 'package:lectary/utils/utils.dart';
 import 'package:collection/collection.dart';
 
 
-/// ViewModel for handling state of the carousel
-/// uses [ChangeNotifier] for propagating changes to UI components
+/// ViewModel for handling state of the carousel.
+/// Uses [ChangeNotifier] for propagating changes to UI components.
+/// Has [LectureRepository] as dependency.
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
 
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
   CarouselController carouselController;
 
-  bool _hideVocableModeOn = false;
+  /// Used by the UI widget to know if it should display the lecture name next to the vocable
   bool isVirtualLecture = false;
+  /// Used to know if vocable progress should be considered in [Utils.chooseRandomVocable]
   bool vocableProgressEnabled = false;
+  /// Used by the model to differ between navigation and real-search of the vocable-search-screen
+  bool searchForNavigationOnly = true;
 
+  /// Modes used by [MediaViewer].
+  bool _hideVocableModeOn = false;
   bool get hideVocableModeOn => _hideVocableModeOn;
   set hideVocableModeOn(bool hideVocableModeOn) {
     _hideVocableModeOn = hideVocableModeOn;
     notifyListeners();
   }
-
   bool _slowModeOn = false;
   bool get slowModeOn => _slowModeOn;
   set slowModeOn(bool slowModeOn) {
     _slowModeOn = slowModeOn;
     notifyListeners();
   }
-
   bool _autoModeOn = false;
   bool get autoModeOn => _autoModeOn;
   set autoModeOn(bool autoModeOn) {
     _autoModeOn = autoModeOn;
     notifyListeners();
   }
-
   bool _loopModeOn = false;
   bool get loopModeOn => _loopModeOn;
   set loopModeOn(bool loopModeOn) {
@@ -55,6 +57,7 @@ class CarouselViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  /// A [List] of the current loaded [Vocable], that should be displayed in the [Carousel].
   List<Vocable> _currentVocables = List();
   List<Vocable> get currentVocables => _currentVocables;
   set currentVocables(List<Vocable> value) {
@@ -69,16 +72,16 @@ class CarouselViewModel with ChangeNotifier {
   List<Vocable> get filteredVocables => _filteredVocables;
   set filteredVocables(List<Vocable> value) {
     _filteredVocables = value;
-    _searchResults = findDuplicatesAndConvert(value);
+    _searchResults = _findDuplicatesAndConvert(value);
   }
 
   /// A copy of [currentVocables], used for filtering.
   /// If the filter result will be accepted [filteredVocables] will be assigned
-  /// as new value of [currentVocables], otherwise discarded
+  /// as new value of [currentVocables], otherwise discarded.
   List<SearchResultPackage> _searchResults = List();
   List<SearchResultPackage> get searchResults => _searchResults;
 
-  /// used for displaying the name of the current loaded lecture/package (vocable-list)
+  /// Used for displaying the name of the current [Vocable]-selection list.
   String _selectionTitle = "";
   String get selectionTitle => _selectionTitle;
   set selectionTitle(String value) {
@@ -86,7 +89,7 @@ class CarouselViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// used in the carousel for keeping track of the current item/vocable
+  /// Used in the carousel for keeping track of the index of the current [Vocable].
   int _currentItemIndex = 0;
   int get currentItemIndex => _currentItemIndex;
   set currentItemIndex(int currentItemIndex) {
@@ -94,10 +97,12 @@ class CarouselViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
+  /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture].
   Stream<List<Lecture>> _localLecturesStream;
   StreamSubscription _localLectureStreamSubscription;
 
+  /// Used for retrieving the lecture name for corresponding vocables (e.g. when packaging
+  /// vocables in [_findDuplicatesAndConvert]).
   List<Lecture> localLectures;
 
   /// Listener function for the stream of local persisted lectures used for updating the state of [LectureMainScreen]
@@ -116,8 +121,8 @@ class CarouselViewModel with ChangeNotifier {
     }
   }
 
-
-  /// Constructor with passed in [LectureRepository]
+  /// Constructor with passed in [LectureRepository] dependency.
+  /// Loads and listens to the [Stream] of local [Lecture].
   CarouselViewModel({@required lectureRepository})
       : _lectureRepository = lectureRepository {
     _localLecturesStream = _lectureRepository.watchAllLectures();
@@ -131,7 +136,7 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
-  /// grouped as [LecturePackage] and properly sorted
+  /// grouped as [LecturePackage] and properly sorted.
   Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
     return _lectureRepository.watchAllLectures().map((list) {
       // Sorting
@@ -151,8 +156,8 @@ class CarouselViewModel with ChangeNotifier {
     });
   }
 
-  /// Loads all persisted [Vocable] and notifies listeners
-  /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
+  /// Loads all persisted [Vocable] and notifies listeners.
+  /// Sets [_currentVocables], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
   /// The vocables are sorted only lexicographically.
   /// Returns a [Future] with [List] of type [Vocable].
@@ -165,73 +170,84 @@ class CarouselViewModel with ChangeNotifier {
     return _currentVocables;
   }
 
-  /// Loads all persisted [Vocable] from the passed [Lecture] and notifies listeners
-  /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
+  /// Loads all persisted [Vocable] from the passed [Lecture] and notifies listeners.
+  /// Sets [_currentVocables], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
   /// The vocables are sorted lexicographically and by metaData SORT if available.
   Future<void> loadVocablesOfLecture(Lecture lecture) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
-
-    // sort vocables by sort-metaData if available
-    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
-    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
-    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
-
-    List<Vocable> resultVocables = List.of({
-      ...vocablesWithSort,
-      ...vocablesWithoutSort
-    });
-
-    _currentVocables = resultVocables;
+    _currentVocables = _sortVocables(vocables);
     _currentItemIndex = 0;
     _selectionTitle = lecture.lesson;
     isVirtualLecture = false;
     notifyListeners();
   }
 
-  /// Loads all persisted [Vocable] from the passed [LecturePackage] and notifies listeners
-  /// Sets [_currentMediaItems], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
+  /// Loads all persisted [Vocable] from the passed [LecturePackage] and notifies listeners.
+  /// Sets [_currentVocables], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
   /// [_currentItemIndex] back to 0.
   /// The vocables are sorted lexicographically and by metaData SORT if available.
   Future<void> loadVocablesOfPackage(LecturePackage pack) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
-
-    // sort vocables by sort-metaData if available
-    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
-    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
-    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
-
-    List<Vocable> resultVocables = List.of({
-      ...vocablesWithSort,
-      ...vocablesWithoutSort
-    });
-
-    _currentVocables = resultVocables;
+    _currentVocables = _sortVocables(vocables);
     _currentItemIndex = 0;
     _selectionTitle = pack.title;
     isVirtualLecture = false;
     notifyListeners();
   }
 
-  /// Filters the [List] of available [Vocable] by a [String]
-  /// Filters vocable-name of [Vocable]
+  /// Navigating to the selected vocable of the passed [SearchResult].
+  /// Create a new virtual lecture if the passed [currentFilter] is not empty.
+  void navigateToVocable(SearchResult searchResult, String currentFilter) {
+    int newIndex = getIndexOfResult(searchResult);
+
+    if (currentFilter.isNotEmpty) {
+      // if search-term is not empty, a new "virtual"-lecture
+      // containing the filter results is created and set
+      log("Created new virtual lecture");
+      _selectionTitle = "Suche: " + currentFilter;
+      createNewVirtualLecture();
+      // set index corresponding to the tabbed item index where
+      // the carouselController should jump to after init
+      _currentItemIndex = newIndex;
+      notifyListeners();
+    } else {
+      carouselController.jumpToPage(newIndex);
+    }
+  }
+
+  /// Filters the [List] of available [Vocable] ([_currentVocables]) by a [String].
+  /// The vocables are filtered by their attribute [Vocable.vocable].
   /// Creates a temporary list with the filtered elements as references to the original list elements of
-  /// [_currentMediaItems] and assigns it by reference again to [_filteredMediaItems] and notifies listeners
-  /// Operations on the original list [_currentMediaItems] will therefore also affect the corresponding elements in [_filteredMediaItems]
+  /// [_currentVocables] and assigns it by reference again to [_filteredVocables] and notifies listeners.
+  /// Operations on the original list [_currentVocables] will therefore also affect the corresponding elements in [_filteredVocables]
   Future<void> filterVocables(String filter) async {
-    List<Vocable> tempListVocables = List();
+    List<Vocable> localResults = List();
     _currentVocables.forEach((voc) {
       if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
-        tempListVocables.add(voc);
+        localResults.add(voc);
       }
     });
-    filteredVocables = tempListVocables;
+
+    List<Vocable> allVocables = await _lectureRepository.findAllVocables();
+    localResults.forEach((localVoc) =>
+      allVocables.removeWhere((globalVoc) => globalVoc.id == localVoc.id)
+    );
+    List<Vocable> globalResults = List();
+    allVocables.forEach((voc) {
+      if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
+        globalResults.add(voc);
+      }
+    });
+
+    filteredVocables = List.of({...localResults, ...globalResults});
     notifyListeners();
   }
 
-  /// Increases the [Vocable.vocableProgress] of the [Vocable] with the passed index
-  /// Persists the changes in the database
-  /// Returns a [Future] with type [Void]
+  /// Increases the [Vocable.vocableProgress] of the [Vocable] with the passed index.
+  /// Updates the changes of the corresponding [Vocable] in the database.
+  /// Returns a [Future] with type [Void].
+  /// Exceptions of the database update are caught and ignored.
   Future<void> increaseVocableProgress(int vocableIndex) async {
     Vocable vocableToUpdate = _currentVocables[vocableIndex];
     vocableToUpdate.vocableProgress = (vocableToUpdate.vocableProgress + 1) % 3;
@@ -251,56 +267,78 @@ class CarouselViewModel with ChangeNotifier {
     return rndPage;
   }
 
+  /// Returns the index as [int] of the [Vocable] corresponding to the passed [SearchResult.vocable]
   int getIndexOfResult(SearchResult searchResult) {
     Vocable vocable = _filteredVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
     return _filteredVocables.indexOf(vocable);
   }
 
+  /// Sets [isVirtualLecture] to true to indicate depending widgets that there is now a virtual lecture,
+  /// which means that the lecture name has to be displayed together with the vocable.
+  /// Assigns the current filter result [_filteredVocables] list as new value of [_currentVocables].
   void createNewVirtualLecture() {
     isVirtualLecture = true;
     _currentVocables = List.from(_filteredVocables);
   }
 
+  /// Sorts a [List] of [Vocable].
+  /// Returns a list of vocables, which first contains all vocables sorted by
+  /// [Vocable.sort] and then all vocables sorted lexicographically by [Vocable.vocableSort].
+  /// Asserts that the vocables are already sorted lexicographically by the database query.
+  List<Vocable> _sortVocables(List<Vocable> vocables) {
+    // extract and sort sublist of vocables with or without vocable.sort value
+    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
+    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
+    // assert that the vocables are already sorted via the database query
+    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
 
-  /// Helper function for finding [Vocable] duplicates and converting them to
-  /// [SearchResult] used by [VocableSearchScreen] for displaying.
-  /// The function adds all vocables to a [HashMap], duplicates are saved together
-  /// in a [List]. Then all elements of the map are iterated over and assigned to
-  /// a final list of [SearchResult], where duplicates have their [MediaType] set,
-  /// which is otherwise [Null].
-  List<SearchResultPackage> findDuplicatesAndConvert(List<Vocable> vocables) {
-    List<SearchResult> searchResultList = List();
-    HashMap<String, List<Vocable>> duplicates = HashMap();
+    List<Vocable> resultVocables = List.of({
+      ...vocablesWithSort,
+      ...vocablesWithoutSort
+    });
+
+    return resultVocables;
+  }
+
+  /// Helper function for finding [Vocable] duplicates, converting them to
+  /// [SearchResult] and grouping them to [SearchResultPackage], which is
+  /// used by [VocableSearchScreen] for displaying.
+  /// Returns a [List] of [SearchResultPackage].
+  /// Duplicated vocables have their [MediaType] set in the corresponding
+  /// [SearchResult.mediaType], which is [Null] otherwise.
+  /// Asserts that the vocable list is already sorted as specified
+  List<SearchResultPackage> _findDuplicatesAndConvert(List<Vocable> vocables) {
+    // Iterating over the list and saving the vocables in a hashMap of
+    // type <String, bool>. If a vocable is already saved, then the value
+    // is set to true to indicate that there are duplicates for this vocable,
+    // which is saved as key.
+    Map<String, bool> hasDuplicates = HashMap();
     vocables.forEach((voc) {
-      if (duplicates.containsKey(voc.vocable)) {
-        duplicates[voc.vocable].add(voc);
+      if (hasDuplicates.containsKey(voc.vocable)) {
+        hasDuplicates[voc.vocable] = true;
       } else {
-        duplicates.putIfAbsent(voc.vocable, () => List.of({voc}));
+        hasDuplicates.putIfAbsent(voc.vocable, () => false);
       }
     });
 
-    duplicates.forEach((key, value) {
-      if (value.length == 1) {
-        searchResultList.add(
-          SearchResult(value[0])
-        );
+    // Mapping the vocable list to the corresponding SearchResult list
+    // with the media type set for duplicates
+    List<SearchResult> searchResultList = vocables.map((vocable) {
+      if (hasDuplicates[vocable.vocable]) {
+        return SearchResult(vocable, mediaType: vocable.mediaType);
       } else {
-        value.forEach((duplicate) {
-          searchResultList.add(
-            SearchResult(duplicate, mediaType: duplicate.mediaType)
-          );
-        });
+        return SearchResult(vocable);
       }
-    });
+    }).toList();
 
+    // grouping the searchResults after lecture id, and then replacing the id
+    // with the corresponding lecture name, by a lookup in the list of local lectures
     final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
     List<SearchResultPackage> searchResultPackageList = List();
     groupedByLectureId.forEach((key, value) {
       String lectureName = localLectures.firstWhere((lecture) => lecture.id == key).lesson;
       searchResultPackageList.add(SearchResultPackage(lectureName, value));
     });
-
-    // TODO sort
 
     return searchResultPackageList;
   }

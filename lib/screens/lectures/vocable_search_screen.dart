@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
-import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/widgets/search_result_package_item.dart';
@@ -12,9 +9,12 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/widgets/search_bar.dart';
 import 'package:provider/provider.dart';
 
-/// Used for passing arguments to [VocableSearchScreen] via [Navigator.pushNamed]
+/// Used for passing arguments to [VocableSearchScreen] via [Navigator.pushNamed].
 class VocableSearchScreenArguments {
-  /// Indicates whether search and keyboard should get focus on widget init
+  /// Indicates whether the search should be used for navigation only.
+  /// This means that the search scope is always the current selection and that no
+  /// virtual lecture is created.
+  /// Also indicates whether the keyboard should get focus on widget init.
   final bool openSearch;
 
   VocableSearchScreenArguments({this.openSearch});
@@ -93,9 +93,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                   textEditingController: textEditingController,
                   focusNode: focus,
                   initOpen: args.openSearch,
-                  filterFunction:
-                      Provider.of<CarouselViewModel>(context, listen: false)
-                          .filterVocables,
+                  filterFunction: model.filterVocables,
                 )
               ],
             )

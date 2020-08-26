@@ -34,6 +34,8 @@ ThemeData lectaryThemeDark() {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: ColorsLectary.darkBlue,
 
-      textTheme: base.textTheme.copyWith(headline6: TextStyle(color: ColorsLectary.white), subtitle1: TextStyle(color: ColorsLectary.white)),
+    textTheme: base.textTheme.copyWith(
+        headline6: TextStyle(color: ColorsLectary.white),
+        subtitle1: TextStyle(color: ColorsLectary.white)),
   );
 }

@@ -35,6 +35,7 @@ class MediaViewer extends StatelessWidget {
 
     final bool isVirtualLecture = context.select((CarouselViewModel model) => model.isVirtualLecture);
     final model = Provider.of<CarouselViewModel>(context, listen: false);
+    // TODO fix case OrElse
     String lectureName = model.localLectures.firstWhere((lecture) => lecture.id == vocable.lectureId).lesson;
 
     return Column(
