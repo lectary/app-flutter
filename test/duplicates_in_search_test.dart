@@ -56,7 +56,7 @@ void main() async {
                 MaterialPageRoute<void>(
                     settings: RouteSettings(
                         arguments:
-                            VocableSearchScreenArguments(openSearch: false)),
+                            VocableSearchScreenArguments(navigationOnly: false)),
                     builder: (_) => VocableSearchScreen()),
               ), child: const SizedBox(),
             ),

@@ -15,9 +15,9 @@ class VocableSearchScreenArguments {
   /// This means that the search scope is always the current selection and that no
   /// virtual lecture is created.
   /// Also indicates whether the keyboard should get focus on widget init.
-  final bool openSearch;
+  final bool navigationOnly;
 
-  VocableSearchScreenArguments({this.openSearch});
+  VocableSearchScreenArguments({this.navigationOnly});
 }
 
 
@@ -44,9 +44,10 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieving arguments from route
-    final VocableSearchScreenArguments args = ModalRoute.of(context).settings.arguments;
     final model = Provider.of<CarouselViewModel>(context, listen: false);
+    // Retrieving arguments from route
+    VocableSearchScreenArguments args = ModalRoute.of(context).settings.arguments;
+    model.searchForNavigationOnly = args.navigationOnly;
     // listen on changes of the list of filtered vocables
     List<SearchResultPackage> searchResults = context.select((CarouselViewModel model) => model.searchResults);
 
@@ -92,8 +93,8 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                 SearchBar(
                   textEditingController: textEditingController,
                   focusNode: focus,
-                  initOpen: args.openSearch,
-                  filterFunction: model.filterVocables,
+                  initOpen: !model.searchForNavigationOnly,
+                  filterFunction: model.searchForNavigationOnly ? model.filterVocablesForNavigation : model.filterVocablesForSearch,
                 )
               ],
             )

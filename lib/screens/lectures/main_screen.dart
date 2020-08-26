@@ -56,7 +56,7 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
                                 Navigator.pushNamed(
                                     context, VocableSearchScreen.routeName,
                                     arguments: VocableSearchScreenArguments(
-                                        openSearch: false));
+                                        navigationOnly: true));
                               }),
                           actions: [
                             IconButton(
@@ -65,7 +65,7 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
                                   Navigator.pushNamed(
                                       context, VocableSearchScreen.routeName,
                                       arguments: VocableSearchScreenArguments(
-                                          openSearch: true));
+                                          navigationOnly: false));
                                 }),
                           ],
                         )

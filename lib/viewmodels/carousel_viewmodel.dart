@@ -197,11 +197,14 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Navigating to the selected vocable of the passed [SearchResult].
-  /// Create a new virtual lecture if the passed [currentFilter] is not empty.
+  /// If [searchForNavigationOnly] is false and the passed [currentFilter] is
+  /// not empty, then a new virtual lecture is created.
   void navigateToVocable(SearchResult searchResult, String currentFilter) {
     int newIndex = getIndexOfResult(searchResult);
 
-    if (currentFilter.isNotEmpty) {
+    if (currentFilter.isEmpty || searchForNavigationOnly) {
+      carouselController.jumpToPage(newIndex);
+    } else {
       // if search-term is not empty, a new "virtual"-lecture
       // containing the filter results is created and set
       log("Created new virtual lecture");
@@ -211,8 +214,6 @@ class CarouselViewModel with ChangeNotifier {
       // the carouselController should jump to after init
       _currentItemIndex = newIndex;
       notifyListeners();
-    } else {
-      carouselController.jumpToPage(newIndex);
     }
   }
 
@@ -221,7 +222,26 @@ class CarouselViewModel with ChangeNotifier {
   /// Creates a temporary list with the filtered elements as references to the original list elements of
   /// [_currentVocables] and assigns it by reference again to [_filteredVocables] and notifies listeners.
   /// Operations on the original list [_currentVocables] will therefore also affect the corresponding elements in [_filteredVocables]
-  Future<void> filterVocables(String filter) async {
+  Future<void> filterVocablesForNavigation(String filter) async {
+    List<Vocable> localResults = List();
+    _currentVocables.forEach((voc) {
+      if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
+        localResults.add(voc);
+      }
+    });
+
+    filteredVocables = localResults;
+    notifyListeners();
+  }
+
+  /// Filters the [List] of available [Vocable] by a [String].
+  /// This function first filters the current vocable selection ([_currentVocables])
+  /// and then filters all persisted vocables.
+  /// The vocables are filtered by their attribute [Vocable.vocable].
+  /// Creates a temporary list with the filtered elements as references to the original list elements of
+  /// [_currentVocables] and assigns it by reference again to [_filteredVocables] and notifies listeners.
+  /// Operations on the original list [_currentVocables] will therefore also affect the corresponding elements in [_filteredVocables]
+  Future<void> filterVocablesForSearch(String filter) async {
     List<Vocable> localResults = List();
     _currentVocables.forEach((voc) {
       if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
@@ -231,7 +251,7 @@ class CarouselViewModel with ChangeNotifier {
 
     List<Vocable> allVocables = await _lectureRepository.findAllVocables();
     localResults.forEach((localVoc) =>
-      allVocables.removeWhere((globalVoc) => globalVoc.id == localVoc.id)
+        allVocables.removeWhere((globalVoc) => globalVoc.id == localVoc.id)
     );
     List<Vocable> globalResults = List();
     allVocables.forEach((voc) {
