@@ -323,7 +323,7 @@ class _$VocableDao extends VocableDao {
   @override
   Future<List<Vocable>> findVocablesByLecturePack(String lecturePack) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM vocables JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ? ORDER BY vocable_sort ASC',
+        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ? ORDER BY vocable_sort ASC',
         arguments: <dynamic>[lecturePack],
         mapper: _vocablesMapper);
   }

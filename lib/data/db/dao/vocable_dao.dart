@@ -10,7 +10,7 @@ abstract class VocableDao {
   @Query("SELECT * FROM vocables WHERE lecture_id = :lectureId ORDER BY vocable_sort ASC")
   Future<List<Vocable>> findVocablesByLectureId(int lectureId);
 
-  @Query("SELECT * FROM vocables JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = :lecturePack ORDER BY vocable_sort ASC")
+  @Query("SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = :lecturePack ORDER BY vocable_sort ASC")
   Future<List<Vocable>> findVocablesByLecturePack(String lecturePack);
 
   @insert
