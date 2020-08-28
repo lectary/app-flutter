@@ -7,6 +7,7 @@ import 'package:lectary/screens/lectures/search/search_result_package_item.dart'
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:lectary/widgets/search_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -51,13 +52,15 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
     model.searchForNavigationOnly = args.navigationOnly;
     // listen on changes of the list of filtered vocables
     List<SearchResultPackage> searchResults = context.select((CarouselViewModel model) => model.searchResults);
+    bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
+    String selectionTitle = context.select((CarouselViewModel model) => model.selectionTitle);
 
     return Theme(
       data: lectaryThemeDark(),
       child: Builder( // used to create a new buildContext from which the above new theme is accessible
         builder: (BuildContext context) => Scaffold(
           appBar: AppBar(
-            title: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
+            title: Text(uppercase ? selectionTitle.toUpperCase() : selectionTitle),
             actions: [
               IconButton(
                   icon: Icon(Icons.cancel),

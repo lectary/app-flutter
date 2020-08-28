@@ -3,6 +3,7 @@ import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
@@ -17,11 +18,12 @@ class LecturePackageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildTiles(entry);
+    final settingUppercase = context.select((SettingViewModel model) => model.settingUppercase);
+    return _buildTiles(entry, settingUppercase);
   }
 
   // builds the header tile for the package and standard tiles for the children
-  Widget _buildTiles(LecturePackage pack) {
+  Widget _buildTiles(LecturePackage pack, bool uppercase) {
     // return when there are no children, although this should never happen
     if (pack.children.isEmpty) return ListTile(title: Text(pack.title));
     List<Widget> childs = List<Widget>();
@@ -29,7 +31,7 @@ class LecturePackageItem extends StatelessWidget {
         height: 70,
         alignment: Alignment.centerLeft,
         child: ListTile(
-          title: Text(pack.title, style: Theme.of(context).textTheme.headline6),
+          title: Text(uppercase ? pack.title.toUpperCase() : pack.title, style: Theme.of(context).textTheme.headline6),
           onTap: () {
             Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfPackage(pack.title);
             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
@@ -37,7 +39,7 @@ class LecturePackageItem extends StatelessWidget {
           },
         ))
     );
-    pack.children.map(_buildChildren).forEach((element) {childs.addAll(element);});
+    pack.children.map((e) => _buildChildren(e, uppercase)).forEach((element) {childs.addAll(element);});
 
     Column column = Column(
         children: childs
@@ -46,11 +48,11 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the children of an package
-  List<Widget> _buildChildren(Lecture lecture) {
+  List<Widget> _buildChildren(Lecture lecture, bool uppercase) {
     return <Widget>[
       Divider(height: 1,thickness: 1),
       ListTile(
-        title: Text(lecture.lesson),
+        title: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
         onTap: () {
           Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfLecture(lecture.id, lecture.lesson);
           Navigator.pop(context); // close drawer first to avoid unwanted behaviour!

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
+import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
@@ -14,6 +15,7 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:collection/collection.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -22,6 +24,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Has [LectureRepository] as dependency.
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
+  final SettingViewModel _settingViewModel;
 
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
   CarouselController carouselController;
@@ -145,8 +148,8 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Constructor with passed in [LectureRepository] dependency.
   /// Loads and listens to the [Stream] of local [Lecture].
-  CarouselViewModel({@required lectureRepository})
-      : _lectureRepository = lectureRepository {
+  CarouselViewModel({@required lectureRepository, @required settingViewModel})
+      : _lectureRepository = lectureRepository, _settingViewModel = settingViewModel {
     _localLecturesStream = _lectureRepository.watchAllLectures();
     _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
   }
@@ -190,7 +193,7 @@ class CarouselViewModel with ChangeNotifier {
   /// Returns a [Future] with [List] of type [Vocable].
   Future<List<Vocable>> loadAllVocables({bool saveSelection=true}) async {
     _currentVocables = await _lectureRepository.findAllVocables();
-    _selectionTitle = "Alle Vokabel";
+    _selectionTitle = AppLocalizations.current.allVocables;
     isVirtualLecture = false;
     if (saveSelection) {
       _currentItemIndex = 0;
@@ -375,7 +378,9 @@ class CarouselViewModel with ChangeNotifier {
       // if search-term is not empty, a new "virtual"-lecture
       // containing the filter results is created and set
       log("Created new virtual lecture");
-      _selectionTitle = "Suche: " + currentFilter;
+      _selectionTitle = _settingViewModel.settingUppercase
+          ? (AppLocalizations.current.searchLabel + currentFilter).toUpperCase()
+          : AppLocalizations.current.searchLabel + currentFilter;
       createNewVirtualLecture();
       // set index corresponding to the tabbed item index where
       // the carouselController should jump to after init

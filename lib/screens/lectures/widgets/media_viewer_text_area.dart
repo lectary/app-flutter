@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/screens/lectures/widgets/learning_control_area.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 
 /// Class responsible for displaying the actual textual [Vocable] in the [Carousel] header.
@@ -21,6 +23,7 @@ class _TextAreaState extends State<TextArea> {
 
   @override
   Widget build(BuildContext context) {
+    bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
     return Expanded(
       child: GestureDetector(
         onTap: () => {
@@ -36,7 +39,7 @@ class _TextAreaState extends State<TextArea> {
             child: widget.hideVocableModeOn && !showVocable
                 ? Icon(Icons.visibility, size: 80, color: ColorsLectary.green,)
                 : Text(
-                    widget.text,
+                    uppercase ? widget.text.toUpperCase() : widget.text,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 28, color: ColorsLectary.white),
                   )),

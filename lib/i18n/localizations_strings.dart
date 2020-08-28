@@ -19,6 +19,8 @@ const String
     Oops = 'oops',
     ReportErrorText = 'report_error_text',
     ReportError = 'report_error',
+    AllVocables = 'all_vocables',
+    SearchLabel = 'search_label',
 
     // error messages
     ErrorDownloadLecture = 'error_download_lecture',
@@ -34,7 +36,6 @@ const String
     DrawerHeader = 'drawer_header',
     DrawerButtonLectureManagement = 'drawer_button_lecture_management',
     DrawerButtonSettings = 'drawer_button_settings',
-    DrawerAllVocables = 'drawer_all_vocables',
     DrawerNoLecturesAvailable = 'drawer_no_lectures_available',
 
     // lecture-screen
@@ -102,6 +103,8 @@ final de = {
   Oops: 'Upps....',
   ReportErrorText: 'Sie können den Fehler an das Lectary Team melden, damit dieser behoben werden kann.',
   ReportError: 'Fehler melden',
+  AllVocables: 'Alle Vokabel',
+  SearchLabel: 'Suche: ',
 
   // error messages
   ErrorDownloadLecture: 'Leider ist beim Download der Lektion ein Fehler aufgetreten!',
@@ -117,7 +120,6 @@ final de = {
   DrawerHeader: 'Lectary',
   DrawerButtonSettings: 'Einstellungen',
   DrawerButtonLectureManagement: 'Lektionen verwalten',
-  DrawerAllVocables: 'Alle Vokabel',
   DrawerNoLecturesAvailable: 'Keine offline Lektionen vorhanden!',
 
   // lecture-screen

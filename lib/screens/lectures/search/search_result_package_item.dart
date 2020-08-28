@@ -4,6 +4,7 @@ import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
@@ -19,11 +20,12 @@ class SearchResultPackageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildTiles(entry);
+    final settingUppercase = context.select((SettingViewModel model) => model.settingUppercase);
+    return _buildTiles(entry, settingUppercase);
   }
 
   // root level
-  Widget _buildTiles(SearchResultPackage pack) {
+  Widget _buildTiles(SearchResultPackage pack, bool uppercase) {
     if (pack.children.isEmpty) return ListTile(title: Text(pack.lectureTitle));
     List<Widget> childs = List<Widget>();
     childs.add(
@@ -32,7 +34,7 @@ class SearchResultPackageItem extends StatelessWidget {
         child: Container(
           color: ColorsLectary.white,
           child: ListTile(
-            title: Text(pack.lectureTitle,
+            title: Text(uppercase ? pack.lectureTitle.toUpperCase() : pack.lectureTitle,
                 style: Theme.of(context).textTheme.headline6.copyWith(
                     fontWeight: FontWeight.bold,
                     color: ColorsLectary.lightBlue)),
@@ -40,7 +42,7 @@ class SearchResultPackageItem extends StatelessWidget {
         ),
       ),
     );
-    pack.children.map(_buildChildren).forEach((element) {childs.addAll(element);});
+    pack.children.map((e) => _buildChildren(e, uppercase)).forEach((element) {childs.addAll(element);});
 
     Column column = Column(
         children: childs
@@ -49,13 +51,13 @@ class SearchResultPackageItem extends StatelessWidget {
   }
 
   // children of an package
-  List<Widget> _buildChildren(SearchResult searchResult) {
+  List<Widget> _buildChildren(SearchResult searchResult, bool uppercase) {
     final model = Provider.of<CarouselViewModel>(context, listen: false);
     return <Widget>[
       Divider(height: 1,thickness: 1),
       GestureDetector(
         child: ListTile(
-            title: Text(searchResult.vocable.vocable),
+            title: Text(uppercase ? searchResult.vocable.vocable.toUpperCase() : searchResult.vocable.vocable),
             trailing: (() {
               if (searchResult.mediaType == null) return SizedBox();
               MediaType mediaType = MediaType.fromString(searchResult.mediaType);

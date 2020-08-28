@@ -8,6 +8,7 @@ import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
@@ -33,6 +34,8 @@ class LectureMainScreen extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
               // retrieve current vocable list and keep listening for future changes in the vocable selection
               List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
+              bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
+              String selectionTitle = context.select((CarouselViewModel model) => model.selectionTitle);
               log("build lecture-main-screen--lectures");
               return Scaffold(
                   // to avoid bottom overflow when keyboard on search-screen is opened
@@ -40,7 +43,7 @@ class LectureMainScreen extends StatelessWidget {
                   appBar: vocables.isNotEmpty
                       ? AppBar(
                           title: GestureDetector(
-                              child: Text(context.select((CarouselViewModel model) => model.selectionTitle)),
+                              child: Text(uppercase ? selectionTitle.toUpperCase() : selectionTitle),
                               onTap: () {
                                 Navigator.pushNamed(
                                     context, VocableSearchScreen.routeName,

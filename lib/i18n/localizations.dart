@@ -6,7 +6,11 @@ import 'package:provider/provider.dart';
 
 /// Class for handling localization resources
 class AppLocalizations {
-  AppLocalizations(this.locale);
+  static AppLocalizations current;
+
+  AppLocalizations._(this.locale) {
+    current = this;
+  }
 
   final Locale locale;
   static bool _settingUppercase;
@@ -51,6 +55,8 @@ class AppLocalizations {
   String get oops => _getValue(Oops);
   String get reportErrorText => _getValue(ReportErrorText);
   String get reportError => _getValue(ReportError);
+  String get allVocables => _getValue(AllVocables);
+  String get searchLabel => _getValue(SearchLabel);
 
   // error messages
   String get errorDownloadLecture => _getValue(ErrorDownloadLecture);
@@ -66,7 +72,6 @@ class AppLocalizations {
   String get drawerHeader => _getValue(DrawerHeader);
   String get drawerButtonLectureManagement => _getValue(DrawerButtonLectureManagement);
   String get drawerButtonSettings => _getValue(DrawerButtonSettings);
-  String get drawerAllVocables => _getValue(DrawerAllVocables);
   String get drawerNoLecturesAvailable => _getValue(DrawerNoLecturesAvailable);
 
   // lecture-screen
@@ -139,7 +144,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 
   @override
   Future<AppLocalizations> load(Locale locale) {
-    return SynchronousFuture<AppLocalizations>(AppLocalizations(locale));
+    return SynchronousFuture<AppLocalizations>(AppLocalizations._(locale));
   }
 
   @override

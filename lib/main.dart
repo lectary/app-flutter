@@ -56,10 +56,10 @@ class LectaryApp extends StatelessWidget {
           update: (context, lectureRepository, settingViewModel, lectureViewModel) =>
               LectureViewModel(lectureRepository: lectureRepository, settingViewModel: settingViewModel),
         ),
-        ChangeNotifierProxyProvider<LectureRepository, CarouselViewModel>(
+        ChangeNotifierProxyProvider2<LectureRepository, SettingViewModel, CarouselViewModel>(
           create: (BuildContext context) { return null; },
-          update: (context, lectureRepository, carouselViewModel) =>
-              CarouselViewModel(lectureRepository: lectureRepository),
+          update: (context, lectureRepository, settingViewModel, carouselViewModel) =>
+              CarouselViewModel(lectureRepository: lectureRepository, settingViewModel: settingViewModel),
         )
       ],
       child: LocalizedApp(),

@@ -10,6 +10,7 @@ import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,27 +26,28 @@ class LecturePackageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _buildTiles(entry);
+    final settingUppercase = context.select((SettingViewModel model) => model.settingUppercase);
+    return _buildTiles(entry, settingUppercase);
   }
 
   // builds the header tile for the package and standard tiles for the children
-  Widget _buildTiles(LecturePackage pack) {
+  Widget _buildTiles(LecturePackage pack, bool uppercase) {
     // return when there are no children, although this should never happen
-    if (pack.children.isEmpty) return ListTile(title: Text(pack.title));
+    if (pack.children.isEmpty) return ListTile(title: Text(uppercase ? pack.title.toUpperCase() : pack.title));
     List<Widget> childs = List<Widget>();
     childs.add(
       Container(
         height: 70,
         alignment: Alignment.centerLeft,
         child: ListTile(
-          title: Text(pack.title, style: Theme.of(context).textTheme.headline6),
+          title: Text(uppercase ? pack.title.toUpperCase() : pack.title, style: Theme.of(context).textTheme.headline6),
           trailing: IconButton(
-              onPressed: () => _showAbstract(pack.title, pack.abstract),
+              onPressed: () => _showAbstract(pack.title, pack.abstract, uppercase),
               icon: Icon(Icons.more_horiz)),
         ),
       ),
     );
-    pack.children.map(_buildChildren).forEach((element) {childs.addAll(element);});
+    pack.children.map((e) => _buildChildren(e, uppercase)).forEach((element) {childs.addAll(element);});
 
     Column column = Column(
         children: childs
@@ -54,7 +56,7 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the bottom-modal-sheet for the abstract
-  _showAbstract(String packTitle, String abstractText) {
+  _showAbstract(String packTitle, String abstractText, bool uppercase) {
     return showModalBottomSheet(
       context: context,
       builder: (_) {
@@ -63,7 +65,7 @@ class LecturePackageItem extends StatelessWidget {
             Container(
                 padding: EdgeInsets.all(10),
                 alignment: Alignment.center,
-                child: Text(packTitle,
+                child: Text(uppercase ? packTitle.toUpperCase() : packTitle,
                     style: Theme.of(context).textTheme.headline6)),
             Divider(thickness: 1, height: 1),
             abstractText != null
@@ -73,7 +75,7 @@ class LecturePackageItem extends StatelessWidget {
                       customTextStyle: (dom.Node node, TextStyle baseStyle) {
                         return baseStyle.merge(Theme.of(context).textTheme.bodyText1);
                       },
-                      data: abstractText,
+                      data: uppercase ? abstractText.toUpperCase() : abstractText,
                       onLinkTap: (url) async {
                         if (await canLaunch(url)) {
                           await launch(url);
@@ -97,12 +99,12 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the children of an package
-  List<Widget> _buildChildren(Lecture lecture) {
+  List<Widget> _buildChildren(Lecture lecture, bool uppercase) {
     return <Widget>[
       Divider(height: 1,thickness: 1),
       ListTile(
           leading: _getIconForLectureStatus(lecture.lectureStatus),
-          title: Text(lecture.lesson),
+          title: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
           trailing: IconButton(
               onPressed: () => _showLectureMenu(lecture),
               icon: Icon(Icons.more_horiz))),
@@ -128,21 +130,25 @@ class LecturePackageItem extends StatelessWidget {
 
   // builds the bottom-modal-sheet for the lecture menu
   _showLectureMenu(Lecture lecture) {
-    final lecturesProvider = Provider.of<LectureViewModel>(context, listen: false);
+    final lectureViewModel = Provider.of<LectureViewModel>(context, listen: false);
+    final settingViewModel = Provider.of<SettingViewModel>(context, listen: false);
     return showModalBottomSheet(
       context: context,
       builder: (_) {
         return ChangeNotifierProvider(
-          create: (context) => lecturesProvider,
-          child: Wrap(
-            children: <Widget>[
-              _buildLectureInfoWidget(lecture),
-              Divider(height: 1, thickness: 1),
-              _buildButtonForLectureStatus(lecture, lecturesProvider),
-              Divider(height: 1, thickness: 1),
-              _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
-                  func: () => Navigator.pop(context)),
-            ],
+          create: (context) => lectureViewModel,
+          child: ChangeNotifierProvider(
+            create: (context) => settingViewModel,
+            child: Wrap(
+              children: <Widget>[
+                _buildLectureInfoWidget(lecture, settingViewModel),
+                Divider(height: 1, thickness: 1),
+                _buildButtonForLectureStatus(lecture, lectureViewModel),
+                Divider(height: 1, thickness: 1),
+                _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
+                    func: () => Navigator.pop(context)),
+              ],
+            ),
           ),
         );
       },
@@ -195,7 +201,8 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the text part for the lecture menu bottom-modal-sheet
-  Container _buildLectureInfoWidget(Lecture lecture) {
+  Container _buildLectureInfoWidget(Lecture lecture, SettingViewModel settingViewModel) {
+    final uppercase = settingViewModel.settingUppercase;
     return Container(
         padding: EdgeInsets.all(10),
         child: Column(
@@ -203,13 +210,15 @@ class LecturePackageItem extends StatelessWidget {
           children: <Widget>[
             Text(
                 AppLocalizations.of(context).lectureInfoLecture +
-                    lecture.lesson,
+                    (uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
                     .copyWith(fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
-            Text(AppLocalizations.of(context).lectureInfoPack + lecture.pack,
+            Text(
+                AppLocalizations.of(context).lectureInfoPack +
+                    (uppercase ? lecture.pack.toUpperCase() : lecture.pack),
                 style: Theme.of(context).textTheme.bodyText1),
             SizedBox(height: 10),
             Text(

@@ -103,7 +103,7 @@ class MainDrawer extends StatelessWidget {
                     if (index == 0)
                       // extra tile for loading all vocables
                       return ListTile(
-                        title: Text(AppLocalizations.of(context).drawerAllVocables),
+                        title: Text(AppLocalizations.of(context).allVocables),
                         onTap: () {
                           Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
                           Navigator.pop(context); // close drawer first to avoid unwanted behaviour!

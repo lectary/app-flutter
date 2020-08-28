@@ -3,6 +3,7 @@ import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
@@ -84,6 +85,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     // listening on the index of the current visible carousel page/item
     int currentItemIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
+    bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
 
     // if slowMode gets disabled the media gets visible instantly
     if (!widget.slowMode) {
@@ -123,10 +125,19 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
         child: AspectRatio(
             aspectRatio: Constants.aspectRatio,
             child: showText
-                ? Center(
-                    child: Text(widget.slowMode ? finalContent : widget.content,
-                        style: TextStyle(
-                            fontSize: 28, color: ColorsLectary.white)))
+                ? Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(50),
+                    child: Text(
+                      uppercase
+                          ? (widget.slowMode
+                              ? finalContent.toUpperCase()
+                              : widget.content.toUpperCase())
+                          : (widget.slowMode ? finalContent : widget.content),
+                      style:
+                          TextStyle(fontSize: 28, color: ColorsLectary.white),
+                      textAlign: TextAlign.center,
+                    ))
                 : Icon(
                     Icons.subject,
                     size: 120,
