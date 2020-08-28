@@ -159,13 +159,91 @@ final de = {
   AboutContact: 'Fragen, Hinweise, Anregungen bitte an ',
   AboutInstruction: 'Anleitung: ',
   AboutCredits: 'Credits: \n\n',
-  AboutIconCredit: 'Icons by : ',
-  AboutIconCreationCreditPart1: 'Icons made by ',
-  AboutIconCreationCreditPart2: 'from ',
+  AboutIconCredit: 'Icons von : ',
+  AboutIconCreationCreditPart1: 'Icons erstellt von ',
+  AboutIconCreationCreditPart2: 'von ',
   AboutVersion: 'Version 4 #datum--time',
 };
 
 // Language en
 final en = {
+  // titles
   AppTitle: 'Lectary 4',
+  ScreenManagementTitle: 'Lecture management',
+  ScreenManagementSearchHint: 'Search',
+  ScreenSettingsTitle: 'Settings',
+  ScreenAboutTitle: 'About',
+
+  // general
+  OkUppercase: 'OK',
+  Cancel: 'Cancel',
+  Download: 'Download',
+  Update: 'Update',
+  Delete: 'Delete',
+  Reset: 'Reset',
+  NoDescription: 'No description available.',
+  Close: 'Close',
+  Oops: 'Oops....',
+  ReportErrorText: 'You can report the bug to the Lectary Team, so they can fix it.',
+  ReportError: 'Report bug.',
+  AllVocables: 'All vocables',
+  SearchLabel: 'Search: ',
+
+  // error messages
+  ErrorDownloadLecture: 'Unfortunately, an error occurred while downloading lecture!',
+
+  // lecture-info menu
+  LectureInfoLecture: 'Lecture: ',
+  LectureInfoPack: 'Package: ',
+  LectureInfoFileSize: 'File size: ',
+  LectureInfoVocableCount: 'Vocable: ',
+  LectureInfoFileSizeUnit: ' MB',
+
+  // drawer
+  DrawerHeader: 'Lectary',
+  DrawerButtonSettings: 'Settings',
+  DrawerButtonLectureManagement: 'Lecture management',
+  DrawerNoLecturesAvailable: 'No offline lectures available!',
+
+  // lecture-screen
+  EmptyLectures: 'No lectures available!',
+  MinMaxLectureSizes: 'Single lectures have a file size of about 5MB to 20MB.',
+  DownloadAndManageLectures: 'Download and manage lectures.',
+
+  // lecture-search-screen
+  NoVocablesFound: 'No vocables found',
+
+  // lecture-management-screen
+  NoLecturesFound: 'No lectures found',
+  DeleteAllLectures: 'Delete all lectures.',
+  DeleteAllLecturesQuestion: 'Are you sure you want to delete all lectures?',
+  DeleteAll: 'Delete all',
+  DeletingLectures: 'Deleting lectures...',
+
+  NoInternetConnection: 'No internet connection!!',
+  OfflineMode: 'OFFLINE MODE',
+
+  // setting-screen
+  SettingMediaWithSound: 'Play media with sound',
+  SettingVideoTimeLine: 'Show video-timeline',
+  SettingMediaOverlay: 'Show media-overlay',
+  SettingUppercase: 'UPPERCASE',
+  SettingResetLearningProgress: 'Reset learning progress',
+  SettingResetLearningProgressQuestion: 'Are you sure you want to reset all of your learning progress?',
+  SettingChooseAppLanguage: 'Choose app-language',
+  SettingChooseLearningLanguage: 'Choose learning language',
+  SettingResetSettings: 'Reset all settings',
+  SettingResetSettingsQuestion: 'Are you sure you want to reset all settings?',
+
+  // about-screen
+  About: 'About',
+  AboutIntroductionPart1: 'Lectary, learn signs and languages anywhere, anytime. More information about this project can be found at ',
+  AboutIntroductionPart2: 'If you would like to offer your learning videos, plase contact us.\n\n',
+  AboutContact: 'Please send questions, hints and suggestions to ',
+  AboutInstruction: 'Manual: ',
+  AboutCredits: 'Credits: \n\n',
+  AboutIconCredit: 'Icons by : ',
+  AboutIconCreationCreditPart1: 'Icons made by ',
+  AboutIconCreationCreditPart2: 'from ',
+  AboutVersion: 'Version 4 #datum--time',
 };
