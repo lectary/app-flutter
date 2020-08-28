@@ -12,27 +12,16 @@ import 'package:provider/provider.dart';
 
 
 /// Lecture main screen responsible for building the [AppBar] and initially
-/// loading all vocables and showing either [LectureScreen] or [LectureNotAvailableScreen]
-class LectureMainScreen extends StatefulWidget {
+/// loading all vocables and showing either [LectureScreen] or [LectureNotAvailableScreen].
+class LectureMainScreen extends StatelessWidget {
   static const String routeName  = '/';
 
-  @override
-  _LectureMainScreenState createState() => _LectureMainScreenState();
-}
-
-class _LectureMainScreenState extends State<LectureMainScreen> {
-  Future<List<Vocable>> _vocableFuture;
-  List<Vocable> vocables;
-
-  @override
-  void initState() {
-    _vocableFuture = Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
-    super.initState();
-  }
+  LectureMainScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     log("build lecture-main-screen--theme");
+    Future<List<Vocable>> _vocableFuture = Provider.of<CarouselViewModel>(context, listen: false).initVocables();
     return Theme(
       data: lectaryThemeDark(),
       // Future builder will wait till the vocables are loaded initially, then the snapshot
@@ -43,7 +32,7 @@ class _LectureMainScreenState extends State<LectureMainScreen> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
               // retrieve current vocable list and keep listening for future changes in the vocable selection
-              vocables = context.select((CarouselViewModel model) => model.currentVocables);
+              List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
               log("build lecture-main-screen--lectures");
               return Scaffold(
                   // to avoid bottom overflow when keyboard on search-screen is opened

@@ -31,7 +31,7 @@ class LecturePackageItem extends StatelessWidget {
         child: ListTile(
           title: Text(pack.title, style: Theme.of(context).textTheme.headline6),
           onTap: () {
-            Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfPackage(pack);
+            Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfPackage(pack.title);
             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
             Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
           },
@@ -52,7 +52,7 @@ class LecturePackageItem extends StatelessWidget {
       ListTile(
         title: Text(lecture.lesson),
         onTap: () {
-          Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfLecture(lecture);
+          Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfLecture(lecture.id, lecture.lesson);
           Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
           Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
         },

@@ -10,8 +10,11 @@ import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
+import 'package:lectary/utils/constants.dart';
+import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:collection/collection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 /// ViewModel for handling state of the carousel.
@@ -22,6 +25,12 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
   CarouselController carouselController;
+
+  /// Represents the current [Selection] (i.e. the selection of loaded vocables).
+  Selection currentSelection;
+  /// The index of the vocable on which the carousel should start on app-start.
+  /// Will be resetted by the carousel after the first use.
+  int initialCarouselValue = 0;
 
   /// Used by the UI widget to know if it should display the lecture name next to the vocable
   bool isVirtualLecture = false;
@@ -94,6 +103,7 @@ class CarouselViewModel with ChangeNotifier {
   set currentItemIndex(int currentItemIndex) {
     _currentItemIndex = currentItemIndex;
     notifyListeners();
+    if (!isVirtualLecture) _saveItemIndexPref(currentItemIndex);
   }
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture].
@@ -107,7 +117,7 @@ class CarouselViewModel with ChangeNotifier {
   /// Used for global search and loaded when the search is first used.
   List<Vocable> _allLocalVocables = List();
 
-  void clearAllLocalVocables() async {
+  void clearAllLocalVocables() {
     _allLocalVocables.clear();
   }
 
@@ -117,14 +127,20 @@ class CarouselViewModel with ChangeNotifier {
   /// Resets [_currentVocables] and [_selectionTitle] when no lectures are available or got deleted
   void _localLectureStreamListener(List<Lecture> list) {
     localLectures = list;
+
     if (list.isEmpty) {
       _currentVocables.clear();
       _selectionTitle = "";
+      _saveSelection(null);
       notifyListeners();
     }
-    if (list.isNotEmpty && _currentVocables.isEmpty) {
-      loadAllVocables();
-    }
+    // ToDo review - disabling due to interferences with init-loading mechanic during debugging
+    // load all vocables when there is no current selection and dont save it as
+    // new selection
+    /*if (list.isNotEmpty && currentSelection == null) {
+      loadAllVocables(saveSelection: false);
+      log("loaded all vocables");
+    }*/
   }
 
   /// Constructor with passed in [LectureRepository] dependency.
@@ -163,43 +179,188 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Loads all persisted [Vocable] and notifies listeners.
-  /// Sets [_currentVocables], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
-  /// [_currentItemIndex] back to 0.
-  /// The vocables are sorted only lexicographically.
+  /// Vocables are sorted only lexicographically.
+  /// Sets [_currentVocables], [_selectionTitle] appropriately and [isVirtualLecture] to false.
+  ///
+  /// Further resets [currentItemIndex] back to 0 and saves it in the cache.
+  /// Saves the metaInfo about the loaded vocable list as new [Selection] in the cache.
+  /// The optional parameter [saveSelection] can be used to avoid saving [currentItemIndex] or [Selection]
+  /// if they are already restored from cache by other means.
+  ///
   /// Returns a [Future] with [List] of type [Vocable].
-  Future<List<Vocable>> loadAllVocables() async {
+  Future<List<Vocable>> loadAllVocables({bool saveSelection=true}) async {
     _currentVocables = await _lectureRepository.findAllVocables();
-    _currentItemIndex = 0;
     _selectionTitle = "Alle Vokabel";
     isVirtualLecture = false;
+    if (saveSelection) {
+      _currentItemIndex = 0;
+      await _saveItemIndexPref(0);
+      await _saveSelection(Selection.all());
+    }
     notifyListeners();
+    log("loaded all vocables");
     return _currentVocables;
   }
 
-  /// Loads all persisted [Vocable] from the passed [Lecture] and notifies listeners.
-  /// Sets [_currentVocables], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
-  /// [_currentItemIndex] back to 0.
-  /// The vocables are sorted lexicographically and by metaData SORT if available.
-  Future<void> loadVocablesOfLecture(Lecture lecture) async {
-    List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lecture.id);
+  /// Loads all persisted [Vocable] from the passed [Lecture.id] and [Lecture.lesson] and notifies listeners.
+  /// Vocables are sorted only lexicographically and by metaData SORT if available.
+  /// Sets [_currentVocables], [_selectionTitle] appropriately and [isVirtualLecture] to false.
+  ///
+  /// Further resets [currentItemIndex] back to 0 and saves it in the cache.
+  /// Saves the metaInfo about the loaded vocable list as new [Selection] in the cache.
+  /// The optional parameter [saveSelection] can be used to avoid saving [currentItemIndex] or [Selection]
+  /// if they are already restored from cache by other means.
+  ///
+  /// Returns a [Future] with [List] of type [Vocable].
+  Future<List<Vocable>> loadVocablesOfLecture(int lectureId, String lesson, {bool saveSelection=true}) async {
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lectureId);
     _currentVocables = _sortVocables(vocables);
-    _currentItemIndex = 0;
-    _selectionTitle = lecture.lesson;
+    _selectionTitle = lesson;
     isVirtualLecture = false;
+    if (saveSelection) {
+      _currentItemIndex = 0;
+      await _saveItemIndexPref(0);
+      await _saveSelection(Selection.lecture(lectureId, lesson));
+    }
     notifyListeners();
+    log("loaded lecture $lesson");
+    return _currentVocables;
   }
 
-  /// Loads all persisted [Vocable] from the passed [LecturePackage] and notifies listeners.
-  /// Sets [_currentVocables], [_selectionTitle] and [selectionDidUpdate] appropriate and resets
-  /// [_currentItemIndex] back to 0.
-  /// The vocables are sorted lexicographically and by metaData SORT if available.
-  Future<void> loadVocablesOfPackage(LecturePackage pack) async {
-    List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(pack.title);
+  /// Loads all persisted [Vocable] from the passed [LecturePackage.title] and notifies listeners.
+  /// Vocables are sorted only lexicographically and by metaData SORT if available.
+  /// Sets [_currentVocables], [_selectionTitle] appropriately and [isVirtualLecture] to false.
+  ///
+  /// Further resets [currentItemIndex] back to 0 and saves it in the cache.
+  /// Saves the metaInfo about the loaded vocable list as new [Selection] in the cache.
+  /// The optional parameter [saveSelection] can be used to avoid saving [currentItemIndex] or [Selection]
+  /// if they are already restored from cache by other means.
+  ///
+  /// Returns a [Future] with [List] of type [Vocable].
+  Future<List<Vocable>> loadVocablesOfPackage(String packTitle, {bool saveSelection=true}) async {
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(packTitle);
     _currentVocables = _sortVocables(vocables);
-    _currentItemIndex = 0;
-    _selectionTitle = pack.title;
+    _selectionTitle = packTitle;
     isVirtualLecture = false;
+    if (saveSelection) {
+      _currentItemIndex = 0;
+      await _saveItemIndexPref(0);
+      await _saveSelection(Selection.package(packTitle));
+    }
     notifyListeners();
+    log("loaded package $packTitle");
+    return _currentVocables;
+  }
+
+  /// Saves [itemIndex] in the [SharedPreferences].
+  Future<void> _saveItemIndexPref(int itemIndex) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(Constants.keyItemIndex, itemIndex);
+  }
+
+  /// Loads the itemIndex saved in the [SharedPreferences] and sets
+  /// [_currentItemIndex] and [initialCarouselValue].
+  Future<void> _restoreItemIndexPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int index = prefs.get(Constants.keyItemIndex) ?? 0;
+    _currentItemIndex = index;
+    initialCarouselValue = index;
+  }
+
+  /// Saves the passed [Selection] in the [SharedPreferences].
+  /// [SelectionType.all] gets saved with the value 'all'.
+  /// [SelectionType.package] gets saved with the value 'package:<package-title>'.
+  /// [SelectionType.lecture] gets saved with the value 'lecture:<lecture-id>:<lecture-lesson>'.
+  /// If [Null] is passed, then the saved selection will be removed.
+  Future<void> _saveSelection(Selection selection) async {
+    // save selection in the viewModel to be available for UI-widgets
+    currentSelection = selection;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // remove key (and possible value) if null is passed as selection-value
+    if (selection == null) {
+      return await prefs.remove(Constants.keySelection);
+    }
+    // save needed selection info corresponding to the SelectionType
+    switch (selection.type) {
+      case SelectionType.all:
+        await prefs.setString(Constants.keySelection, Constants.keySelectionAll);
+        break;
+      case SelectionType.package:
+        await prefs.setString(Constants.keySelection, "${Constants.keySelectionPackage}:${selection.packTitle}");
+        break;
+      case SelectionType.lecture:
+        await prefs.setString(Constants.keySelection, "${Constants.keySelectionLecture}:${selection.lectureId}:${selection.lesson}");
+        break;
+    }
+  }
+
+  /// Loads the last vocable-selection from [SharedPreferences].
+  /// Returns a [Future] of type [Selection] or [Null] if no last selection
+  /// is available.
+  Future<Selection> loadLastSelection() async {
+    // load selection value
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String selectionString = prefs.getString(Constants.keySelection);
+
+    if (selectionString == null) {
+      return null;
+    } else {
+      if (selectionString == Constants.keySelectionAll) {
+        return Selection.all();
+      }
+
+      // safety check
+      if (!selectionString.contains(Constants.keySelectionPackage) &&
+          !selectionString.contains(Constants.keySelectionLecture)) return null;
+
+      // retrieve selection type 'package' or 'lecture' by index to be independent of package/lecture names
+      int firstIndex = selectionString.indexOf(":");
+      String selection = selectionString.substring(0, firstIndex);
+
+      if (selection == Constants.keySelectionPackage) {
+        // extract pack title
+        String packTitle = selectionString.substring(firstIndex + 1);
+        return Selection.package(packTitle);
+      }
+
+      if (selection == Constants.keySelectionLecture) {
+        // extract lectureId and name, using indexOf to be independent of lecture name
+        String selectionSubString = selectionString.substring(firstIndex + 1);
+        int secondIndex = selectionSubString.indexOf(":");
+        int id = int.parse(selectionSubString.substring(0, secondIndex));
+        String lesson = selectionSubString.substring(secondIndex + 1);
+        return Selection.lecture(id, lesson);
+      }
+
+      return null;
+    }
+  }
+
+  /// Method used at app-start to load vocables.
+  /// First loads the last vocable-selection if available.
+  /// If no last selection is available, then all vocables will be loaded.
+  Future<List<Vocable>> initVocables() async {
+    Selection lastSelection = await loadLastSelection();
+    log("loaded last selection");
+
+    if (lastSelection == null) {
+      return await loadAllVocables();
+    }
+
+    // restore and set itemIndex and initialValue for the carousel
+    await _restoreItemIndexPref();
+
+    switch (lastSelection.type) {
+      case SelectionType.all:
+        return await loadAllVocables(saveSelection: false);
+      case SelectionType.package:
+        return await loadVocablesOfPackage(lastSelection.packTitle, saveSelection: false);
+      case SelectionType.lecture:
+        return await loadVocablesOfLecture(lastSelection.lectureId, lastSelection.lesson, saveSelection: false);
+      default:
+        return await loadAllVocables();
+    }
   }
 
   /// Navigating to the selected vocable of the passed [SearchResult].
@@ -235,7 +396,6 @@ class CarouselViewModel with ChangeNotifier {
         localResults.add(voc);
       }
     });
-
     filteredVocables = localResults;
     notifyListeners();
   }
@@ -372,9 +532,8 @@ class CarouselViewModel with ChangeNotifier {
 
     // grouping the searchResults after lecture id, and then replacing the id
     // with the corresponding lecture name, by a lookup in the list of local lectures
-    final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
     List<SearchResultPackage> tmpList = List();
-
+    final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
     groupedByLectureId.forEach((key, value) {
       String lectureName = localLectures.firstWhere((lecture) => lecture.id == key).lesson;
       tmpList.add(SearchResultPackage(lectureName, value));
@@ -382,8 +541,10 @@ class CarouselViewModel with ChangeNotifier {
 
     // sorting grouped lists excluding first one
     List<SearchResultPackage> searchResultPackageList = List();
-    searchResultPackageList.add(tmpList.removeAt(0));
-    tmpList.sort((lec1, lec2) => Utils.customCompareTo(lec1.lectureTitle, lec2.lectureTitle));
+    if (tmpList.length > 1) {
+      searchResultPackageList.add(tmpList.removeAt(0));
+      tmpList.sort((lec1, lec2) => Utils.customCompareTo(lec1.lectureTitle, lec2.lectureTitle));
+    }
     searchResultPackageList.addAll(tmpList);
 
     return searchResultPackageList;

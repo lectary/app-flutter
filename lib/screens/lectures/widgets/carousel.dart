@@ -27,9 +27,8 @@ class _CarouselState extends State<Carousel> {
     super.initState();
     /// Adding callback for jumping to the selected [Vocable] after the [Carousel] is initialized fully and
     /// the [widget.carouselController] is set properly
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final index = Provider.of<CarouselViewModel>(context, listen: false)
-          .currentItemIndex;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final index = Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex;
       if (index != 0) widget.carouselController.jumpToPage(index);
     });
   }
@@ -38,6 +37,10 @@ class _CarouselState extends State<Carousel> {
   Widget build(BuildContext context) {
     log("build carousel");
     final double height = MediaQuery.of(context).size.height;
+    // get initial value from viewModel for usage at app-start; reset back to 0 afterwards.
+    final model = Provider.of<CarouselViewModel>(context, listen: false);
+    final initialValue = model.initialCarouselValue;
+    if (initialValue != 0) model.initialCarouselValue = 0;
 
     return CarouselSlider.builder(
         carouselController: widget.carouselController,
@@ -48,10 +51,9 @@ class _CarouselState extends State<Carousel> {
             viewportFraction: 0.999999,
             autoPlay: false,
             enlargeCenterPage: true,
-            initialPage: 0,
+            initialPage: initialValue,
             onPageChanged: (int index, CarouselPageChangedReason reason) {
-              Provider.of<CarouselViewModel>(context, listen: false)
-                  .currentItemIndex = index;
+              Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = index;
             }),
         itemCount: widget.vocables.length,
         itemBuilder: (BuildContext context, int itemIndex) =>
