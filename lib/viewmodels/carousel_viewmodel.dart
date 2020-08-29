@@ -24,7 +24,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Has [LectureRepository] as dependency.
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
-  final SettingViewModel _settingViewModel;
+  SettingViewModel _settingViewModel;
+
+  /// Updates the local reference to [SettingViewModel].
+  void updateSettings(SettingViewModel settingViewModel) {
+    _settingViewModel = settingViewModel;
+    notifyListeners();
+    log("updated settings reference in carouselViewModel");
+  }
 
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
   CarouselController carouselController;
@@ -161,8 +168,8 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Constructor with passed in [LectureRepository] dependency.
   /// Loads and listens to the [Stream] of local [Lecture].
-  CarouselViewModel({@required lectureRepository, @required settingViewModel})
-      : _lectureRepository = lectureRepository, _settingViewModel = settingViewModel {
+  CarouselViewModel({@required lectureRepository})
+      : _lectureRepository = lectureRepository {
     _localLecturesStream = _lectureRepository.watchAllLectures();
     _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
     log("carousel view model instances!");
@@ -312,7 +319,6 @@ class CarouselViewModel with ChangeNotifier {
     }
   }
 
-
   /// Method for reloading current selection.
   /// Main purpose is for reloading current state after the setting-resetLearningProgress.
   Future<void> reloadCurrentSelection() async {
@@ -375,7 +381,7 @@ class CarouselViewModel with ChangeNotifier {
   /// If no last selection is available, then all vocables will be loaded.
   Future<List<Vocable>> initVocables() async {
     Selection lastSelection = await loadLastSelection();
-    log("loaded last selection");
+    log("loaded last selection: ${lastSelection.type}");
 
     if (lastSelection == null) {
       return await loadAllVocables();

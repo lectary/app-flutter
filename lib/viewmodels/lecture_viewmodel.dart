@@ -26,7 +26,14 @@ import 'package:path_provider/path_provider.dart';
 /// uses [ChangeNotifier] for propagating changes to UI components
 class LectureViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
-  final SettingViewModel _settingViewModel;
+  SettingViewModel _settingViewModel;
+
+  /// Updates the local reference to [SettingViewModel].
+  void updateSettings(SettingViewModel settingViewModel) {
+    _settingViewModel = settingViewModel;
+    notifyListeners();
+    log("updated settings reference in lectureViewModel");
+  }
 
   /// represents the loading status of fetching available lectures via [Response]
   Response _availableLectureStatus = Response.completed();
@@ -49,8 +56,8 @@ class LectureViewModel with ChangeNotifier {
   List<Coding> _availableCodings = List();
 
   /// Constructor with passed in [LectureRepository]
-  LectureViewModel({@required lectureRepository, @required settingViewModel})
-      : _lectureRepository = lectureRepository, _settingViewModel = settingViewModel;
+  LectureViewModel({@required lectureRepository})
+      : _lectureRepository = lectureRepository;
 
 
   /// Loads all available local and remote api-data, i.e. [Lecture], [Abstract], [Coding]

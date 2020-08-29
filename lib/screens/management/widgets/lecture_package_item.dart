@@ -130,25 +130,28 @@ class LecturePackageItem extends StatelessWidget {
 
   // builds the bottom-modal-sheet for the lecture menu
   _showLectureMenu(Lecture lecture) {
-    final lectureViewModel = Provider.of<LectureViewModel>(context, listen: false);
-    final settingViewModel = Provider.of<SettingViewModel>(context, listen: false);
+    LectureViewModel lectureViewModel = Provider.of<LectureViewModel>(context, listen: false);
+    SettingViewModel settingViewModel = Provider.of<SettingViewModel>(context, listen: false);
     return showModalBottomSheet(
       context: context,
       builder: (_) {
-        return ChangeNotifierProvider(
-          create: (context) => lectureViewModel,
-          child: ChangeNotifierProvider(
-            create: (context) => settingViewModel,
-            child: Wrap(
-              children: <Widget>[
-                _buildLectureInfoWidget(lecture, settingViewModel),
-                Divider(height: 1, thickness: 1),
-                _buildButtonForLectureStatus(lecture, lectureViewModel),
-                Divider(height: 1, thickness: 1),
-                _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
-                    func: () => Navigator.pop(context)),
-              ],
-            ),
+        return MultiProvider(
+          providers: [
+            // re-using existing instances of the viewModels via value-constructor
+            ChangeNotifierProvider.value(value: lectureViewModel),
+            ChangeNotifierProvider.value(value: settingViewModel)
+          ],
+          child: Wrap(
+            children: <Widget>[
+              _buildLectureInfoWidget(lecture, settingViewModel),
+              Divider(height: 1, thickness: 1),
+              _buildButtonForLectureStatus(lecture, lectureViewModel),
+              Divider(height: 1, thickness: 1),
+              _buildButton(
+                  icon: Icons.close,
+                  text: AppLocalizations.of(context).cancel,
+                  func: () => Navigator.pop(context)),
+            ],
           ),
         );
       },

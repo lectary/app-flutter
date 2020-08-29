@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,6 +24,7 @@ import 'package:lectary/data/db/database.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final database = await DatabaseProvider.instance.db;
+  log("database initialized!");
 
   runApp(LectaryApp(lectureDatabase: database));
 }
@@ -37,30 +40,24 @@ class LectaryApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log("build lectary app providers!");
+    // initializing immutable dependencies that are not provided to child widgets
+    final api = LectaryApi();
+    final lectureRepository = LectureRepository(lectaryApi: api, lectureDatabase: lectureDatabase);
+
     return MultiProvider(
       providers: [
-        Provider(create: (context) => LectaryApi()),
-        ProxyProvider<LectaryApi, LectureRepository>(
-          update: (context, lectaryApi, lectureRepository) =>
-              LectureRepository(lectaryApi: lectaryApi, lectureDatabase: lectureDatabase),
-          //dispose: (context, lectureRepository) => lectureRepository.dispose(), //TODO-Review: disable for enabling hot reload, maybe reactivate for production?
+        ChangeNotifierProvider<SettingViewModel>(
+          create: (BuildContext context) => SettingViewModel(lectureRepository: lectureRepository)
         ),
-        ChangeNotifierProxyProvider<LectureRepository, SettingViewModel>(
-          create: (BuildContext context) { return null; },
-          update: (context, lectureRepository, settingViewModel) =>
-              SettingViewModel(lectureRepository: lectureRepository),
+        ChangeNotifierProxyProvider<SettingViewModel, LectureViewModel>(
+          create: (BuildContext context) => LectureViewModel(lectureRepository: lectureRepository),
+          update: (context, settingViewModel, lectureViewModel) => lectureViewModel..updateSettings(settingViewModel),
           lazy: false,
         ),
-        ChangeNotifierProxyProvider2<LectureRepository, SettingViewModel, LectureViewModel>(
-          create: (BuildContext context) { return null; },
-          update: (context, lectureRepository, settingViewModel, lectureViewModel) =>
-              LectureViewModel(lectureRepository: lectureRepository, settingViewModel: settingViewModel),
-          lazy: false,
-        ),
-        ChangeNotifierProxyProvider2<LectureRepository, SettingViewModel, CarouselViewModel>(
-          create: (BuildContext context) { return null; },
-          update: (context, lectureRepository, settingViewModel, carouselViewModel) =>
-              CarouselViewModel(lectureRepository: lectureRepository, settingViewModel: settingViewModel),
+        ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel>(
+          create: (BuildContext context) => CarouselViewModel(lectureRepository: lectureRepository),
+          update: (context, settingViewModel, carouselViewModel) => carouselViewModel..updateSettings(settingViewModel),
           lazy: false,
         )
       ],
@@ -111,6 +108,8 @@ class _LocalizedAppState extends State<LocalizedApp> {
 
   @override
   Widget build(BuildContext context) {
+    log("build localized app");
+
     // restricting device orientation
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

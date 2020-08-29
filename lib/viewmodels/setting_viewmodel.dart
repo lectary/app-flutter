@@ -22,7 +22,10 @@ class SettingViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
 
   SettingViewModel({@required lectureRepository})
-      :_lectureRepository = lectureRepository;
+      :_lectureRepository = lectureRepository {
+    log("settings instance created");
+    loadLocalSettings();
+  }
 
   Future<void> loadLocalSettings() async {
     log("loading local app settings");
