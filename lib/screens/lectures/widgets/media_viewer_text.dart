@@ -86,6 +86,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
     // listening on the index of the current visible carousel page/item
     int currentItemIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
     bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
+    bool interrupted = context.select((CarouselViewModel model) => model.interrupted);
 
     // if slowMode gets disabled the media gets visible instantly
     if (!widget.slowMode) {
@@ -93,7 +94,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
       finalContent = widget.content;
     }
     // if current item is not visible any more, reset animation and hide text
-    if (currentItemIndex != widget.mediaIndex) {
+    if (currentItemIndex != widget.mediaIndex || interrupted) {
       showText = false;
       _resetAnimation();
       isAutoModeFinished = false;

@@ -55,11 +55,13 @@ class LectaryApp extends StatelessWidget {
           create: (BuildContext context) { return null; },
           update: (context, lectureRepository, settingViewModel, lectureViewModel) =>
               LectureViewModel(lectureRepository: lectureRepository, settingViewModel: settingViewModel),
+          lazy: false,
         ),
         ChangeNotifierProxyProvider2<LectureRepository, SettingViewModel, CarouselViewModel>(
           create: (BuildContext context) { return null; },
           update: (context, lectureRepository, settingViewModel, carouselViewModel) =>
               CarouselViewModel(lectureRepository: lectureRepository, settingViewModel: settingViewModel),
+          lazy: false,
         )
       ],
       child: LocalizedApp(),
@@ -67,6 +69,8 @@ class LectaryApp extends StatelessWidget {
   }
 }
 
+/// Register the RouteObserver as a navigation observer.
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 /// This widget encapsulates the localization logic and the [MaterialApp]
 /// Provides a static [setLocale] method for changing the locale everywhere in the app
@@ -134,7 +138,8 @@ class _LocalizedAppState extends State<LocalizedApp> {
             LectureManagementScreen.routeName : (context) => LectureManagementScreen(),
             SettingsScreen.routeName: (context) => SettingsScreen(),
             AboutScreen.routeName: (context) => AboutScreen(),
-          }
+          },
+          navigatorObservers: [routeObserver],
       );
     }
   }

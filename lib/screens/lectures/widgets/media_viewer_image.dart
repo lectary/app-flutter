@@ -65,13 +65,14 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     // listening on the index of the current visible carousel page/item
     int currentItemIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
+    bool interrupted = context.select((CarouselViewModel model) => model.interrupted);
 
     // if slowMode gets disabled the media gets visible instantly
     if (!widget.slowMode) {
       _animationController.reset();
     }
     // if current item is not visible any more, reset animation and hide image
-    if (currentItemIndex != widget.mediaIndex) {
+    if (currentItemIndex != widget.mediaIndex || interrupted) {
       showPicture = false;
       _animationController.reset();
       isAutoModeFinished = false;

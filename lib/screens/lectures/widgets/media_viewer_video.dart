@@ -86,6 +86,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
     } else {
       _controller.setVolume(0);
     }
+    bool interrupted = context.select((CarouselViewModel model) => model.interrupted);
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
@@ -96,7 +97,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
           widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
 
           // resets video if its running but its not the current visible one in the carousel
-          if (currentItemIndex != widget.mediaIndex) {
+          if (currentItemIndex != widget.mediaIndex || interrupted) {
             isAutoModeFinished = false;
             _controller.pause();
             _controller.seekTo(Duration.zero);

@@ -29,6 +29,14 @@ class CarouselViewModel with ChangeNotifier {
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
   CarouselController carouselController;
 
+  /// Used to interrupt videos or animations of the carousel when another route is pushed
+  bool _interrupted = false;
+  bool get interrupted => _interrupted;
+  set interrupted(bool interrupted) {
+    _interrupted = interrupted;
+    notifyListeners();
+  }
+
   /// Represents the current [Selection] (i.e. the selection of loaded vocables).
   Selection currentSelection;
   /// The index of the vocable on which the carousel should start on app-start.
