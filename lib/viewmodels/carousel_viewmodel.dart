@@ -38,7 +38,12 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Represents the current [Selection] (i.e. the selection of loaded vocables).
-  Selection currentSelection;
+  Selection _currentSelection;
+  Selection get currentSelection => _currentSelection;
+  set currentSelection(Selection currentSelection) {
+    _currentSelection = currentSelection;
+    notifyListeners();
+  }
   /// The index of the vocable on which the carousel should start on app-start.
   /// Will be resetted by the carousel after the first use.
   int initialCarouselValue = 0;
@@ -160,6 +165,7 @@ class CarouselViewModel with ChangeNotifier {
       : _lectureRepository = lectureRepository, _settingViewModel = settingViewModel {
     _localLecturesStream = _lectureRepository.watchAllLectures();
     _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
+    log("carousel view model instances!");
   }
 
   @override
@@ -359,6 +365,7 @@ class CarouselViewModel with ChangeNotifier {
       return await loadAllVocables();
     }
 
+    currentSelection = lastSelection;
     // restore and set itemIndex and initialValue for the carousel
     await _restoreItemIndexPref();
 

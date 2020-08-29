@@ -6,6 +6,7 @@ import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -90,6 +91,7 @@ class MainDrawer extends StatelessWidget {
   /// as [Stream], via a [StreamBuilder]. Retrieves the stream from the viewModel [CarouselViewModel]
   /// The items of the [ListView] are of type [LecturePackage]
   Widget _generateListView(BuildContext context) {
+    Selection selection = context.select((CarouselViewModel model) => model.currentSelection);
     return StreamBuilder<List<LecturePackage>>(
       stream: Provider.of<CarouselViewModel>(context, listen: false).loadLocalLecturesAsStream(),
       builder: (context, snapshot) {
@@ -102,13 +104,22 @@ class MainDrawer extends StatelessWidget {
                   itemBuilder: (context, index) {
                     if (index == 0)
                       // extra tile for loading all vocables
-                      return ListTile(
-                        title: Text(AppLocalizations.of(context).allVocables),
-                        onTap: () {
-                          Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
-                          Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-                          Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
-                        },
+                      return Container(
+                        color: selection != null && selection.type == SelectionType.all
+                            ? ColorsLectary.lightBlue
+                            : ColorsLectary.white,
+                        child: ListTile(
+                          title: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyText1.copyWith(
+                            color: selection != null && selection.type == SelectionType.all
+                                ? ColorsLectary.white
+                                : Colors.black
+                          ),),
+                          onTap: () {
+                            Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
+                            Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
+                            Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
+                          },
+                        ),
                       );
                     return LecturePackageItem(context, snapshot.data[index - 1]);
                   });
