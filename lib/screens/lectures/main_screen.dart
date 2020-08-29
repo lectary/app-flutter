@@ -7,6 +7,7 @@ import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
+import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,9 @@ class LectureMainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log("build lecture-main-screen--theme");
-    Future<List<Vocable>> _vocableFuture = Provider.of<CarouselViewModel>(context, listen: false).initVocables();
+    final model = Provider.of<CarouselViewModel>(context, listen: false);
+    Future<List<Vocable>> _vocableFuture = model.initVocables();
+    model.listenOnLocalLectures();
     return Theme(
       data: lectaryThemeDark(),
       // Future builder will wait till the vocables are loaded initially, then the snapshot
@@ -35,7 +38,7 @@ class LectureMainScreen extends StatelessWidget {
               // retrieve current vocable list and keep listening for future changes in the vocable selection
               List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
               bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
-              String selectionTitle = context.select((CarouselViewModel model) => model.selectionTitle);
+              Selection selection = context.select((CarouselViewModel model) => model.currentSelection);
               log("build lecture-main-screen--lectures");
               return Scaffold(
                   // to avoid bottom overflow when keyboard on search-screen is opened
@@ -43,7 +46,10 @@ class LectureMainScreen extends StatelessWidget {
                   appBar: vocables.isNotEmpty
                       ? AppBar(
                           title: GestureDetector(
-                              child: Text(uppercase ? selectionTitle.toUpperCase() : selectionTitle),
+                              child: Text(_getHeaderText(
+                                  context: context,
+                                  selection: selection,
+                                  uppercase: uppercase)),
                               onTap: () {
                                 Navigator.pushNamed(
                                     context, VocableSearchScreen.routeName,
@@ -85,5 +91,22 @@ class LectureMainScreen extends StatelessWidget {
             }
           }),
     );
+  }
+
+  /// Helper class for extracting correct header text depending on the passed [Selection].
+  String _getHeaderText({BuildContext context, Selection selection, bool uppercase}) {
+    if (selection == null) return "";
+    switch (selection.type) {
+      case SelectionType.all:
+        return AppLocalizations.of(context).allVocables;
+      case SelectionType.package:
+        return uppercase ? selection.packTitle.toUpperCase() : selection.packTitle;
+      case SelectionType.lecture:
+        return uppercase ? selection.lesson.toUpperCase() : selection.lesson;
+      case SelectionType.search:
+        return AppLocalizations.of(context).searchLabel + (uppercase ? selection.filter.toUpperCase() : selection.filter);
+      default:
+        return "";
+    }
   }
 }

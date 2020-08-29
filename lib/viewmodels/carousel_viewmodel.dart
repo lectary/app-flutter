@@ -112,14 +112,6 @@ class CarouselViewModel with ChangeNotifier {
   List<SearchResultPackage> _searchResults = List();
   List<SearchResultPackage> get searchResults => _searchResults;
 
-  /// Used for displaying the name of the current [Vocable]-selection list.
-  String _selectionTitle = "";
-  String get selectionTitle => _selectionTitle;
-  set selectionTitle(String value) {
-    _selectionTitle = value;
-    notifyListeners();
-  }
-
   /// Used in the carousel for keeping track of the index of the current [Vocable].
   int _currentItemIndex = 0;
   int get currentItemIndex => _currentItemIndex;
@@ -144,41 +136,58 @@ class CarouselViewModel with ChangeNotifier {
     _allLocalVocables.clear();
   }
 
+  /// Constructor with passed in [LectureRepository] dependency.
+  /// Loads and listens to the [Stream] of local [Lecture].
+  CarouselViewModel({@required lectureRepository})
+      : _lectureRepository = lectureRepository;
+
+  @override
+  void dispose() {
+    _localLectureStreamSubscription.cancel();
+    super.dispose();
+  }
+
+  void listenOnLocalLectures() {
+    if (_localLecturesStream == null) {
+      _localLecturesStream = _lectureRepository.watchAllLectures();
+      _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
+      log("carousel view model instances!");
+    }
+  }
+
   /// Listener function for the stream of local persisted lectures used for updating the state of [LectureMainScreen]
   /// and its child appropriate (e.g. showing [LectureNotAvailableScreen]).
   /// Loads all vocables when a new lecture list gets emitted and no vocables are currently loaded.
-  /// Resets [_currentVocables] and [_selectionTitle] when no lectures are available or got deleted
+  /// Resets [_currentVocables] when no lectures are available or got deleted
   void _localLectureStreamListener(List<Lecture> list) {
     localLectures = list;
 
     if (list.isEmpty) {
       _currentVocables.clear();
-      _selectionTitle = "";
+      currentSelection = null;
       _saveSelection(null);
       notifyListeners();
     }
     // ToDo review - disabling due to interferences with init-loading mechanic during debugging
     // load all vocables when there is no current selection and dont save it as
     // new selection
-    /*if (list.isNotEmpty && currentSelection == null) {
-      loadAllVocables(saveSelection: false);
-      log("loaded all vocables");
-    }*/
-  }
-
-  /// Constructor with passed in [LectureRepository] dependency.
-  /// Loads and listens to the [Stream] of local [Lecture].
-  CarouselViewModel({@required lectureRepository})
-      : _lectureRepository = lectureRepository {
-    _localLecturesStream = _lectureRepository.watchAllLectures();
-    _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
-    log("carousel view model instances!");
-  }
-
-  @override
-  void dispose() {
-    _localLectureStreamSubscription.cancel();
-    super.dispose();
+    if (list.isNotEmpty) {
+      if (currentSelection == null) {
+        log("loading all vocables");
+        loadAllVocables();
+        return;
+      }
+      if (currentSelection.type == SelectionType.all) {
+        log("reloading all vocables selection");
+        loadAllVocables(saveSelection: false);
+        return;
+      }
+      if (currentSelection.type == SelectionType.package && currentSelection.packTitle == list[0].pack) {
+        log("reloading package selection");
+        reloadCurrentSelection();
+        return;
+      }
+    }
   }
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
@@ -204,7 +213,7 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Loads all persisted [Vocable] and notifies listeners.
   /// Vocables are sorted only lexicographically.
-  /// Sets [_currentVocables], [_selectionTitle] appropriately and [isVirtualLecture] to false.
+  /// Sets [_currentVocables] appropriately and [isVirtualLecture] to false.
   ///
   /// Further resets [currentItemIndex] back to 0 and saves it in the cache.
   /// Saves the metaInfo about the loaded vocable list as new [Selection] in the cache.
@@ -214,7 +223,6 @@ class CarouselViewModel with ChangeNotifier {
   /// Returns a [Future] with [List] of type [Vocable].
   Future<List<Vocable>> loadAllVocables({bool saveSelection=true}) async {
     _currentVocables = await _lectureRepository.findAllVocables();
-    _selectionTitle = AppLocalizations.current.allVocables;
     isVirtualLecture = false;
     if (saveSelection) {
       _currentItemIndex = 0;
@@ -228,7 +236,7 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Loads all persisted [Vocable] from the passed [Lecture.id] and [Lecture.lesson] and notifies listeners.
   /// Vocables are sorted only lexicographically and by metaData SORT if available.
-  /// Sets [_currentVocables], [_selectionTitle] appropriately and [isVirtualLecture] to false.
+  /// Sets [_currentVocables] appropriately and [isVirtualLecture] to false.
   ///
   /// Further resets [currentItemIndex] back to 0 and saves it in the cache.
   /// Saves the metaInfo about the loaded vocable list as new [Selection] in the cache.
@@ -239,7 +247,6 @@ class CarouselViewModel with ChangeNotifier {
   Future<List<Vocable>> loadVocablesOfLecture(int lectureId, String lesson, {bool saveSelection=true}) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lectureId);
     _currentVocables = _sortVocables(vocables);
-    _selectionTitle = lesson;
     isVirtualLecture = false;
     if (saveSelection) {
       _currentItemIndex = 0;
@@ -253,7 +260,7 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Loads all persisted [Vocable] from the passed [LecturePackage.title] and notifies listeners.
   /// Vocables are sorted only lexicographically and by metaData SORT if available.
-  /// Sets [_currentVocables], [_selectionTitle] appropriately and [isVirtualLecture] to false.
+  /// Sets [_currentVocables] appropriately and [isVirtualLecture] to false.
   ///
   /// Further resets [currentItemIndex] back to 0 and saves it in the cache.
   /// Saves the metaInfo about the loaded vocable list as new [Selection] in the cache.
@@ -264,7 +271,6 @@ class CarouselViewModel with ChangeNotifier {
   Future<List<Vocable>> loadVocablesOfPackage(String packTitle, {bool saveSelection=true}) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(packTitle);
     _currentVocables = _sortVocables(vocables);
-    _selectionTitle = packTitle;
     isVirtualLecture = false;
     if (saveSelection) {
       _currentItemIndex = 0;
@@ -316,6 +322,8 @@ class CarouselViewModel with ChangeNotifier {
       case SelectionType.lecture:
         await prefs.setString(Constants.keySelection, "${Constants.keySelectionLecture}:${selection.lectureId}:${selection.lesson}");
         break;
+      default:
+        break;
     }
   }
 
@@ -331,6 +339,8 @@ class CarouselViewModel with ChangeNotifier {
         return await loadVocablesOfPackage(currentSelection.packTitle, saveSelection: false);
       case SelectionType.lecture:
         return await loadVocablesOfLecture(currentSelection.lectureId, currentSelection.lesson, saveSelection: false);
+      default:
+        return;
     }
   }
 
@@ -381,7 +391,7 @@ class CarouselViewModel with ChangeNotifier {
   /// If no last selection is available, then all vocables will be loaded.
   Future<List<Vocable>> initVocables() async {
     Selection lastSelection = await loadLastSelection();
-    log("loaded last selection: ${lastSelection.type}");
+    log("loaded last selection: ${lastSelection == null ? "<null>" : lastSelection.type}");
 
     if (lastSelection == null) {
       return await loadAllVocables();
@@ -415,15 +425,21 @@ class CarouselViewModel with ChangeNotifier {
       // if search-term is not empty, a new "virtual"-lecture
       // containing the filter results is created and set
       log("Created new virtual lecture");
-      _selectionTitle = _settingViewModel.settingUppercase
-          ? (AppLocalizations.current.searchLabel + currentFilter).toUpperCase()
-          : AppLocalizations.current.searchLabel + currentFilter;
       createNewVirtualLecture();
+      currentSelection = Selection.search(currentFilter, currentSelection);
       // set index corresponding to the tabbed item index where
       // the carouselController should jump to after init
       _currentItemIndex = newIndex;
       notifyListeners();
     }
+  }
+
+  /// Sets [isVirtualLecture] to true to indicate depending widgets that there is now a virtual lecture,
+  /// which means that the lecture name has to be displayed together with the vocable.
+  /// Assigns the current filter result [_filteredVocables] list as new value of [_currentVocables].
+  void createNewVirtualLecture() {
+    isVirtualLecture = true;
+    _currentVocables = List.from(_filteredVocables);
   }
 
   /// Filters the [List] of available [Vocable] ([_currentVocables]) by a [String].
@@ -512,14 +528,6 @@ class CarouselViewModel with ChangeNotifier {
       Vocable vocable = _filteredVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
       return _filteredVocables.indexOf(vocable);
     }
-  }
-
-  /// Sets [isVirtualLecture] to true to indicate depending widgets that there is now a virtual lecture,
-  /// which means that the lecture name has to be displayed together with the vocable.
-  /// Assigns the current filter result [_filteredVocables] list as new value of [_currentVocables].
-  void createNewVirtualLecture() {
-    isVirtualLecture = true;
-    _currentVocables = List.from(_filteredVocables);
   }
 
   /// Sorts a [List] of [Vocable].

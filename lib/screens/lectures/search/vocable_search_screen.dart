@@ -6,6 +6,7 @@ import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/search/search_result_package_item.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/global_theme.dart';
+import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:lectary/widgets/search_bar.dart';
@@ -54,14 +55,17 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
     // listen on changes of the list of filtered vocables
     List<SearchResultPackage> searchResults = context.select((CarouselViewModel model) => model.searchResults);
     bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
-    String selectionTitle = context.select((CarouselViewModel model) => model.selectionTitle);
+    Selection selection = context.select((CarouselViewModel model) => model.currentSelection);
 
     return Theme(
       data: lectaryThemeDark(),
       child: Builder( // used to create a new buildContext from which the above new theme is accessible
         builder: (BuildContext context) => Scaffold(
           appBar: AppBar(
-            title: Text(uppercase ? selectionTitle.toUpperCase() : selectionTitle),
+            title: Text(_getHeaderText(
+                context: context,
+                selection: selection,
+                uppercase: uppercase)),
             actions: [
               IconButton(
                   icon: Icon(Icons.cancel),
@@ -125,5 +129,22 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
         ),
       ),
     );
+  }
+
+  /// Helper class for extracting correct header text depending on the passed [Selection].
+  String _getHeaderText({BuildContext context, Selection selection, bool uppercase}) {
+    if (selection == null) return "";
+    switch (selection.type) {
+      case SelectionType.all:
+        return AppLocalizations.of(context).allVocables;
+      case SelectionType.package:
+        return uppercase ? selection.packTitle.toUpperCase() : selection.packTitle;
+      case SelectionType.lecture:
+        return uppercase ? selection.lesson.toUpperCase() : selection.lesson;
+      case SelectionType.search:
+        return AppLocalizations.of(context).searchLabel + (uppercase ? selection.filter.toUpperCase() : selection.filter);
+      default:
+        return "";
+    }
   }
 }

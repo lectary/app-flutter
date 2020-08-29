@@ -109,12 +109,11 @@ class _LocalizedAppState extends State<LocalizedApp> {
   @override
   Widget build(BuildContext context) {
     log("build localized app");
-
     // restricting device orientation
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     if (locale == null) {
-      return CircularProgressIndicator();
+      return Center(child: CircularProgressIndicator());
     } else {
       return MaterialApp(
           onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).appTitle, // used by os task switcher

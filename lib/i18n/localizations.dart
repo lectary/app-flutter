@@ -6,11 +6,7 @@ import 'package:provider/provider.dart';
 
 /// Class for handling localization resources
 class AppLocalizations {
-  static AppLocalizations current;
-
-  AppLocalizations._(this.locale) {
-    current = this;
-  }
+  AppLocalizations(this.locale);
 
   final Locale locale;
   static bool _settingUppercase;
@@ -144,7 +140,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 
   @override
   Future<AppLocalizations> load(Locale locale) {
-    return SynchronousFuture<AppLocalizations>(AppLocalizations._(locale));
+    return SynchronousFuture<AppLocalizations>(AppLocalizations(locale));
   }
 
   @override
