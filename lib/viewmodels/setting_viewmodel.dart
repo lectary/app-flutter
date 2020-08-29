@@ -4,34 +4,17 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lectary_overview.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingViewModel with ChangeNotifier {
-  static const bool defaultPlayMediaWithSound = true;
-  static const bool defaultShowVideoTimeline = true;
-  static const bool defaultShowMediaOverlay = true;
-  static const bool defaultUppercase = false;
-  static const String defaultAppLanguage = "de";
-  static const String defaultLearningLanguage = "ALLE"; //TODO for testing purposes - maybe remove
-
-  static const List<String> appLanguagesList = ["de", "en"];
-  static const List<String> defaultLearningLanguagesList = ["ALLE", "OGS", "DGS", "EN"];
-
-  static const String _keySettingPlayMediaWithSound = "settingPlayMediaWithSound";
-  static const String _keySettingShowVideoTimeline = "settingShowVideoTimeline";
-  static const String _keySettingShowMediaOverlay = "settingShowMediaOverlay";
-  static const String _keySettingUppercase = "settingUppercase";
-  static const String _keySettingAppLanguage = "settingAppLanguage";
-  static const String _keySettingLearningLanguage = "settingLearningLanguage";
-  static const String _keySettingLearningLanguageList = "settingLearningLanguageList";
-
-  bool settingPlayMediaWithSound = defaultPlayMediaWithSound;
-  bool settingShowVideoTimeline = defaultShowVideoTimeline;
-  bool settingShowMediaOverlay = defaultShowMediaOverlay;
-  bool settingUppercase = defaultUppercase;
-  String settingAppLanguage = defaultAppLanguage;
-  String settingLearningLanguage = defaultLearningLanguage;
-  List<String> learningLanguagesList = defaultLearningLanguagesList;
+  bool settingPlayMediaWithSound = Constants.defaultPlayMediaWithSound;
+  bool settingShowVideoTimeline = Constants.defaultShowVideoTimeline;
+  bool settingShowMediaOverlay = Constants.defaultShowMediaOverlay;
+  bool settingUppercase = Constants.defaultUppercase;
+  String settingAppLanguage = Constants.defaultAppLanguage;
+  String settingLearningLanguage = Constants.defaultLearningLanguage;
+  List<String> learningLanguagesList = Constants.defaultLearningLanguagesList;
 
   bool _isUpdatingLanguages = false;
   bool get isUpdatingLanguages => _isUpdatingLanguages;
@@ -44,13 +27,13 @@ class SettingViewModel with ChangeNotifier {
   Future<void> loadLocalSettings() async {
     log("loading local app settings");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    settingPlayMediaWithSound = prefs.getBool(_keySettingPlayMediaWithSound) ?? defaultPlayMediaWithSound;
-    settingShowVideoTimeline = prefs.getBool(_keySettingShowVideoTimeline) ?? defaultShowVideoTimeline;
-    settingShowMediaOverlay = prefs.getBool(_keySettingShowMediaOverlay) ?? defaultShowMediaOverlay;
-    settingUppercase = prefs.getBool(_keySettingUppercase) ?? defaultUppercase;
-    settingAppLanguage = prefs.getString(_keySettingAppLanguage) ?? defaultAppLanguage;
-    settingLearningLanguage = prefs.getString(_keySettingLearningLanguage) ?? defaultLearningLanguage;
-    learningLanguagesList = prefs.getStringList(_keySettingLearningLanguageList) ?? defaultLearningLanguagesList;
+    settingPlayMediaWithSound = prefs.getBool(Constants.keySettingPlayMediaWithSound) ?? Constants.defaultPlayMediaWithSound;
+    settingShowVideoTimeline = prefs.getBool(Constants.keySettingShowVideoTimeline) ?? Constants.defaultShowVideoTimeline;
+    settingShowMediaOverlay = prefs.getBool(Constants.keySettingShowMediaOverlay) ?? Constants.defaultShowMediaOverlay;
+    settingUppercase = prefs.getBool(Constants.keySettingUppercase) ?? Constants.defaultUppercase;
+    settingAppLanguage = prefs.getString(Constants.keySettingAppLanguage) ?? Constants.defaultAppLanguage;
+    settingLearningLanguage = prefs.getString(Constants.keySettingLearningLanguage) ?? Constants.defaultLearningLanguage;
+    learningLanguagesList = prefs.getStringList(Constants.keySettingLearningLanguageList) ?? Constants.defaultLearningLanguagesList;
   }
 
   Future<void> updateLearningLanguages() async {
@@ -66,7 +49,7 @@ class SettingViewModel with ChangeNotifier {
     newLanguages.sort();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_keySettingLearningLanguageList, newLanguages);
+    await prefs.setStringList(Constants.keySettingLearningLanguageList, newLanguages);
     learningLanguagesList = newLanguages;
 
     _isUpdatingLanguages = false;
@@ -76,28 +59,28 @@ class SettingViewModel with ChangeNotifier {
   Future<void> toggleSettingPlayMediaWithSound() async {
     settingPlayMediaWithSound = settingPlayMediaWithSound ? false : true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keySettingPlayMediaWithSound, settingPlayMediaWithSound);
+    await prefs.setBool(Constants.keySettingPlayMediaWithSound, settingPlayMediaWithSound);
     notifyListeners();
   }
 
   Future<void> toggleSettingShowVideoTimeline() async {
     settingShowVideoTimeline = settingShowVideoTimeline ? false : true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keySettingShowVideoTimeline, settingShowVideoTimeline);
+    await prefs.setBool(Constants.keySettingShowVideoTimeline, settingShowVideoTimeline);
     notifyListeners();
   }
 
   Future<void> toggleSettingShowMediaOverlay() async {
     settingShowMediaOverlay = settingShowMediaOverlay ? false : true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keySettingShowMediaOverlay, settingShowMediaOverlay);
+    await prefs.setBool(Constants.keySettingShowMediaOverlay, settingShowMediaOverlay);
     notifyListeners();
   }
 
   Future<void> toggleSettingUppercase() async {
     settingUppercase = settingUppercase ? false : true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keySettingUppercase, settingUppercase);
+    await prefs.setBool(Constants.keySettingUppercase, settingUppercase);
     notifyListeners();
   }
 
@@ -105,14 +88,14 @@ class SettingViewModel with ChangeNotifier {
     if (settingAppLanguage == lang) return;
     settingAppLanguage = lang;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keySettingAppLanguage, settingAppLanguage);
+    await prefs.setString(Constants.keySettingAppLanguage, settingAppLanguage);
     notifyListeners();
   }
 
   Future<void> setSettingLearningLanguage(String lang) async {
     settingLearningLanguage = lang;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keySettingLearningLanguage, settingLearningLanguage);
+    await prefs.setString(Constants.keySettingLearningLanguage, settingLearningLanguage);
     notifyListeners();
   }
 
@@ -124,12 +107,12 @@ class SettingViewModel with ChangeNotifier {
   Future<void> resetAllSettings() async {
     log("resetting all settings");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keySettingPlayMediaWithSound, defaultPlayMediaWithSound);
-    await prefs.setBool(_keySettingShowVideoTimeline, defaultShowVideoTimeline);
-    await prefs.setBool(_keySettingShowMediaOverlay, defaultShowMediaOverlay);
-    await prefs.setBool(_keySettingUppercase, defaultUppercase);
-    await prefs.setString(_keySettingAppLanguage, defaultAppLanguage);
-    await prefs.setString(_keySettingLearningLanguage, defaultLearningLanguage);
+    await prefs.setBool(Constants.keySettingPlayMediaWithSound, Constants.defaultPlayMediaWithSound);
+    await prefs.setBool(Constants.keySettingShowVideoTimeline, Constants.defaultShowVideoTimeline);
+    await prefs.setBool(Constants.keySettingShowMediaOverlay, Constants.defaultShowMediaOverlay);
+    await prefs.setBool(Constants.keySettingUppercase, Constants.defaultUppercase);
+    await prefs.setString(Constants.keySettingAppLanguage, Constants.defaultAppLanguage);
+    await prefs.setString(Constants.keySettingLearningLanguage, Constants.defaultLearningLanguage);
     await loadLocalSettings();
     notifyListeners();
   }

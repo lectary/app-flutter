@@ -5,7 +5,9 @@ import 'package:lectary/main.dart';
 import 'package:lectary/screens/about/about_screen.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/dialogs.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -48,12 +50,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               context: context,
               title: AppLocalizations.of(context).settingResetLearningProgressQuestion,
               submitText: AppLocalizations.of(context).reset,
-              submitFunc: settings.resetLearningProgress)),
+              submitFunc: () {
+                settings.resetLearningProgress();
+                Provider.of<CarouselViewModel>(context, listen: false).reloadCurrentSelection();
+              })),
       ListTile(
         title: Text(AppLocalizations.of(context).settingChooseAppLanguage),
         trailing: DropdownButton(
             value: context.select((SettingViewModel model) => model.settingAppLanguage),
-            items: SettingViewModel.appLanguagesList
+            items: Constants.appLanguagesList
                 .map((e) => DropdownMenuItem(child: Text(e.toUpperCase()), value: e)).toList(),
             onChanged: (value) async {
               if (settings.settingAppLanguage != value) {

@@ -312,6 +312,22 @@ class CarouselViewModel with ChangeNotifier {
     }
   }
 
+
+  /// Method for reloading current selection.
+  /// Main purpose is for reloading current state after the setting-resetLearningProgress.
+  Future<void> reloadCurrentSelection() async {
+    if (currentSelection == null) return null;
+
+    switch (currentSelection.type) {
+      case SelectionType.all:
+        return await loadAllVocables(saveSelection: false);
+      case SelectionType.package:
+        return await loadVocablesOfPackage(currentSelection.packTitle, saveSelection: false);
+      case SelectionType.lecture:
+        return await loadVocablesOfLecture(currentSelection.lectureId, currentSelection.lesson, saveSelection: false);
+    }
+  }
+
   /// Loads the last vocable-selection from [SharedPreferences].
   /// Returns a [Future] of type [Selection] or [Null] if no last selection
   /// is available.
