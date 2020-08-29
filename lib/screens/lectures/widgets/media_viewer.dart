@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_image.dart';
@@ -36,7 +37,11 @@ class MediaViewer extends StatelessWidget {
     final bool isVirtualLecture = context.select((CarouselViewModel model) => model.isVirtualLecture);
     final model = Provider.of<CarouselViewModel>(context, listen: false);
     // TODO fix case OrElse
-    String lectureName = model.localLectures.firstWhere((lecture) => lecture.id == vocable.lectureId).lesson;
+    String lectureName = "";
+    if (model.localLectures != null) {
+      Lecture lecture = model.localLectures.firstWhere((lecture) => lecture.id == vocable.lectureId, orElse: () => null);
+      lectureName = lecture == null ? "" : lecture.lesson;
+    }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,

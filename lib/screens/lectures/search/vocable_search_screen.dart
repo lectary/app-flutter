@@ -42,8 +42,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
     super.initState();
     /// When opening the search-screen, set the current list of [Vocable]
     /// as the init filter result
-    final model = Provider.of<CarouselViewModel>(context, listen: false);
-    model.filteredVocables = List.from(model.currentVocables); // create a new! list with model.currentVocables
+    Provider.of<CarouselViewModel>(context, listen: false).copyCurrentToFilteredVocables();
   }
 
   @override
@@ -76,7 +75,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                         currentScope.hasFocus) {
                       FocusManager.instance.primaryFocus.unfocus();
                     }
-                    model.filteredVocables.clear(); // clear filter result
+                    model.clearFilteredVocables(); // clear filter result
                     model.clearAllLocalVocables(); // clear list of all local vocables which is not needed anymore
                     Navigator.pop(context); // close search-screen
                   }),
@@ -103,7 +102,6 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                             return SearchResultPackageItem(
                                 context: context,
                                 entry: searchResults[index],
-                                showPackage: searchResults.length > 1, //show package only if there is more than one
                                 textEditingController: textEditingController);
                           })
                       : Center(

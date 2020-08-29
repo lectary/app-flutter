@@ -203,8 +203,8 @@ class Utils {
         List<String> split = metaDatum.split("--");
         if (split.length != 2) {
           log("Malformed meta data: $metaDatum of vocable $fileName");
-          // TODO its just a vocable, don't be too restrictive?
-          // throw new VocableException("Malformed meta data: $metaDatum of vocable $fileName");
+          // ignore meta info for this vocable in case of malformation
+          continue;
         }
         String metaDatumType = split[0];
         String metaDatumValue = split[1];

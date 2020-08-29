@@ -101,14 +101,18 @@ class CarouselViewModel with ChangeNotifier {
   /// as new value of [currentVocables], otherwise discarded
   List<Vocable> _filteredVocables = List();
   List<Vocable> get filteredVocables => _filteredVocables;
-  set filteredVocables(List<Vocable> value) {
-    _filteredVocables = value;
-    _searchResults = _findDuplicatesAndConvert(value);
+
+  void clearFilteredVocables() {
+    _filteredVocables.clear();
+  }
+  void copyCurrentToFilteredVocables() {
+    // create a new! list with currentVocables
+    _filteredVocables = List.from(_currentVocables);
+    _searchResults = _findDuplicatesAndConvert(_filteredVocables);
   }
 
-  /// A copy of [currentVocables], used for filtering.
-  /// If the filter result will be accepted [filteredVocables] will be assigned
-  /// as new value of [currentVocables], otherwise discarded.
+  /// /// A copy of [currentVocables], but for display purposes only.
+  /// Contains the same vocables as [filteredVocables] but packaged as [List] of type [SearchResultPackage].
   List<SearchResultPackage> _searchResults = List();
   List<SearchResultPackage> get searchResults => _searchResults;
 
@@ -454,7 +458,8 @@ class CarouselViewModel with ChangeNotifier {
         localResults.add(voc);
       }
     });
-    filteredVocables = localResults;
+    _filteredVocables = localResults;
+    _searchResults = _findDuplicatesAndConvert(_filteredVocables);
     notifyListeners();
   }
 
@@ -466,10 +471,15 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentVocables] and assigns it by reference again to [_filteredVocables] and notifies listeners.
   /// Operations on the original list [_currentVocables] will therefore also affect the corresponding elements in [_filteredVocables]
   Future<void> filterVocablesForSearch(String filter) async {
+    if (filter.isEmpty) {
+      _searchResults = _findDuplicatesAndConvert(_filteredVocables);
+      notifyListeners();
+      return;
+    }
+
     if (_allLocalVocables.isEmpty) {
       _allLocalVocables = await _lectureRepository.findAllVocables();
       log("loaded all local vocables");
-
     }
 
     // filter the list of current selected vocables
@@ -492,7 +502,8 @@ class CarouselViewModel with ChangeNotifier {
       }
     });
 
-    filteredVocables = List.of({...localResults, ...globalResults});
+    _filteredVocables = List.of({...localResults, ...globalResults});
+    _searchResults = _findDuplicatesAndConvert(_filteredVocables, toPackages: true);
     notifyListeners();
   }
 
@@ -556,7 +567,7 @@ class CarouselViewModel with ChangeNotifier {
   /// Duplicated vocables have their [MediaType] set in the corresponding
   /// [SearchResult.mediaType], which is [Null] otherwise.
   /// Asserts that the vocable list is already sorted as specified
-  List<SearchResultPackage> _findDuplicatesAndConvert(List<Vocable> vocables) {
+  List<SearchResultPackage> _findDuplicatesAndConvert(List<Vocable> vocables, {bool toPackages=false}) {
     // Iterating over the list and saving the vocables in a hashMap of
     // type <String, bool>. If a vocable is already saved, then the value
     // is set to true to indicate that there are duplicates for this vocable,
@@ -583,11 +594,15 @@ class CarouselViewModel with ChangeNotifier {
     // grouping the searchResults after lecture id, and then replacing the id
     // with the corresponding lecture name, by a lookup in the list of local lectures
     List<SearchResultPackage> tmpList = List();
-    final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
-    groupedByLectureId.forEach((key, value) {
-      String lectureName = localLectures.firstWhere((lecture) => lecture.id == key).lesson;
-      tmpList.add(SearchResultPackage(lectureName, value));
-    });
+    if (toPackages) {
+      final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
+      groupedByLectureId.forEach((key, value) {
+        String lectureName = localLectures.firstWhere((lecture) => lecture.id == key).lesson;
+        tmpList.add(SearchResultPackage(lectureName, value));
+      });
+    } else {
+      tmpList.add(SearchResultPackage("", searchResultList));
+    }
 
     // sorting grouped lists excluding first one
     List<SearchResultPackage> searchResultPackageList = List();

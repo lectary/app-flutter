@@ -14,11 +14,10 @@ import 'package:provider/provider.dart';
 /// its children list of [SearchResult] to a standard [ListTile].
 /// If [showPackage] is false, then the [ListTile] header for the package is omitted.
 class SearchResultPackageItem extends StatelessWidget {
-  const SearchResultPackageItem({this.context, this.entry, this.showPackage, this.textEditingController});
+  const SearchResultPackageItem({this.context, this.entry, this.textEditingController});
 
   final BuildContext context;
   final SearchResultPackage entry;
-  final bool showPackage;
   final TextEditingController textEditingController;
 
   @override
@@ -32,7 +31,7 @@ class SearchResultPackageItem extends StatelessWidget {
     if (pack.children.isEmpty) return ListTile(title: Text(pack.lectureTitle));
     List<Widget> childs = List<Widget>();
 
-    if (showPackage) {
+    if (entry.lectureTitle.isNotEmpty) {
       childs.add(
         Container(
           alignment: Alignment.centerLeft,
