@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:lectary/screens/lectures/widgets/custom_button.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/icons.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,7 @@ class _MediaControlAreaState extends State<MediaControlArea> {
           CustomButton(
             color: slowModeOn ? ColorsLectary.yellow : ColorsLectary.darkBlue,
             // custom icon from the asset icon-fonts
-            icon: IconData(0xe900, fontFamily: 'icomoon'),
+            icon: LectaryIcons.iconTurtle,
             size: 35,
             func: () =>
             Provider.of<CarouselViewModel>(context, listen: false)
@@ -43,7 +44,7 @@ class _MediaControlAreaState extends State<MediaControlArea> {
           ),
           CustomButton(
             color: autoModeOn ? ColorsLectary.orange : ColorsLectary.darkBlue,
-            icon: IconData(0xe901, fontFamily: 'icomoon'),
+            icon: LectaryIcons.iconWordAuto,
             size: 35,
             iconContainerWidth: 80,
             func: () =>
@@ -52,7 +53,7 @@ class _MediaControlAreaState extends State<MediaControlArea> {
           ),
           CustomButton(
             color: loopModeOn ? ColorsLectary.red : ColorsLectary.darkBlue,
-            icon: IconData(0xe902, fontFamily: 'icomoon'),
+            icon: LectaryIcons.iconReload,
             size: 35,
             func: () =>
             Provider.of<CarouselViewModel>(context, listen: false)
