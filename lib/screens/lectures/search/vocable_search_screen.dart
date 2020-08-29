@@ -11,6 +11,7 @@ import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:lectary/widgets/search_bar.dart';
 import 'package:provider/provider.dart';
 
+
 /// Used for passing arguments to [VocableSearchScreen] via [Navigator.pushNamed].
 class VocableSearchScreenArguments {
   /// Indicates whether the search should be used for navigation only.
@@ -95,8 +96,11 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                               ),
                           itemCount: searchResults.length,
                           itemBuilder: (context, index) {
-                            return SearchResultPackageItem(context,
-                                searchResults[index], textEditingController);
+                            return SearchResultPackageItem(
+                                context: context,
+                                entry: searchResults[index],
+                                showPackage: searchResults.length > 1, //show package only if there is more than one
+                                textEditingController: textEditingController);
                           })
                       : Center(
                           child: Text(
