@@ -3,6 +3,9 @@ class Constants {
   static const lectaryApiUrl = "https://lectary.net/l4/";
   static const lectaryApiLectureOverviewEndpoint = "info.php";
 
+  // carousel
+  static const opacityOfCarouselOverLay = 0.5;
+
   // media
   static const double aspectRatio = 4 / 3;
   static const double slowModeSpeed = 0.3;

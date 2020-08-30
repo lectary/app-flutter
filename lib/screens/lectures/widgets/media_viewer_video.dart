@@ -151,7 +151,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
                 Container(
                   alignment: Alignment.center,
                   child: Opacity(
-                    opacity: 0.3,
+                    opacity: Constants.opacityOfCarouselOverLay,
                       child: Icon(Icons.play_circle_filled, size: 120, color: ColorsLectary.white,),
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/screens/lectures/widgets/carousel.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +27,7 @@ class CarouselNavigationOverlay extends StatelessWidget {
               widthFactor: 0.5,
               alignment: Alignment.center,
               child: Opacity(
-                opacity: 0.3,
+                opacity: Constants.opacityOfCarouselOverLay,
                 child: IconButton(
                   padding: EdgeInsets.all(0.0),
                   iconSize: 60,
@@ -49,7 +50,7 @@ class CarouselNavigationOverlay extends StatelessWidget {
               widthFactor: 0.5,
               alignment: Alignment.center,
               child: Opacity(
-                opacity: 0.3,
+                opacity: Constants.opacityOfCarouselOverLay,
                 child: IconButton(
                   padding: EdgeInsets.all(0.0),
                   iconSize: 60,
