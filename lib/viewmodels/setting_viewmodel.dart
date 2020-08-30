@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/utils/constants.dart';
@@ -16,6 +17,8 @@ class SettingViewModel with ChangeNotifier {
   String settingLearningLanguage = Constants.defaultLearningLanguage;
   List<String> learningLanguagesList = Constants.defaultLearningLanguagesList;
 
+  /// Status indicator used for showing progress-indicator while updating
+  /// learning languages
   bool _isUpdatingLanguages = false;
   bool get isUpdatingLanguages => _isUpdatingLanguages;
 
@@ -45,10 +48,25 @@ class SettingViewModel with ChangeNotifier {
 
     // adding all media languages to a hashSet to avoid duplicates
     HashSet<String> availableLanguages = HashSet();
+    // loading all languages based on remote availability
     LectaryData data = await _lectureRepository.loadLectaryData();
-    data.lessons.forEach((lesson) => availableLanguages.add(lesson.langMedia));
+    data.lessons.forEach((lesson) => availableLanguages.add(lesson.langMedia.toLowerCase()));
+
+    // loading all languages based on local lectures
+    HashSet<String> localLanguagesOfLectures = HashSet();
+    List<Lecture> lectures = await _lectureRepository.loadLecturesLocal();
+    lectures.forEach((lecture) => localLanguagesOfLectures.add(lecture.langMedia.toLowerCase()));
+
+    // merging language-lists
+    List<String> mergedList = localLanguagesOfLectures.toList();
+    availableLanguages.forEach((lang) {
+      if (!mergedList.contains(lang)) {
+        mergedList.add(lang);
+      }
+    });
+
     //TODO 'ALLE' for testing purposes - maybe remove
-    List<String> newLanguages = List.of({"ALLE", ...availableLanguages.toList()});
+    List<String> newLanguages = List.of({"ALLE", ...mergedList});
     newLanguages.sort();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();

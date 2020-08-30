@@ -42,15 +42,12 @@ void main() async {
                 create: (BuildContext context) =>
                     SettingViewModel(lectureRepository: mockRepo)
             ),
-            ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel>(
-              create: (BuildContext context) =>
-                  CarouselViewModel(lectureRepository: mockRepo)
-                    ..listenOnLocalLectures()
-                    ..loadAllVocables(saveSelection: false),
-              update: (context, settingViewModel, carouselViewModel) =>
-                  carouselViewModel..updateSettings(settingViewModel),
-              lazy: false,
-            )
+            ChangeNotifierProvider<CarouselViewModel>(
+                create: (BuildContext context) =>
+                    CarouselViewModel(lectureRepository: mockRepo)
+                      ..listenOnLocalLectures()
+                      ..loadAllVocables(saveSelection: false),
+                lazy: false),
           ],
           child: MaterialApp(
             navigatorKey: key,

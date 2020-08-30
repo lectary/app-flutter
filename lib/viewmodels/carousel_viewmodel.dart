@@ -24,14 +24,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Has [LectureRepository] as dependency.
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
-  SettingViewModel _settingViewModel;
-
-  /// Updates the local reference to [SettingViewModel].
-  void updateSettings(SettingViewModel settingViewModel) {
-    _settingViewModel = settingViewModel;
-    notifyListeners();
-    log("updated settings reference in carouselViewModel");
-  }
 
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
   CarouselController carouselController;
@@ -175,9 +167,7 @@ class CarouselViewModel with ChangeNotifier {
       _saveSelection(null);
       notifyListeners();
     }
-    // ToDo review - disabling due to interferences with init-loading mechanic during debugging
-    // load all vocables when there is no current selection and dont save it as
-    // new selection
+    // based on the current selection, load all vocables or reload current selection
     if (list.isNotEmpty) {
       if (currentSelection == null) {
         log("loading all vocables");
