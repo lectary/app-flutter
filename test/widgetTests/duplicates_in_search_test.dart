@@ -7,12 +7,15 @@ import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 class MockLectureRepository extends Mock implements LectureRepository {}
+
+class MockSettingsViewModel extends Mock implements SettingViewModel {}
 
 void main() async {
 
@@ -31,15 +34,27 @@ void main() async {
       when(mockRepo.findAllVocables()).thenAnswer((_) async => Future.value(vocablesWithDuplicates));
       when(mockRepo.watchAllLectures()).thenAnswer((_) => lectureStream);
 
-      CarouselViewModel carouselViewModel = CarouselViewModel(lectureRepository: mockRepo);
-      await carouselViewModel.loadAllVocables();
-
       final key = GlobalKey<NavigatorState>();
       await tester.pumpWidget(
-        ChangeNotifierProvider.value(
-          value: carouselViewModel,
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<SettingViewModel>(
+                create: (BuildContext context) =>
+                    SettingViewModel(lectureRepository: mockRepo)
+            ),
+            ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel>(
+              create: (BuildContext context) =>
+                  CarouselViewModel(lectureRepository: mockRepo)
+                    ..listenOnLocalLectures()
+                    ..loadAllVocables(saveSelection: false),
+              update: (context, settingViewModel, carouselViewModel) =>
+                  carouselViewModel..updateSettings(settingViewModel),
+              lazy: false,
+            )
+          ],
           child: MaterialApp(
             navigatorKey: key,
+            locale: Locale('de', 'DE'),
             localizationsDelegates: [
               AppLocalizations.delegate,
               // following localizations are needed!
@@ -52,13 +67,15 @@ void main() async {
             ],
             title: 'Flutter Test Wrapper',
             home: FlatButton(
-              onPressed: () => key.currentState.push(
-                MaterialPageRoute<void>(
-                    settings: RouteSettings(
-                        arguments:
-                            VocableSearchScreenArguments(navigationOnly: false)),
-                    builder: (_) => VocableSearchScreen()),
-              ), child: const SizedBox(),
+              onPressed: () =>
+                  key.currentState.push(
+                    MaterialPageRoute<void>(
+                        settings: RouteSettings(
+                            arguments: VocableSearchScreenArguments(
+                                navigationOnly: false)),
+                        builder: (_) => VocableSearchScreen()),
+                  ),
+              child: const SizedBox(),
             ),
           ),
         ),
@@ -91,8 +108,7 @@ void main() async {
       await tester.pumpAndSettle();
 
       final findBaumElement = find.text("Baum");
-      // TODO fix - finds two text-widgets of 'Baum' although only one visible through manual testing ....
-      expect(findBaumElement, findsWidgets);
+      expect(findBaumElement, findsOneWidget);
       expect(find.byIcon(Icons.subject), findsNothing);
       expect(find.text("Haus"), findsNothing);
     });

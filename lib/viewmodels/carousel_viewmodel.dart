@@ -151,6 +151,9 @@ class CarouselViewModel with ChangeNotifier {
     super.dispose();
   }
 
+
+  /// Retrieves a [Stream] of the [List] of all local persisted [Lecture].
+  /// Additionally listens to changes via [_localLectureStreamListener].
   void listenOnLocalLectures() {
     if (_localLecturesStream == null) {
       _localLecturesStream = _lectureRepository.watchAllLectures();
@@ -228,10 +231,12 @@ class CarouselViewModel with ChangeNotifier {
   Future<List<Vocable>> loadAllVocables({bool saveSelection=true}) async {
     _currentVocables = await _lectureRepository.findAllVocables();
     isVirtualLecture = false;
+    Selection newSelection = Selection.all();
+    currentSelection = newSelection;
+    _currentItemIndex = 0;
     if (saveSelection) {
-      _currentItemIndex = 0;
       await _saveItemIndexPref(0);
-      await _saveSelection(Selection.all());
+      await _saveSelection(newSelection);
     }
     notifyListeners();
     log("loaded all vocables");
@@ -252,10 +257,12 @@ class CarouselViewModel with ChangeNotifier {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lectureId);
     _currentVocables = _sortVocables(vocables);
     isVirtualLecture = false;
+    Selection newSelection = Selection.lecture(lectureId, lesson);
+    currentSelection = newSelection;
+    _currentItemIndex = 0;
     if (saveSelection) {
-      _currentItemIndex = 0;
       await _saveItemIndexPref(0);
-      await _saveSelection(Selection.lecture(lectureId, lesson));
+      await _saveSelection(newSelection);
     }
     notifyListeners();
     log("loaded lecture $lesson");
@@ -276,10 +283,12 @@ class CarouselViewModel with ChangeNotifier {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(packTitle);
     _currentVocables = _sortVocables(vocables);
     isVirtualLecture = false;
+    Selection newSelection = Selection.package(packTitle);
+    currentSelection = newSelection;
+    _currentItemIndex = 0;
     if (saveSelection) {
-      _currentItemIndex = 0;
       await _saveItemIndexPref(0);
-      await _saveSelection(Selection.package(packTitle));
+      await _saveSelection(newSelection);
     }
     notifyListeners();
     log("loaded package $packTitle");
@@ -307,9 +316,6 @@ class CarouselViewModel with ChangeNotifier {
   /// [SelectionType.lecture] gets saved with the value 'lecture:<lecture-id>:<lecture-lesson>'.
   /// If [Null] is passed, then the saved selection will be removed.
   Future<void> _saveSelection(Selection selection) async {
-    // save selection in the viewModel to be available for UI-widgets
-    currentSelection = selection;
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // remove key (and possible value) if null is passed as selection-value
     if (selection == null) {
@@ -471,12 +477,6 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentVocables] and assigns it by reference again to [_filteredVocables] and notifies listeners.
   /// Operations on the original list [_currentVocables] will therefore also affect the corresponding elements in [_filteredVocables]
   Future<void> filterVocablesForSearch(String filter) async {
-    if (filter.isEmpty) {
-      _searchResults = _findDuplicatesAndConvert(_filteredVocables);
-      notifyListeners();
-      return;
-    }
-
     if (_allLocalVocables.isEmpty) {
       _allLocalVocables = await _lectureRepository.findAllVocables();
       log("loaded all local vocables");
@@ -489,6 +489,12 @@ class CarouselViewModel with ChangeNotifier {
         localResults.add(voc);
       }
     });
+
+    if (filter.isEmpty) {
+      _searchResults = _findDuplicatesAndConvert(localResults);
+      notifyListeners();
+      return;
+    }
 
     // remove all vocables in the global list that are already in the local one
     localResults.forEach((localVoc) =>
@@ -597,8 +603,10 @@ class CarouselViewModel with ChangeNotifier {
     if (toPackages) {
       final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
       groupedByLectureId.forEach((key, value) {
-        String lectureName = localLectures.firstWhere((lecture) => lecture.id == key).lesson;
-        tmpList.add(SearchResultPackage(lectureName, value));
+        if (localLectures != null) {
+          Lecture lecture = localLectures.firstWhere((lecture) => lecture.id == key, orElse: () => null);
+          if (lecture != null) tmpList.add(SearchResultPackage(lecture.lesson, value));
+        }
       });
     } else {
       tmpList.add(SearchResultPackage("", searchResultList));
