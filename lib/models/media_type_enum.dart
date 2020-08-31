@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
 
@@ -20,6 +22,13 @@ class MediaType {
     MediaType.JPG,
     MediaType.PNG,
     MediaType.TXT
+  });
+
+  static final Map<MediaType, int> sortValues = HashMap.of({
+    MediaType.MP4: 0,
+    MediaType.JPG: 1,
+    MediaType.PNG: 1,
+    MediaType.TXT: 2
   });
 
   @override

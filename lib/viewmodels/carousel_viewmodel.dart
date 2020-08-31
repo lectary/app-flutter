@@ -9,6 +9,7 @@ import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
+import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/utils/constants.dart';
@@ -599,6 +600,18 @@ class CarouselViewModel with ChangeNotifier {
         }
       });
     } else {
+      // sort duplicates by their mediaType
+      searchResultList.sort((a,b) {
+        // sort only searchResults with same vocable and not-null mediaType
+        if (a.mediaType != null && b.mediaType != null && a.vocable.vocable == b.vocable.vocable) {
+          // convert to MediaType and sort by sort-table of MediaType
+          MediaType typeA = MediaType.fromString(a.mediaType);
+          MediaType typeB = MediaType.fromString(b.mediaType);
+          return MediaType.sortValues[typeA] - MediaType.sortValues[typeB];
+        } else {
+          return 0;
+        }
+      });
       tmpList.add(SearchResultPackage("", searchResultList));
     }
 
