@@ -164,7 +164,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
               margin: EdgeInsets.only(left: 10, bottom: 10),
               alignment: Alignment.bottomLeft,
               child: Container(
-                padding: EdgeInsets.only(left: 5, right: 10),
+                padding: EdgeInsets.only(left: 8, right: 10, top: 3, bottom: 3),
                 decoration: BoxDecoration(
                   color: ColorsLectary.darkBlue,
                   borderRadius: BorderRadius.circular(10),

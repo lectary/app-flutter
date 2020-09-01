@@ -38,11 +38,13 @@ class _TextAreaState extends State<TextArea> {
             padding: EdgeInsets.all(10),
             child: widget.hideVocableModeOn && !showVocable
                 ? Icon(Icons.visibility, size: 80, color: ColorsLectary.green,)
-                : Text(
-                    uppercase ? widget.text.toUpperCase() : widget.text,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 28, color: ColorsLectary.white),
-                  )),
+                : SingleChildScrollView(
+                  child: Text(
+                      uppercase ? widget.text.toUpperCase() : widget.text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 28, color: ColorsLectary.white),
+                    ),
+                )),
       ),
     );
   }
