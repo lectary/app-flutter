@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
@@ -13,7 +15,35 @@ import 'package:provider/provider.dart';
 
 /// Drawer screen, handling the navigation and loading of local [Lecture]s
 /// Used for further navigation to [LectureManagementScreen] and [SettingsScreen]
-class MainDrawer extends StatelessWidget {
+class MainDrawer extends StatefulWidget {
+
+  @override
+  _MainDrawerState createState() => _MainDrawerState();
+}
+
+class _MainDrawerState extends State<MainDrawer> {
+  CarouselViewModel _carouselViewModel;
+
+  /// Listening to drawer init(opened) and disposed(closed) to interrupt
+  /// medias corresponding.
+  /// Using [WidgetsBinding.instance.addPostFrameCallback] to ensure the action
+  /// is performed after the build, to avoid build-errors.
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _carouselViewModel = Provider.of<CarouselViewModel>(context, listen: false);
+      _carouselViewModel.interrupted = true;
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _carouselViewModel.interrupted = false;
+    });
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

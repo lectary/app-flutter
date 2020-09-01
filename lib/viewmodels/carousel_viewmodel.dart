@@ -399,18 +399,25 @@ class CarouselViewModel with ChangeNotifier {
     }
 
     currentSelection = lastSelection;
-    // restore and set itemIndex and initialValue for the carousel
-    await _restoreItemIndexPref();
 
+    // load vocables and restore itemIndex/initialValue for the carousel
     switch (lastSelection.type) {
       case SelectionType.all:
-        return await loadAllVocables(saveSelection: false);
+        List<Vocable> vocables = await loadAllVocables(saveSelection: false);
+        await _restoreItemIndexPref();
+        return vocables;
       case SelectionType.package:
-        return await loadVocablesOfPackage(lastSelection.packTitle, saveSelection: false);
+        List<Vocable> vocables = await loadVocablesOfPackage(lastSelection.packTitle, saveSelection: false);
+        await _restoreItemIndexPref();
+        return vocables;
       case SelectionType.lecture:
-        return await loadVocablesOfLecture(lastSelection.lectureId, lastSelection.lesson, saveSelection: false);
+        List<Vocable> vocables = await loadVocablesOfLecture(lastSelection.lectureId, lastSelection.lesson, saveSelection: false);
+        await _restoreItemIndexPref();
+        return vocables;
       default:
-        return await loadAllVocables();
+        List<Vocable> vocables = await loadAllVocables();
+        await _restoreItemIndexPref();
+        return vocables;
     }
   }
 
