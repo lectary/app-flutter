@@ -163,7 +163,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             return Column(
               children: <Widget>[
                 Divider(
-                  height: 0,
+                  height: 10,
                   thickness: 10,
                 ),
                 ListTileTheme(
