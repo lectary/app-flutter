@@ -170,8 +170,8 @@ class Utils {
           if (langs.length != 2) {
             throw new LectureException("Malformed LANG meta info: $metaInfoValue");
           }
-          result.putIfAbsent("LANG-MEDIA", () => langs[0]);
-          result.putIfAbsent("LANG-VOCABLE", () => langs[1]);
+          result.putIfAbsent("LANG-MEDIA", () => deAsciify(langs[0])); // deAsciifying due to possible special german characters like in 'ÖGS'
+          result.putIfAbsent("LANG-VOCABLE", () => (langs[1])); // no deAsciifying, because the langs are of ISO 639-1, which does not contain any special characters
           break;
         case "AUDIO":
           result.putIfAbsent("AUDIO", () => metaInfoValue);

@@ -50,12 +50,12 @@ class SettingViewModel with ChangeNotifier {
     HashSet<String> availableLanguages = HashSet();
     // loading all languages based on remote availability
     LectaryData data = await _lectureRepository.loadLectaryData();
-    data.lessons.forEach((lesson) => availableLanguages.add(lesson.langMedia.toLowerCase()));
+    data.lessons.forEach((lesson) => availableLanguages.add(lesson.langMedia.toUpperCase()));
 
     // loading all languages based on local lectures
     HashSet<String> localLanguagesOfLectures = HashSet();
     List<Lecture> lectures = await _lectureRepository.loadLecturesLocal();
-    lectures.forEach((lecture) => localLanguagesOfLectures.add(lecture.langMedia.toLowerCase()));
+    lectures.forEach((lecture) => localLanguagesOfLectures.add(lecture.langMedia.toUpperCase()));
 
     // merging language-lists
     List<String> mergedList = localLanguagesOfLectures.toList();
@@ -65,13 +65,19 @@ class SettingViewModel with ChangeNotifier {
       }
     });
 
-    //TODO 'ALLE' for testing purposes - maybe remove
-    List<String> newLanguages = List.of({"ALLE", ...mergedList});
-    newLanguages.sort();
+    // considering default languages
+    Constants.defaultLearningLanguagesList.forEach((lang) {
+      if (!mergedList.contains(lang)) {
+        mergedList.add(lang);
+      }
+    });
+
+    // sort
+    mergedList.sort();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(Constants.keySettingLearningLanguageList, newLanguages);
-    learningLanguagesList = newLanguages;
+    await prefs.setStringList(Constants.keySettingLearningLanguageList, mergedList);
+    learningLanguagesList = mergedList;
 
     _isUpdatingLanguages = false;
     notifyListeners();
