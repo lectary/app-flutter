@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/screens/lectures/widgets/learning_control_area.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -10,34 +11,42 @@ import 'package:provider/provider.dart';
 /// or via the [LearningControlArea].
 class TextArea extends StatefulWidget {
   final bool hideVocableModeOn;
+  final int mediaIndex;
   final String text;
 
-  TextArea({this.hideVocableModeOn, this.text, Key key}) : super(key: key);
+  TextArea({this.hideVocableModeOn, this.mediaIndex, this.text, Key key}) : super(key: key);
 
   @override
   _TextAreaState createState() => _TextAreaState();
 }
 
 class _TextAreaState extends State<TextArea> {
-  bool showVocable = false;
+  bool _hideVocable = true;
 
   @override
   Widget build(BuildContext context) {
     bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
+    // listen on currentItemIndex and hide vocable if swiped out
+    int currentItemIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
+    if (currentItemIndex != widget.mediaIndex) {
+      setState(() {
+        _hideVocable = true;
+      });
+    }
     return Expanded(
       child: GestureDetector(
         onTap: () => {
           if (widget.hideVocableModeOn) {
             setState(() {
-              showVocable = showVocable ? false : true;
+              _hideVocable = _hideVocable ? false : true;
             })
           }
         },
         child: Container(
             alignment: Alignment.bottomCenter,
             padding: EdgeInsets.all(10),
-            child: widget.hideVocableModeOn && !showVocable
-                ? Icon(Icons.visibility, size: 80, color: ColorsLectary.green,)
+            child: widget.hideVocableModeOn && _hideVocable
+                ? Icon(Icons.visibility_off, size: 80, color: ColorsLectary.green,)
                 : SingleChildScrollView(
                   child: Text(
                       uppercase ? widget.text.toUpperCase() : widget.text,

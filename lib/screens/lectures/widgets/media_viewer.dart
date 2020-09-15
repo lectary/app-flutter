@@ -26,59 +26,84 @@ class MediaViewer extends StatelessWidget {
   final Vocable vocable;
   final int vocableIndex;
 
-  @override
-  Widget build(BuildContext context) {
-    log("build media-viewer with index: $vocableIndex");
-    final bool hideVocableModeOn = context.select((CarouselViewModel model) => model.hideVocableModeOn);
-    final bool slowModeOn = context.select((CarouselViewModel model) => model.slowModeOn);
-    final bool autoModeOn = context.select((CarouselViewModel model) => model.autoModeOn);
-    final bool loopModeOn = context.select((CarouselViewModel model) => model.loopModeOn);
-
-    final bool isVirtualLecture = context.select((CarouselViewModel model) => model.isVirtualLecture);
+  /// Retrieve the lecture name of the vocable in case of a virtual-lecture.
+  /// Returns the [Lecture.lesson] of the current [vocable].
+  String _getLectureName(BuildContext context) {
     final model = Provider.of<CarouselViewModel>(context, listen: false);
     String lectureName = "";
     if (model.localLectures != null) {
-      Lecture lecture = model.localLectures.firstWhere((lecture) => lecture.id == vocable.lectureId, orElse: () => null);
+      Lecture lecture = model.localLectures.firstWhere(
+              (lecture) => lecture.id == vocable.lectureId,
+          orElse: () => null);
       lectureName = lecture == null ? "" : lecture.lesson;
     }
+    return lectureName;
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    log("build media-viewer with index: $vocableIndex");
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        TextArea(
-          hideVocableModeOn: hideVocableModeOn,
-          text: isVirtualLecture ? vocable.vocable + "\n[$lectureName]"
-          : vocable.vocable,
+        Builder(
+          builder: (BuildContext context) {
+            final bool hideVocableModeOn = context.select((CarouselViewModel model) => model.hideVocableModeOn);
+            final bool isVirtualLecture = context.select((CarouselViewModel model) => model.isVirtualLecture);
+            return TextArea(
+              key: UniqueKey(),
+              hideVocableModeOn: hideVocableModeOn,
+              mediaIndex: vocableIndex,
+              text: isVirtualLecture
+                  ? vocable.vocable + "\n[${_getLectureName(context)}]"
+                  : vocable.vocable,
+            );
+          },
         ),
-        () {
-        // assert that all mediaTypes are valid, otherwise would be filtered before by the models
-          switch (MediaType.fromString(vocable.mediaType)) {
-            case MediaType.MP4:
-              return LectaryVideoPlayer(
-                videoPath: vocable.media,
-                mediaIndex: vocableIndex,
-                slowMode: slowModeOn,
-                autoMode: autoModeOn,
-                loopMode: loopModeOn,
-                audio: vocable.audio,
-              );
-            case MediaType.PNG:
-            case MediaType.JPG:
-              return ImageViewer(
-                imagePath: vocable.media,
-                mediaIndex: vocableIndex,
-                slowMode: slowModeOn,
-                autoMode: autoModeOn,
-              );
-            case MediaType.TXT:
-              return TextViewer(
-                content: vocable.media,
-                mediaIndex: vocableIndex,
-                slowMode: slowModeOn,
-                autoMode: autoModeOn,
-              );
-          }
-        } ()
+        Builder(
+          builder: (BuildContext context) {
+            final bool slowModeOn = context.select((CarouselViewModel model) => model.slowModeOn);
+            final bool autoModeOn = context.select((CarouselViewModel model) => model.autoModeOn);
+            final bool loopModeOn = context.select((CarouselViewModel model) => model.loopModeOn);
+
+            Widget resultWidget;
+            switch (MediaType.fromString(vocable.mediaType)) {
+              case MediaType.MP4:
+                resultWidget = LectaryVideoPlayer(
+                  videoPath: vocable.media,
+                  mediaIndex: vocableIndex,
+                  slowMode: slowModeOn,
+                  autoMode: autoModeOn,
+                  loopMode: loopModeOn,
+                  audio: vocable.audio,
+                );
+                break;
+              case MediaType.PNG:
+              case MediaType.JPG:
+                resultWidget = ImageViewer(
+                  imagePath: vocable.media,
+                  mediaIndex: vocableIndex,
+                  slowMode: slowModeOn,
+                  autoMode: autoModeOn,
+                );
+                break;
+              case MediaType.TXT:
+                resultWidget = TextViewer(
+                  content: vocable.media,
+                  mediaIndex: vocableIndex,
+                  slowMode: slowModeOn,
+                  autoMode: autoModeOn,
+                );
+                break;
+              default:
+                // Should be unreachable
+                // assert that all mediaTypes are valid, otherwise the vocable should had been filtered beforehand
+                resultWidget = Container();
+                break;
+            }
+            return resultWidget;
+          },
+        ),
       ],
     );
   }

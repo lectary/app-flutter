@@ -24,7 +24,6 @@ class LearningControlArea extends StatefulWidget {
 }
 
 class _LearningControlAreaState extends State<LearningControlArea> {
-  Random random = new Random();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +40,6 @@ class _LearningControlAreaState extends State<LearningControlArea> {
             color: ColorsLectary.green,
             icon: hideVocableModeOn ? Icons.visibility_off : Icons.visibility,
             size: 70,
-            iconColor: hideVocableModeOn ? ColorsLectary.white : Colors.grey[600],
             func: () => Provider.of<CarouselViewModel>(context, listen: false)
                 .hideVocableModeOn = hideVocableModeOn ? false : true,
           ),
