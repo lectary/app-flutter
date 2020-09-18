@@ -73,7 +73,10 @@ class LecturePackageItem extends StatelessWidget {
                     padding: EdgeInsets.only(left: 10, right: 10),
                     child: Html(
                       customTextStyle: (dom.Node node, TextStyle baseStyle) {
-                        return baseStyle.merge(Theme.of(context).textTheme.bodyText1);
+                        return baseStyle.copyWith(
+                          fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
+                          fontFamily: Theme.of(context).textTheme.bodyText1.fontFamily,
+                        );
                       },
                       data: uppercase ? abstractText.toUpperCase() : abstractText,
                       onLinkTap: (url) async {
