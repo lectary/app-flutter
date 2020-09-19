@@ -7,14 +7,14 @@ import 'package:test/test.dart';
 void main() {
   group('extracting meta info', () {
     test('Test1 - successful extraction', () {
-      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03.zip";
+      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-03-03.zip";
       Map<String, dynamic> metaInfos = Utils.extractMetaDataFromLectureFile(zipFile);
 
       Map<String, dynamic> expectedMap = Map.of({
         "PACK": "Testung",
         "LESSON": "Ölfarben",
         "LESSON-SORT": "ozzzzlfarben",
-        "LANG-MEDIA": "OGS",
+        "LANG-MEDIA": "ÖGS",
         "LANG-VOCABLE": "DE",
         "DATE": "2020-03-03",
       });
@@ -22,7 +22,7 @@ void main() {
     });
 
     test('Test2 - missing zip ending', () {
-      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03";
+      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-03-03";
       try {
         Utils.extractMetaDataFromLectureFile(zipFile);
         fail("should had thrown exception");
@@ -33,7 +33,7 @@ void main() {
     });
 
     test('Test3 - missing mandatory meta info', () {
-      String zipFile1 = "LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03.zip";
+      String zipFile1 = "LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-03-03.zip";
       try {
         Utils.extractMetaDataFromLectureFile(zipFile1);
         fail("should had thrown exception");
@@ -41,7 +41,7 @@ void main() {
         expect(e, TypeMatcher<LectureException>());
         expect(e.toString().contains("Missing: PACK"), isTrue);
       }
-      String zipFile2 = "PACK--Testung---LANG--OGS-DE---DATE--2020-03-03.zip";
+      String zipFile2 = "PACK--Testung---LANG--_OeGS-DE---DATE--2020-03-03.zip";
       try {
         Utils.extractMetaDataFromLectureFile(zipFile2);
         fail("should had thrown exception");
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('Test4 - malformed lang with only one language', () {
-      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS---DATE--2020-03-03.zip";
+      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS---DATE--2020-03-03.zip";
       try {
         Utils.extractMetaDataFromLectureFile(zipFile);
         fail("should had thrown exception");
@@ -71,13 +71,23 @@ void main() {
     });
 
     test('Test5 - malformed lang with invalid separator', () {
-      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS+DE---DATE--2020-03-03.zip";
+      String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS+DE---DATE--2020-03-03.zip";
       try {
         Utils.extractMetaDataFromLectureFile(zipFile);
         fail("should had thrown exception");
       } catch(e) {
         expect(e, TypeMatcher<LectureException>());
-        expect(e.toString(), "Malformed LANG meta info: OGS+DE");
+        expect(e.toString(), "Malformed LANG meta info: _OeGS+DE");
+      }
+    });
+
+    test('Test6 - malformed filename without "---"', () {
+      String zipFile = "PACK--Testung--LESSON--_Oelfarben--LANG--_OeGS-DE--DATE--2020-03-03.zip";
+      try {
+        Utils.extractMetaDataFromLectureFile(zipFile);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<LectureException>());
       }
     });
   });
@@ -154,13 +164,13 @@ void main() {
 
   group('Date extraction util | ', () {
     test('Test1 - successful extraction of date meta info', () {
-      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE--2020-03-03.zip";
+      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-03-03.zip";
       String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
       expect(newDate, "2020-03-03");
     });
 
     test('Test2 - return empty string on missing date meta info', () {
-      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE.zip";
+      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE.zip";
       String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
       expect(newDate, "");
     });
@@ -178,13 +188,13 @@ void main() {
     });
 
     test('Test5 - return empty string on invalid filename with malformed date info', () {
-      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE---DATE-2020-03-03.zip";
+      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE---DATE-2020-03-03.zip";
       String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
       expect(newDate, "");
     });
 
     test('Test6 - return empty string on invalid filename with malformed meta info separation', () {
-      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--OGS-DE--DATE--2020-03-03.zip";
+      String lectureFileName = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE--DATE--2020-03-03.zip";
       String newDate = Utils.extractDateMetaInfoFromFilename(lectureFileName);
       expect(newDate, "");
     });
