@@ -159,10 +159,10 @@ final de = {
   AboutContact: 'Fragen, Hinweise, Anregungen bitte an ',
   AboutInstruction: 'Anleitung: ',
   AboutCredits: 'Credits: \n\n',
-  AboutIconCredit: 'Icons von : ',
+  AboutIconCredit: 'Icons von: ',
   AboutIconCreationCreditPart1: 'Icons erstellt von ',
   AboutIconCreationCreditPart2: 'von ',
-  AboutVersion: 'Version 4 #datum--time',
+  AboutVersion: 'Version 4 #',
 };
 
 // Language en
@@ -245,5 +245,5 @@ final en = {
   AboutIconCredit: 'Icons by : ',
   AboutIconCreationCreditPart1: 'Icons made by ',
   AboutIconCreationCreditPart2: 'from ',
-  AboutVersion: 'Version 4 #datum--time',
+  AboutVersion: 'Version 4 #',
 };

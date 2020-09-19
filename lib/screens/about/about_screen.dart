@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -16,18 +17,18 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
-  TapGestureRecognizer tapGestureRecognizer;
-
-  @override
-  void initState() {
-    super.initState();
-    tapGestureRecognizer = TapGestureRecognizer();
-  }
+  List<TapGestureRecognizer> _tapGestureRecognizerList = List();
 
   @override
   void dispose() {
-    tapGestureRecognizer.dispose();
+    _tapGestureRecognizerList.forEach((recognizer) => recognizer.dispose());
     super.dispose();
+  }
+
+  _buildTapGestureRecognizer(String link) {
+    final recognizer = TapGestureRecognizer()..onTap = () => launch(link);
+    _tapGestureRecognizerList.add(recognizer);
+    return recognizer;
   }
 
   @override
@@ -59,8 +60,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             TextSpan(
                               text: "Lectary.net.\n",
                               style: TextStyle(color: ColorsLectary.red),
-                              recognizer: tapGestureRecognizer
-                                ..onTap = () => launch('https://lectary.net')
+                              recognizer: _buildTapGestureRecognizer('https://lectary.net'),
                             ),
                             TextSpan(
                               text: AppLocalizations.of(context).aboutIntroductionPart2,
@@ -72,8 +72,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             TextSpan(
                               text: "info@lectary.net.\n\n",
                               style: TextStyle(color: ColorsLectary.red),
-                              recognizer: tapGestureRecognizer
-                                ..onTap = () => launch('mailto:info@lectary.net')
+                              recognizer: _buildTapGestureRecognizer('mailto:info@lectary.net')
                             ),
                           ]),
                       TextSpan(
@@ -82,8 +81,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             TextSpan(
                               text: "lectary.net/anleitung\n\n",
                               style: TextStyle(color: ColorsLectary.red),
-                              recognizer: tapGestureRecognizer
-                                ..onTap = () => launch('https://lectary.net/anleitung.html')
+                              recognizer:_buildTapGestureRecognizer('https://lectary.net/anleitung4.html')
                             ),
                           ]),
                       TextSpan(
@@ -92,8 +90,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             TextSpan(
                               text: "Flutter.dev.\n\n",
                               style: TextStyle(color: ColorsLectary.red),
-                              recognizer: tapGestureRecognizer
-                                ..onTap = () => launch('https://flutter.dev')
+                              recognizer: _buildTapGestureRecognizer('https://flutter.dev')
                             ),
                             TextSpan(
                                 text: AppLocalizations.of(context).aboutIconCredit,
@@ -101,15 +98,13 @@ class _AboutScreenState extends State<AboutScreen> {
                                   TextSpan(
                                     text: "Material Icons",
                                     style: TextStyle(color: ColorsLectary.red),
-                                    recognizer: tapGestureRecognizer
-                                      ..onTap = () => launch('https://material.io/resources/icons/?style=baseline')
+                                    recognizer: _buildTapGestureRecognizer('https://material.io/resources/icons/')
                                   ),
                                   TextSpan(text: " & "),
                                   TextSpan(
                                     text: "FontAwesome\n\n",
                                     style: TextStyle(color: ColorsLectary.red),
-                                    recognizer: tapGestureRecognizer
-                                      ..onTap = () => launch('https://fontawesome.com/')
+                                    recognizer: _buildTapGestureRecognizer('https://fontawesome.com/')
                                   ),
                                 ]),
                             TextSpan(
@@ -118,8 +113,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                   TextSpan(
                                     text: "FreePik ",
                                     style: TextStyle(color: ColorsLectary.red),
-                                    recognizer: tapGestureRecognizer
-                                      ..onTap = () => launch('https://www.freepik.com/')
+                                    recognizer: _buildTapGestureRecognizer('https://www.flaticon.com/authors/freepik')
                                   ),
                                   TextSpan(
                                       text: AppLocalizations.of(context)
@@ -127,8 +121,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                   TextSpan(
                                     text: "flaticon.com",
                                     style: TextStyle(color: ColorsLectary.red),
-                                    recognizer: tapGestureRecognizer
-                                      ..onTap = () => launch('https://flaticon.com')
+                                    recognizer: _buildTapGestureRecognizer('https://flaticon.com')
                                   ),
                                 ]),
                           ]),
@@ -140,7 +133,8 @@ class _AboutScreenState extends State<AboutScreen> {
               child: RichText(
                 textAlign: TextAlign.right,
                 text: TextSpan(
-                  text: AppLocalizations.of(context).aboutVersion,
+                  text: AppLocalizations.of(context).aboutVersion
+                  + Constants.versionCommitHash,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.black,
