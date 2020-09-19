@@ -12,7 +12,8 @@ import 'package:lectary/utils/exceptions/media_type_exception.dart';
 import 'package:collection/collection.dart';
 import 'exceptions/lecture_exception.dart';
 
-/// Helper class with multiple
+/// Helper class with multiple static functions for sorting, validation or extracting
+/// Metadata.
 class Utils {
 
   /// Custom compare function which uses [replaceForSort] to replace special
@@ -137,13 +138,12 @@ class Utils {
       throw new LectureException("Missing .zip ending in filename: $fileName");
     String fileWithoutType = fileName.split(".zip")[0];
     if (!fileWithoutType.contains("PACK") || !fileWithoutType.contains("LESSON") || !fileWithoutType.contains("LANG")) {
-      // TODO add mechanic to send error message to server for informing about wrong packages?
-      log("File has not mandatory meta information! File: " + fileWithoutType);
       throw new LectureException("File has not mandatory meta information!\n"
           "Missing:"
           "${!fileWithoutType.contains("PACK") ? " PACK " : ""}"
           "${!fileWithoutType.contains("LESSON") ? " LESSON " : ""}"
           "${!fileWithoutType.contains("LANG") ? " LANG " : ""}"
+          "\nFile: $fileWithoutType"
       );
     }
 
@@ -170,7 +170,9 @@ class Utils {
           if (langs.length != 2) {
             throw new LectureException("Malformed LANG meta info: $metaInfoValue");
           }
-          result.putIfAbsent("LANG-MEDIA", () => deAsciify(langs[0])); // deAsciifying due to possible special german characters like in 'ÖGS'
+          String langMedia = deAsciify(langs[0]);
+          if (langMedia == "OGS") langMedia = "ÖGS"; // convert legacy 'OGS'-lectures to 'ÖGS'
+          result.putIfAbsent("LANG-MEDIA", () => langMedia); // deAsciifying due to possible special german characters like in 'ÖGS'
           result.putIfAbsent("LANG-VOCABLE", () => (langs[1])); // no deAsciifying, because the langs are of ISO 639-1, which does not contain any special characters
           break;
         case "AUDIO":
