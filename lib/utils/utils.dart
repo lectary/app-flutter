@@ -179,10 +179,22 @@ class Utils {
           result.putIfAbsent("AUDIO", () => metaInfoValue);
           break;
         case "DATE":
-          result.putIfAbsent("DATE", () => metaInfoValue);
+          // validate date-format, which it will be parsed later when checking on updates
+          try {
+            DateTime.parse(metaInfoValue);
+            result.putIfAbsent("DATE", () => metaInfoValue);
+          } catch(FormatException) {
+            throw new LectureException("Malformed DATE meta info: $metaInfoValue");
+          }
           break;
         case "SORT":
-          result.putIfAbsent("SORT", () => metaInfoValue);
+          // ensure that SORT consists of only numbers with a length of 1 to max 5
+          var _parseFormat = RegExp(r'^[0-9]{1,5}$');
+          if (_parseFormat.hasMatch(metaInfoValue)) {
+            result.putIfAbsent("SORT", () => metaInfoValue);
+          } else {
+            throw new LectureException("Malformed SORT meta info: $metaInfoValue");
+          }
           break;
       }
     }
