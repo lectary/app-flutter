@@ -17,56 +17,64 @@ class CarouselNavigationOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isOverlayOn = context.select((SettingViewModel model) => model.settingShowMediaOverlay);
-    return Visibility(
-      visible: isOverlayOn,
-      child: Stack(children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: ClipRect(
+    return Positioned.fill( // Positioning widget on the parent stack
+      child: Visibility(
+        visible: isOverlayOn,
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          ClipRect(
             child: Align(
               widthFactor: 0.5,
               alignment: Alignment.center,
               child: Opacity(
                 opacity: Constants.opacityOfCarouselOverLay,
-                child: IconButton(
-                  padding: EdgeInsets.all(0.0),
-                  iconSize: 60,
-                  icon: Icon(
-                    Icons.keyboard_arrow_left,
-                    color: ColorsLectary.white,
-                  ),
-                  onPressed: () => carouselController.previousPage(
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.linear),
+                child: Column( // Column combined with expanded to stretch the iconButton vertically
+                  children: [
+                    Expanded(
+                      child: IconButton(
+                        padding: EdgeInsets.all(0.0),
+                        iconSize: 60,
+                        icon: Icon(
+                          Icons.keyboard_arrow_left,
+                          color: ColorsLectary.white,
+                        ),
+                        onPressed: () => carouselController.previousPage(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.linear),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: ClipRect(
+          ClipRect(
             child: Align(
               widthFactor: 0.5,
               alignment: Alignment.center,
               child: Opacity(
                 opacity: Constants.opacityOfCarouselOverLay,
-                child: IconButton(
-                  padding: EdgeInsets.all(0.0),
-                  iconSize: 60,
-                  icon: Icon(
-                    Icons.keyboard_arrow_right,
-                    color: ColorsLectary.white,
-                  ),
-                  onPressed: () => carouselController.nextPage(
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.linear),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: IconButton(
+                        padding: EdgeInsets.all(0.0),
+                        iconSize: 60,
+                        icon: Icon(
+                          Icons.keyboard_arrow_right,
+                          color: ColorsLectary.white,
+                        ),
+                        onPressed: () => carouselController.nextPage(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.linear),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
-        )
-      ]),
+          )
+        ]),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/colors.dart';
@@ -89,6 +90,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
       isAutoModeFinished = true;
     }
     return GestureDetector(
+      behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
       onTap: () {
         setState(() {
           if (widget.slowMode) {

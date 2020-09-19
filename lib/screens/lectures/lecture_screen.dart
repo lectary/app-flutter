@@ -40,18 +40,10 @@ class _LectureScreenState extends State<LectureScreen> {
       children: <Widget>[
         Expanded(
           flex: 7,
-          child: Stack(children: [
-            // build the carousel with a new UniqueKey, so that it gets rebuilt completely
-            // every time build is called. This will be every time when there are new vocable
-            // loaded. This ensures the carousel-indices are resetted and the videos
-            // are (re)loaded correctly.
-            Carousel(
+          child: Carousel(
               key: UniqueKey(),
               vocables: widget.vocables,
-              carouselController: carouselController
-            ),
-            CarouselNavigationOverlay(carouselController: carouselController),
-          ]),
+              carouselController: carouselController),
         ),
         MediaControlArea(flex: 1),
         LearningControlArea(flex: 2, carouselController: carouselController),

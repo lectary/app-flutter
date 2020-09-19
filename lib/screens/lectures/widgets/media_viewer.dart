@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/media_type_enum.dart';
+import 'package:lectary/screens/lectures/widgets/carousel_navigation_overlay.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_image.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_text.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
@@ -19,10 +21,12 @@ import 'package:lectary/screens/lectures/widgets/media_viewer_video.dart';
 class MediaViewer extends StatelessWidget {
   const MediaViewer({
     Key key,
+    @required this.carouselController,
     @required this.vocable,
-    @required this.vocableIndex
+    @required this.vocableIndex,
   }) : super(key: key);
 
+  final CarouselController carouselController;
   final Vocable vocable;
   final int vocableIndex;
 
@@ -60,49 +64,54 @@ class MediaViewer extends StatelessWidget {
             );
           },
         ),
-        Builder(
-          builder: (BuildContext context) {
-            final bool slowModeOn = context.select((CarouselViewModel model) => model.slowModeOn);
-            final bool autoModeOn = context.select((CarouselViewModel model) => model.autoModeOn);
-            final bool loopModeOn = context.select((CarouselViewModel model) => model.loopModeOn);
+        Stack(
+          children: [
+            Builder(
+              builder: (BuildContext context) {
+                final bool slowModeOn = context.select((CarouselViewModel model) => model.slowModeOn);
+                final bool autoModeOn = context.select((CarouselViewModel model) => model.autoModeOn);
+                final bool loopModeOn = context.select((CarouselViewModel model) => model.loopModeOn);
 
-            Widget resultWidget;
-            switch (MediaType.fromString(vocable.mediaType)) {
-              case MediaType.MP4:
-                resultWidget = LectaryVideoPlayer(
-                  videoPath: vocable.media,
-                  mediaIndex: vocableIndex,
-                  slowMode: slowModeOn,
-                  autoMode: autoModeOn,
-                  loopMode: loopModeOn,
-                  audio: vocable.audio,
-                );
-                break;
-              case MediaType.PNG:
-              case MediaType.JPG:
-                resultWidget = ImageViewer(
-                  imagePath: vocable.media,
-                  mediaIndex: vocableIndex,
-                  slowMode: slowModeOn,
-                  autoMode: autoModeOn,
-                );
-                break;
-              case MediaType.TXT:
-                resultWidget = TextViewer(
-                  content: vocable.media,
-                  mediaIndex: vocableIndex,
-                  slowMode: slowModeOn,
-                  autoMode: autoModeOn,
-                );
-                break;
-              default:
-                // Should be unreachable
-                // assert that all mediaTypes are valid, otherwise the vocable should had been filtered beforehand
-                resultWidget = Container();
-                break;
-            }
-            return resultWidget;
-          },
+                Widget resultWidget;
+                switch (MediaType.fromString(vocable.mediaType)) {
+                  case MediaType.MP4:
+                    resultWidget = LectaryVideoPlayer(
+                      videoPath: vocable.media,
+                      mediaIndex: vocableIndex,
+                      slowMode: slowModeOn,
+                      autoMode: autoModeOn,
+                      loopMode: loopModeOn,
+                      audio: vocable.audio,
+                    );
+                    break;
+                  case MediaType.PNG:
+                  case MediaType.JPG:
+                    resultWidget = ImageViewer(
+                      imagePath: vocable.media,
+                      mediaIndex: vocableIndex,
+                      slowMode: slowModeOn,
+                      autoMode: autoModeOn,
+                    );
+                    break;
+                  case MediaType.TXT:
+                    resultWidget = TextViewer(
+                      content: vocable.media,
+                      mediaIndex: vocableIndex,
+                      slowMode: slowModeOn,
+                      autoMode: autoModeOn,
+                    );
+                    break;
+                  default:
+                    // Should be unreachable
+                    // assert that all mediaTypes are valid, otherwise the vocable should had been filtered beforehand
+                    resultWidget = Container();
+                    break;
+                }
+                return resultWidget;
+              },
+            ),
+            CarouselNavigationOverlay(carouselController: carouselController)
+          ],
         ),
       ],
     );

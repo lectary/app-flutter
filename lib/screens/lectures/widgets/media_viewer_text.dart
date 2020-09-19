@@ -109,6 +109,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
       isAutoModeFinished = true;
     }
     return GestureDetector(
+      behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
       onTap: () {
         setState(() {
           if (widget.slowMode) {

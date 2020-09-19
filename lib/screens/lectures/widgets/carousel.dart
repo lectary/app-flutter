@@ -58,7 +58,7 @@ class _CarouselState extends State<Carousel> with RouteAware {
             }),
         itemCount: widget.vocables.length,
         itemBuilder: (BuildContext context, int itemIndex) =>
-            MediaViewer(vocable: widget.vocables[itemIndex], vocableIndex: itemIndex));
+            MediaViewer(carouselController: widget.carouselController, vocable: widget.vocables[itemIndex], vocableIndex: itemIndex));
   }
 
   @override
