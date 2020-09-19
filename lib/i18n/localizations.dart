@@ -65,7 +65,6 @@ class AppLocalizations {
   String get lectureInfoFileSizeUnit => _getValue(LectureInfoFileSizeUnit);
 
   // drawer
-  String get drawerHeader => _getValue(DrawerHeader);
   String get drawerButtonLectureManagement => _getValue(DrawerButtonLectureManagement);
   String get drawerButtonSettings => _getValue(DrawerButtonSettings);
   String get drawerNoLecturesAvailable => _getValue(DrawerNoLecturesAvailable);

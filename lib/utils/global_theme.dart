@@ -19,6 +19,7 @@ ThemeData lectaryThemeLight() {
 
     textTheme: base.textTheme.copyWith(
         caption: TextStyle(color: ColorsLectary.lightBlue),
+        headline5: TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
         headline6: TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
     ),
   );

@@ -33,7 +33,6 @@ const String
     LectureInfoFileSizeUnit = 'lecture_info_file_size_unit',
 
     // drawer
-    DrawerHeader = 'drawer_header',
     DrawerButtonLectureManagement = 'drawer_button_lecture_management',
     DrawerButtonSettings = 'drawer_button_settings',
     DrawerNoLecturesAvailable = 'drawer_no_lectures_available',
@@ -117,7 +116,6 @@ final de = {
   LectureInfoFileSizeUnit: ' MB',
 
   // drawer
-  DrawerHeader: 'Lectary',
   DrawerButtonSettings: 'Einstellungen',
   DrawerButtonLectureManagement: 'Lektionen verwalten',
   DrawerNoLecturesAvailable: 'Keine offline Lektionen vorhanden!',
@@ -200,7 +198,6 @@ final en = {
   LectureInfoFileSizeUnit: ' MB',
 
   // drawer
-  DrawerHeader: 'Lectary',
   DrawerButtonSettings: 'Settings',
   DrawerButtonLectureManagement: 'Lecture management',
   DrawerNoLecturesAvailable: 'No offline lectures available!',

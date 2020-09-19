@@ -10,6 +10,7 @@ import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
@@ -47,6 +48,7 @@ class _MainDrawerState extends State<MainDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final String learningLanguage = context.select((SettingViewModel model) => model.settingLearningLanguage);
     return Drawer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -64,7 +66,10 @@ class _MainDrawerState extends State<MainDrawer> {
                     },
                     icon: Icon(Icons.arrow_back_ios),
                   ),
-                  Text(AppLocalizations.of(context).drawerHeader)
+                  Text(
+                    learningLanguage,
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
                 ],
               ),
             ),
