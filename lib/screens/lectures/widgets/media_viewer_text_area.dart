@@ -35,25 +35,38 @@ class _TextAreaState extends State<TextArea> {
     }
     return Expanded(
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () => {
-          if (widget.hideVocableModeOn) {
-            setState(() {
-              _hideVocable = _hideVocable ? false : true;
-            })
-          }
+          if (widget.hideVocableModeOn)
+            {
+              setState(() {
+                _hideVocable = _hideVocable ? false : true;
+              })
+            }
         },
-        child: Container(
-            alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.all(10),
-            child: widget.hideVocableModeOn && _hideVocable
-                ? Icon(Icons.visibility_off, size: 80, color: ColorsLectary.green,)
-                : SingleChildScrollView(
+        child: widget.hideVocableModeOn && _hideVocable
+            ? Container(
+                // visibility icon
+                alignment: Alignment.bottomCenter,
+                padding: EdgeInsets.only(bottom: 10),
+                child: Icon(
+                  Icons.visibility_off,
+                  size: 80,
+                  color: ColorsLectary.green,
+                ),
+              )
+            : Container(
+                // vocable-text
+                alignment: Alignment.bottomLeft,
+                padding: EdgeInsets.only(left: 15, bottom: 10),
+                child: SingleChildScrollView(
                   child: Text(
-                      uppercase ? widget.text.toUpperCase() : widget.text,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 28, color: ColorsLectary.white),
-                    ),
-                )),
+                    uppercase ? widget.text.toUpperCase() : widget.text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 28, color: ColorsLectary.white),
+                  ),
+                ),
+              ),
       ),
     );
   }
