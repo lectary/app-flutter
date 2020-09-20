@@ -16,12 +16,12 @@ void main() async {
 
       test('Test 1 - a local language, that is not in the remote list, appears in the result list', () async {
         List<Lecture> localLectures = List.of({
-          Lecture(langMedia: 'de'),
-          Lecture(langMedia: 'en'),
+          Lecture(langMedia: 'DE'),
+          Lecture(langMedia: 'EN'),
         });
         List<Lecture> remoteLectures = List.of({
-          Lecture(langMedia: 'de'),
-          Lecture(langMedia: 'es'),
+          Lecture(langMedia: 'DE'),
+          Lecture(langMedia: 'ES'),
         });
         LectaryData lectaryData = LectaryData(lessons: remoteLectures);
 
@@ -35,7 +35,7 @@ void main() async {
         await settingViewModel.updateLearningLanguages();
 
         List<String> resultLangs = settingViewModel.learningLanguagesList;
-        List<String> correctList = List.of({'ALLE', 'de', 'en', 'es'});
+        List<String> correctList = List.of({'DE', 'EN', 'ES'});
         expect(resultLangs, containsAll(correctList));
       });
 
@@ -43,8 +43,8 @@ void main() async {
         List<Lecture> localLectures = List.of({
         });
         List<Lecture> remoteLectures = List.of({
-          Lecture(langMedia: 'de'),
-          Lecture(langMedia: 'es'),
+          Lecture(langMedia: 'DE'),
+          Lecture(langMedia: 'ES'),
         });
         LectaryData lectaryData = LectaryData(lessons: remoteLectures);
 
@@ -58,14 +58,14 @@ void main() async {
         await settingViewModel.updateLearningLanguages();
 
         List<String> resultLangs = settingViewModel.learningLanguagesList;
-        List<String> correctList = List.of({'ALLE', 'de', 'es'});
+        List<String> correctList = List.of({'DE', 'ES'});
         expect(resultLangs, containsAll(correctList));
       });
 
       test('Test 3 - with empty remote list, only the local list appears in the result list', () async {
         List<Lecture> localLectures = List.of({
-          Lecture(langMedia: 'de'),
-          Lecture(langMedia: 'en'),
+          Lecture(langMedia: 'DE'),
+          Lecture(langMedia: 'EN'),
         });
         List<Lecture> remoteLectures = List.of({
         });
@@ -81,24 +81,24 @@ void main() async {
         await settingViewModel.updateLearningLanguages();
 
         List<String> resultLangs = settingViewModel.learningLanguagesList;
-        List<String> correctList = List.of({'ALLE', 'de', 'en'});
+        List<String> correctList = List.of({'DE', 'EN'});
         expect(resultLangs, containsAll(correctList));
       });
 
       test('Test 4 - persisted langs in the shared preferences does not influence the result', () async {
         List<Lecture> localLectures = List.of({
-          Lecture(langMedia: 'de'),
-          Lecture(langMedia: 'en'),
+          Lecture(langMedia: 'DE'),
+          Lecture(langMedia: 'EN'),
         });
         List<Lecture> remoteLectures = List.of({
-          Lecture(langMedia: 'en'),
-          Lecture(langMedia: 'es'),
+          Lecture(langMedia: 'EN'),
+          Lecture(langMedia: 'ES'),
         });
         LectaryData lectaryData = LectaryData(lessons: remoteLectures);
 
         List<String> savedLangs = List.of({
-          'fr',
-          'ru',
+          'FR',
+          'RU',
         });
         SharedPreferences.setMockInitialValues({Constants.keySettingLearningLanguageList: savedLangs});
 
@@ -110,7 +110,7 @@ void main() async {
         await settingViewModel.updateLearningLanguages();
 
         List<String> resultLangs = settingViewModel.learningLanguagesList;
-        List<String> correctList = List.of({'ALLE', 'de', 'en', 'es'});
+        List<String> correctList = List.of({'DE', 'EN', 'ES'});
         expect(resultLangs, containsAll(correctList));
       });
     });

@@ -20,8 +20,8 @@ class Constants {
   static const bool defaultShowMediaOverlay = true;
   static const bool defaultUppercase = false;
   static const String defaultAppLanguage = "de";
-  static const String defaultLearningLanguage = "ÖGS";
   static const List<String> appLanguagesList = ["de", "en"];
+  static const String defaultLearningLanguage = "ÖGS";
   static const List<String> defaultLearningLanguagesList = ["ÖGS", "DGS", "EN"];
 
   // keys for SharedPreferences
