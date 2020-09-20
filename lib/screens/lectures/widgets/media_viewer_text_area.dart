@@ -62,7 +62,6 @@ class _TextAreaState extends State<TextArea> {
                 child: SingleChildScrollView(
                   child: Text(
                     uppercase ? widget.text.toUpperCase() : widget.text,
-                    textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 28, color: ColorsLectary.white),
                   ),
                 ),
