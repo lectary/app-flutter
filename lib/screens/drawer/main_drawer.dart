@@ -41,7 +41,7 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void dispose() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _carouselViewModel.interrupted = false;
+      if (!_carouselViewModel.interruptedCauseNavigation) _carouselViewModel.interrupted = false;
     });
     super.dispose();
   }

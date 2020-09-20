@@ -11,6 +11,8 @@ import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
+import 'package:lectary/screens/management/lecture_management_screen.dart';
+import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/utils/utils.dart';
@@ -32,6 +34,16 @@ class CarouselViewModel with ChangeNotifier {
   bool get interrupted => _interrupted;
   set interrupted(bool interrupted) {
     _interrupted = interrupted;
+    notifyListeners();
+  }
+  /// Double checking variable used with the drawer to ensure that the drawer does not set [interrupted] when
+  /// navigating to [LectureManagementScreen] or [SettingsScreen].
+  /// This is because the drawer is not recognized as route, and therefor sets [interrupted] in its dispose method to false.
+  /// But the route change is recognized before the drawer gets disposed, resulting in a interfering setting of [interrupted].
+  bool _interruptedCauseNavigation = false;
+  bool get interruptedCauseNavigation => _interruptedCauseNavigation;
+  set interruptedCauseNavigation(bool interruptedCauseNavigation) {
+    _interruptedCauseNavigation = interruptedCauseNavigation;
     notifyListeners();
   }
 

@@ -77,6 +77,7 @@ class _CarouselState extends State<Carousel> with RouteAware {
   @override
   void didPopNext() {
     log("carousel is visible again, cancel media interrupt!");
+    Provider.of<CarouselViewModel>(context, listen: false).interruptedCauseNavigation = false;
     Provider.of<CarouselViewModel>(context, listen: false).interrupted = false;
   }
 
@@ -84,6 +85,7 @@ class _CarouselState extends State<Carousel> with RouteAware {
   @override
   void didPushNext() {
     log("carousel is not visible anymore, interrupt media!");
+    Provider.of<CarouselViewModel>(context, listen: false).interruptedCauseNavigation = true;
     Provider.of<CarouselViewModel>(context, listen: false).interrupted = true;
   }
 }
