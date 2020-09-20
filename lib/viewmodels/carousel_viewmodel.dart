@@ -421,6 +421,48 @@ class CarouselViewModel with ChangeNotifier {
     }
   }
 
+  /// Sorts a [List] of [Vocable].
+  /// Returns a list of vocables, which first contains all vocables sorted by
+  /// [Vocable.sort] and then all vocables sorted lexicographically by [Vocable.vocableSort].
+  /// Asserts that the vocables are already sorted lexicographically by the database query.
+  List<Vocable> _sortVocables(List<Vocable> vocables) {
+    // extract and sort sublist of vocables with or without vocable.sort value
+    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
+    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
+    // assert that the vocables are already sorted via the database query
+    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
+
+    List<Vocable> resultVocables = List.of({
+      ...vocablesWithSort,
+      ...vocablesWithoutSort
+    });
+
+    return resultVocables;
+  }
+
+  /// Increases the [Vocable.vocableProgress] of the [Vocable] with the passed index.
+  /// Updates the changes of the corresponding [Vocable] in the database.
+  /// Returns a [Future] with type [Void].
+  /// Exceptions of the database update are caught and ignored.
+  Future<void> increaseVocableProgress(int vocableIndex) async {
+    Vocable vocableToUpdate = _currentVocables[vocableIndex];
+    vocableToUpdate.vocableProgress = (vocableToUpdate.vocableProgress + 1) % 3;
+    notifyListeners();
+    try {
+      await _lectureRepository.updateVocable(vocableToUpdate);
+    } catch (e) {
+      log("Updating progress of vocable: ${_currentVocables[vocableIndex]} failed: ${e.toString()}");
+    }
+  }
+
+  /// Returns the index as [int] of a randomly chosen variable
+  /// If [vocableProgressEnabled] is [True] then the [Vocable.vocableProgress] will be considered
+  int chooseRandomVocable() {
+    int rndPage = Utils.chooseRandomVocable(vocableProgressEnabled, _currentVocables);
+    currentItemIndex = rndPage;
+    return rndPage;
+  }
+
   /// Navigating to the selected vocable of the passed [SearchResult].
   /// If [searchForNavigationOnly] is false and the passed [currentFilter] is
   /// not empty, then a new virtual lecture is created.
@@ -439,6 +481,17 @@ class CarouselViewModel with ChangeNotifier {
       // the carouselController should jump to after init
       _currentItemIndex = newIndex;
       notifyListeners();
+    }
+  }
+
+  /// Returns the index as [int] of the [Vocable] corresponding to the passed [SearchResult.vocable]
+  int _getIndexOfResult(SearchResult searchResult) {
+    if (searchForNavigationOnly) {
+      Vocable vocable = _currentVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
+      return _currentVocables.indexOf(vocable);
+    } else {
+      Vocable vocable = _filteredVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
+      return _filteredVocables.indexOf(vocable);
     }
   }
 
@@ -475,10 +528,22 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentVocables] and assigns it by reference again to [_filteredVocables] and notifies listeners.
   /// Operations on the original list [_currentVocables] will therefore also affect the corresponding elements in [_filteredVocables]
   Future<void> filterVocablesForSearch(String filter) async {
+    // If the filter is empty, early return with the current list of vocable,
+    // with determined duplicates and converted to type [SearchResult]
+    if (filter.isEmpty) {
+      _searchResults = _findDuplicatesAndConvert(List.from(_currentVocables));
+      notifyListeners();
+      return;
+    }
+
+    // Load all local variables if not already done.
     if (_allLocalVocables.isEmpty) {
       _allLocalVocables = await _lectureRepository.findAllVocables();
       log("loaded all local vocables");
     }
+
+    // Local copy for manipulating
+    List<Vocable> allVocables = List.from(_allLocalVocables);
 
     // filter the list of current selected vocables
     List<Vocable> localResults = List();
@@ -488,19 +553,13 @@ class CarouselViewModel with ChangeNotifier {
       }
     });
 
-    if (filter.isEmpty) {
-      _searchResults = _findDuplicatesAndConvert(localResults);
-      notifyListeners();
-      return;
-    }
-
     // remove all vocables in the global list that are already in the local one
     localResults.forEach((localVoc) =>
-        _allLocalVocables.removeWhere((globalVoc) => globalVoc.id == localVoc.id)
+        allVocables.removeWhere((globalVoc) => globalVoc.id == localVoc.id)
     );
     // filter remaining vocables in the global list
     List<Vocable> globalResults = List();
-    _allLocalVocables.forEach((voc) {
+    allVocables.forEach((voc) {
       if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
         globalResults.add(voc);
       }
@@ -511,59 +570,6 @@ class CarouselViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Increases the [Vocable.vocableProgress] of the [Vocable] with the passed index.
-  /// Updates the changes of the corresponding [Vocable] in the database.
-  /// Returns a [Future] with type [Void].
-  /// Exceptions of the database update are caught and ignored.
-  Future<void> increaseVocableProgress(int vocableIndex) async {
-    Vocable vocableToUpdate = _currentVocables[vocableIndex];
-    vocableToUpdate.vocableProgress = (vocableToUpdate.vocableProgress + 1) % 3;
-    notifyListeners();
-    try {
-      await _lectureRepository.updateVocable(vocableToUpdate);
-    } catch (e) {
-      log("Updating progress of vocable: ${_currentVocables[vocableIndex]} failed: ${e.toString()}");
-    }
-  }
-
-  /// Returns the index as [int] of a randomly chosen variable
-  /// If [vocableProgressEnabled] is [True] then the [Vocable.vocableProgress] will be considered
-  int chooseRandomVocable() {
-    int rndPage = Utils.chooseRandomVocable(vocableProgressEnabled, _currentVocables);
-    currentItemIndex = rndPage;
-    return rndPage;
-  }
-
-  /// Returns the index as [int] of the [Vocable] corresponding to the passed [SearchResult.vocable]
-  int _getIndexOfResult(SearchResult searchResult) {
-    if (searchForNavigationOnly) {
-      Vocable vocable = _currentVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
-      return _currentVocables.indexOf(vocable);
-    } else {
-      Vocable vocable = _filteredVocables.firstWhere((vocable) => vocable.id == searchResult.vocable.id);
-      return _filteredVocables.indexOf(vocable);
-    }
-  }
-
-  /// Sorts a [List] of [Vocable].
-  /// Returns a list of vocables, which first contains all vocables sorted by
-  /// [Vocable.sort] and then all vocables sorted lexicographically by [Vocable.vocableSort].
-  /// Asserts that the vocables are already sorted lexicographically by the database query.
-  List<Vocable> _sortVocables(List<Vocable> vocables) {
-    // extract and sort sublist of vocables with or without vocable.sort value
-    List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
-    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
-    // assert that the vocables are already sorted via the database query
-    List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
-
-    List<Vocable> resultVocables = List.of({
-      ...vocablesWithSort,
-      ...vocablesWithoutSort
-    });
-
-    return resultVocables;
-  }
-
   /// Helper function for finding [Vocable] duplicates, converting them to
   /// [SearchResult] and grouping them to [SearchResultPackage], which is
   /// used by [VocableSearchScreen] for displaying.
@@ -572,43 +578,87 @@ class CarouselViewModel with ChangeNotifier {
   /// [SearchResult.mediaType], which is [Null] otherwise.
   /// Asserts that the vocable list is already sorted as specified
   List<SearchResultPackage> _findDuplicatesAndConvert(List<Vocable> vocables, {bool toPackages=false}) {
-    // Iterating over the list and saving the vocables in a hashMap of
-    // type <String, bool>. If a vocable is already saved, then the value
-    // is set to true to indicate that there are duplicates for this vocable,
-    // which is saved as key.
-    Map<String, bool> hasDuplicates = HashMap();
-    vocables.forEach((voc) {
-      if (hasDuplicates.containsKey(voc.vocable)) {
-        hasDuplicates[voc.vocable] = true;
-      } else {
-        hasDuplicates.putIfAbsent(voc.vocable, () => false);
-      }
-    });
-
     // Mapping the vocable list to the corresponding SearchResult list
-    // with the media type set for duplicates
-    List<SearchResult> searchResultList = vocables.map((vocable) {
-      if (hasDuplicates[vocable.vocable]) {
-        return SearchResult(vocable, mediaType: vocable.mediaType);
-      } else {
-        return SearchResult(vocable);
-      }
-    }).toList();
+    List<SearchResult> searchResultList = vocables.map((vocable) => SearchResult(vocable)).toList();
 
-    // grouping the searchResults after lecture id, and then replacing the id
-    // with the corresponding lecture name, by a lookup in the list of local lectures
+    // Result list of type [SearchResultPackage]
     List<SearchResultPackage> tmpList = List();
+
+    // Optionally grouping the searchResults after lecture id and replacing the id
+    // with the corresponding lecture name by a lookup in the list of local lectures.
+    // Then possible vocable duplicates are determined and sorted and the mediaType is set correspondingly.
     if (toPackages) {
       final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
-      groupedByLectureId.forEach((key, value) {
+      groupedByLectureId.forEach((key, groupedSearchResultList) {
         if (localLectures != null) {
           Lecture lecture = localLectures.firstWhere((lecture) => lecture.id == key, orElse: () => null);
-          if (lecture != null) tmpList.add(SearchResultPackage(lecture.lesson, value));
+          if (lecture != null) {
+            Map<String, bool> hasDuplicates = _determineDuplicates(groupedSearchResultList);
+            _sortDuplicates(hasDuplicates, groupedSearchResultList);
+            tmpList.add(SearchResultPackage(lecture.lesson, groupedSearchResultList));
+          }
         }
       });
     } else {
-      // sort duplicates by their mediaType
-      searchResultList.sort((a,b) {
+      Map<String, bool> hasDuplicates = _determineDuplicates(searchResultList);
+      _sortDuplicates(hasDuplicates, searchResultList);
+      tmpList.add(SearchResultPackage("", searchResultList));
+    }
+
+    // sorting grouped lists excluding first one
+    List<SearchResultPackage> searchResultPackageList = List();
+    // If a lecture is selected, show results from the selected lecture first
+    if (currentSelection.type == SelectionType.lecture && tmpList.length > 1) {
+      searchResultPackageList.add(tmpList.removeAt(0));
+    }
+    tmpList.sort((lec1, lec2) => Utils.customCompareTo(lec1.lectureTitle, lec2.lectureTitle));
+    searchResultPackageList.addAll(tmpList);
+
+    return searchResultPackageList;
+  }
+
+  /// Determines possible [Vocable] duplicates.
+  /// Returns a [HashMap] of type [String] and [bool], populated with every entry in [searchResultList] with value [True] or [False]
+  /// indicating whether there are duplicates or not.
+  /// Furthermore, for duplicates in [searchResultList] its corresponding [mediaType] is set to its [Vocable.mediaType].
+  Map<String, bool> _determineDuplicates(List<SearchResult> searchResultList) {
+    // This map is used for determining duplicated vocables by iterating over the list and
+    // saving the vocables in the map. If a vocable is already saved, then the value
+    // is set to true to indicate that there are duplicates for this vocable,
+    // which is saved as key.
+    Map<String, bool> hasDuplicates = HashMap();
+
+    searchResultList.forEach((searchResult) {
+      if (hasDuplicates.containsKey(searchResult.vocable.vocable)) {
+        hasDuplicates[searchResult.vocable.vocable] = true;
+      } else {
+        hasDuplicates.putIfAbsent(searchResult.vocable.vocable, () => false);
+      }
+    });
+    searchResultList.forEach((searchResult) {
+      if (hasDuplicates[searchResult.vocable.vocable]) {
+        searchResult.mediaType = searchResult.vocable.mediaType;
+      }
+    });
+
+    return hasDuplicates;
+  }
+
+  /// Sort duplicates by their mediaType
+  /// For each duplicate group, extract the corresponding sublist, sort them, and replace the original with the sorted one.
+  /// Returns [Void]; Manipulates the reference of [searchResultList].
+  void _sortDuplicates(Map<String, bool> hasDuplicates, List<SearchResult> searchResultList) {
+    // sort duplicates by their mediaType
+    // for each duplicate group, extract the corresponding sublist, sort them, and replace the original with the sorted one
+    // first remove non duplicates from duplicate-map
+    hasDuplicates.removeWhere((key, value) => value == false);
+    hasDuplicates.forEach((key, value) {
+      // extract duplicate sublist
+      int firstIndex = searchResultList.indexOf(searchResultList.firstWhere((element) => element.vocable.vocable == key));
+      int lastIndex = searchResultList.indexOf(searchResultList.lastWhere((element) => element.vocable.vocable == key)) + 1;
+      List<SearchResult> sublist = searchResultList.sublist(firstIndex, lastIndex);
+      // sort
+      sublist.sort((a,b) {
         // sort only searchResults with same vocable and not-null mediaType
         if (a.mediaType != null && b.mediaType != null && a.vocable.vocable == b.vocable.vocable) {
           // convert to MediaType and sort by sort-table of MediaType
@@ -619,17 +669,8 @@ class CarouselViewModel with ChangeNotifier {
           return 0;
         }
       });
-      tmpList.add(SearchResultPackage("", searchResultList));
-    }
-
-    // sorting grouped lists excluding first one
-    List<SearchResultPackage> searchResultPackageList = List();
-    if (tmpList.length > 1) {
-      searchResultPackageList.add(tmpList.removeAt(0));
-      tmpList.sort((lec1, lec2) => Utils.customCompareTo(lec1.lectureTitle, lec2.lectureTitle));
-    }
-    searchResultPackageList.addAll(tmpList);
-
-    return searchResultPackageList;
+      // replace original duplicate-sublist with the sorted one
+      searchResultList.replaceRange(firstIndex, lastIndex, sublist);
+    });
   }
 }

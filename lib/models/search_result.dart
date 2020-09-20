@@ -10,7 +10,7 @@ class SearchResultPackage {
 
 class SearchResult {
   final Vocable vocable;
-  final String mediaType;
+  String mediaType;
 
   SearchResult(this.vocable, {this.mediaType});
 }
