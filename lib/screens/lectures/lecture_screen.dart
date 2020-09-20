@@ -1,11 +1,14 @@
 import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/screens/lectures/widgets/carousel.dart';
 import 'package:lectary/screens/lectures/widgets/carousel_navigation_overlay.dart';
 import 'package:lectary/screens/lectures/widgets/learning_control_area.dart';
 import 'package:lectary/screens/lectures/widgets/media_control_area.dart';
+import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -40,10 +43,23 @@ class _LectureScreenState extends State<LectureScreen> {
       children: <Widget>[
         Expanded(
           flex: 7,
-          child: Carousel(
-              key: UniqueKey(),
-              vocables: widget.vocables,
-              carouselController: carouselController),
+          child: Stack(
+            children: [
+              Carousel(
+                  key: UniqueKey(),
+                  vocables: widget.vocables,
+                  carouselController: carouselController),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: AspectRatio(
+                    aspectRatio: Constants.aspectRatio,
+                    child: CarouselNavigationOverlay(
+                        carouselController: carouselController)),
+              )
+            ],
+          ),
         ),
         MediaControlArea(flex: 1),
         LearningControlArea(flex: 2, carouselController: carouselController),
