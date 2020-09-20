@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
-import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/models/search_result.dart';
@@ -16,7 +15,6 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:collection/collection.dart';
-import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -47,6 +45,9 @@ class CarouselViewModel with ChangeNotifier {
   /// The index of the vocable on which the carousel should start on app-start.
   /// Will be resetted by the carousel after the first use.
   int initialCarouselValue = 0;
+  /// Is [True] during initial vocable loading, to ensure
+  /// that streams from the drawer are not interfering loading of selection or itemIndex.
+  bool _initialization = false;
 
   /// Used by the UI widget to know if it should display the lecture name next to the vocable
   bool isVirtualLecture = false;
@@ -169,7 +170,7 @@ class CarouselViewModel with ChangeNotifier {
       notifyListeners();
     }
     // based on the current selection, load all vocables or reload current selection
-    if (list.isNotEmpty) {
+    if (list.isNotEmpty && !_initialization) {
       if (currentSelection == null) {
         log("loading all vocables");
         loadAllVocables();
@@ -391,6 +392,7 @@ class CarouselViewModel with ChangeNotifier {
   /// First loads the last vocable-selection if available.
   /// If no last selection is available, then all vocables will be loaded.
   Future<List<Vocable>> initVocables() async {
+    _initialization = true;
     Selection lastSelection = await loadLastSelection();
     log("loaded last selection: ${lastSelection == null ? "<null>" : lastSelection.type}");
 
@@ -400,25 +402,29 @@ class CarouselViewModel with ChangeNotifier {
 
     currentSelection = lastSelection;
 
+    List<Vocable> vocables;
     // load vocables and restore itemIndex/initialValue for the carousel
     switch (lastSelection.type) {
       case SelectionType.all:
-        List<Vocable> vocables = await loadAllVocables(saveSelection: false);
+        vocables = await loadAllVocables(saveSelection: false);
         await _restoreItemIndexPref();
-        return vocables;
+        break;
       case SelectionType.package:
-        List<Vocable> vocables = await loadVocablesOfPackage(lastSelection.packTitle, saveSelection: false);
+        vocables = await loadVocablesOfPackage(lastSelection.packTitle, saveSelection: false);
         await _restoreItemIndexPref();
-        return vocables;
+        break;
       case SelectionType.lecture:
-        List<Vocable> vocables = await loadVocablesOfLecture(lastSelection.lectureId, lastSelection.lesson, saveSelection: false);
+        vocables = await loadVocablesOfLecture(lastSelection.lectureId, lastSelection.lesson, saveSelection: false);
         await _restoreItemIndexPref();
-        return vocables;
+        break;
       default:
-        List<Vocable> vocables = await loadAllVocables();
+        vocables = await loadAllVocables();
         await _restoreItemIndexPref();
-        return vocables;
+        break;
     }
+
+    _initialization = false;
+    return vocables;
   }
 
   /// Sorts a [List] of [Vocable].
