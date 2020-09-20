@@ -476,7 +476,7 @@ class CarouselViewModel with ChangeNotifier {
       // containing the filter results is created and set
       log("Created new virtual lecture");
       createNewVirtualLecture();
-      currentSelection = Selection.search(currentFilter, currentSelection);
+      currentSelection = Selection.search(currentFilter, _currentSelection);
       // set index corresponding to the tabbed item index where
       // the carouselController should jump to after init
       _currentItemIndex = newIndex;
@@ -501,6 +501,18 @@ class CarouselViewModel with ChangeNotifier {
   void createNewVirtualLecture() {
     isVirtualLecture = true;
     _currentVocables = List.from(_filteredVocables);
+  }
+
+  /// Closes current virtual lecture.
+  /// Sets [isVirtualLecture] to [False].
+  /// Restores selection and itemIndex that where set prior to the virtual lecture.
+  void closeVirtualLecture() async {
+    if (!isVirtualLecture && _currentSelection.type!= SelectionType.search) return;
+    isVirtualLecture = false;
+    // retrieve last selection
+    _currentSelection = _currentSelection.originSelection;
+    // reload selection
+    await reloadCurrentSelection();
   }
 
   /// Filters the [List] of available [Vocable] ([_currentVocables]) by a [String].

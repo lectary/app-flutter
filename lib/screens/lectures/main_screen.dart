@@ -57,14 +57,21 @@ class LectureMainScreen extends StatelessWidget {
                                         navigationOnly: true));
                               }),
                           actions: [
-                            IconButton(
-                                icon: Icon(Icons.search),
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                      context, VocableSearchScreen.routeName,
-                                      arguments: VocableSearchScreenArguments(
-                                          navigationOnly: false));
-                                }),
+                            selection.type == SelectionType.search
+                                ? IconButton(
+                                    icon: Icon(Icons.close),
+                                    onPressed: () =>
+                                        Provider.of<CarouselViewModel>(context, listen: false)
+                                            .closeVirtualLecture())
+                                : IconButton(
+                                    icon: Icon(Icons.search),
+                                    onPressed: () {
+                                      Navigator.pushNamed(context,
+                                          VocableSearchScreen.routeName,
+                                          arguments:
+                                              VocableSearchScreenArguments(
+                                                  navigationOnly: false));
+                                    }),
                           ],
                         )
                       : AppBar(title: Text(AppLocalizations.of(context).appTitle),),
