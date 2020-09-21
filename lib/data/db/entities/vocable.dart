@@ -50,7 +50,11 @@ class Vocable {
       @required this.media,
       this.audio,
       this.sort,
-      @required this.vocableProgress});
+      this.vocableProgress = 0})
+      : assert(vocable != null),
+        assert(vocableSort != null),
+        assert(mediaType != null),
+        assert(media != null);
 
   @override
   String toString() {

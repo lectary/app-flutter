@@ -65,7 +65,15 @@ class Lecture {
       @required this.langVocable,
       this.audio,
       this.date,
-      this.sort});
+      this.sort})
+      : assert(fileName != null),
+        assert(fileSize != null),
+        assert(vocableCount != null),
+        assert(pack != null),
+        assert(lesson != null),
+        assert(lessonSort != null),
+        assert(langMedia != null),
+        assert(langVocable != null);
 
   @ignore
   Lecture.clone(Lecture lecture) {

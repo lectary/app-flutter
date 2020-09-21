@@ -1,10 +1,8 @@
 import 'dart:developer';
-import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/media_type_enum.dart';
-import 'package:lectary/screens/lectures/widgets/carousel_navigation_overlay.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_image.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_text.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';

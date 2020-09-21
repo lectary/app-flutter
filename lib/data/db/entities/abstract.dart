@@ -35,7 +35,10 @@ class Abstract {
       @required this.fileName,
       @required this.pack,
       this.text,
-      @required this.date});
+      @required this.date})
+      : assert(fileName != null),
+        assert(pack != null),
+        assert(date != null);
 
   factory Abstract.fromJson(Map<String, dynamic> json) {
     String fileName = json['fileName'];

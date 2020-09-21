@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/lecture_package.dart';
+import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/utils/colors.dart';
-import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';

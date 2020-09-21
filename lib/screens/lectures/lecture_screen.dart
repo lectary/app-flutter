@@ -7,7 +7,6 @@ import 'package:lectary/screens/lectures/widgets/carousel.dart';
 import 'package:lectary/screens/lectures/widgets/carousel_navigation_overlay.dart';
 import 'package:lectary/screens/lectures/widgets/learning_control_area.dart';
 import 'package:lectary/screens/lectures/widgets/media_control_area.dart';
-import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';

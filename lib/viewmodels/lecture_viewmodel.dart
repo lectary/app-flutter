@@ -14,10 +14,10 @@ import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/models/lecture_package.dart';
 
 import 'package:lectary/models/media_type_enum.dart';
+import 'package:lectary/models/response_type.dart';
 import 'package:lectary/utils/exceptions/abstract_exception.dart';
 import 'package:lectary/utils/exceptions/coding_exception.dart';
 import 'package:lectary/utils/exceptions/no_internet_exception.dart';
-import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:path_provider/path_provider.dart';
@@ -423,11 +423,10 @@ class LectureViewModel with ChangeNotifier {
           break;
       }
 
-      // not all required vocable attributes are initialized, but this will be
-      // done immediately afterwards and before persisting
       vocables.add(Vocable(
         lectureId: null,
         vocable: vocable,
+        vocableSort: vocable,
         media: content,
         mediaType: mediaType.toString(),
         vocableProgress: 0,
@@ -656,7 +655,8 @@ class LectureViewModel with ChangeNotifier {
         log("coding needed for language: ${lecture.langVocable} is already persisted...querying...");
         List<CodingEntry> codingEntries = await _lectureRepository.findAllCodingEntriesByCodingId(coding.id);
         return codingEntries;
-      }
+      } else
+        return null;
     } else {
       log("coding needed for language: ${lecture.langVocable} is not available");
       return null;

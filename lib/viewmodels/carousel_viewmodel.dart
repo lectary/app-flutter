@@ -14,7 +14,7 @@ import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/constants.dart';
-import 'package:lectary/utils/selection_type.dart';
+import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:shared_preferences/shared_preferences.dart';

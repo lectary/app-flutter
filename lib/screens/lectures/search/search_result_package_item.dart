@@ -3,7 +3,6 @@ import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/utils/colors.dart';
-import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';

@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:developer' as dev;
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';

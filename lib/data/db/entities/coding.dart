@@ -30,7 +30,10 @@ class Coding {
       {this.id,
       @required this.fileName,
       @required this.lang,
-      @required this.date});
+      @required this.date})
+      : assert(fileName != null),
+        assert(lang != null),
+        assert(date != null);
 
   factory Coding.fromJson(Map<String, dynamic> json) {
     String fileName = json['fileName'];

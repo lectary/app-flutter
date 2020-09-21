@@ -9,7 +9,7 @@ import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
-import 'package:lectary/utils/selection_type.dart';
+import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -51,13 +51,15 @@ class LectureMainScreen extends StatelessWidget {
                               behavior: HitTestBehavior.opaque,
                               child: Row(
                                 children: [
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                      _getHeaderText(
-                                          context: context,
-                                          selection: selection,
-                                          uppercase: uppercase),
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text(
+                                        _getHeaderText(
+                                            context: context,
+                                            selection: selection,
+                                            uppercase: uppercase),
+                                      ),
                                     ),
                                   ),
                                 ],
