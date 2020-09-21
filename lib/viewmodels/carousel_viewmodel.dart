@@ -638,7 +638,7 @@ class CarouselViewModel with ChangeNotifier {
     // sorting grouped lists excluding first one
     List<SearchResultPackage> searchResultPackageList = List();
     // If a lecture is selected, show results from the selected lecture first
-    if (currentSelection.type == SelectionType.lecture && tmpList.length > 1) {
+    if (currentSelection.type == SelectionType.lecture && currentSelection.lesson == tmpList[0].lectureTitle && tmpList.length > 1) {
       searchResultPackageList.add(tmpList.removeAt(0));
     }
     tmpList.sort((lec1, lec2) => Utils.customCompareTo(lec1.lectureTitle, lec2.lectureTitle));
