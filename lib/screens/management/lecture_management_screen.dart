@@ -41,8 +41,10 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).screenManagementTitle),
-      ),
+          title: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Text(AppLocalizations.of(context).screenManagementTitle)),
+        ),
       drawer: MainDrawer(),
       body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

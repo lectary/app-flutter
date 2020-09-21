@@ -39,11 +39,14 @@ class LecturePackageItem extends StatelessWidget {
               : ColorsLectary.white,
         ),
         child: ListTile(
-          title: Text(uppercase ? pack.title.toUpperCase() : pack.title,
-              style: Theme.of(context).textTheme.headline6.copyWith(
-                  color: selection != null && selection.packTitle == pack.title
-                      ? ColorsLectary.white
-                      : ColorsLectary.lightBlue)),
+          title: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(uppercase ? pack.title.toUpperCase() : pack.title,
+                style: Theme.of(context).textTheme.headline6.copyWith(
+                    color: selection != null && selection.packTitle == pack.title
+                        ? ColorsLectary.white
+                        : ColorsLectary.lightBlue)),
+          ),
           onTap: () {
             Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfPackage(pack.title);
             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
@@ -69,12 +72,15 @@ class LecturePackageItem extends StatelessWidget {
             ? ColorsLectary.lightBlue
             : ColorsLectary.white,
         child: ListTile(
-          title: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson,
-              style: Theme.of(context).textTheme.bodyText1.copyWith(
-                  color:
-                      selection != null && selection.lesson == lecture.lesson
-                          ? ColorsLectary.white
-                          : Colors.black)),
+          title: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson,
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                    color:
+                        selection != null && selection.lesson == lecture.lesson
+                            ? ColorsLectary.white
+                            : Colors.black)),
+          ),
           onTap: () {
             Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfLecture(lecture.id, lecture.lesson);
             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!

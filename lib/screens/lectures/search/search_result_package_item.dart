@@ -38,13 +38,16 @@ class SearchResultPackageItem extends StatelessWidget {
           child: Container(
             color: ColorsLectary.white,
             child: ListTile(
-              title: Text(
-                  uppercase
-                      ? pack.lectureTitle.toUpperCase()
-                      : pack.lectureTitle,
-                  style: Theme.of(context).textTheme.headline6.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: ColorsLectary.lightBlue)),
+              title: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                    uppercase
+                        ? pack.lectureTitle.toUpperCase()
+                        : pack.lectureTitle,
+                    style: Theme.of(context).textTheme.headline6.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: ColorsLectary.lightBlue)),
+              ),
             ),
           ),
         ),
@@ -65,7 +68,11 @@ class SearchResultPackageItem extends StatelessWidget {
       Divider(height: 1,thickness: 1),
       GestureDetector(
         child: ListTile(
-            title: Text(uppercase ? searchResult.vocable.vocable.toUpperCase() : searchResult.vocable.vocable),
+            title: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Text(uppercase
+                  ? searchResult.vocable.vocable.toUpperCase()
+                  : searchResult.vocable.vocable)),
             trailing: (() {
               if (searchResult.mediaType == null) return SizedBox();
               MediaType mediaType = MediaType.fromString(searchResult.mediaType);

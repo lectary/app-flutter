@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/i18n/localizations.dart';
@@ -47,10 +48,20 @@ class LectureMainScreen extends StatelessWidget {
                   appBar: vocables.isNotEmpty
                       ? AppBar(
                           title: GestureDetector(
-                              child: Text(_getHeaderText(
-                                  context: context,
-                                  selection: selection,
-                                  uppercase: uppercase),),
+                              behavior: HitTestBehavior.opaque,
+                              child: Row(
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                      _getHeaderText(
+                                          context: context,
+                                          selection: selection,
+                                          uppercase: uppercase),
+                                    ),
+                                  ),
+                                ],
+                              ),
                               onTap: () {
                                 Navigator.pushNamed(
                                     context, VocableSearchScreen.routeName,
@@ -60,12 +71,19 @@ class LectureMainScreen extends StatelessWidget {
                           actions: [
                             selection.type == SelectionType.search
                                 ? IconButton(
-                                    icon: Icon(Icons.close, semanticLabel: Constants.semanticCloseVirtualLecture,),
+                                    icon: Icon(
+                                      Icons.close,
+                                      semanticLabel:
+                                          Constants.semanticCloseVirtualLecture,
+                                    ),
                                     onPressed: () =>
                                         Provider.of<CarouselViewModel>(context, listen: false)
                                             .closeVirtualLecture())
                                 : IconButton(
-                                    icon: Icon(Icons.search, semanticLabel: Constants.semanticSearch,),
+                                    icon: Icon(
+                                      Icons.search,
+                                      semanticLabel: Constants.semanticSearch,
+                                    ),
                                     onPressed: () {
                                       Navigator.pushNamed(context,
                                           VocableSearchScreen.routeName,
@@ -75,7 +93,9 @@ class LectureMainScreen extends StatelessWidget {
                                     }),
                           ],
                         )
-                      : AppBar(title: Text(AppLocalizations.of(context).appTitle),),
+                      : AppBar(
+                          title: Text(AppLocalizations.of(context).appTitle),
+                        ),
                   drawer: Theme(
                     data: lectaryThemeLight(),
                     child: MainDrawer(),

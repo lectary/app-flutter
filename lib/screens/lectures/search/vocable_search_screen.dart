@@ -62,10 +62,13 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
       child: Builder( // used to create a new buildContext from which the above new theme is accessible
         builder: (BuildContext context) => Scaffold(
           appBar: AppBar(
-            title: Text(_getHeaderText(
-                context: context,
-                selection: selection,
-                uppercase: uppercase)),
+            title: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Text(_getHeaderText(
+                  context: context,
+                  selection: selection,
+                  uppercase: uppercase)),
+            ),
             actions: [
               IconButton(
                   icon: Icon(Icons.cancel, semanticLabel: Constants.semanticCloseSearch),

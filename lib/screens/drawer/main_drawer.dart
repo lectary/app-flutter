@@ -137,18 +137,20 @@ class _MainDrawerState extends State<MainDrawer> {
                 separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
                   itemCount: snapshot.data.length + 1,
                   itemBuilder: (context, index) {
-                    if (index == 0)
-                      // extra tile for loading all vocables
+                    if (index == 0) {
                       return Container(
                         color: selection != null && selection.type == SelectionType.all
                             ? ColorsLectary.lightBlue
                             : ColorsLectary.white,
                         child: ListTile(
-                          title: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyText1.copyWith(
-                            color: selection != null && selection.type == SelectionType.all
-                                ? ColorsLectary.white
-                                : Colors.black
-                          ),),
+                          title: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyText1.copyWith(
+                              color: selection != null && selection.type == SelectionType.all
+                                  ? ColorsLectary.white
+                                  : Colors.black
+                            ),),
+                          ),
                           onTap: () {
                             Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
                             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
@@ -156,6 +158,7 @@ class _MainDrawerState extends State<MainDrawer> {
                           },
                         ),
                       );
+                    }
                     return LecturePackageItem(context, snapshot.data[index - 1]);
                   });
             } else {

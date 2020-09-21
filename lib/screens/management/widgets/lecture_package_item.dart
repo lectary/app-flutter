@@ -41,10 +41,15 @@ class LecturePackageItem extends StatelessWidget {
         height: 70,
         alignment: Alignment.centerLeft,
         child: ListTile(
-          title: Text(uppercase ? pack.title.toUpperCase() : pack.title, style: Theme.of(context).textTheme.headline6),
+          title: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Text(uppercase ? pack.title.toUpperCase() : pack.title,
+                  style: Theme.of(context).textTheme.headline6)),
           trailing: IconButton(
-              onPressed: () => _showAbstract(pack.title, pack.abstract, uppercase),
-              icon: Icon(Icons.more_horiz, semanticLabel: Constants.semanticOpenAbstract)),
+              onPressed: () =>
+                  _showAbstract(pack.title, pack.abstract, uppercase),
+              icon: Icon(Icons.more_horiz,
+                  semanticLabel: Constants.semanticOpenAbstract)),
         ),
       ),
     );
@@ -108,10 +113,14 @@ class LecturePackageItem extends StatelessWidget {
       Divider(height: 1,thickness: 1),
       ListTile(
           leading: _getIconForLectureStatus(lecture.lectureStatus),
-          title: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
+          title: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Text(
+                  uppercase ? lecture.lesson.toUpperCase() : lecture.lesson)),
           trailing: IconButton(
               onPressed: () => _showLectureMenu(lecture),
-              icon: Icon(Icons.more_horiz, semanticLabel: Constants.semanticOpenMenu))),
+              icon: Icon(Icons.more_horiz,
+                  semanticLabel: Constants.semanticOpenMenu))),
     ];
   }
 

@@ -132,15 +132,17 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
                   ? Container(
                       alignment: Alignment.center,
                       padding: EdgeInsets.all(50),
-                      child: Text(
-                        uppercase
-                            ? (widget.slowMode
-                                ? finalContent.toUpperCase()
-                                : widget.content.toUpperCase())
-                            : (widget.slowMode ? finalContent : widget.content),
-                        style:
-                            TextStyle(fontSize: 28, color: ColorsLectary.white),
-                        textAlign: TextAlign.center,
+                      child: SingleChildScrollView(
+                        child: Text(
+                          uppercase
+                              ? (widget.slowMode
+                                  ? finalContent.toUpperCase()
+                                  : widget.content.toUpperCase())
+                              : (widget.slowMode ? finalContent : widget.content),
+                          style:
+                              TextStyle(fontSize: 28, color: ColorsLectary.white),
+                          textAlign: TextAlign.center,
+                        ),
                       ))
                   : Icon(
                       Icons.subject,

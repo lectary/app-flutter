@@ -6,6 +6,7 @@ import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/utils/constants.dart';
+import 'package:lectary/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingViewModel with ChangeNotifier {
@@ -39,7 +40,8 @@ class SettingViewModel with ChangeNotifier {
     settingUppercase = prefs.getBool(Constants.keySettingUppercase) ?? Constants.defaultUppercase;
     settingAppLanguage = prefs.getString(Constants.keySettingAppLanguage) ?? Constants.defaultAppLanguage;
     settingLearningLanguage = prefs.getString(Constants.keySettingLearningLanguage) ?? Constants.defaultLearningLanguage;
-    learningLanguagesList = prefs.getStringList(Constants.keySettingLearningLanguageList) ?? Constants.defaultLearningLanguagesList;
+    learningLanguagesList = prefs.getStringList(Constants.keySettingLearningLanguageList) ?? List.from(Constants.defaultLearningLanguagesList);
+    learningLanguagesList.sort((a,b) => Utils.customCompareTo(a, b));
   }
 
   Future<void> updateLearningLanguages() async {
