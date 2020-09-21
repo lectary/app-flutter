@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/screens/lectures/widgets/learning_progress_button_animation.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:lectary/screens/lectures/widgets/custom_button.dart';
@@ -39,6 +40,7 @@ class _LearningControlAreaState extends State<LearningControlArea> {
           CustomButton(
             color: ColorsLectary.green,
             icon: hideVocableModeOn ? Icons.visibility_off : Icons.visibility,
+            semanticLabel: hideVocableModeOn ? Constants.semanticShowVocable : Constants.semanticHideVocable,
             size: 70,
             func: () => Provider.of<CarouselViewModel>(context, listen: false)
                 .hideVocableModeOn = hideVocableModeOn ? false : true,
@@ -46,6 +48,7 @@ class _LearningControlAreaState extends State<LearningControlArea> {
           CustomButton(
             color: ColorsLectary.violet,
             icon: Icons.casino,
+            semanticLabel: Constants.semanticRandomVocable,
             size: 70,
             func: () {
               int rndPage = Provider.of<CarouselViewModel>(context, listen: false).chooseRandomVocable();

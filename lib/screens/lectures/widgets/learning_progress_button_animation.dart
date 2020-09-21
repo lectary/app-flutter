@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/screens/lectures/widgets/learning_progress_button.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -80,10 +81,12 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
                       ? Icon(
                           Icons.keyboard_arrow_right,
                           color: ColorsLectary.white,
+                          semanticLabel: Constants.semanticDeactivateLearningProgress,
                         )
                       : Icon(
                           Icons.keyboard_arrow_left,
                           color: ColorsLectary.white,
+                          semanticLabel: Constants.semanticActivateLearningProgress,
                         ),
                   onPressed: () {
                     setState(() {

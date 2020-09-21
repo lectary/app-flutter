@@ -38,4 +38,24 @@ class Constants {
   static const String keySettingAppLanguage = "settingAppLanguage";
   static const String keySettingLearningLanguage = "settingLearningLanguage";
   static const String keySettingLearningLanguageList = "settingLearningLanguageList";
+
+  // semantic labels used for screen readers
+  static const String semanticCloseVirtualLecture = "Virtuelle Lektion schließen";
+  static const String semanticCloseSearch = "Suchfunktion schließen";
+  static const String semanticSearch = "Suchfunktion";
+  static const String semanticClearFilter = "Suchfeld leeren";
+  static const String semanticSlowMode = "Medium langsam abspielen";
+  static const String semanticAutoMode = "Medium automatisch starten";
+  static const String semanticReplayMode = "Medium automatisch wiederholen";
+  static const String semanticHideVocable = "Vokabel verbergen";
+  static const String semanticShowVocable = "Vokabel einblenden";
+  static const String semanticRandomVocable = "Zufälliges Medium auswählen";
+  static const String semanticActivateLearningProgress = "Lernfortschritt einblenden";
+  static const String semanticDeactivateLearningProgress = "Lernfortschritt ausblenden";
+  static const String semanticLearningProgress = "Lernfortschritt protokollieren, Status:";
+  static const String semanticMediumVideo = "Video Medium";
+  static const String semanticMediumImage = "Bild Medium";
+  static const String semanticMediumText = "Text Medium";
+  static const String semanticOpenMenu = "Menü öffnen";
+  static const String semanticOpenAbstract = "Abstract anzeigen";
 }

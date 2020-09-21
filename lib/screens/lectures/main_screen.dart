@@ -6,6 +6,7 @@ import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
@@ -49,7 +50,7 @@ class LectureMainScreen extends StatelessWidget {
                               child: Text(_getHeaderText(
                                   context: context,
                                   selection: selection,
-                                  uppercase: uppercase)),
+                                  uppercase: uppercase),),
                               onTap: () {
                                 Navigator.pushNamed(
                                     context, VocableSearchScreen.routeName,
@@ -59,12 +60,12 @@ class LectureMainScreen extends StatelessWidget {
                           actions: [
                             selection.type == SelectionType.search
                                 ? IconButton(
-                                    icon: Icon(Icons.close),
+                                    icon: Icon(Icons.close, semanticLabel: Constants.semanticCloseVirtualLecture,),
                                     onPressed: () =>
                                         Provider.of<CarouselViewModel>(context, listen: false)
                                             .closeVirtualLecture())
                                 : IconButton(
-                                    icon: Icon(Icons.search),
+                                    icon: Icon(Icons.search, semanticLabel: Constants.semanticSearch,),
                                     onPressed: () {
                                       Navigator.pushNamed(context,
                                           VocableSearchScreen.routeName,

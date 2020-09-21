@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 
 
 /// Custom searchBar widget.
@@ -67,7 +68,7 @@ class _SearchBarState extends State<SearchBar> {
                 widget.textEditingController.clear();
                 widget.filterFunction("");
               },
-              icon: Icon(Icons.cancel),
+              icon: Icon(Icons.cancel, semanticLabel: Constants.semanticClearFilter),
             ),
           ),
           Visibility(

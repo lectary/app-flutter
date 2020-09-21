@@ -130,67 +130,70 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
     bool isOverlayOn = context.select((SettingViewModel model) => model.settingShowMediaOverlay);
     bool isAudioOn = context.select((SettingViewModel model) => model.settingPlayMediaWithSound);
     bool isVideoTimelineOn = context.select((SettingViewModel model) => model.settingShowVideoTimeline);
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          if (_controller.value.isPlaying) {
-            _controller.pause();
-          } else {
-            _controller.play();
-          }
-        });
-      },
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: <Widget>[
-          VideoPlayer(_controller),
-          Visibility(
-            visible: isOverlayOn && !_controller.value.isPlaying,
-            child: Stack(
-              children: [
-                Container(
-                  alignment: Alignment.center,
-                  child: Opacity(
-                    opacity: Constants.opacityOfCarouselOverLay,
-                      child: Icon(Icons.play_circle_filled, size: 120, color: ColorsLectary.white,),
+    return Semantics(
+      label: Constants.semanticMediumVideo,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            if (_controller.value.isPlaying) {
+              _controller.pause();
+            } else {
+              _controller.play();
+            }
+          });
+        },
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            VideoPlayer(_controller),
+            Visibility(
+              visible: isOverlayOn && !_controller.value.isPlaying,
+              child: Stack(
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    child: Opacity(
+                      opacity: Constants.opacityOfCarouselOverLay,
+                        child: Icon(Icons.play_circle_filled, size: 120, color: ColorsLectary.white,),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Visibility(
+              visible: isOverlayOn && widget.audio != null,
+              child: Container(
+                margin: EdgeInsets.only(left: 10, bottom: 10),
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  padding: EdgeInsets.only(left: 8, right: 10, top: 3, bottom: 3),
+                  decoration: BoxDecoration(
+                    color: ColorsLectary.darkBlue,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(isAudioOn ? Icons.volume_up : Icons.volume_off, color: ColorsLectary.lightBlue,),
+                      Text(" - ", style: TextStyle(color: ColorsLectary.lightBlue),),
+                      Text(widget.audio ?? "", style: TextStyle(color: ColorsLectary.lightBlue),),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Visibility(
-            visible: isOverlayOn && widget.audio != null,
-            child: Container(
-              margin: EdgeInsets.only(left: 10, bottom: 10),
-              alignment: Alignment.bottomLeft,
-              child: Container(
-                padding: EdgeInsets.only(left: 8, right: 10, top: 3, bottom: 3),
-                decoration: BoxDecoration(
-                  color: ColorsLectary.darkBlue,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(isAudioOn ? Icons.volume_up : Icons.volume_off, color: ColorsLectary.lightBlue,),
-                    Text(" - ", style: TextStyle(color: ColorsLectary.lightBlue),),
-                    Text(widget.audio ?? "", style: TextStyle(color: ColorsLectary.lightBlue),),
-                  ],
-                ),
               ),
             ),
-          ),
-          Visibility(
-            visible: isVideoTimelineOn,
-            child: VideoProgressIndicator(_controller, allowScrubbing: false,
-              colors: VideoProgressColors(
-                backgroundColor: Color.fromRGBO(0, 0, 0, 0),
-                bufferedColor: Color.fromRGBO(0, 0, 0, 0),
-                playedColor: ColorsLectary.yellow
+            Visibility(
+              visible: isVideoTimelineOn,
+              child: VideoProgressIndicator(_controller, allowScrubbing: false,
+                colors: VideoProgressColors(
+                  backgroundColor: Color.fromRGBO(0, 0, 0, 0),
+                  bufferedColor: Color.fromRGBO(0, 0, 0, 0),
+                  playedColor: ColorsLectary.yellow
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

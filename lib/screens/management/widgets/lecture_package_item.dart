@@ -7,6 +7,7 @@ import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/utils/response_type.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
@@ -43,7 +44,7 @@ class LecturePackageItem extends StatelessWidget {
           title: Text(uppercase ? pack.title.toUpperCase() : pack.title, style: Theme.of(context).textTheme.headline6),
           trailing: IconButton(
               onPressed: () => _showAbstract(pack.title, pack.abstract, uppercase),
-              icon: Icon(Icons.more_horiz)),
+              icon: Icon(Icons.more_horiz, semanticLabel: Constants.semanticOpenAbstract)),
         ),
       ),
     );
@@ -110,7 +111,7 @@ class LecturePackageItem extends StatelessWidget {
           title: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
           trailing: IconButton(
               onPressed: () => _showLectureMenu(lecture),
-              icon: Icon(Icons.more_horiz))),
+              icon: Icon(Icons.more_horiz, semanticLabel: Constants.semanticOpenMenu))),
     ];
   }
 

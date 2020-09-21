@@ -7,6 +7,7 @@ import 'package:lectary/utils/colors.dart';
 class CustomButton extends StatelessWidget {
   final Color color;
   final IconData icon;
+  final String semanticLabel;
   final int size;
   final Color iconColor;
   final int iconContainerWidth;
@@ -15,6 +16,7 @@ class CustomButton extends StatelessWidget {
   CustomButton(
       {@required this.color,
       @required this.icon,
+      @required this.semanticLabel,
       @required this.size,
       this.iconColor = ColorsLectary.white,
       this.iconContainerWidth = 0,
@@ -32,7 +34,7 @@ class CustomButton extends StatelessWidget {
           /// additional container for aligning rectangular icons correctly
           width: iconContainerWidth == 0 ? size.toDouble() : iconContainerWidth
               .toDouble(),
-          child: Icon(icon, size: size.toDouble(), color: iconColor),
+          child: Icon(icon, size: size.toDouble(), color: iconColor, semanticLabel: semanticLabel),
         ),
         onPressed: func,
       ),

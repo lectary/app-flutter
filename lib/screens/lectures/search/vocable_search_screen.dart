@@ -5,6 +5,7 @@ import 'package:lectary/models/search_result.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/search/search_result_package_item.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/utils/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
@@ -67,7 +68,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                 uppercase: uppercase)),
             actions: [
               IconButton(
-                  icon: Icon(Icons.cancel),
+                  icon: Icon(Icons.cancel, semanticLabel: Constants.semanticCloseSearch),
                   onPressed: () {
                     // clearing focus i.e. closing keyboard
                     final FocusScopeNode currentScope = FocusScope.of(context);

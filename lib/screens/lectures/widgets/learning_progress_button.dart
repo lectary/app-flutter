@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -32,18 +34,24 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
       }
     });
 
-    return FlatButton(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(0))),
-      color: widget.color,
-      child: Container(
-        /// additional container for aligning rectangular icons correctly
-        width: widget.size.toDouble(),
-        child: FittedBox(child: _buildIconsForProgress(progress)),
+    return MergeSemantics(
+      child: Semantics(
+        label: Constants.semanticLearningProgress + (progress + 1).toString(),
+        child: FlatButton(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(0))),
+          color: widget.color,
+          child: Container(
+            /// additional container for aligning rectangular icons correctly
+            width: widget.size.toDouble(),
+            child: FittedBox(child: _buildIconsForProgress(progress)),
+          ),
+          onPressed: () {
+            Provider.of<CarouselViewModel>(context, listen: false)
+                .increaseVocableProgress(vocableIndex);
+          },
+        ),
       ),
-      onPressed: () {
-        Provider.of<CarouselViewModel>(context, listen: false).increaseVocableProgress(vocableIndex);
-      },
     );
   }
 

@@ -89,53 +89,56 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
       // play animation only once due to autoMode to avoid looping
       isAutoModeFinished = true;
     }
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
-      onTap: () {
-        setState(() {
-          if (widget.slowMode) {
-            showPicture
-                ? _animationController.reset()
-                : _animationController.forward();
-          }
-          showPicture = showPicture ? false : true;
-        });
-      },
-      child: Center(
-        child: AspectRatio(
-            aspectRatio: Constants.aspectRatio,
-            child: showPicture
-                ? Stack(alignment: Alignment.bottomCenter, children: [
-                    // wrapping image as decoration image in a container for achieving
-                    // auto-scaling to the available space
-                    Container(
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        alignment: Alignment.bottomCenter,
-                        image: FileImage(File(widget.imagePath)),
-                        fit: BoxFit.fitWidth,
-                      )),
-                    ),
-                    ClipRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaY: _animation.status == AnimationStatus.forward
-                              ? _animation.value
-                              : 0,
-                          sigmaX: _animation.status == AnimationStatus.forward
-                              ? _animation.value
-                              : 0,
-                        ),
-                        child: Container(
-                          color: ColorsLectary.darkBlue.withOpacity(0),
+    return Semantics(
+      label: Constants.semanticMediumImage,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
+        onTap: () {
+          setState(() {
+            if (widget.slowMode) {
+              showPicture
+                  ? _animationController.reset()
+                  : _animationController.forward();
+            }
+            showPicture = showPicture ? false : true;
+          });
+        },
+        child: Center(
+          child: AspectRatio(
+              aspectRatio: Constants.aspectRatio,
+              child: showPicture
+                  ? Stack(alignment: Alignment.bottomCenter, children: [
+                      // wrapping image as decoration image in a container for achieving
+                      // auto-scaling to the available space
+                      Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                          alignment: Alignment.bottomCenter,
+                          image: FileImage(File(widget.imagePath)),
+                          fit: BoxFit.fitWidth,
+                        )),
+                      ),
+                      ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(
+                            sigmaY: _animation.status == AnimationStatus.forward
+                                ? _animation.value
+                                : 0,
+                            sigmaX: _animation.status == AnimationStatus.forward
+                                ? _animation.value
+                                : 0,
+                          ),
+                          child: Container(
+                            color: ColorsLectary.darkBlue.withOpacity(0),
+                          ),
                         ),
                       ),
-                    ),
-                  ])
-                : Icon(
-                    Icons.image,
-                    size: 120,
-                  )),
+                    ])
+                  : Icon(
+                      Icons.image,
+                      size: 120,
+                    )),
+        ),
       ),
     );
   }

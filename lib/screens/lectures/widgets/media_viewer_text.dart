@@ -108,42 +108,45 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
       // play animation only once due to autoMode to avoid looping
       isAutoModeFinished = true;
     }
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
-      onTap: () {
-        setState(() {
-          if (widget.slowMode) {
-            if (showText) {
-              _resetAnimation();
-            } else {
-              _resetAnimation();
-              _animationController.forward();
+    return Semantics(
+      label: Constants.semanticMediumText,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
+        onTap: () {
+          setState(() {
+            if (widget.slowMode) {
+              if (showText) {
+                _resetAnimation();
+              } else {
+                _resetAnimation();
+                _animationController.forward();
+              }
             }
-          }
-          showText = showText ? false : true;
-        });
-      },
-      child: Center(
-        child: AspectRatio(
-            aspectRatio: Constants.aspectRatio,
-            child: showText
-                ? Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(50),
-                    child: Text(
-                      uppercase
-                          ? (widget.slowMode
-                              ? finalContent.toUpperCase()
-                              : widget.content.toUpperCase())
-                          : (widget.slowMode ? finalContent : widget.content),
-                      style:
-                          TextStyle(fontSize: 28, color: ColorsLectary.white),
-                      textAlign: TextAlign.center,
-                    ))
-                : Icon(
-                    Icons.subject,
-                    size: 120,
-                  )),
+            showText = showText ? false : true;
+          });
+        },
+        child: Center(
+          child: AspectRatio(
+              aspectRatio: Constants.aspectRatio,
+              child: showText
+                  ? Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(50),
+                      child: Text(
+                        uppercase
+                            ? (widget.slowMode
+                                ? finalContent.toUpperCase()
+                                : widget.content.toUpperCase())
+                            : (widget.slowMode ? finalContent : widget.content),
+                        style:
+                            TextStyle(fontSize: 28, color: ColorsLectary.white),
+                        textAlign: TextAlign.center,
+                      ))
+                  : Icon(
+                      Icons.subject,
+                      size: 120,
+                    )),
+        ),
       ),
     );
   }
