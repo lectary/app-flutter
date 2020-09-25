@@ -28,7 +28,10 @@ class _MediaControlAreaState extends State<MediaControlArea> {
     final bool slowModeOn = context.select((CarouselViewModel model) => model.slowModeOn);
     final bool autoModeOn = context.select((CarouselViewModel model) => model.autoModeOn);
     final bool loopModeOn = context.select((CarouselViewModel model) => model.loopModeOn);
-
+    // Increase icon size on tablets
+    final mediaWidth = MediaQuery.of(context).size.width;
+    double iconSize = mediaWidth >= Constants.breakpointTablet ? 50 : 35;
+    double iconContainerWidth = mediaWidth >= Constants.breakpointTablet ? 160 : 80;
     return Expanded(
       flex: widget.flex,
       child: Row(
@@ -37,27 +40,27 @@ class _MediaControlAreaState extends State<MediaControlArea> {
           CustomButton(
             color: slowModeOn ? ColorsLectary.yellow : ColorsLectary.darkBlue,
             // custom icon from the asset icon-fonts
-            icon: LectaryIcons.iconTurtle,
+            iconData: LectaryIcons.iconTurtle,
             semanticLabel: Constants.semanticSlowMode,
-            size: 35,
+            iconSize: iconSize,
             func: () => Provider.of<CarouselViewModel>(context, listen: false)
                 .slowModeOn = slowModeOn ? false : true,
           ),
           CustomButton(
             color: autoModeOn ? ColorsLectary.orange : ColorsLectary.darkBlue,
-            icon: LectaryIcons.iconWordAuto,
+            iconData: LectaryIcons.iconWordAuto,
             semanticLabel: Constants.semanticAutoMode,
-            size: 35,
-            iconContainerWidth: 80,
+            iconSize: iconSize,
+            iconContainerWidth: iconContainerWidth,
             func: () =>
             Provider.of<CarouselViewModel>(context, listen: false)
                 .autoModeOn = autoModeOn ? false : true,
           ),
           CustomButton(
             color: loopModeOn ? ColorsLectary.red : ColorsLectary.darkBlue,
-            icon: LectaryIcons.iconReload,
+            iconData: LectaryIcons.iconReload,
             semanticLabel: Constants.semanticReplayMode,
-            size: 35,
+            iconSize: iconSize,
             func: () =>
             Provider.of<CarouselViewModel>(context, listen: false)
                 .loopModeOn = loopModeOn ? false : true,

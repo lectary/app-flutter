@@ -2,6 +2,9 @@ class Constants {
   // general
   static const versionCommitHash = "d92316b08bddead71bfb76884b5d4ecb9693b21f";
 
+  // device breakpoints for responsive layout
+  static const double breakpointTablet = 800;
+
   // api
   static const lectaryApiUrl = "https://lectary.net/l4/";
   static const lectaryApiLectureOverviewEndpoint = "info.php";

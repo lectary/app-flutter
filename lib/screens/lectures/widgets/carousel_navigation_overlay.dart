@@ -19,6 +19,9 @@ class CarouselNavigationOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isOverlayOn = context.select((SettingViewModel model) => model.settingShowMediaOverlay);
+    // Increase icon size on tablets
+    final mediaWidth = MediaQuery.of(context).size.width;
+    double navigationIconSize = mediaWidth >= Constants.breakpointTablet ? 90 : 60;
     return ExcludeSemantics(
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         ClipRect(
@@ -33,7 +36,7 @@ class CarouselNavigationOverlay extends StatelessWidget {
                   Expanded(
                     child: IconButton(
                       padding: EdgeInsets.all(0.0),
-                      iconSize: 60,
+                      iconSize: navigationIconSize,
                       icon: Icon(
                         Icons.keyboard_arrow_left,
                         color: ColorsLectary.white,
@@ -59,7 +62,7 @@ class CarouselNavigationOverlay extends StatelessWidget {
                   Expanded(
                     child: IconButton(
                       padding: EdgeInsets.all(0.0),
-                      iconSize: 60,
+                      iconSize: navigationIconSize,
                       icon: Icon(
                         Icons.keyboard_arrow_right,
                         color: ColorsLectary.white,

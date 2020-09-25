@@ -30,7 +30,9 @@ class _LearningControlAreaState extends State<LearningControlArea> {
     dev.log("build learning-control-area");
     final bool hideVocableModeOn =
         context.select((CarouselViewModel model) => model.hideVocableModeOn);
-
+    // Increase icon size on tablets
+    final mediaWidth = MediaQuery.of(context).size.width;
+    double iconSize = mediaWidth >= Constants.breakpointTablet ? 100 : 70;
     return Expanded(
       flex: widget.flex,
       child: Row(
@@ -38,17 +40,17 @@ class _LearningControlAreaState extends State<LearningControlArea> {
         children: <Widget>[
           CustomButton(
             color: ColorsLectary.green,
-            icon: hideVocableModeOn ? Icons.visibility_off : Icons.visibility,
+            iconData: hideVocableModeOn ? Icons.visibility_off : Icons.visibility,
             semanticLabel: hideVocableModeOn ? Constants.semanticShowVocable : Constants.semanticHideVocable,
-            size: 70,
+            iconSize: iconSize,
             func: () => Provider.of<CarouselViewModel>(context, listen: false)
                 .hideVocableModeOn = hideVocableModeOn ? false : true,
           ),
           CustomButton(
             color: ColorsLectary.violet,
-            icon: Icons.casino,
+            iconData: Icons.casino,
             semanticLabel: Constants.semanticRandomVocable,
-            size: 70,
+            iconSize: iconSize,
             func: () {
               int rndPage = Provider.of<CarouselViewModel>(context, listen: false).chooseRandomVocable();
               widget.carouselController.jumpToPage(rndPage);

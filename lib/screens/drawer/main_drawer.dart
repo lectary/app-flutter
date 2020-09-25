@@ -52,7 +52,7 @@ class _MainDrawerState extends State<MainDrawer> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Container(
-            height: 80, // TODO replace with relative placement?
+            height: 80,
             child: DrawerHeader(
               margin: EdgeInsets.all(0.0),
               padding: EdgeInsets.all(0.0),
@@ -73,7 +73,6 @@ class _MainDrawerState extends State<MainDrawer> {
             ),
           ),
           Expanded(
-            flex: 8,
             child: Container(
               child: _generateListView(context),
             ),
@@ -99,24 +98,22 @@ class _MainDrawerState extends State<MainDrawer> {
   }
 
   /// Creates a horizontal stretched button with passed icon, text and route navigation tapEvent
-  Expanded _buildButton({BuildContext context, int flex, IconData icon, String text, String routeName}) {
-    return Expanded(
-        flex: flex,
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-            Navigator.pushNamedAndRemoveUntil(context, routeName, ModalRoute.withName(LectureMainScreen.routeName));
-          },
-          child: Container(
-            child: Row(
-              children: <Widget>[
-                Icon(icon, color: ColorsLectary.lightBlue,),
-                SizedBox(width: 10), // spacer
-                Text(text),
-              ],
-            ),
-          ),
-        )
+  Widget _buildButton({BuildContext context, int flex, IconData icon, String text, String routeName}) {
+    return Container(
+      height: 60,
+      child: RaisedButton(
+        onPressed: () {
+          Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
+          Navigator.pushNamedAndRemoveUntil(context, routeName, ModalRoute.withName(LectureMainScreen.routeName));
+        },
+        child: Row(
+          children: <Widget>[
+            Icon(icon, color: ColorsLectary.lightBlue,),
+            SizedBox(width: 10), // spacer
+            Text(text),
+          ],
+        ),
+      ),
     );
   }
 

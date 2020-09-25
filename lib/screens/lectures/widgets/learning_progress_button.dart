@@ -10,18 +10,19 @@ import 'package:provider/provider.dart';
 /// A custom button that is used for managing the learning progress of a vocable
 /// The button displays a number of [Icon], corresponding to the [Vocable.vocableProgress]
 /// The [Vocable.vocableProgress] can be changed by pressing the button.
-/// The button accepts [size] and [color], used for its size and color
+/// The button accepts [iconSize] and [color], used for its size and color
 class LearningProgressButton extends StatefulWidget {
-  final size;
+  final iconSize;
   final color;
 
-  LearningProgressButton({this.size, this.color});
+  LearningProgressButton({this.iconSize, this.color});
 
   @override
   _LearningProgressButtonState createState() => _LearningProgressButtonState();
 }
 
 class _LearningProgressButtonState extends State<LearningProgressButton> {
+
   @override
   Widget build(BuildContext context) {
     int vocableIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
@@ -33,7 +34,6 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
         return 0;
       }
     });
-
     return MergeSemantics(
       child: Semantics(
         label: Constants.semanticLearningProgress + (progress + 1).toString(),
@@ -43,7 +43,7 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
           color: widget.color,
           child: Container(
             /// additional container for aligning rectangular icons correctly
-            width: widget.size.toDouble(),
+            width: widget.iconSize,
             child: FittedBox(child: _buildIconsForProgress(progress)),
           ),
           onPressed: () {
@@ -100,8 +100,8 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
 
   // returns either a circle or smiley widget
   Icon _buildIcon(bool filled) {
-    return filled ?
-     Icon(Icons.insert_emoticon, color: ColorsLectary.white)
+    return filled
+        ? Icon(Icons.insert_emoticon, color: ColorsLectary.white)
         : Icon(Icons.radio_button_unchecked, color: ColorsLectary.white);
   }
 }

@@ -49,7 +49,9 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
     width = width / 3;
     final double widthButton = width * 0.8;
     final double widthControl = width * 0.2;
-
+    // Increase icon size on tablets
+    final mediaWidth = MediaQuery.of(context).size.width;
+    double iconSize = mediaWidth >= Constants.breakpointTablet ? 100 : 70;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -64,7 +66,7 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
                   // the size needs to be set manually
                   width: widthButton,
                   child: LearningProgressButton(
-                      size: 70, color: ColorsLectary.lightBlue),
+                      iconSize: iconSize, color: ColorsLectary.lightBlue),
                 ),
               ],
             )),
