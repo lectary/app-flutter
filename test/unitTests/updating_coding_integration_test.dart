@@ -57,17 +57,37 @@ void main() async {
   coding.fileNameUpdate = "CODING--CZ---DATE--2020-05-27.json";
 
   List<Lecture> persistedLecturesWithLangCZ = List.of({
-    Lecture(id: 1, langVocable: "CZ"), Lecture(id: 2, langVocable: "CZ")});
+    Lecture(
+        id: 1,
+        fileName: "",
+        fileSize: 5,
+        vocableCount: 5,
+        pack: "",
+        lesson: "",
+        lessonSort: "",
+        langVocable: "CZ",
+        langMedia: "DE"),
+    Lecture(
+        id: 2,
+        fileName: "",
+        fileSize: 5,
+        vocableCount: 5,
+        pack: "",
+        lesson: "",
+        lessonSort: "",
+        langVocable: "CZ",
+        langMedia: "DE")
+  });
 
   List<Vocable> persistedVocablesLectureId1 = List.of({
-    Vocable(lectureId: 1, vocable: "_CZXA",),
-    Vocable(lectureId: 1, vocable: "_CZd",),});
-  List<Vocable> persistedVocablesLectureId2 = List.of({Vocable(lectureId: 2, vocable: "_CZC",)});
+    Vocable(lectureId: 1, vocable: "_CZXA", vocableSort: "", media: "", mediaType: ""),
+    Vocable(lectureId: 1, vocable: "_CZd", vocableSort: "", media: "", mediaType: ""),});
+  List<Vocable> persistedVocablesLectureId2 = List.of({Vocable(lectureId: 2, vocable: "_CZC", vocableSort: "", media: "", mediaType: "")});
 
   List<Vocable> updatedVocables = List.of({
-    Vocable(lectureId: 1, vocable: "Á",),
-    Vocable(lectureId: 1, vocable: "ď",),
-    Vocable(lectureId: 2, vocable: "Č",)
+    Vocable(lectureId: 1, vocable: "Á", vocableSort: "", media: "", mediaType: ""),
+    Vocable(lectureId: 1, vocable: "ď", vocableSort: "", media: "", mediaType: ""),
+    Vocable(lectureId: 2, vocable: "Č", vocableSort: "", media: "", mediaType: "")
   });
 
   group('Integration testing of coding |', () {

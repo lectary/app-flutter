@@ -46,6 +46,7 @@ class MediaViewer extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
+        // Using builder widget to avoid rebuild of the whole widget tree
         Builder(
           builder: (BuildContext context) {
             final bool hideVocableModeOn = context.select((CarouselViewModel model) => model.hideVocableModeOn);
@@ -89,7 +90,7 @@ class MediaViewer extends StatelessWidget {
                 break;
               case MediaType.TXT:
                 resultWidget = TextViewer(
-                  content: vocable.media,
+                  textPath: vocable.media,
                   mediaIndex: vocableIndex,
                   slowMode: slowModeOn,
                   autoMode: autoModeOn,

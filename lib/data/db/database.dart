@@ -1,4 +1,3 @@
-// required package imports
 import 'dart:async';
 import 'package:floor/floor.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
@@ -14,6 +13,8 @@ import 'entities/vocable.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
+
+/// Abstract database, whose functionality is generated via the floor generator.
 @Database(version: 1, entities: [Lecture, Vocable, Abstract, Coding, CodingEntry])
 abstract class LectureDatabase extends FloorDatabase {
   LectureDao get lectureDao;
@@ -22,6 +23,8 @@ abstract class LectureDatabase extends FloorDatabase {
   CodingDao get codingDao;
 }
 
+
+/// Database helper class for creating an instance of the [LectureDatabase] as singleton.
 class DatabaseProvider {
   static final _instance = DatabaseProvider._internal();
   static DatabaseProvider instance = _instance;
@@ -33,7 +36,6 @@ class DatabaseProvider {
   Future<LectureDatabase> get db async {
     if (_db == null) {
       _db = await $FloorLectureDatabase.databaseBuilder('lectary.db')
-          .addCallback(callback)
           .build();
     }
     return _db;
@@ -44,9 +46,4 @@ class DatabaseProvider {
       _db.close();
     }
   }
-
-  /// insert mock data
-  final callback = Callback(onOpen: (database) {
-    // -----
-  });
 }

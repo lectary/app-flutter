@@ -16,12 +16,50 @@ void main() async {
 
       test('Test 1 - a local language, that is not in the remote list, appears in the result list', () async {
         List<Lecture> localLectures = List.of({
-          Lecture(langMedia: 'DE'),
-          Lecture(langMedia: 'EN'),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "DE"),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "EN")
         });
         List<Lecture> remoteLectures = List.of({
-          Lecture(langMedia: 'DE'),
-          Lecture(langMedia: 'ES'),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "DE"),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "ES")
+
+
         });
         LectaryData lectaryData = LectaryData(lessons: remoteLectures);
 
@@ -43,8 +81,26 @@ void main() async {
         List<Lecture> localLectures = List.of({
         });
         List<Lecture> remoteLectures = List.of({
-          Lecture(langMedia: 'DE'),
-          Lecture(langMedia: 'ES'),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "DE"),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "ES"),
         });
         LectaryData lectaryData = LectaryData(lessons: remoteLectures);
 
@@ -64,8 +120,26 @@ void main() async {
 
       test('Test 3 - with empty remote list, only the local list appears in the result list', () async {
         List<Lecture> localLectures = List.of({
-          Lecture(langMedia: 'DE'),
-          Lecture(langMedia: 'EN'),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "DE"),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "ES"),
         });
         List<Lecture> remoteLectures = List.of({
         });
@@ -87,12 +161,48 @@ void main() async {
 
       test('Test 4 - persisted langs in the shared preferences does not influence the result', () async {
         List<Lecture> localLectures = List.of({
-          Lecture(langMedia: 'DE'),
-          Lecture(langMedia: 'EN'),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "DE"),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "EN"),
         });
         List<Lecture> remoteLectures = List.of({
-          Lecture(langMedia: 'EN'),
-          Lecture(langMedia: 'ES'),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "EN"),
+          Lecture(
+              id: 1,
+              fileName: "",
+              fileSize: 5,
+              vocableCount: 5,
+              pack: "",
+              lesson: "",
+              lessonSort: "",
+              langVocable: "",
+              langMedia: "ES"),
         });
         LectaryData lectaryData = LectaryData(lessons: remoteLectures);
 

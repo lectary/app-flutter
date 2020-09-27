@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:archive/archive.dart';
@@ -10,10 +9,8 @@ import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
 import 'package:collection/collection.dart';
-import 'exceptions/lecture_exception.dart';
 
-/// Helper class with multiple static functions for sorting, validation or extracting
-/// Metadata.
+/// Helper class with multiple static functions for sorting, validation or string operations.
 class Utils {
 
   /// Custom compare function which uses [replaceForSort] to replace special
@@ -55,28 +52,27 @@ class Utils {
   /// throws [ArchiveStructureException] on error
   static bool validateArchive(File zipFile, Archive archive) {
     String dirName = Utils.extractFileName(zipFile.path);
-
     // check conditions and directory structure for and by every file in archive,
     // since it seems that there is no consistent way
     // of receiving information about the directory structure
     for (ArchiveFile file in archive) {
       // replacing windows path divider to unix' one
-      String filename = file.name.replaceAll('\\', '/');
+      String fileName = file.name.replaceAll('\\', '/');
       if (!file.isFile) continue;
       // check if there are media files without a name i.e. missing vocable
-      if (Utils.extractFileName(filename).isEmpty)
-        throw new ArchiveStructureException("File without filename found");
-      // check if there are nested directories by splitting filename by path divider '/'
-      if (filename.split('/').length > 2)
+      if (Utils.extractFileName(fileName).isEmpty)
+        throw new ArchiveStructureException("File without fileName found");
+      // check if there are nested directories by splitting fileName by path divider '/'
+      if (fileName.split('/').length > 2)
         throw new ArchiveStructureException(
-            "Wrong archive structure: $filename");
-      // check if inner directory name matches zip-filename
-      if (dirName != Utils.extractDirName(filename))
+            "Wrong archive structure: $fileName");
+      // check if inner directory name matches zip-fileName
+      if (dirName != Utils.extractDirName(fileName))
         throw new ArchiveStructureException(
-            "Inner directory name should be equal the archive name!\nZipArchive: $dirName <-> directory: $filename");
+            "Inner directory name should be equal the archive name!\nZipArchive: $dirName <-> directory: $fileName");
       // check if archive consists only of valid file types
       try {
-        String extension = Utils.extractFileExtension(filename);
+        String extension = Utils.extractFileExtension(fileName);
         MediaType.fromString(extension);
       } on MediaTypeException catch (e) {
         throw new ArchiveStructureException(e.toString());
@@ -86,159 +82,46 @@ class Utils {
     return true;
   }
 
-  /// extracts the filename out of an file path
-  static String extractFileName(String filename) {
+  /// extracts the fileName out of an file path
+  static String extractFileName(String fileName) {
     // replace all windows backslash with normal slash
-    filename = filename.replaceAll('\\', '/');
-    if (filename.isEmpty) return "";
-    return filename.contains('.')
-        ? filename.substring(
-            filename.lastIndexOf('/') + 1, filename.lastIndexOf('.'))
-        : filename.substring(filename.lastIndexOf('/') + 1);
+    fileName = fileName.replaceAll('\\', '/');
+    if (fileName.isEmpty) return "";
+    return fileName.contains('.')
+        ? fileName.substring(
+            fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.'))
+        : fileName.substring(fileName.lastIndexOf('/') + 1);
   }
 
   /// extracts the most inner directory name out of an file path
-  static String extractDirName(String filename) {
+  static String extractDirName(String fileName) {
     // replace all windows backslash with normal slash
-    filename = filename.replaceAll('\\', '/');
-    if (!filename.contains('/')) return "";
-    return filename.split('/')[filename.split('/').length - 2];
+    fileName = fileName.replaceAll('\\', '/');
+    if (!fileName.contains('/')) return "";
+    return fileName.split('/')[fileName.split('/').length - 2];
   }
 
   /// extracts the file extension out of an file path
-  static String extractFileExtension(String filename) {
-    if (!filename.contains('.')) return "";
-    int indexDot = filename.lastIndexOf('.');
-    int indexLastPath = filename.lastIndexOf('/');
+  static String extractFileExtension(String fileName) {
+    if (!fileName.contains('.')) return "";
+    int indexDot = fileName.lastIndexOf('.');
+    int indexLastPath = fileName.lastIndexOf('/');
     if (indexLastPath > indexDot) return "";
-    return filename.substring(filename.lastIndexOf('.') + 1);
+    return fileName.substring(fileName.lastIndexOf('.') + 1);
   }
 
   /// extracts the date meta info
-  /// returns an empty string if filename is invalid or date meta info is missing
-  static String extractDateMetaInfoFromFilename(String filename) {
-    if (!filename.contains('.') || !filename.contains('DATE')) return "";
-    List<String> filenameSplit = filename.split('.');
-    if (filenameSplit.length != 2) return "";
-    List<String> metaInfo = filenameSplit[0].split('---');
+  /// returns an empty string if fileName is invalid or date meta info is missing
+  static String extractDateMetadatumFromFileName(String fileName) {
+    if (!fileName.contains('.') || !fileName.contains('DATE')) return "";
+    List<String> fileNameSplit = fileName.split('.');
+    if (fileNameSplit.length != 2) return "";
+    List<String> metaInfo = fileNameSplit[0].split('---');
     if (metaInfo.length == 0) return "";
     List<String> dateSplit = metaInfo.firstWhere((element) => element.contains("DATE")).split('--');
     if (dateSplit.length != 2) return "";
     return dateSplit[1];
   }
-
-  /// Extracts the meta information out of an [Lecture]] filename.
-  /// Returns a [Map] with the meta data.
-  /// Throws [LectureException] if mandatory meta data is missing
-  /// Used keys {optional}: PACK, LESSON, LESSON-SORT, LANG-MEDIA, LANG-VOCABLE, {AUDIO}, {DATE}, {SORT}
-  static Map<String, dynamic> extractMetaDataFromLectureFile(String fileName) {
-    Map<String, dynamic> result = Map();
-
-    if (!fileName.contains(".zip"))
-      throw new LectureException("Missing .zip ending in filename: $fileName");
-    String fileWithoutType = fileName.split(".zip")[0];
-    if (!fileWithoutType.contains("PACK") || !fileWithoutType.contains("LESSON") || !fileWithoutType.contains("LANG")) {
-      throw new LectureException("File has not mandatory meta information!\n"
-          "Missing:"
-          "${!fileWithoutType.contains("PACK") ? " PACK " : ""}"
-          "${!fileWithoutType.contains("LESSON") ? " LESSON " : ""}"
-          "${!fileWithoutType.contains("LANG") ? " LANG " : ""}"
-          "\nFile: $fileWithoutType"
-      );
-    }
-
-    List<String> metaData = fileWithoutType.split("---");
-    for (String metaDatum in metaData) {
-      List<String> split = metaDatum.split("--");
-      if (split.length != 2) {
-        throw new LectureException("Malformed meta info: $metaDatum of lecture $fileName");
-      }
-      String metaInfoType = split[0];
-      String metaInfoValue = split[1];
-
-      switch(metaInfoType) {
-        case "PACK":
-          result.putIfAbsent("PACK", () => deAsciify(metaInfoValue));
-          break;
-        case "LESSON":
-          String lesson = deAsciify(metaInfoValue);
-          result.putIfAbsent("LESSON", () => lesson);
-          result.putIfAbsent("LESSON-SORT", () => replaceForSort(lesson));
-          break;
-        case "LANG":
-          List<String> langs = metaInfoValue.split("-");
-          if (langs.length != 2) {
-            throw new LectureException("Malformed LANG meta info: $metaInfoValue");
-          }
-          String langMedia = deAsciify(langs[0]);
-          if (langMedia == "OGS") langMedia = "ÖGS"; // convert legacy 'OGS'-lectures to 'ÖGS'
-          result.putIfAbsent("LANG-MEDIA", () => langMedia); // deAsciifying due to possible special german characters like in 'ÖGS'
-          result.putIfAbsent("LANG-VOCABLE", () => (langs[1])); // no deAsciifying, because the langs are of ISO 639-1, which does not contain any special characters
-          break;
-        case "AUDIO":
-          result.putIfAbsent("AUDIO", () => metaInfoValue);
-          break;
-        case "DATE":
-          // validate date-format, which it will be parsed later when checking on updates
-          try {
-            DateTime.parse(metaInfoValue);
-            result.putIfAbsent("DATE", () => metaInfoValue);
-          } catch(FormatException) {
-            throw new LectureException("Malformed DATE meta info: $metaInfoValue");
-          }
-          break;
-        case "SORT":
-          // ensure that SORT consists of only numbers with a length of 1 to max 5
-          var _parseFormat = RegExp(r'^[0-9]{1,5}$');
-          if (_parseFormat.hasMatch(metaInfoValue)) {
-            result.putIfAbsent("SORT", () => metaInfoValue);
-          } else {
-            throw new LectureException("Malformed SORT meta info: $metaInfoValue");
-          }
-          break;
-      }
-    }
-    return result;
-  }
-
-  /// Extracts the vocable itself and possible meta data out of an [Vocable] filename.
-  /// Returns a [Map] with the vocable and meta data.
-  /// Used keys {optional}: VOCABLES, {AUDIO}, {SORT}
-  static Map<String, dynamic> extractMetaDataFromVocableFile(String fileName) {
-    Map<String, dynamic> result = Map();
-
-    // check if there are metaData
-    if (fileName.contains("---")) {
-      List<String> metaData = fileName.split("---");
-      // the first one is always the vocable itself
-      result.putIfAbsent("VOCABLE", () => metaData.removeAt(0));
-      for (String metaDatum in metaData) {
-        // extracting metaData
-        List<String> split = metaDatum.split("--");
-        if (split.length != 2) {
-          log("Malformed meta data: $metaDatum of vocable $fileName");
-          // ignore meta info for this vocable in case of malformation
-          continue;
-        }
-        String metaDatumType = split[0];
-        String metaDatumValue = split[1];
-
-        switch (metaDatumType) {
-          case "AUDIO":
-            result.putIfAbsent("AUDIO", () => metaDatumValue);
-            break;
-          case "SORT":
-            result.putIfAbsent("SORT", () => metaDatumValue);
-            break;
-        }
-      }
-    } else {
-      result.putIfAbsent("VOCABLE", () => fileName);
-    }
-
-    return result;
-  }
-
 
   /// Returns a string where all asciified parts are replaced with the corresponding characters
   static String deAsciify(String asciifiedString, {List<CodingEntry> codingEntries}) {

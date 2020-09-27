@@ -256,7 +256,7 @@ class LectureViewModel with ChangeNotifier {
     lecture.id = null;
     lecture.fileName = lecture.fileNameUpdate;
     lecture.fileNameUpdate = null;
-    String newDate = Utils.extractDateMetaInfoFromFilename(lecture.fileName);
+    String newDate = Utils.extractDateMetadatumFromFileName(lecture.fileName);
     lecture.date = newDate;
 
     // Check if additional coding files are needed
@@ -392,47 +392,13 @@ class LectureViewModel with ChangeNotifier {
       // file.name holds archive name plus actual filename
       String filePath = '$dir/${file.name}';
 
-      // extracting file extension for media type validation and the
-      // filename representing the vocable and possible meta data
-      String fileName = Utils.extractFileName(file.name);
-      String extension = Utils.extractFileExtension(file.name);
-      // checking whether media type is valid
-      MediaType mediaType = MediaType.fromString(extension);
-      // extracting vocable and possible metadata from fileName (i.e. filename without path and extension)
-      Map<String, dynamic> metaData = Utils.extractMetaDataFromVocableFile(fileName);
-      String vocable = metaData.remove("VOCABLE");
-      String audio = metaData.containsKey("AUDIO") ? metaData.remove("AUDIO") : null;
-      String sort = metaData.containsKey("SORT") ? Utils.fillWithLeadingZeros(metaData.remove("SORT")) : null;
+      Vocable newVocable = Vocable.fromFilePath(filePath);
+      vocables.add(newVocable);
 
       // saving media file locally
       File outFile = File(filePath);
       outFile = await outFile.create(recursive: true);
       await outFile.writeAsBytes(file.content);
-
-      // construct model class
-      // TODO review: save file path as content in general (not the content text directly in case of txt-file)
-      String content;
-      switch (mediaType) {
-        case MediaType.JPG:
-        case MediaType.MP4:
-        case MediaType.PNG:
-          content = filePath;
-          break;
-        case MediaType.TXT:
-          content = utf8.decode(file.content);
-          break;
-      }
-
-      vocables.add(Vocable(
-        lectureId: null,
-        vocable: vocable,
-        vocableSort: vocable,
-        media: content,
-        mediaType: mediaType.toString(),
-        vocableProgress: 0,
-        audio: audio,
-        sort: sort,
-      ));
     }
 
     return vocables;
@@ -550,7 +516,7 @@ class LectureViewModel with ChangeNotifier {
     try {
       abstract.fileName = abstract.fileNameUpdate;
       abstract.fileNameUpdate = null;
-      String newDate = Utils.extractDateMetaInfoFromFilename(abstract.fileName);
+      String newDate = Utils.extractDateMetadatumFromFileName(abstract.fileName);
       abstract.date = newDate;
       File file = await _lectureRepository.downloadAbstract(abstract);
       String text = file.readAsStringSync();
@@ -710,7 +676,7 @@ class LectureViewModel with ChangeNotifier {
       // update coding infos
       coding.fileName = coding.fileNameUpdate;
       coding.fileNameUpdate = null;
-      String newDate = Utils.extractDateMetaInfoFromFilename(coding.fileName);
+      String newDate = Utils.extractDateMetadatumFromFileName(coding.fileName);
       coding.date = newDate;
       // download new coding and extract content
       File file = await _lectureRepository.downloadCoding(coding);

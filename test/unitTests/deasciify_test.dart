@@ -7,22 +7,22 @@ void main() async {
   group('DeAsciify |', () {
     test('Test1 - successful deAsciify', () {
       List<Vocable> output = List.of({
-        Vocable(vocable: "L_oewe_VAR1"),
-        Vocable(vocable: "Nein___KKMund__offen_ZZ"),
-        Vocable(vocable: "weiss__nein___KKMund__tief_ZZ"),
-        Vocable(vocable: "Ja___KKKussmund_ZZ"),
-        Vocable(vocable: "St_PPP_oelten"),
-        Vocable(vocable: "_uebersetzen___KKschriftlich_ZZ"),
+        Vocable(lectureId: null, vocable: "L_oewe_VAR1", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "Nein___KKMund__offen_ZZ", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "weiss__nein___KKMund__tief_ZZ", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "Ja___KKKussmund_ZZ", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "St_PPP_oelten", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "_uebersetzen___KKschriftlich_ZZ", vocableSort: "", media: "", mediaType: ""),
       });
       output.forEach((e) => e.vocable = Utils.deAsciify(e.vocable));
 
       List<Vocable> expectedOutput = List.of({
-        Vocable(vocable: "Löwe (Variante 1)"),
-        Vocable(vocable: "Nein (Mund offen)"),
-        Vocable(vocable: "weiss nein (Mund tief)"),
-        Vocable(vocable: "Ja (Kussmund)"),
-        Vocable(vocable: "St.Pölten"),
-        Vocable(vocable: "übersetzen (schriftlich)"),
+        Vocable(lectureId: null, vocable: "Löwe (Variante 1)", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "Nein (Mund offen)", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "weiss nein (Mund tief)", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "Ja (Kussmund)", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "St.Pölten", vocableSort: "", media: "", mediaType: ""),
+        Vocable(lectureId: null, vocable: "übersetzen (schriftlich)", vocableSort: "", media: "", mediaType: ""),
       });
 
       expect(output.toString(), expectedOutput.toString());
@@ -67,7 +67,11 @@ void main() async {
           .where((element) => element != null)
           .toList();
 
-      Vocable vocable =  Vocable(vocable: "_CZXA_CZXa_CZC_CZc_CZD_CZd_CZXE_CZXe_CZE_CZe_CZXI_CZXi_CZN_CZn_CZXO_CZXo_CZR_CZr_CZS_CZs_CZT_CZt_CZXU_CZXu_CZU_CZu_CZXY_CZXy_CZZ_CZz");
+      Vocable vocable = Vocable(lectureId: null,
+          vocable: "_CZXA_CZXa_CZC_CZc_CZD_CZd_CZXE_CZXe_CZE_CZe_CZXI_CZXi_CZN_CZn_CZXO_CZXo_CZR_CZr_CZS_CZs_CZT_CZt_CZXU_CZXu_CZU_CZu_CZXY_CZXy_CZZ_CZz",
+          vocableSort: "",
+          media: "",
+          mediaType: "");
       String output = Utils.deAsciify(vocable.vocable, codingEntries: coding);
 
       String expectedOutput = "ÁáČčĎďÉéĚéÍíŇňÓóŘřŠšŤťÚúŮůÝýŽž";

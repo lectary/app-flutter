@@ -7,12 +7,12 @@ void main() {
   group('Testing distribution of chooseRandomVocable | ', () {
       test('List with one standard vocable with index 0', () {
       List<Vocable> listOf6WithOneStandardVocable = List.of({
-        Vocable(id: 1, lectureId: 1, vocable: "voc1", vocableProgress: 0),
-        Vocable(id: 2, lectureId: 1, vocable: "voc2", vocableProgress: 2),
-        Vocable(id: 3, lectureId: 1, vocable: "voc3", vocableProgress: 2),
-        Vocable(id: 4, lectureId: 1, vocable: "voc4", vocableProgress: 2),
-        Vocable(id: 5, lectureId: 1, vocable: "voc5", vocableProgress: 2),
-        Vocable(id: 6, lectureId: 1, vocable: "voc6", vocableProgress: 2),
+        Vocable(id: 1, lectureId: 1, vocable: "voc1", vocableProgress: 0, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 2, lectureId: 1, vocable: "voc2", vocableProgress: 2, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 3, lectureId: 1, vocable: "voc3", vocableProgress: 2, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 4, lectureId: 1, vocable: "voc4", vocableProgress: 2, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 5, lectureId: 1, vocable: "voc5", vocableProgress: 2, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 6, lectureId: 1, vocable: "voc6", vocableProgress: 2, vocableSort: "", media: "", mediaType: ""),
       });
 
       Map resultMap1 = Map();
@@ -54,12 +54,12 @@ void main() {
     test('List with one very good vocable with index 5', ()
     {
       List<Vocable> listOf6WithOneReallyGoodVocable = List.of({
-        Vocable(id: 1, lectureId: 1, vocable: "voc1", vocableProgress: 0),
-        Vocable(id: 2, lectureId: 1, vocable: "voc2", vocableProgress: 0),
-        Vocable(id: 3, lectureId: 1, vocable: "voc3", vocableProgress: 0),
-        Vocable(id: 4, lectureId: 1, vocable: "voc4", vocableProgress: 0),
-        Vocable(id: 5, lectureId: 1, vocable: "voc5", vocableProgress: 0),
-        Vocable(id: 6, lectureId: 1, vocable: "voc6", vocableProgress: 2),
+        Vocable(id: 1, lectureId: 1, vocable: "voc1", vocableProgress: 0, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 2, lectureId: 1, vocable: "voc2", vocableProgress: 0, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 3, lectureId: 1, vocable: "voc3", vocableProgress: 0, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 4, lectureId: 1, vocable: "voc4", vocableProgress: 0, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 5, lectureId: 1, vocable: "voc5", vocableProgress: 0, vocableSort: "", media: "", mediaType: ""),
+        Vocable(id: 6, lectureId: 1, vocable: "voc6", vocableProgress: 2, vocableSort: "", media: "", mediaType: ""),
       });
 
       Map resultMap1 = Map();

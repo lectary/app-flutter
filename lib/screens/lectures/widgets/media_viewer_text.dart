@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/colors.dart';
@@ -19,7 +21,7 @@ import 'package:provider/provider.dart';
 /// but influences the speed of character copying. Thus, a longer text appear to be animated faster.
 /// Supports slowMode and autoStarting of the text animation.
 class TextViewer extends StatefulWidget {
-  final String content;
+  final String textPath;
   final int mediaIndex;
 
   final bool slowMode;
@@ -27,7 +29,7 @@ class TextViewer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  TextViewer({this.content, this.mediaIndex, this.slowMode, this.autoMode, Key key}) : super(key: key);
+  TextViewer({this.textPath, this.mediaIndex, this.slowMode, this.autoMode, Key key}) : super(key: key);
 
   @override
   _TextViewerState createState() => _TextViewerState();
@@ -44,23 +46,26 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
   AnimationController _animationController;
   Animation<int> _characterCount;
 
-  String finalContent;
+  String text;
+  String finalText;
   int index = -1;
   List<int> randomBox;
 
   @override
   void initState() {
     super.initState();
+    // get a reference to the text file and read the content
+    text = File(widget.textPath).readAsStringSync();
     // placeholder of empty chars that get replaced during the animation
-    finalContent = " " * widget.content.length;
+    finalText = " " * text.length;
     // array of indices representing the content, to pick one index randomly
-    randomBox = List.generate(widget.content.length, (_index) => _index);
+    randomBox = List.generate(text.length, (_index) => _index);
 
     _animationController = AnimationController(
       duration: Duration(milliseconds: Constants.mediaAnimationDurationMilliseconds),
       vsync: this,
     );
-    _characterCount = StepTween(begin: 0, end: widget.content.length-1).animate(_animationController)
+    _characterCount = StepTween(begin: 0, end: text.length-1).animate(_animationController)
       ..addListener(() {
         // update only when index changed
         if (index < _characterCount.value) {
@@ -68,7 +73,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
           randomBox.shuffle();
           int rndIndex = randomBox.removeLast();
           setState(() {
-            finalContent = finalContent.replaceRange(rndIndex, rndIndex+1, widget.content[rndIndex]);
+            finalText = finalText.replaceRange(rndIndex, rndIndex+1, text[rndIndex]);
           });
         }
       });
@@ -91,7 +96,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
     // if slowMode gets disabled the media gets visible instantly
     if (!widget.slowMode) {
       _animationController.reset();
-      finalContent = widget.content;
+      finalText = text;
     }
     // if current item is not visible any more, reset animation and hide text
     if (currentItemIndex != widget.mediaIndex || interrupted) {
@@ -136,9 +141,9 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
                         child: Text(
                           uppercase
                               ? (widget.slowMode
-                                  ? finalContent.toUpperCase()
-                                  : widget.content.toUpperCase())
-                              : (widget.slowMode ? finalContent : widget.content),
+                                  ? finalText.toUpperCase()
+                                  : text.toUpperCase())
+                              : (widget.slowMode ? finalText : text),
                           style:
                               TextStyle(fontSize: 28, color: ColorsLectary.white),
                           textAlign: TextAlign.center,
@@ -155,8 +160,8 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
 
   void _resetAnimation() {
     _animationController.reset();
-    finalContent = " " * widget.content.length;
+    finalText = " " * text.length;
     index = -1;
-    randomBox = List.generate(widget.content.length, (_index) => _index);
+    randomBox = List.generate(text.length, (_index) => _index);
   }
 }

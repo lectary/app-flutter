@@ -5,15 +5,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:lectary/utils/exceptions/coding_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
+
 enum CodingStatus { notPersisted, persisted, removed, updateAvailable }
 
+/// Entity class representing a coding which is linked to a set of [CodingEntry].
+/// It is used to decode additional special characters in vocables.
 @Entity(tableName: "codings")
 class Coding {
   @PrimaryKey(autoGenerate: true)
   int id;
 
+  /// Used for automatically managing (e.g. downloading) codings
   @ignore
   CodingStatus codingStatus;
+  /// Used for saving the fileName of an available update
   @ignore
   String fileNameUpdate;
 
@@ -35,46 +40,59 @@ class Coding {
         assert(lang != null),
         assert(date != null);
 
+  /// Factory constructor to create a new coding instance from a json.
+  /// Returns a new [Coding] on successful json deserialization.
+  /// Returns [Null] on [CodingException] i.e. when metadata are malformed.
   factory Coding.fromJson(Map<String, dynamic> json) {
     String fileName = json['fileName'];
-    Map<String, dynamic> metaInfo;
+    Map<String, dynamic> metadata;
     try {
-      metaInfo = _extractMetaInformation(fileName);
+      metadata = _extractMetadata(fileName);
     } on CodingException catch(e) {
       log("Invalid abstract: ${e.toString()}");
       return null;
     }
     return Coding(
       fileName: fileName,
-      lang: metaInfo.remove("CODING"),
-      date: metaInfo.remove("DATE")
+      lang: metadata.remove("CODING"),
+      date: metadata.remove("DATE")
     );
   }
 
-  static Map<String, dynamic> _extractMetaInformation(String fileName) {
+  /// Extracts metadata of the coding fileName.
+  /// Returns a [Map] with the metadata.
+  /// Throws [CodingException] if mandatory metadata are missing
+  /// Used keys: CODING, DATE
+  static Map<String, dynamic> _extractMetadata(String fileName) {
     Map<String, dynamic> result = Map();
 
     String fileWithoutType = fileName.split(".json")[0];
     if (!fileWithoutType.contains("CODING") || !fileWithoutType.contains("DATE")) {
-      log("File has not mandatory meta information! File: " + fileWithoutType);
-      throw new CodingException("File has not mandatory meta information!\n"
+      log("Coding has not mandatory metadata! Coding: " + fileWithoutType);
+      throw new CodingException("Coding has not mandatory metadata!\n"
           "Missing:"
           "${!fileWithoutType.contains("CODING") ? " CODING " : ""}"
           "${!fileWithoutType.contains("DATE") ? " DATE " : ""}"
       );
     }
 
-    List<String> metaInfos = fileWithoutType.split("---");
-    for (String metaInfo in metaInfos) {
-      String metaInfoType = metaInfo.split("--")[0];
-      String metaInfoValue = metaInfo.split("--")[1];
+    List<String> metadata = fileWithoutType.split("---");
+    for (String metadatum in metadata) {
+      String metadatumType = metadatum.split("--")[0];
+      String metadatumValue = metadatum.split("--")[1];
 
-      switch(metaInfoType) {
+      switch(metadatumType) {
         case "CODING":
-          result.putIfAbsent("CODING", () => Utils.deAsciify(metaInfoValue));
+          result.putIfAbsent("CODING", () => Utils.deAsciify(metadatumValue));
           break;
         case "DATE":
-          result.putIfAbsent("DATE", () => metaInfoValue);
+          // validate date-format, which it will be parsed later when checking on updates
+          try {
+            DateTime.parse(metadatumValue);
+            result.putIfAbsent("DATE", () => metadatumValue);
+          } catch(FormatException) {
+            throw new CodingException("Malformed DATE metadatum: $metadatumValue");
+          }
           break;
       }
     }
@@ -88,6 +106,7 @@ class Coding {
 }
 
 
+/// Entity class representing a specific coding entry (a char with the corresponding ascii encoding).
 @Entity(
   tableName: "coding_entries",
   foreignKeys: [

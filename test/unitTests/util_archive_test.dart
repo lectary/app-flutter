@@ -58,7 +58,7 @@ void main() {
         fail("should had thrown exception");
       } catch(e) {
         expect(e, TypeMatcher<ArchiveStructureException>());
-        expect(e.toString().contains("Type is not supported"), isTrue);
+        expect(e.toString(), contains("Type is not supported"));
       }
     });
 
@@ -79,7 +79,7 @@ void main() {
         fail("should had thrown exception");
       } catch(e) {
         expect(e, TypeMatcher<ArchiveStructureException>());
-        expect(e.toString().contains("Inner directory name should be equal the archive name"), isTrue);
+        expect(e.toString(), contains("Inner directory name should be equal the archive name"));
       }
     });
 
@@ -106,7 +106,7 @@ void main() {
         fail("should had thrown exception");
       } catch(e) {
         expect(e, TypeMatcher<ArchiveStructureException>());
-        expect(e.toString().contains("Wrong archive structure"), isTrue);
+        expect(e.toString(), contains("Wrong archive structure"));
       }
     });
 
@@ -129,7 +129,7 @@ void main() {
         fail("should had thrown exception");
       } catch(e) {
         expect(e, TypeMatcher<ArchiveStructureException>());
-        expect(e.toString().contains("Inner directory name should be equal"), isTrue);
+        expect(e.toString(), contains("Inner directory name should be equal"));
       }
     });
 
@@ -152,7 +152,7 @@ void main() {
         fail("should had thrown exception");
       } catch(e) {
         expect(e, TypeMatcher<ArchiveStructureException>());
-        expect(e.toString().contains("File without filename found"), isTrue);
+        expect(e.toString(), contains("File without fileName found"));
       }
     });
   });

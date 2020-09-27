@@ -23,10 +23,10 @@ void main() async {
     Stream lectureStream = StreamController<List<Lecture>>().stream;
 
     List<Vocable> vocablesWithDuplicates = List.of({
-      Vocable(id: 1, lectureId: 1, vocable: "Haus", mediaType: "PNG"),
-      Vocable(id: 2, lectureId: 1, vocable: "Haus", mediaType: "TXT"),
-      Vocable(id: 3, lectureId: 2, vocable: "Haus", mediaType: "MP4"),
-      Vocable(id: 4, lectureId: 3, vocable: "Baum", mediaType: "TXT")
+      Vocable(id: 1, lectureId: 1, vocable: "Haus", vocableSort: "Haus", media: "", mediaType: "PNG"),
+      Vocable(id: 2, lectureId: 1, vocable: "Haus", vocableSort: "Haus", media: "", mediaType: "TXT"),
+      Vocable(id: 3, lectureId: 2, vocable: "Haus", vocableSort: "Haus", media: "", mediaType: "MP4"),
+      Vocable(id: 4, lectureId: 3, vocable: "Baum", vocableSort: "Haus", media: "", mediaType: "TXT")
     });
 
     testWidgets('Test1 - testing correct appearance with vocable duplicates', (WidgetTester tester) async {
