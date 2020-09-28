@@ -25,7 +25,6 @@ ThemeData lectaryThemeLight() {
   );
 }
 
-
 ThemeData lectaryThemeDark() {
   final ThemeData base = lectaryThemeLight();
   return base.copyWith(
@@ -39,4 +38,10 @@ ThemeData lectaryThemeDark() {
         headline6: TextStyle(color: ColorsLectary.white),
         subtitle1: TextStyle(color: ColorsLectary.white)),
   );
+}
+
+class CustomTextStyle {
+  static TextStyle hyperlink(BuildContext context) {
+    return Theme.of(context).textTheme.bodyText1.copyWith(color: ColorsLectary.red);
+  }
 }

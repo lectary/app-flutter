@@ -10,6 +10,7 @@ import 'package:lectary/models/response_type.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/dialogs.dart';
+import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -78,13 +79,14 @@ class LecturePackageItem extends StatelessWidget {
                 ? Container(
                     padding: EdgeInsets.only(left: 10, right: 10),
                     child: Html(
+                      data: uppercase ? abstractText.toUpperCase() : abstractText,
                       customTextStyle: (dom.Node node, TextStyle baseStyle) {
                         return baseStyle.copyWith(
                           fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
                           fontFamily: Theme.of(context).textTheme.bodyText1.fontFamily,
                         );
                       },
-                      data: uppercase ? abstractText.toUpperCase() : abstractText,
+                      linkStyle: CustomTextStyle.hyperlink(context),
                       onLinkTap: (url) async {
                         if (await canLaunch(url)) {
                           await launch(url);

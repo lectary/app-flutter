@@ -4,6 +4,7 @@ import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
+import 'package:lectary/utils/global_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -52,14 +53,14 @@ class _AboutScreenState extends State<AboutScreen> {
               padding: EdgeInsets.all(15),
               child: RichText(
                 text: TextSpan(
-                    style: TextStyle(fontSize: 18, color: Colors.black),
+                    style: Theme.of(context).textTheme.bodyText1,
                     children: [
                       TextSpan(
                           text: AppLocalizations.of(context).aboutIntroductionPart1,
                           children: [
                             TextSpan(
                               text: "Lectary.net.\n",
-                              style: TextStyle(color: ColorsLectary.red),
+                              style: CustomTextStyle.hyperlink(context),
                               recognizer: _buildTapGestureRecognizer('https://lectary.net'),
                             ),
                             TextSpan(
@@ -71,7 +72,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           children: [
                             TextSpan(
                               text: "info@lectary.net.\n\n",
-                              style: TextStyle(color: ColorsLectary.red),
+                              style: CustomTextStyle.hyperlink(context),
                               recognizer: _buildTapGestureRecognizer('mailto:info@lectary.net')
                             ),
                           ]),
@@ -80,7 +81,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           children: [
                             TextSpan(
                               text: "lectary.net/anleitung\n\n",
-                              style: TextStyle(color: ColorsLectary.red),
+                              style: CustomTextStyle.hyperlink(context),
                               recognizer:_buildTapGestureRecognizer('https://lectary.net/anleitung4.html')
                             ),
                           ]),
@@ -89,7 +90,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           children: [
                             TextSpan(
                               text: "Flutter.dev.\n\n",
-                              style: TextStyle(color: ColorsLectary.red),
+                              style: CustomTextStyle.hyperlink(context),
                               recognizer: _buildTapGestureRecognizer('https://flutter.dev')
                             ),
                             TextSpan(
@@ -97,13 +98,13 @@ class _AboutScreenState extends State<AboutScreen> {
                                 children: [
                                   TextSpan(
                                     text: "Material Icons",
-                                    style: TextStyle(color: ColorsLectary.red),
+                                    style: CustomTextStyle.hyperlink(context),
                                     recognizer: _buildTapGestureRecognizer('https://material.io/resources/icons/')
                                   ),
                                   TextSpan(text: " & "),
                                   TextSpan(
                                     text: "FontAwesome\n\n",
-                                    style: TextStyle(color: ColorsLectary.red),
+                                    style: CustomTextStyle.hyperlink(context),
                                     recognizer: _buildTapGestureRecognizer('https://fontawesome.com/')
                                   ),
                                 ]),
@@ -112,7 +113,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                 children: [
                                   TextSpan(
                                     text: "FreePik ",
-                                    style: TextStyle(color: ColorsLectary.red),
+                                    style: CustomTextStyle.hyperlink(context),
                                     recognizer: _buildTapGestureRecognizer('https://www.flaticon.com/authors/freepik')
                                   ),
                                   TextSpan(
@@ -120,7 +121,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                           .aboutIconCreationCreditPart2),
                                   TextSpan(
                                     text: "flaticon.com",
-                                    style: TextStyle(color: ColorsLectary.red),
+                                    style: CustomTextStyle.hyperlink(context),
                                     recognizer: _buildTapGestureRecognizer('https://flaticon.com')
                                   ),
                                 ]),
