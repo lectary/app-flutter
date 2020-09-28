@@ -27,14 +27,23 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   TextEditingController textEditingController = TextEditingController();
   // needed to control screen focus, i.e. handle the keyboard
   FocusNode focus = FocusNode();
+  LectureViewModel _lectureViewModel;
 
   @override
   void initState() {
     super.initState();
     /// Callback for loading lectures on first frame once the layout is finished completely
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-      Provider.of<LectureViewModel>(context, listen: false).loadLectaryData()
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _lectureViewModel = Provider.of<LectureViewModel>(context, listen: false);
+      _lectureViewModel.loadLectaryData();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _lectureViewModel.resetCurrentFilter());
+    super.dispose();
   }
 
   @override

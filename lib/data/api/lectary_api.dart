@@ -43,6 +43,8 @@ class LectaryApi {
       File file = File('$dir/${lecture.fileName}');
       await file.writeAsBytes(response.bodyBytes);
       return file;
+    } else if (response.statusCode == 404) {
+      throw ServerResponseException("Lecture: ${lecture.lesson} not found!");
     } else {
       throw ServerResponseException(
           "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
@@ -63,6 +65,8 @@ class LectaryApi {
       File file = File('$dir/${abstract.fileName}');
       await file.writeAsBytes(response.bodyBytes);
       return file;
+    } else if (response.statusCode == 404) {
+      throw ServerResponseException("Abstract: ${abstract.pack} not found!");
     } else {
       throw ServerResponseException(
           "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
@@ -83,6 +87,8 @@ class LectaryApi {
       File file = File('$dir/${coding.fileName}');
       await file.writeAsBytes(response.bodyBytes);
       return file;
+    } else if (response.statusCode == 404) {
+      throw ServerResponseException("Coding: ${coding.lang} not found!");
     } else {
       throw ServerResponseException(
           "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");

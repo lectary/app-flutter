@@ -48,6 +48,8 @@ class LectureViewModel with ChangeNotifier {
   List<LecturePackage> _filteredLectures = List();
   List<LecturePackage> get availableLectures => _filteredLectures;
 
+  String _currentFilter;
+
   /// contains all persisted [Vocable]
   List<Vocable> _currentVocables = List();
   List<Vocable> get currentVocables => _currentVocables;
@@ -59,6 +61,9 @@ class LectureViewModel with ChangeNotifier {
   LectureViewModel({@required lectureRepository})
       : _lectureRepository = lectureRepository;
 
+  void resetCurrentFilter() {
+    _currentFilter = "";
+  }
 
   /// Loads all available local and remote api-data, i.e. [Lecture], [Abstract], [Coding]
   /// Returns a [Future] and indicates its loading status via a separate variable [_availableLectureStatus] of type [Response]
@@ -114,8 +119,11 @@ class LectureViewModel with ChangeNotifier {
       groupedLectureList.sort((p1, p2) => Utils.customCompareTo(p1.title, p2.title));
 
       _availableLectures = groupedLectureList;
-      // assignment by reference
-      _filteredLectures = _availableLectures;
+      if (_currentFilter != null && _currentFilter.isNotEmpty) {
+        filterLectureList(_currentFilter);
+      } else {
+        _filteredLectures = _availableLectures; // assignment by reference
+      }
       log("loaded lectures");
 
       // load again all persisted abstracts and add them to the corresponding packs
@@ -319,6 +327,8 @@ class LectureViewModel with ChangeNotifier {
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
     int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
 
+    LectureStatus oldLectureStatus = _availableLectures[indexPack].children[indexLecture].lectureStatus;
+
     // update LectureStatus and notify listeners for updating UI
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
     notifyListeners();
@@ -336,7 +346,18 @@ class LectureViewModel with ChangeNotifier {
       await _lectureRepository.deleteVocablesByLectureId(lecture.id);
       await _lectureRepository.deleteLecture(lecture);
 
-      _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
+      // check if removed lecture is still available remotely
+      if (oldLectureStatus == LectureStatus.removed) {
+        // remove lecture from lecture list as well from the filtered list if not available anymore remotely
+        _availableLectures[indexPack].children.removeAt(indexLecture);
+        if (_currentFilter != null && _currentFilter.isNotEmpty) {
+          int indexPackFilter = _filteredLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
+          int indexLectureFilter = _filteredLectures[indexPackFilter].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+          _filteredLectures[indexPackFilter].children.removeAt(indexLectureFilter);
+        }
+      } else {
+        _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.notPersisted;
+      }
       notifyListeners();
 
       return Response.completed();
@@ -409,6 +430,8 @@ class LectureViewModel with ChangeNotifier {
   /// [_availableLectures] and assigns it by reference again to [_filteredLectures] and notifies listeners
   /// Operations on the original list [_availableLectures] will therefore also affect the corresponding elements in [_filteredLectures]
   void filterLectureList(String filter) {
+    _currentFilter = filter;
+
     List<Lecture> tempListLectures = List();
     _availableLectures.forEach((pack) => pack.children.forEach((lecture) {
       if (lecture.pack.toLowerCase().contains(filter.toLowerCase()) ||
@@ -745,5 +768,4 @@ class LectureViewModel with ChangeNotifier {
       throw CodingException("extracting coding entries from json failed: ${e.toString()}");
     }
   }
-
 }
