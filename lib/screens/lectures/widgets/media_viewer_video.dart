@@ -93,7 +93,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
         if (snapshot.connectionState == ConnectionState.done) {
           _controller.addListener(_restartVideoListener);
 
-          widget.slowMode ? _controller.setSpeed(widget.slowModeSpeed) : _controller.setSpeed(1);
+          widget.slowMode ? _controller.setPlaybackSpeed(widget.slowModeSpeed) : _controller.setPlaybackSpeed(1);
           widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
 
           // resets video if its running but its not the current visible one in the carousel
