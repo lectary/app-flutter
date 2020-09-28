@@ -6,7 +6,7 @@ import 'package:lectary/utils/utils.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('extracting meta info', () {
+  group('extracting lecture metadata', () {
     test('Test1 - successful extraction', () {
       String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-03-03.zip";
       Map<String, dynamic> metaInfos = Lecture.extractMetadata(zipFile);
@@ -22,7 +22,37 @@ void main() {
       expect(metaInfos, expectedMap);
     });
 
-    test('Test2 - missing zip ending', () {
+    test('Test2 - successful extraction with malformed fileName with quad "-"', () {
+      String zipFile = "PACK--Testung----LESSON--_Oelfarben----LANG--_OeGS-DE---DATE--2020-03-03.zip";
+      Map<String, dynamic> metaInfos = Lecture.extractMetadata(zipFile);
+
+      Map<String, dynamic> expectedMap = Map.of({
+        "PACK": "Testung",
+        "LESSON": "Ölfarben",
+        "LESSON-SORT": "ozzzzlfarben",
+        "LANG-MEDIA": "ÖGS",
+        "LANG-VOCABLE": "DE",
+        "DATE": "2020-03-03",
+      });
+      expect(metaInfos, expectedMap);
+    });
+
+    test('Test3 - successful extraction with malformed fileName without "---"', () {
+      String zipFile = "PACK--Testung--LESSON--_Oelfarben--LANG--_OeGS-DE--DATE--2020-03-03.zip";
+      Map<String, dynamic> metaInfos = Lecture.extractMetadata(zipFile);
+
+      Map<String, dynamic> expectedMap = Map.of({
+        "PACK": "Testung",
+        "LESSON": "Ölfarben",
+        "LESSON-SORT": "ozzzzlfarben",
+        "LANG-MEDIA": "ÖGS",
+        "LANG-VOCABLE": "DE",
+        "DATE": "2020-03-03",
+      });
+      expect(metaInfos, expectedMap);
+    });
+
+    test('Test4 - missing zip ending', () {
       String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-03-03";
       try {
         Lecture.extractMetadata(zipFile);
@@ -33,7 +63,7 @@ void main() {
       }
     });
 
-    test('Test3 - missing mandatory meta info', () {
+    test('Test5 - missing mandatory meta info', () {
       String zipFile1 = "LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-03-03.zip";
       try {
         Lecture.extractMetadata(zipFile1);
@@ -60,7 +90,7 @@ void main() {
       }
     });
 
-    test('Test4 - malformed lang with only one language', () {
+    test('Test6 - malformed lang with only one language', () {
       String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS---DATE--2020-03-03.zip";
       try {
         Lecture.extractMetadata(zipFile);
@@ -71,7 +101,7 @@ void main() {
       }
     });
 
-    test('Test5 - malformed lang with invalid separator', () {
+    test('Test7 - malformed lang with invalid separator', () {
       String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS+DE---DATE--2020-03-03.zip";
       try {
         Lecture.extractMetadata(zipFile);
@@ -82,23 +112,39 @@ void main() {
       }
     });
 
-    test('Test6 - malformed filename without "---"', () {
-      String zipFile = "PACK--Testung--LESSON--_Oelfarben--LANG--_OeGS-DE--DATE--2020-03-03.zip";
-      try {
-        Lecture.extractMetadata(zipFile);
-        fail("should had thrown exception");
-      } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
-      }
-    });
-
-    test('Test7 - malformed date format', () {
+    test('Test8 - malformed date format', () {
       String zipFile = "PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-3-03.zip";
       try {
         Lecture.extractMetadata(zipFile);
         fail("should had thrown exception");
       } catch(e) {
         expect(e, TypeMatcher<LectureException>());
+        expect(e.toString(), contains("Malformed DATE"));
+      }
+    });
+
+    test('Test9 - leading "---" should be filtered', () {
+      String zipFile = "---PACK--Testung---LESSON--_Oelfarben---LANG--_OeGS-DE---DATE--2020-03-03.zip";
+      Map<String, dynamic> resultMap = Lecture.extractMetadata(zipFile);
+      Map<String, dynamic> expectedMap = Map.of({
+        "PACK": "Testung",
+        "LESSON": "Ölfarben",
+        "LESSON-SORT": "ozzzzlfarben",
+        "LANG-MEDIA": "ÖGS",
+        "LANG-VOCABLE": "DE",
+        "DATE": "2020-03-03",
+      });
+      expect(resultMap, expectedMap);
+    });
+
+    test('Test10 - malformed mandatory metadata - keys merged together', () {
+      String zipFile = "PACKLESSONLANG--Testung---T--_Oelfarben---T--_OeGS-DE---DATE--2020-03-03.zip";
+      try {
+        Lecture.extractMetadata(zipFile);
+        fail("should had thrown exception");
+      } catch(e) {
+        expect(e, TypeMatcher<LectureException>());
+        expect(e.toString(), contains("Lecture has not mandatory metadata"));
       }
     });
   });

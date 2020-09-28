@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:lectary/utils/exceptions/lecture_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
-
 enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvailable }
 
 /// Entity class representing a lecture.
@@ -128,22 +127,37 @@ class Lecture {
   /// Used keys {optional}: PACK, LESSON, LESSON-SORT, LANG-MEDIA, LANG-VOCABLE, {AUDIO}, {DATE}, {SORT}
   @visibleForTesting
   static Map<String, dynamic> extractMetadata(String fileName) {
+    const List<String> mandatoryMetadataKeys = ["PACK", "LESSON", "LANG"];
+    const List<String> optionalMetadataKeys = ["AUDIO", "DATE", "SORT"];
+    const List<String> metadataKeys = [...mandatoryMetadataKeys, ...optionalMetadataKeys];
     Map<String, dynamic> result = Map();
+    const List<String> mandatoryResultMetadataKeys = ["PACK", "LESSON", "LESSON-SORT", "LANG-MEDIA", "LANG-VOCABLE"];
 
+    // check fileType
     if (!fileName.contains(".zip"))
       throw new LectureException("Missing .zip ending in filename: $fileName");
-    String fileWithoutType = fileName.split(".zip")[0];
-    if (!fileWithoutType.contains("PACK") || !fileWithoutType.contains("LESSON") || !fileWithoutType.contains("LANG")) {
-      throw new LectureException("Lecture has not mandatory meta information!\n"
-          "Missing:"
-          "${!fileWithoutType.contains("PACK") ? " PACK " : ""}"
-          "${!fileWithoutType.contains("LESSON") ? " LESSON " : ""}"
-          "${!fileWithoutType.contains("LANG") ? " LANG " : ""}"
-          "\nFile: $fileWithoutType"
-      );
+
+    // checking if fileName contains mandatory metadata with key-value separator e.g. 'PACK--'
+    mandatoryMetadataKeys.forEach((key) {
+      if (!RegExp(key + r'\b-{2}\b').hasMatch(fileName)) {
+        throw new LectureException("Lecture has not mandatory metadata!\n"
+            "Missing: "
+            "$key"
+            "\nFile: $fileName"
+        );
+      }
+    });
+
+    // counting number of metadata keys with key-value separator ('KEY--<VALUE>')
+    int keyMatchCount = metadataKeys.map((key) => RegExp(key + r'\b-{2}\b').hasMatch(fileName) ? 1 : 0).reduce((i, j) => i + j);
+    // The following regex finds all groups of '<key>--<value>' which are followed by at least 2x '-' or '.zip'.
+    // Therefore, it doesn't matter if the formal key-separator '---' is malformed and contains only two or more chars of '-'
+    List<String> metadata = RegExp(r'([a-zA-Z0-9]+\b--\b.*?)(?=\b--|.zip)').allMatches(fileName).map((e) => e.group(0)).toList();
+    // checking if as many key-value pairs could be extracted as the number of matching keys
+    if (metadata.length != keyMatchCount) {
+      throw new LectureException("Malformed metadata: $fileName");
     }
 
-    List<String> metadata = fileWithoutType.split("---");
     for (String metadatum in metadata) {
       List<String> split = metadatum.split("--");
       if (split.length != 2) {
@@ -194,6 +208,17 @@ class Lecture {
           break;
       }
     }
+
+    // Check again if all mandatory keys could be processed
+    mandatoryResultMetadataKeys.forEach((key) {
+      if (!result.containsKey(key)) {
+        throw new LectureException("Lecture has not mandatory metadata!\n"
+            "Missing: "
+            "$key"
+            "\nFile: $fileName"
+        );
+      }
+    });
     return result;
   }
 
