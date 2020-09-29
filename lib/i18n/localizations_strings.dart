@@ -41,7 +41,9 @@ const String
     EmptyLectures = 'empty_lectures',
     MinMaxLectureSizes = 'min_max_lecture_sizes',
     DownloadAndManageLectures = 'download_and_manage_lectures',
-
+    DownloadAndManageLecturesFromLangPart1 = 'download_and_manage_lectures_from_lang_part_1',
+    DownloadAndManageLecturesFromLangPart2 = 'download_and_manage_lectures_from_lang_part_2',
+    LearningLanguageCanBeChanged = 'learning_language_can_be_changed',
     // lecture-search-screen
     NoVocablesFound = 'no_vocables_found',
 
@@ -125,6 +127,9 @@ final de = {
   EmptyLectures: 'Keine Lektionen vorhanden.',
   MinMaxLectureSizes: 'Einzelne Lektionen sind ungefähr 5MB bis 20MB gross.',
   DownloadAndManageLectures: 'Lektionen herunterladen und verwalten.',
+  DownloadAndManageLecturesFromLangPart1: 'Lektionen in ',
+  DownloadAndManageLecturesFromLangPart2: ' herunterladen und verwalten.',
+  LearningLanguageCanBeChanged: 'Ihre Sprachauswahl kann jederzeit in den Einstellungen geändert werden.',
 
   // lecture-search-screen
   NoVocablesFound: 'Keine Vokabeln gefunden.',
@@ -208,6 +213,9 @@ final en = {
   EmptyLectures: 'No lectures available!',
   MinMaxLectureSizes: 'Single lectures have a file size of about 5MB to 20MB.',
   DownloadAndManageLectures: 'Download and manage lectures.',
+  DownloadAndManageLecturesFromLangPart1: 'Download and manage lectures in ',
+  DownloadAndManageLecturesFromLangPart2: '.',
+  LearningLanguageCanBeChanged: 'Your language selection can be changed at any time in the settings.',
 
   // lecture-search-screen
   NoVocablesFound: 'No vocables found',

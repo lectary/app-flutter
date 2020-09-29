@@ -6,6 +6,7 @@ import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/drawer/main_drawer.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
+import 'package:lectary/screens/lectures/lecture_startup_screen.dart';
 import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
@@ -41,6 +42,7 @@ class LectureMainScreen extends StatelessWidget {
               List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
               bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
               Selection selection = context.select((CarouselViewModel model) => model.currentSelection);
+              bool freshAppInstallation = Provider.of<SettingViewModel>(context, listen: false).settingAppFreshInstalled;
               log("build lecture-main-screen--lectures");
               return Scaffold(
                   // to avoid bottom overflow when keyboard on search-screen is opened
@@ -104,7 +106,9 @@ class LectureMainScreen extends StatelessWidget {
                   ),
                   body: vocables.isNotEmpty
                       ? LectureScreen(vocables: vocables)
-                      : LectureNotAvailableScreen());
+                      : freshAppInstallation ? LectureStartupScreen()
+                      : LectureNotAvailableScreen()
+              );
             } else {
               log("build lecture-main-screen--loading");
               return Scaffold(

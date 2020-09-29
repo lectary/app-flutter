@@ -10,6 +10,7 @@ import 'package:lectary/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingViewModel with ChangeNotifier {
+  bool settingAppFreshInstalled = Constants.defaultAppFreshInstalled;
   bool settingPlayMediaWithSound = Constants.defaultPlayMediaWithSound;
   bool settingShowVideoTimeline = Constants.defaultShowVideoTimeline;
   bool settingShowMediaOverlay = Constants.defaultShowMediaOverlay;
@@ -34,6 +35,7 @@ class SettingViewModel with ChangeNotifier {
   Future<void> loadLocalSettings() async {
     log("loading local app settings");
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    settingAppFreshInstalled = prefs.getBool(Constants.keySettingAppFreshInstalled) ?? Constants.defaultAppFreshInstalled;
     settingPlayMediaWithSound = prefs.getBool(Constants.keySettingPlayMediaWithSound) ?? Constants.defaultPlayMediaWithSound;
     settingShowVideoTimeline = prefs.getBool(Constants.keySettingShowVideoTimeline) ?? Constants.defaultShowVideoTimeline;
     settingShowMediaOverlay = prefs.getBool(Constants.keySettingShowMediaOverlay) ?? Constants.defaultShowMediaOverlay;
@@ -83,6 +85,12 @@ class SettingViewModel with ChangeNotifier {
 
     _isUpdatingLanguages = false;
     notifyListeners();
+  }
+
+  Future<void> setSettingAppFreshInstalled(bool freshInstalled) async {
+    settingAppFreshInstalled = freshInstalled;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(Constants.keySettingAppFreshInstalled, settingAppFreshInstalled);
   }
 
   Future<void> toggleSettingPlayMediaWithSound() async {

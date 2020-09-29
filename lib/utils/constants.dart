@@ -1,6 +1,7 @@
 class Constants {
   // general
   static const versionCommitHash = "d92316b08bddead71bfb76884b5d4ecb9693b21f";
+  static bool defaultAppFreshInstalled = true;
 
   // device breakpoints for responsive layout
   static const double breakpointTablet = 800;
@@ -34,6 +35,7 @@ class Constants {
   static const String keySelectionLecture = "lecture";
   static const String keyItemIndex = "itemIndex";
 
+  static const String keySettingAppFreshInstalled = "settingAppFreshInstalled";
   static const String keySettingPlayMediaWithSound = "settingPlayMediaWithSound";
   static const String keySettingShowVideoTimeline = "settingShowVideoTimeline";
   static const String keySettingShowMediaOverlay = "settingShowMediaOverlay";

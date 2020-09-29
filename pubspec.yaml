@@ -35,6 +35,7 @@ dependencies:
   video_player: ^0.11.0
   carousel_slider: ^2.1.0
   shared_preferences: ^0.5.8
+  country_icons: ^1.1.1
 
 
   # The following adds the Cupertino Icons font to your application.

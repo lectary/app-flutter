@@ -237,6 +237,11 @@ class LectureViewModel with ChangeNotifier {
       _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.persisted;
       notifyListeners();
 
+      // set setting of "freshAppInstallation" to false
+      if (_settingViewModel.settingAppFreshInstalled) {
+        _settingViewModel.setSettingAppFreshInstalled(false);
+      }
+
       return Response.completed();
     } catch(e) {
       log("downloading lecture failed: ${e.toString()}");
