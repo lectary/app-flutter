@@ -41,8 +41,8 @@ class LectureRepository {
     return _lectureDatabase.lectureDao.findAllLectures();
   }
 
-  Future<List<Lecture>> findAllLecturesWithLang(String lang) {
-    return _lectureDatabase.lectureDao.findAllLecturesWithLang(lang);
+  Future<List<Lecture>> findAllLecturesWithLang(String langMedia) {
+    return _lectureDatabase.lectureDao.findAllLecturesWithLang(langMedia);
   }
 
   Future<int> insertLecture(Lecture lecture) {
@@ -98,6 +98,10 @@ class LectureRepository {
 
   Future<void> deleteAllVocables() {
     return _lectureDatabase.vocableDao.deleteAllVocables();
+  }
+
+  Future<void> deleteAllVocablesByLangMedia(String langMedia) {
+    return _lectureDatabase.vocableDao.deleteAllVocablesByLangMedia(langMedia);
   }
 
   Future<void> resetAllVocableProgress() {

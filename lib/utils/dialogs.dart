@@ -62,6 +62,59 @@ class Dialogs {
     );
   }
 
+  static Future<void> showAlertDialogThreeButtons(
+      {@required BuildContext context,
+        @required String title,
+        @required String submitText1,
+        @required String submitText2,
+        @required Function submitFunc1,
+        @required Function submitFunc2}) async {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          actions: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                FlatButton(
+                  child: Text(
+                    submitText1,
+                    style: TextStyle(color: ColorsLectary.red),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    submitFunc1();
+                  },
+                ),
+                FlatButton(
+                  child: Text(
+                    submitText2,
+                    style: TextStyle(color: ColorsLectary.red),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    submitFunc2();
+                  },
+                ),
+                FlatButton(
+                    child: Text(
+                      AppLocalizations.of(context).cancel,
+                      style: TextStyle(color: ColorsLectary.lightBlue),
+                    ),
+                    onPressed: () => Navigator.of(context).pop()
+                )
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   /// A simple [AlertDialog] for errors that can be reported to the Lectary team
   static Future<void> showErrorReportDialog(
       {@required BuildContext context,

@@ -10,8 +10,8 @@ abstract class LectureDao {
   @Query("SELECT * FROM lectures")
   Future<List<Lecture>> findAllLectures();
 
-  @Query("SELECT * FROM lectures WHERE lang_vocable = :lang")
-  Future<List<Lecture>> findAllLecturesWithLang(String lang);
+  @Query("SELECT * FROM lectures WHERE lang_media = :langMedia")
+  Future<List<Lecture>> findAllLecturesWithLang(String langMedia);
 
   @insert
   Future<int> insertLecture(Lecture lecture);

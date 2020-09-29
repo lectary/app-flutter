@@ -222,10 +222,10 @@ class _$LectureDao extends LectureDao {
   }
 
   @override
-  Future<List<Lecture>> findAllLecturesWithLang(String lang) async {
+  Future<List<Lecture>> findAllLecturesWithLang(String langMedia) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM lectures WHERE lang_vocable = ?',
-        arguments: <dynamic>[lang],
+        'SELECT * FROM lectures WHERE lang_media = ?',
+        arguments: <dynamic>[langMedia],
         mapper: _lecturesMapper);
   }
 
@@ -349,6 +349,13 @@ class _$VocableDao extends VocableDao {
   @override
   Future<void> deleteAllVocables() async {
     await _queryAdapter.queryNoReturn('DELETE FROM vocables');
+  }
+
+  @override
+  Future<void> deleteAllVocablesByLangMedia(String langMedia) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE FROM vocables WHERE lecture_id IN(SELECT vocables.lecture_id FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lang_media = ?)',
+        arguments: <dynamic>[langMedia]);
   }
 
   @override

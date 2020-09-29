@@ -387,6 +387,26 @@ class LectureViewModel with ChangeNotifier {
     await _lectureRepository.deleteAllCoding();
   }
 
+  /// Deletes all lectures with a specific [Lecture.langMedia] and their vocables and corresponding media files
+  /// Returns a [Future] of type [Void]
+  Future<void> deleteAllLecturesFromLangMedia(String langMedia) async {
+    log("deleting all lectures and their contents of language $langMedia");
+    List<Lecture> lectures = await _lectureRepository.findAllLecturesWithLang(langMedia);
+    log("deleting media files");
+    await Future.forEach(lectures, (lecture) => _deleteMediaFiles(lecture));
+    log("deleting database entries");
+    await _lectureRepository.deleteAllVocablesByLangMedia(langMedia);
+    await Future.forEach(lectures, (lecture) {
+      // Check if coding needs to be deleted
+      try {
+        _checkDeletingOfCoding(lecture);
+      } catch(e) {
+        log("error when deleting coding: ${e.toString()}");
+      }
+      return _lectureRepository.deleteLecture(lecture);
+    });
+  }
+
   /// Deletes media files related to the lecture
   /// Returns a [Future] of type [Void]
   Future<void> _deleteMediaFiles(Lecture lecture) async {

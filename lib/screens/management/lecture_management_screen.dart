@@ -9,6 +9,7 @@ import 'package:lectary/screens/management/widgets/lecture_package_item.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:lectary/widgets/search_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -159,6 +160,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
   // builds a listView with ListTiles based on the generated item-list
   Widget _generateListView(List<LecturePackage> lectures) {
+    final String langMedia = Provider.of<SettingViewModel>(context, listen: false).settingLearningLanguage;
     return RefreshIndicator(
       color: ColorsLectary.lightBlue,
       onRefresh: () async {
@@ -183,13 +185,20 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                   child: ListTile(
                     leading: Icon(Icons.delete_forever),
                     title: Text(AppLocalizations.of(context).deleteAllLectures),
-                    onTap: () => Dialogs.showAlertDialog(
+                    onTap: () => Dialogs.showAlertDialogThreeButtons(
                         context: context,
                         title: AppLocalizations.of(context).deleteAllLecturesQuestion,
-                        submitText: AppLocalizations.of(context).deleteAll,
-                        submitFunc: () async {
+                        submitText1: AppLocalizations.of(context).deleteAllLectures,
+                        submitText2: AppLocalizations.of(context).deleteOnlyLecturesFromLangPart1 +
+                            langMedia + AppLocalizations.of(context).deleteOnlyLecturesFromLangPart2,
+                        submitFunc1: () async {
                           Dialogs.showLoadingDialog(context: context, text: AppLocalizations.of(context).deletingLectures);
                           await Provider.of<LectureViewModel>(context, listen: false).deleteAllLectures();
+                          Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
+                        },
+                        submitFunc2: () async {
+                          Dialogs.showLoadingDialog(context: context, text: AppLocalizations.of(context).deletingLectures);
+                          await Provider.of<LectureViewModel>(context, listen: false).deleteAllLecturesFromLangMedia(langMedia);
                           Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
                         }),
                   ),

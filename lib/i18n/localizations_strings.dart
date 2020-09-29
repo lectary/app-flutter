@@ -49,7 +49,8 @@ const String
     NoLecturesFound = 'no_lectures_found',
     DeleteAllLectures = 'delete_all_lectures',
     DeleteAllLecturesQuestion = 'delete_all_lectures_question',
-    DeleteAll = 'delete_all',
+    DeleteOnlyLecturesFromLangPart1 = 'delete_only_lectures_from_part_1',
+    DeleteOnlyLecturesFromLangPart2 = 'delete_only_lectures_from_part_2',
     DeletingLectures = 'deleting_lectures',
 
     NoInternetConnection = 'no_internet_connection',
@@ -130,9 +131,10 @@ final de = {
 
   // lecture-management-screen
   NoLecturesFound: 'Keine Lektionen gefunden.',
-  DeleteAllLectures: 'Alle Lektionen löschen.',
-  DeleteAllLecturesQuestion: 'Möchten Sie wirklich alle Lektionen löschen?',
-  DeleteAll: 'Alle löschen',
+  DeleteAllLectures: 'Alle Lektionen löschen',
+  DeleteAllLecturesQuestion: 'Möchten Sie alle Lektionen löschen oder nur die Lektionen der ausgewählten Lernsprache?',
+  DeleteOnlyLecturesFromLangPart1: 'Nur Lektionen aus ',
+  DeleteOnlyLecturesFromLangPart2: ' löschen',
   DeletingLectures: 'Lösche Lektionen...',
 
   NoInternetConnection: 'Keine Internetverbindung!',
@@ -212,9 +214,10 @@ final en = {
 
   // lecture-management-screen
   NoLecturesFound: 'No lectures found',
-  DeleteAllLectures: 'Delete all lectures.',
-  DeleteAllLecturesQuestion: 'Are you sure you want to delete all lectures?',
-  DeleteAll: 'Delete all',
+  DeleteAllLectures: 'Delete all lectures',
+  DeleteAllLecturesQuestion: 'Do you want to delete all lectures or only the lectures of the current learning language?',
+  DeleteOnlyLecturesFromLangPart1: 'Delete only lectures from ',
+  DeleteOnlyLecturesFromLangPart2: '',
   DeletingLectures: 'Deleting lectures...',
 
   NoInternetConnection: 'No internet connection!!',

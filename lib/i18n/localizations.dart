@@ -81,7 +81,8 @@ class AppLocalizations {
   String get noLecturesFound => _getValue(NoLecturesFound);
   String get deleteAllLectures => _getValue(DeleteAllLectures);
   String get deleteAllLecturesQuestion => _getValue(DeleteAllLecturesQuestion);
-  String get deleteAll => _getValue(DeleteAll);
+  String get deleteOnlyLecturesFromLangPart1 => _getValue(DeleteOnlyLecturesFromLangPart1);
+  String get deleteOnlyLecturesFromLangPart2 => _getValue(DeleteOnlyLecturesFromLangPart2);
   String get deletingLectures => _getValue(DeletingLectures);
 
   String get noInternetConnection => _getValue(NoInternetConnection);

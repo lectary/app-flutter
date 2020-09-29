@@ -34,6 +34,11 @@ abstract class VocableDao {
   @Query("DELETE FROM vocables")
   Future<void> deleteAllVocables();
 
+  @Query("DELETE FROM vocables WHERE lecture_id IN"
+      "(SELECT vocables.lecture_id FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id "
+      "WHERE lang_media = :langMedia"")")
+  Future<void> deleteAllVocablesByLangMedia(String langMedia);
+
   @Query("UPDATE vocables SET vocable_progress = 0")
   Future<void> resetAllVocableProgress();
 }
