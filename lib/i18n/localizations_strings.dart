@@ -84,7 +84,7 @@ const String
 // Language de
 final de = {
   // titles
-  AppTitle: 'Lectary 4',
+  AppTitle: 'Lectary',
   ScreenManagementTitle: 'Lektionen verwalten',
   ScreenManagementSearchHint: 'Suche',
   ScreenSettingsTitle: 'Einstellungen',
@@ -166,7 +166,7 @@ final de = {
 // Language en
 final en = {
   // titles
-  AppTitle: 'Lectary 4',
+  AppTitle: 'Lectary',
   ScreenManagementTitle: 'Lecture management',
   ScreenManagementSearchHint: 'Search',
   ScreenSettingsTitle: 'Settings',

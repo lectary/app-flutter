@@ -25,7 +25,7 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "DE"),
+              langMedia: "ÖGS"),
           Lecture(
               id: 1,
               fileName: "",
@@ -35,7 +35,7 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "EN")
+              langMedia: "DGS")
         });
         List<Lecture> remoteLectures = List.of({
           Lecture(
@@ -47,7 +47,7 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "DE"),
+              langMedia: "ÖGS"),
           Lecture(
               id: 1,
               fileName: "",
@@ -73,7 +73,7 @@ void main() async {
         await settingViewModel.updateLearningLanguages();
 
         List<String> resultLangs = settingViewModel.learningLanguagesList;
-        List<String> correctList = List.of({'DE', 'EN', 'ES'});
+        List<String> correctList = List.of({'ÖGS', 'DGS', 'ES'});
         expect(resultLangs, containsAll(correctList));
       });
 
@@ -90,7 +90,7 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "DE"),
+              langMedia: "ÖGS"),
           Lecture(
               id: 1,
               fileName: "",
@@ -114,7 +114,7 @@ void main() async {
         await settingViewModel.updateLearningLanguages();
 
         List<String> resultLangs = settingViewModel.learningLanguagesList;
-        List<String> correctList = List.of({'DE', 'ES'});
+        List<String> correctList = List.of({'ÖGS', 'ES'});
         expect(resultLangs, containsAll(correctList));
       });
 
@@ -129,7 +129,7 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "DE"),
+              langMedia: "ÖGS"),
           Lecture(
               id: 1,
               fileName: "",
@@ -155,7 +155,7 @@ void main() async {
         await settingViewModel.updateLearningLanguages();
 
         List<String> resultLangs = settingViewModel.learningLanguagesList;
-        List<String> correctList = List.of({'DE', 'EN'});
+        List<String> correctList = List.of({'ÖGS', 'DGS'});
         expect(resultLangs, containsAll(correctList));
       });
 
@@ -170,7 +170,7 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "DE"),
+              langMedia: "ÖGS"),
           Lecture(
               id: 1,
               fileName: "",
@@ -180,7 +180,7 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "EN"),
+              langMedia: "DGS"),
         });
         List<Lecture> remoteLectures = List.of({
           Lecture(
@@ -192,7 +192,7 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "EN"),
+              langMedia: "DGS"),
           Lecture(
               id: 1,
               fileName: "",
@@ -220,7 +220,7 @@ void main() async {
         await settingViewModel.updateLearningLanguages();
 
         List<String> resultLangs = settingViewModel.learningLanguagesList;
-        List<String> correctList = List.of({'DE', 'EN', 'ES'});
+        List<String> correctList = List.of({'ÖGS', 'DGS', 'ES'});
         expect(resultLangs, containsAll(correctList));
       });
     });

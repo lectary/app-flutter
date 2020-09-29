@@ -15,13 +15,43 @@ import 'package:provider/provider.dart';
 
 class MockLectureRepository extends Mock implements LectureRepository {}
 
-class MockSettingsViewModel extends Mock implements SettingViewModel {}
-
 void main() async {
 
   group('Testing elements of search result screen |', () {
     Stream lectureStream = StreamController<List<Lecture>>().stream;
 
+    List<Lecture> mockLectures = List.of({
+      Lecture(
+          id: 1,
+          fileName: "",
+          fileSize: 5,
+          vocableCount: 5,
+          pack: "",
+          lesson: "",
+          lessonSort: "",
+          langVocable: "CZ",
+          langMedia: "ÖGS"),
+      Lecture(
+          id: 2,
+          fileName: "",
+          fileSize: 5,
+          vocableCount: 5,
+          pack: "",
+          lesson: "",
+          lessonSort: "",
+          langVocable: "CZ",
+          langMedia: "ÖGS"),
+      Lecture(
+          id: 3,
+          fileName: "",
+          fileSize: 5,
+          vocableCount: 5,
+          pack: "",
+          lesson: "",
+          lessonSort: "",
+          langVocable: "CZ",
+          langMedia: "ÖGS")
+    });
     List<Vocable> vocablesWithDuplicates = List.of({
       Vocable(id: 1, lectureId: 1, vocable: "Haus", vocableSort: "Haus", media: "", mediaType: "PNG"),
       Vocable(id: 2, lectureId: 1, vocable: "Haus", vocableSort: "Haus", media: "", mediaType: "TXT"),
@@ -31,7 +61,10 @@ void main() async {
 
     testWidgets('Test1 - testing correct appearance with vocable duplicates', (WidgetTester tester) async {
       final mockRepo = MockLectureRepository();
-      when(mockRepo.findAllVocables()).thenAnswer((_) async => Future.value(vocablesWithDuplicates));
+      mockLectures.forEach((lecture) {
+        mockRepo.insertLecture(lecture);
+      });
+      when(mockRepo.findVocablesByLangMedia("ÖGS")).thenAnswer((_) async => Future.value(vocablesWithDuplicates));
       when(mockRepo.watchAllLectures()).thenAnswer((_) => lectureStream);
 
       final key = GlobalKey<NavigatorState>();
@@ -40,11 +73,14 @@ void main() async {
           providers: [
             ChangeNotifierProvider<SettingViewModel>(
                 create: (BuildContext context) =>
-                    SettingViewModel(lectureRepository: mockRepo)
+                    SettingViewModel(lectureRepository: mockRepo)..settingLearningLanguage = "ÖGS"
             ),
-            ChangeNotifierProvider<CarouselViewModel>(
+            ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel>(
                 create: (BuildContext context) =>
-                    CarouselViewModel(lectureRepository: mockRepo)
+                    CarouselViewModel(lectureRepository: mockRepo),
+                update: (context, settingViewModel, carouselViewModel) =>
+                    carouselViewModel
+                      ..updateSettings(settingViewModel)
                       ..listenOnLocalLectures()
                       ..loadAllVocables(saveSelection: false),
                 lazy: false),

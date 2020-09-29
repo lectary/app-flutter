@@ -66,7 +66,8 @@ class Dialogs {
   static Future<void> showErrorReportDialog(
       {@required BuildContext context,
       @required String errorContext,
-      @required String errorMessage}) async {
+      @required String errorMessage,
+      @required reportCallback}) async {
     showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -78,15 +79,16 @@ class Dialogs {
               children: <Widget>[
                 Text(errorContext),
                 Divider(),
-                Text(errorMessage),
-                Divider(),
                 Text(AppLocalizations.of(context).reportErrorText),
                 FlatButton(
                     child: Text(
                       AppLocalizations.of(context).reportError,
                       style: TextStyle(color: ColorsLectary.lightBlue),
                     ),
-                    onPressed: () => Navigator.of(context).pop()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      reportCallback(errorMessage);
+                    }),
               ],
             ),
           ),

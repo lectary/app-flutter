@@ -185,7 +185,10 @@ class LecturePackageItem extends StatelessWidget {
                 Dialogs.showErrorReportDialog(
                     context: context,
                     errorContext: AppLocalizations.of(context).errorDownloadLecture,
-                    errorMessage: response.message);
+                    errorMessage: response.message,
+                    reportCallback:
+                        Provider.of<LectureViewModel>(context, listen: false)
+                            .reportErrorToLectaryServer);
               }
             });
       case LectureStatus.persisted:
@@ -198,7 +201,10 @@ class LecturePackageItem extends StatelessWidget {
                 Dialogs.showErrorReportDialog(
                     context: context,
                     errorContext: AppLocalizations.of(context).errorDownloadLecture,
-                    errorMessage: response.message);
+                    errorMessage: response.message,
+                    reportCallback:
+                        Provider.of<LectureViewModel>(context, listen: false)
+                            .reportErrorToLectaryServer);
               }
             });
       case LectureStatus.updateAvailable:
@@ -210,7 +216,10 @@ class LecturePackageItem extends StatelessWidget {
                 Dialogs.showErrorReportDialog(
                     context: context,
                     errorContext: AppLocalizations.of(context).errorDownloadLecture,
-                    errorMessage: response.message);
+                    errorMessage: response.message,
+                    reportCallback:
+                        Provider.of<LectureViewModel>(context, listen: false)
+                            .reportErrorToLectaryServer);
               }
             });
       default:

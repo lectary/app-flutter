@@ -141,6 +141,12 @@ class LectureViewModel with ChangeNotifier {
     }
   }
 
+  /// Method to send errors with lectures back to the remote api-server
+  void reportErrorToLectaryServer(String errorMessage) async {
+    print("report error");
+    // TODO implement
+  }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   ////// LECTURES ////////////////////////////////////////////////////////////////////////////////

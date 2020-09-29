@@ -25,7 +25,7 @@ class Constants {
   static const String defaultAppLanguage = "de";
   static const List<String> appLanguagesList = ["de", "en"];
   static const String defaultLearningLanguage = "ÖGS";
-  static const List<String> defaultLearningLanguagesList = ["ÖGS", "DGS", "EN"];
+  static const List<String> defaultLearningLanguagesList = ["ÖGS", "DGS"];
 
   // keys for SharedPreferences
   static const String keySelection = "selection";
