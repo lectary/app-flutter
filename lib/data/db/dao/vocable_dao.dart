@@ -4,14 +4,20 @@ import 'package:lectary/data/db/entities/vocable.dart';
 @dao
 abstract class VocableDao {
 
-  @Query("SELECT * FROM vocables ORDER BY vocable_sort ASC")
-  Future<List<Vocable>> findAllVocables();
+  @Query("SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id "
+      "WHERE lang_media = :langMedia ORDER BY vocable_sort ASC")
+  Future<List<Vocable>> findVocablesByLangMedia(String langMedia);
+
+  @Query("SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id "
+      "WHERE lecture_id = :lectureId AND lang_media = :langMedia ORDER BY vocable_sort ASC")
+  Future<List<Vocable>> findVocablesByLectureIdAndLangMedia(int lectureId, String langMedia);
+
+  @Query("SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id "
+      "WHERE pack = :lecturePack AND lang_media = :langMedia ORDER BY vocable_sort ASC")
+  Future<List<Vocable>> findVocablesByLecturePackAndLangMedia(String lecturePack, String langMedia);
 
   @Query("SELECT * FROM vocables WHERE lecture_id = :lectureId ORDER BY vocable_sort ASC")
   Future<List<Vocable>> findVocablesByLectureId(int lectureId);
-
-  @Query("SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = :lecturePack ORDER BY vocable_sort ASC")
-  Future<List<Vocable>> findVocablesByLecturePack(String lecturePack);
 
   @insert
   Future<List<int>> insertVocables(List<Vocable> vocables);

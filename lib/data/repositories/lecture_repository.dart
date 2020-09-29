@@ -64,16 +64,20 @@ class LectureRepository {
   ///////////////////
   // Vocables
   ///////////////////
-  Future<List<Vocable>> findAllVocables() {
-    return _lectureDatabase.vocableDao.findAllVocables();
+  Future<List<Vocable>> findVocablesByLangMedia(String langMedia) {
+    return _lectureDatabase.vocableDao.findVocablesByLangMedia(langMedia);
+  }
+
+  Future<List<Vocable>> findVocablesByLectureIdAndLangMedia(int lectureId, String langMedia) {
+    return _lectureDatabase.vocableDao.findVocablesByLectureIdAndLangMedia(lectureId, langMedia);
+  }
+
+  Future<List<Vocable>> findVocablesByLecturePackAndLangMedia(String lecturePack, String langMedia) {
+    return _lectureDatabase.vocableDao.findVocablesByLecturePackAndLangMedia(lecturePack, langMedia);
   }
 
   Future<List<Vocable>> findVocablesByLectureId(int lectureId) {
     return _lectureDatabase.vocableDao.findVocablesByLectureId(lectureId);
-  }
-
-  Future<List<Vocable>> findVocablesByLecturePack(String lecturePack) {
-    return _lectureDatabase.vocableDao.findVocablesByLecturePack(lecturePack);
   }
 
   Future<List<int>> insertVocables(List<Vocable> vocables) {

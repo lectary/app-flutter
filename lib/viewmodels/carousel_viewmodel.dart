@@ -17,6 +17,7 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:collection/collection.dart';
+import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -25,6 +26,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Has [LectureRepository] as dependency.
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
+  SettingViewModel _settingViewModel;
+
+  /// Updates the local reference to [SettingViewModel].
+  void updateSettings(SettingViewModel settingViewModel) {
+    _settingViewModel = settingViewModel;
+    listenOnLocalLectures();
+    loadAllVocables();
+    log("updated settings reference in carouselViewModel");
+  }
 
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
   CarouselController carouselController;
@@ -157,15 +167,13 @@ class CarouselViewModel with ChangeNotifier {
     super.dispose();
   }
 
-
   /// Retrieves a [Stream] of the [List] of all local persisted [Lecture].
   /// Additionally listens to changes via [_localLectureStreamListener].
   void listenOnLocalLectures() {
-    if (_localLecturesStream == null) {
-      _localLecturesStream = _lectureRepository.watchAllLectures();
-      _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
-      log("carousel view model instances!");
-    }
+    if (_localLectureStreamSubscription != null) _localLectureStreamSubscription.cancel();
+    _localLecturesStream = _lectureRepository.watchAllLectures();
+    _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
+    log("carousel view model instances!");
   }
 
   /// Listener function for the stream of local persisted lectures used for updating the state of [LectureMainScreen]
@@ -173,6 +181,7 @@ class CarouselViewModel with ChangeNotifier {
   /// Loads all vocables when a new lecture list gets emitted and no vocables are currently loaded.
   /// Resets [_currentVocables] when no lectures are available or got deleted
   void _localLectureStreamListener(List<Lecture> list) {
+    list = list.where((lecture) => lecture.langMedia == _settingViewModel.settingLearningLanguage).toList();
     localLectures = list;
 
     if (list.isEmpty) {
@@ -204,7 +213,12 @@ class CarouselViewModel with ChangeNotifier {
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
   /// grouped as [LecturePackage] and properly sorted.
   Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
+    if (_settingViewModel == null) return null;
+
+    String langMedia = _settingViewModel.settingLearningLanguage;
     return _lectureRepository.watchAllLectures().map((list) {
+      // filtering lectures by Settings.settingLearningLanguage
+      list = list.where((lecture) => lecture.langMedia == langMedia).toList();
       // Sorting
       // 1) sort lessons with SORT-meta info by SORT
       List<Lecture> lecturesWithSortMeta = list.where((lecture) => lecture.sort != null).toList();
@@ -233,7 +247,9 @@ class CarouselViewModel with ChangeNotifier {
   ///
   /// Returns a [Future] with [List] of type [Vocable].
   Future<List<Vocable>> loadAllVocables({bool saveSelection=true}) async {
-    _currentVocables = await _lectureRepository.findAllVocables();
+    _currentVocables = await _lectureRepository.findVocablesByLangMedia(
+      _settingViewModel.settingLearningLanguage
+    );
     isVirtualLecture = false;
     Selection newSelection = Selection.all();
     currentSelection = newSelection;
@@ -258,7 +274,10 @@ class CarouselViewModel with ChangeNotifier {
   ///
   /// Returns a [Future] with [List] of type [Vocable].
   Future<List<Vocable>> loadVocablesOfLecture(int lectureId, String lesson, {bool saveSelection=true}) async {
-    List<Vocable> vocables = await _lectureRepository.findVocablesByLectureId(lectureId);
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLectureIdAndLangMedia(
+        lectureId,
+        _settingViewModel.settingLearningLanguage
+    );
     _currentVocables = _sortVocables(vocables);
     isVirtualLecture = false;
     Selection newSelection = Selection.lecture(lectureId, lesson);
@@ -284,7 +303,10 @@ class CarouselViewModel with ChangeNotifier {
   ///
   /// Returns a [Future] with [List] of type [Vocable].
   Future<List<Vocable>> loadVocablesOfPackage(String packTitle, {bool saveSelection=true}) async {
-    List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePack(packTitle);
+    List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePackAndLangMedia(
+        packTitle,
+        _settingViewModel.settingLearningLanguage
+    );
     _currentVocables = _sortVocables(vocables);
     isVirtualLecture = false;
     Selection newSelection = Selection.package(packTitle);
@@ -405,10 +427,12 @@ class CarouselViewModel with ChangeNotifier {
   /// If no last selection is available, then all vocables will be loaded.
   Future<List<Vocable>> initVocables() async {
     _initialization = true;
+
     Selection lastSelection = await loadLastSelection();
     log("loaded last selection: ${lastSelection == null ? "<null>" : lastSelection.type}");
 
     if (lastSelection == null) {
+      _initialization = false;
       return await loadAllVocables();
     }
 
@@ -568,7 +592,7 @@ class CarouselViewModel with ChangeNotifier {
 
     // Load all local variables if not already done.
     if (_allLocalVocables.isEmpty) {
-      _allLocalVocables = await _lectureRepository.findAllVocables();
+      _allLocalVocables = await _lectureRepository.findVocablesByLangMedia(_settingViewModel.settingLearningLanguage);
       log("loaded all local vocables");
     }
 

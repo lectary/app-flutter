@@ -306,9 +306,28 @@ class _$VocableDao extends VocableDao {
   final UpdateAdapter<Vocable> _vocableUpdateAdapter;
 
   @override
-  Future<List<Vocable>> findAllVocables() async {
+  Future<List<Vocable>> findVocablesByLangMedia(String langMedia) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM vocables ORDER BY vocable_sort ASC',
+        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lang_media = ? ORDER BY vocable_sort ASC',
+        arguments: <dynamic>[langMedia],
+        mapper: _vocablesMapper);
+  }
+
+  @override
+  Future<List<Vocable>> findVocablesByLectureIdAndLangMedia(
+      int lectureId, String langMedia) async {
+    return _queryAdapter.queryList(
+        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lecture_id = ? AND lang_media = ? ORDER BY vocable_sort ASC',
+        arguments: <dynamic>[lectureId, langMedia],
+        mapper: _vocablesMapper);
+  }
+
+  @override
+  Future<List<Vocable>> findVocablesByLecturePackAndLangMedia(
+      String lecturePack, String langMedia) async {
+    return _queryAdapter.queryList(
+        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ? AND lang_media = ? ORDER BY vocable_sort ASC',
+        arguments: <dynamic>[lecturePack, langMedia],
         mapper: _vocablesMapper);
   }
 
@@ -317,14 +336,6 @@ class _$VocableDao extends VocableDao {
     return _queryAdapter.queryList(
         'SELECT * FROM vocables WHERE lecture_id = ? ORDER BY vocable_sort ASC',
         arguments: <dynamic>[lectureId],
-        mapper: _vocablesMapper);
-  }
-
-  @override
-  Future<List<Vocable>> findVocablesByLecturePack(String lecturePack) async {
-    return _queryAdapter.queryList(
-        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ? ORDER BY vocable_sort ASC',
-        arguments: <dynamic>[lecturePack],
         mapper: _vocablesMapper);
   }
 
