@@ -81,7 +81,6 @@ void main() async {
                 update: (context, settingViewModel, carouselViewModel) =>
                     carouselViewModel
                       ..updateSettings(settingViewModel)
-                      ..listenOnLocalLectures()
                       ..loadAllVocables(saveSelection: false),
                 lazy: false),
           ],
