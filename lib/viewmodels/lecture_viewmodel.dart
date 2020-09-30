@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
 import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
@@ -141,10 +142,11 @@ class LectureViewModel with ChangeNotifier {
     }
   }
 
-  /// Method to send errors with lectures back to the remote api-server
-  void reportErrorToLectaryServer(String errorMessage) async {
-    print("report error");
-    // TODO implement
+  /// Method to report errors back to the lectary server.
+  Future<void> reportErrorToLectaryServer(String errorMessage) async {
+    final format = DateFormat('yyyy-MM-dd-HH_mm');
+    final timestamp = format.format(DateTime.now());
+    await _lectureRepository.reportErrorToServer(timestamp, errorMessage);
   }
 
 

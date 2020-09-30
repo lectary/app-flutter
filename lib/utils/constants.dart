@@ -9,6 +9,7 @@ class Constants {
   // api
   static const lectaryApiUrl = "https://lectary.net/l4/";
   static const lectaryApiLectureOverviewEndpoint = "info.php";
+  static const lectaryApiErrorEndpoint = "https://lectary.net/l4/error.php";
 
   // carousel
   static const opacityOfCarouselOverLay = 0.5;

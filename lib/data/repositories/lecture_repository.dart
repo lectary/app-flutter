@@ -22,6 +22,10 @@ class LectureRepository {
     return await _lectaryApi.fetchLectaryData();
   }
 
+  Future<void> reportErrorToServer(String timestamp, String errorMessage) async {
+    return await _lectaryApi.reportErrorToServer(timestamp, errorMessage);
+  }
+
   Future<void> dispose() async {
     await _lectureDatabase.close();
   }

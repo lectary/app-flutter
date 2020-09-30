@@ -115,7 +115,7 @@ class Dialogs {
   }
 
 
-  /// A simple [AlertDialog] for errors that can be reported to the Lectary team
+  /// A simple [AlertDialog], which automatically calls the passed [reportCallback].
   static Future<void> showErrorReportDialog(
       {@required BuildContext context,
       @required String errorContext,
@@ -125,6 +125,8 @@ class Dialogs {
       context: context,
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
+        // send the report automatically
+        reportCallback(errorMessage);
         return AlertDialog(
           title: Text(AppLocalizations.of(context).oops),
           content: SingleChildScrollView(
@@ -133,15 +135,6 @@ class Dialogs {
                 Text(errorContext),
                 Divider(),
                 Text(AppLocalizations.of(context).reportErrorText),
-                FlatButton(
-                    child: Text(
-                      AppLocalizations.of(context).reportError,
-                      style: TextStyle(color: ColorsLectary.lightBlue),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      reportCallback(errorMessage);
-                    }),
               ],
             ),
           ),
