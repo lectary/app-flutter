@@ -143,10 +143,10 @@ class LectureViewModel with ChangeNotifier {
   }
 
   /// Method to report errors back to the lectary server.
-  Future<void> reportErrorToLectaryServer(String errorMessage) async {
+  static void reportErrorToLectaryServer(String errorMessage) {
     final format = DateFormat('yyyy-MM-dd-HH_mm');
     final timestamp = format.format(DateTime.now());
-    await _lectureRepository.reportErrorToServer(timestamp, errorMessage);
+    LectureRepository.reportErrorToServer(timestamp, errorMessage);
   }
 
 

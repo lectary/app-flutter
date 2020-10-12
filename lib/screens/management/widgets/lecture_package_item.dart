@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:html/dom.dart' as dom;
+import 'package:flutter_html/style.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
@@ -80,18 +80,20 @@ class LecturePackageItem extends StatelessWidget {
                     padding: EdgeInsets.only(left: 10, right: 10),
                     child: Html(
                       data: uppercase ? abstractText.toUpperCase() : abstractText,
-                      customTextStyle: (dom.Node node, TextStyle baseStyle) {
-                        return baseStyle.copyWith(
-                          fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
-                          fontFamily: Theme.of(context).textTheme.bodyText1.fontFamily,
-                        );
+                      style: {
+                        "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyText1), // default text style
+                        "a": Style.fromTextStyle(CustomTextStyle.hyperlink(context)),
                       },
-                      linkStyle: CustomTextStyle.hyperlink(context),
                       onLinkTap: (url) async {
                         if (await canLaunch(url)) {
                           await launch(url);
                         } else {
                           log('Could not launch url: $url of abstract: $abstractText');
+                          Dialogs.showErrorReportDialog(
+                              context: context,
+                              errorContext: AppLocalizations.of(context).errorOpenAbstractLink,
+                              errorMessage: 'Could not launch url: $url of abstract: $abstractText',
+                              reportCallback: LectureViewModel.reportErrorToLectaryServer);
                         }
                       },
                     ))
@@ -186,9 +188,7 @@ class LecturePackageItem extends StatelessWidget {
                     context: context,
                     errorContext: AppLocalizations.of(context).errorDownloadLecture,
                     errorMessage: response.message,
-                    reportCallback:
-                        Provider.of<LectureViewModel>(context, listen: false)
-                            .reportErrorToLectaryServer);
+                    reportCallback: LectureViewModel.reportErrorToLectaryServer);
               }
             });
       case LectureStatus.persisted:
@@ -202,9 +202,7 @@ class LecturePackageItem extends StatelessWidget {
                     context: context,
                     errorContext: AppLocalizations.of(context).errorDownloadLecture,
                     errorMessage: response.message,
-                    reportCallback:
-                        Provider.of<LectureViewModel>(context, listen: false)
-                            .reportErrorToLectaryServer);
+                    reportCallback: LectureViewModel.reportErrorToLectaryServer);
               }
             });
       case LectureStatus.updateAvailable:
@@ -217,9 +215,7 @@ class LecturePackageItem extends StatelessWidget {
                     context: context,
                     errorContext: AppLocalizations.of(context).errorDownloadLecture,
                     errorMessage: response.message,
-                    reportCallback:
-                        Provider.of<LectureViewModel>(context, listen: false)
-                            .reportErrorToLectaryServer);
+                    reportCallback: LectureViewModel.reportErrorToLectaryServer);
               }
             });
       default:

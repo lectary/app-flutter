@@ -3,6 +3,8 @@ import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/exceptions/lecture_exception.dart';
 import 'package:lectary/utils/utils.dart';
+import 'package:lectary/viewmodels/lecture_viewmodel.dart';
+
 
 enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvailable }
 
@@ -102,8 +104,9 @@ class Lecture {
     try {
       metadata = extractMetadata(fileName);
     } on LectureException catch(e) {
-      log("Invalid lecture: " + e.toString());
-      // TODO add lectary error response api
+      String errorMessage = "Invalid lecture: " + e.toString();
+      log(errorMessage);
+      LectureViewModel.reportErrorToLectaryServer(errorMessage);
       return null;
     }
     return Lecture(

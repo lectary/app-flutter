@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:floor/floor.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
 import 'package:lectary/data/db/entities/coding.dart';
+import 'package:lectary/utils/constants.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
 import 'dao/abstract_dao.dart';
@@ -35,7 +36,7 @@ class DatabaseProvider {
 
   Future<LectureDatabase> get db async {
     if (_db == null) {
-      _db = await $FloorLectureDatabase.databaseBuilder('lectary.db')
+      _db = await $FloorLectureDatabase.databaseBuilder(Constants.databaseName)
           .build();
     }
     return _db;

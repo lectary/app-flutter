@@ -1,7 +1,8 @@
 class Constants {
   // general
-  static const versionCommitHash = "d92316b08bddead71bfb76884b5d4ecb9693b21f";
-  static bool defaultAppFreshInstalled = true;
+  static const String versionCommitHash = "d92316b08bddead71bfb76884b5d4ecb9693b21f";
+  static const bool defaultAppFreshInstalled = true;
+  static const String databaseName = "lectary.db";
 
   // device breakpoints for responsive layout
   static const double breakpointTablet = 800;

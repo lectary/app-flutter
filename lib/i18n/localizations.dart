@@ -4,6 +4,7 @@ import 'package:lectary/i18n/localizations_strings.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
+
 /// Class for handling localization resources
 class AppLocalizations {
   AppLocalizations(this.locale);
@@ -56,6 +57,7 @@ class AppLocalizations {
 
   // error messages
   String get errorDownloadLecture => _getValue(ErrorDownloadLecture);
+  String get errorOpenAbstractLink => _getValue(ErrorOpenAbstractLink);
 
   // lecture-info menu
   String get lectureInfoLecture => _getValue(LectureInfoLecture);

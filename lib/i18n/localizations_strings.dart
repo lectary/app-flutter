@@ -24,6 +24,7 @@ const String
 
     // error messages
     ErrorDownloadLecture = 'error_download_lecture',
+    ErrorOpenAbstractLink = 'error_open_abstract_link',
 
     // lecture-info menu
     LectureInfoLecture = 'lecture_info_lecture',
@@ -110,6 +111,7 @@ final de = {
 
   // error messages
   ErrorDownloadLecture: 'Leider ist beim Download der Lektion ein Fehler aufgetreten!',
+  ErrorOpenAbstractLink: 'Leider ist der Link fehlerhaft!',
 
   // lecture-info menu
   LectureInfoLecture: 'Lektion: ',
@@ -196,6 +198,7 @@ final en = {
 
   // error messages
   ErrorDownloadLecture: 'Unfortunately, an error occurred while downloading lecture!',
+  ErrorOpenAbstractLink: 'Unfortunately, the link is broken!',
 
   // lecture-info menu
   LectureInfoLecture: 'Lecture: ',

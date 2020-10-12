@@ -31,13 +31,12 @@ dependencies:
   path_provider: ^1.6.11
   archive: ^2.0.13
   url_launcher: ^5.5.0
-  flutter_html: ^0.11.1 # no newer version possible because it would conflict with the video_player-plugin version
+  flutter_html: ^1.0.2
   video_player: ^0.11.0
   carousel_slider: ^2.1.0
   shared_preferences: ^0.5.8
   country_icons: ^1.1.1
   intl: ^0.16.1
-
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -46,9 +45,10 @@ dependencies:
 dependency_overrides:
   flutter_svg: ^0.19.0
   analyzer: '0.39.14'
+  video_player: ^0.11.0
 
 dev_dependencies:
-  test: # leave blank
+  test: # leave blank to avoid conflict with flutter sdk
   flutter_test:
     sdk: flutter
   mockito: ^4.1.1

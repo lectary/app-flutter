@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:lectary/data/api/lectary_api.dart';
 import 'package:lectary/data/db/database.dart';
@@ -8,6 +7,7 @@ import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/lectary_overview.dart';
+
 
 /// Repository class for encapsulating data access independent of the source
 class LectureRepository {
@@ -22,8 +22,8 @@ class LectureRepository {
     return await _lectaryApi.fetchLectaryData();
   }
 
-  Future<void> reportErrorToServer(String timestamp, String errorMessage) async {
-    return await _lectaryApi.reportErrorToServer(timestamp, errorMessage);
+  static void reportErrorToServer(String timestamp, String errorMessage) {
+    LectaryApi.reportErrorToServer(timestamp, errorMessage);
   }
 
   Future<void> dispose() async {
