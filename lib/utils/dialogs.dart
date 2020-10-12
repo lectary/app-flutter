@@ -83,6 +83,7 @@ class Dialogs {
                 FlatButton(
                   child: Text(
                     submitText1,
+                    textAlign: TextAlign.right,
                     style: TextStyle(color: ColorsLectary.red),
                   ),
                   onPressed: () {
@@ -93,6 +94,7 @@ class Dialogs {
                 FlatButton(
                   child: Text(
                     submitText2,
+                    textAlign: TextAlign.right,
                     style: TextStyle(color: ColorsLectary.red),
                   ),
                   onPressed: () {
