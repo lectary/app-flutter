@@ -1,0 +1,122 @@
+Detailed directory overview:
+
+lib // main project directory containing the flutter codebase
+|   main.dart // Entry point for the app, containing the core material-app, global providers and i18n initialization
+|   
++---data // All files related to the data management of the app (remote or local)
+|   +---api // Files for communication with remote Lectary-Server
+|   |       lectary_api.dart
+|   |       
+|   +---db // Database and generated database-file
+|   |   |   database.dart // Contains DBProvider class
+|   |   |   database.g.dart
+|   |   |   
+|   |   +---dao // Abstract classes providing queries for the entities
+|   |   |       abstract_dao.dart
+|   |   |       coding_dao.dart
+|   |   |       lecture_dao.dart
+|   |   |       vocable_dao.dart
+|   |   |       
+|   |   \---entities // Entity classes
+|   |           abstract.dart
+|   |           coding.dart
+|   |           lecture.dart
+|   |           vocable.dart
+|   |           
+|   \---repositories // Repository for proxy-access to all entities
+|           lecture_repository.dart
+|           
++---i18n // Internationalization
+|       localizations.dart // Internationalization-class
+|       localizations_strings.dart // Translations
+|       
++---models // Pure model classes used by the UI, but are not related to entities
+|       lectary_overview.dart
+|       lecture_package.dart
+|       media_type_enum.dart
+|       response_type.dart
+|       search_result.dart
+|       selection_type.dart
+|       
++---screens // Different views/screens of the app
+|   +---about
+|   |       about_screen.dart
+|   |       
+|   +---drawer // Main-Drawer used by every screen
+|   |   |   main_drawer.dart
+|   |   |   
+|   |   \---widgets // Drawer-related widget for building grouped lecture-ListTiles
+|   |           lecture_package_item.dart
+|   |           
+|   +---lectures // Main-screens for displaying lectures via the carousel
+|   |   |   lecture_not_available_screen.dart
+|   |   |   lecture_screen.dart
+|   |   |   lecture_startup_screen.dart
+|   |   |   main_screen.dart // Handles data initialization and handles display of above screens
+|   |   |   
+|   |   +---search // Separate screen, but only available through the lecture-screen
+|   |   |       search_result_package_item.dart
+|   |   |       vocable_search_screen.dart
+|   |   |       
+|   |   \---widgets // Sub-widgets related to the lecture-screen (e.g. carousel)
+|   |           carousel.dart
+|   |           carousel_navigation_overlay.dart
+|   |           custom_button.dart
+|   |           learning_control_area.dart
+|   |           learning_progress_button.dart
+|   |           learning_progress_button_animation.dart
+|   |           media_control_area.dart
+|   |           media_viewer.dart
+|   |           media_viewer_image.dart
+|   |           media_viewer_text.dart
+|   |           media_viewer_text_area.dart
+|   |           media_viewer_video.dart
+|   |           
+|   +---management
+|   |   |   lecture_management_screen.dart
+|   |   |   
+|   |   \---widgets // Management-related widget for building grouped lecture-ListTiles
+|   |           lecture_package_item.dart
+|   |           
+|   \---settings
+|           settings_screen.dart
+|           
++---utils // Contains all other classes, like constants (e.g. colors, icons), custom types or Util-functions
+|   |   colors.dart
+|   |   constants.dart
+|   |   dialogs.dart
+|   |   global_theme.dart
+|   |   icons.dart
+|   |   utils.dart
+|   |   
+|   \---exceptions // Custom exceptions
+|           abstract_exception.dart
+|           archive_structure_exception.dart
+|           coding_exception.dart
+|           lecture_exception.dart
+|           media_type_exception.dart
+|           no_internet_exception.dart
+|           server_response_exception.dart
+|           vocable_exception.dart
+|           
++---viewmodels // ViewModels used by the UI for data-handling
+|       carousel_viewmodel.dart // used by the lecture-screens and sub-widgets
+|       lecture_viewmodel.dart // used for handling lectures, primarily for the lecture-management-screen
+|       setting_viewmodel.dart
+|       
+\---widgets // General widgets that are used by more than one widget/screen
+        search_bar.dart
+        
+//// Other directories
+
+test
+|
++---unitTests // Tests for single functions/mechanics
++---widgetTests // Tests involving flutter-widgets
+
+assets
+|
++---fonts // Custom fonts
++---images // Custom images (e.g. logo)
+
+pubspec.yaml // Configuration file with dependencies

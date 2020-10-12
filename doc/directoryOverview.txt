@@ -1,0 +1,26 @@
+Short directory overview:
+
+lib
+|   main.dart
++---data
+|   +---api
+|   +---db
+|   |   +---dao
+|   |   \---entities
+|   \---repositories
++---i18n
++---models
++---screens
+|   +---about
+|   +---drawer
+|   |   \---widgets
+|   +---lectures
+|   |   +---search
+|   |   \---widgets
+|   +---management
+|   |   \---widgets
+|   \---settings
++---utils
+|   \---exceptions
++---viewmodels
+\---widgets
