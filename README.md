@@ -11,22 +11,22 @@ First install the flutter framework and setup your environment based on your OS:
 
 [Install Flutter](https://flutter.dev/docs/get-started/install)
 
-Have a look on [online documentation](https://flutter.dev/docs) for further informations.
+Have a look on [online documentation](https://flutter.dev/docs) for further information.
 
 ### Building and running on Android.
-For running the app on android, just connect your device or start an android-emulator and run 
+For running the app on android, just connect your device or start an android-emulator and run the following command from your console window
 ```flutter run```
 
 ### Building and running on iOS.
 For running the app on iOS a Mac with Xcode is needed. 
-Then connect your device or start the simulator and run 
+Then connect your device or start the simulator and run the following command from your console window
 ```flutter run``` 
 
 ## Tests
-For running all tests in the directory use the command
+For running all tests in the test-directory run the following command from your console window
 ```flutter test test```
 
-For running single test files use the command
+For running a single test, use the following command
 ```flutter test test/<file-path>```
 
 

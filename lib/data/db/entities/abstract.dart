@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/exceptions/abstract_exception.dart';

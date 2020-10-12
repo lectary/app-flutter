@@ -10,6 +10,7 @@ import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
 import 'package:collection/collection.dart';
 
+
 /// Helper class with multiple static functions for sorting, validation or string operations.
 class Utils {
 

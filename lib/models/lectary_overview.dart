@@ -1,8 +1,8 @@
 import 'dart:developer';
-
 import 'package:lectary/data/db/entities/abstract.dart';
 import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
+
 
 class LectaryData {
   List<Lecture> lessons;

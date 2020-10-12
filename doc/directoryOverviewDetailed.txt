@@ -30,11 +30,13 @@ lib // main project directory containing the flutter codebase
 |       localizations.dart // Internationalization-class
 |       localizations_strings.dart // Translations
 |       
-+---models // Pure model classes used by the UI, but are not related to entitites
++---models // Pure model classes used by the UI, but are not related to entities
 |       lectary_overview.dart
 |       lecture_package.dart
 |       media_type_enum.dart
+|       response_type.dart
 |       search_result.dart
+|       selection_type.dart
 |       
 +---screens // Different views/screens of the app
 |   +---about
@@ -46,9 +48,10 @@ lib // main project directory containing the flutter codebase
 |   |   \---widgets // Drawer-related widget for building grouped lecture-ListTiles
 |   |           lecture_package_item.dart
 |   |           
-|   +---lectures // Main-screens containing the carousel and the screen if no local data is available
+|   +---lectures // Main-screens for displaying lectures via the carousel
 |   |   |   lecture_not_available_screen.dart
 |   |   |   lecture_screen.dart
+|   |   |   lecture_startup_screen.dart
 |   |   |   main_screen.dart // Handles data initialization and handles display of above screens
 |   |   |   
 |   |   +---search // Separate screen, but only available through the lecture-screen
@@ -84,8 +87,6 @@ lib // main project directory containing the flutter codebase
 |   |   dialogs.dart
 |   |   global_theme.dart
 |   |   icons.dart
-|   |   response_type.dart
-|   |   selection_type.dart
 |   |   utils.dart
 |   |   
 |   \---exceptions // Custom exceptions

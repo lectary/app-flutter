@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/utils/colors.dart';
 
+
 class Dialogs {
 
   /// A simple [AlertDialog] for loading actions

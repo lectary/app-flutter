@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:floor/floor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lectary/utils/exceptions/coding_exception.dart';

@@ -1,6 +1,7 @@
 import 'package:floor/floor.dart';
 import 'package:lectary/data/db/entities/coding.dart';
 
+
 @dao
 abstract class CodingDao {
 

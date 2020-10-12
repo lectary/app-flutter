@@ -1,6 +1,7 @@
 import 'package:floor/floor.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 
+
 @dao
 abstract class VocableDao {
 
