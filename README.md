@@ -29,4 +29,8 @@ For running all tests in the test-directory run the following command from your 
 For running a single test, use the following command
 ```flutter test test/<file-path>```
 
+## Re-Generating auto-generated code from plugins
+Some plugins are using code generation.
+For doing so, run the following command from your console window
+```flutter pub run build_runner build --delete-conflicting-outputs```
 
