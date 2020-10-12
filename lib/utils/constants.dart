@@ -1,6 +1,6 @@
 class Constants {
   // general
-  static const String versionCommitHash = "d92316b08bddead71bfb76884b5d4ecb9693b21f";
+  static const String versionCommitHash = "2090e6cb218af85354b5e3d3826720edfd246fbd";
   static const bool defaultAppFreshInstalled = true;
   static const String databaseName = "lectary.db";
 
