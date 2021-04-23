@@ -21,13 +21,11 @@ class Coding {
   @ignore
   String fileNameUpdate;
 
-  @ColumnInfo(name: "file_name", nullable: false)
+  @ColumnInfo(name: "file_name")
   String fileName;
 
-  @ColumnInfo(nullable: false)
   String lang;
 
-  @ColumnInfo(nullable: false)
   String date;
 
   Coding(
@@ -117,13 +115,13 @@ class CodingEntry {
   @PrimaryKey(autoGenerate: true)
   int id;
 
-  @ColumnInfo(name: "coding_id", nullable: false)
+  @ColumnInfo(name: "coding_id")
   int codingId;
 
-  @ColumnInfo(nullable: false)
+
   String char;
 
-  @ColumnInfo(nullable: false)
+
   String ascii;
 
   CodingEntry(

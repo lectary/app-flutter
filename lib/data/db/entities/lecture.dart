@@ -22,35 +22,32 @@ class Lecture {
   String fileNameUpdate;
 
   /// Lecture fileName containing all the metadata
-  @ColumnInfo(name: "file_name", nullable: false)
+  @ColumnInfo(name: "file_name")
   String fileName;
 
-  @ColumnInfo(name: "file_size", nullable: false)
+  @ColumnInfo(name: "file_size")
   int fileSize;
 
-  @ColumnInfo(name: "vocable_count", nullable: false)
+  @ColumnInfo(name: "vocable_count")
   int vocableCount;
 
   /// Lecture metadata
-  @ColumnInfo(nullable: false)
   String pack;
 
-  @ColumnInfo(nullable: false)
   String lesson;
 
   // used for sorting
-  @ColumnInfo(name: "lesson_sort", nullable: false)
+  @ColumnInfo(name: "lesson_sort")
   String lessonSort;
 
-  @ColumnInfo(name: "lang_media", nullable: false)
+  @ColumnInfo(name: "lang_media")
   String langMedia;
 
-  @ColumnInfo(name: "lang_vocable", nullable: false)
+  @ColumnInfo(name: "lang_vocable")
   String langVocable;
 
   String audio;
 
-  @ColumnInfo(nullable: false)
   String date;
 
   String sort;
