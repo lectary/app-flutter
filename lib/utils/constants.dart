@@ -8,9 +8,11 @@ class Constants {
   static const double breakpointTablet = 800;
 
   // api
-  static const lectaryApiUrl = "https://lectary.net/l4/";
-  static const lectaryApiLectureOverviewEndpoint = "info.php";
-  static const lectaryApiErrorEndpoint = "https://lectary.net/l4/error.php";
+  static const lectaryApiUrl = "https://lectary.net";
+  static const _lectaryApiVersionPath = "/l4/";
+  static const lectaryApiDownloadPath = _lectaryApiVersionPath;
+  static const lectaryApiLectureOverviewEndpoint = _lectaryApiVersionPath + "info.php";
+  static const lectaryApiErrorEndpoint = _lectaryApiVersionPath + "error.php";
 
   // carousel
   static const opacityOfCarouselOverLay = 0.5;

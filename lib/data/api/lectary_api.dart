@@ -23,7 +23,7 @@ class LectaryApi {
   Future<LectaryData> fetchLectaryData() async {
     http.Response response;
     try {
-      response = await http.get(Constants.lectaryApiUrl + Constants.lectaryApiLectureOverviewEndpoint);
+      response = await http.get(Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiLectureOverviewEndpoint));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -46,7 +46,7 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(Constants.lectaryApiUrl + lecture.fileName);
+      response = await http.get(Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + lecture.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -73,7 +73,7 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(Constants.lectaryApiUrl + abstract.fileName);
+      response = await http.get(Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + abstract.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -100,7 +100,7 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(Constants.lectaryApiUrl + coding.fileName);
+      response = await http.get(Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + coding.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -133,7 +133,8 @@ class LectaryApi {
     http.Response response;
     try {
       http.post(
-        Constants.lectaryApiErrorEndpoint,
+        Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiErrorEndpoint
+        ),
         headers: <String, String>{
           'Content-Type': 'application/x-www-form-urlencoded',
         },
