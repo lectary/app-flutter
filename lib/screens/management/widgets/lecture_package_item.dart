@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
@@ -84,7 +85,7 @@ class LecturePackageItem extends StatelessWidget {
                         "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyText1), // default text style
                         "a": Style.fromTextStyle(CustomTextStyle.hyperlink(context)),
                       },
-                      onLinkTap: (url) async {
+                      onLinkTap: (String? url, unused1, unused2, unused3) async {
                         if (await canLaunch(url)) {
                           await launch(url);
                         } else {
