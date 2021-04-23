@@ -57,7 +57,7 @@ class _CarouselState extends State<Carousel> with RouteAware {
               Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = index;
             }),
         itemCount: widget.vocables.length,
-        itemBuilder: (BuildContext context, int itemIndex) =>
+        itemBuilder: (BuildContext context, int itemIndex, _) =>
             MediaViewer(vocable: widget.vocables[itemIndex], vocableIndex: itemIndex));
   }
 
