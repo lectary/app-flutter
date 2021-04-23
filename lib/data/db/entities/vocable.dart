@@ -23,21 +23,19 @@ class Vocable {
   @PrimaryKey(autoGenerate: true)
   int id;
 
-  @ColumnInfo(name: "lecture_id", nullable: false)
+  @ColumnInfo(name: "lecture_id")
   int lectureId;
 
-  @ColumnInfo(nullable: false)
   String vocable;
 
   // used for sorting lexicographic
-  @ColumnInfo(name: "vocable_sort", nullable: false)
+  @ColumnInfo(name: "vocable_sort")
   String vocableSort;
 
-  @ColumnInfo(name: "media_type", nullable: false)
+  @ColumnInfo(name: "media_type")
   String mediaType;
 
   // contains the path to the media asset
-  @ColumnInfo(nullable: false)
   String media;
 
   // contains the language of the audio or null if no audio is available
@@ -45,7 +43,7 @@ class Vocable {
 
   String sort;
   
-  @ColumnInfo(name: "vocable_progress", nullable: false)
+  @ColumnInfo(name: "vocable_progress")
   int vocableProgress;
 
   Vocable(

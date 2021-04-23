@@ -20,16 +20,13 @@ class Abstract {
   @ignore
   String fileNameUpdate;
 
-  @ColumnInfo(name: "file_name", nullable: false)
+  @ColumnInfo(name: "file_name")
   String fileName;
 
-  @ColumnInfo(nullable: false)
   String pack;
 
-  @ColumnInfo(nullable: false)
   String text;
 
-  @ColumnInfo(nullable: false)
   String date;
 
   Abstract(
