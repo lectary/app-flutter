@@ -8,7 +8,7 @@ class Constants {
   static const double breakpointTablet = 800;
 
   // api
-  static const lectaryApiUrl = "https://lectary.net";
+  static const lectaryApiUrl = "lectary.net";
   static const _lectaryApiVersionPath = "/l4/";
   static const lectaryApiDownloadPath = _lectaryApiVersionPath;
   static const lectaryApiLectureOverviewEndpoint = _lectaryApiVersionPath + "info.php";
