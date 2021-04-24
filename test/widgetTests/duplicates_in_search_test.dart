@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
@@ -8,18 +10,15 @@ import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
-
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-class MockLectureRepository extends Mock implements LectureRepository {}
+import '../shared_mocks.mocks.dart';
 
+@GenerateMocks([LectureRepository])
 void main() async {
-
   group('Testing elements of search result screen |', () {
-    Stream lectureStream = StreamController<List<Lecture>>().stream;
-
     List<Lecture> mockLectures = List.of({
       Lecture(
           id: 1,
@@ -30,7 +29,8 @@ void main() async {
           lesson: "",
           lessonSort: "",
           langVocable: "CZ",
-          langMedia: "ÖGS"),
+          langMedia: "ÖGS",
+          date: '2021-04-04'),
       Lecture(
           id: 2,
           fileName: "",
@@ -40,7 +40,8 @@ void main() async {
           lesson: "",
           lessonSort: "",
           langVocable: "CZ",
-          langMedia: "ÖGS"),
+          langMedia: "ÖGS",
+          date: '2021-04-04'),
       Lecture(
           id: 3,
           fileName: "",
@@ -50,7 +51,8 @@ void main() async {
           lesson: "",
           lessonSort: "",
           langVocable: "CZ",
-          langMedia: "ÖGS")
+          langMedia: "ÖGS",
+          date: '2021-04-04')
     });
     List<Vocable> vocablesWithDuplicates = List.of({
       Vocable(id: 1, lectureId: 1, vocable: "Haus", vocableSort: "Haus", media: "", mediaType: "PNG"),
@@ -61,11 +63,9 @@ void main() async {
 
     testWidgets('Test1 - testing correct appearance with vocable duplicates', (WidgetTester tester) async {
       final mockRepo = MockLectureRepository();
-      mockLectures.forEach((lecture) {
-        mockRepo.insertLecture(lecture);
-      });
+
       when(mockRepo.findVocablesByLangMedia("ÖGS")).thenAnswer((_) async => Future.value(vocablesWithDuplicates));
-      when(mockRepo.watchAllLectures()).thenAnswer((_) => lectureStream as Stream<List<Lecture>>);
+      when(mockRepo.watchAllLectures()).thenAnswer((_) => Stream<List<Lecture>>.value(mockLectures));
 
       final key = GlobalKey<NavigatorState>();
       await tester.pumpWidget(
@@ -73,13 +73,11 @@ void main() async {
           providers: [
             ChangeNotifierProvider<SettingViewModel>(
                 create: (BuildContext context) =>
-                    SettingViewModel(lectureRepository: mockRepo)..settingLearningLanguage = "ÖGS"
-            ),
-            ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel?>(
-                create: (BuildContext context) =>
-                    CarouselViewModel(lectureRepository: mockRepo),
-                update: (context, settingViewModel, carouselViewModel) =>
-                    carouselViewModel
+                    SettingViewModel(lectureRepository: mockRepo)..settingLearningLanguage = "ÖGS"),
+            ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel>(
+                create: (BuildContext context) => CarouselViewModel(lectureRepository: mockRepo),
+                update: (context, SettingViewModel settingViewModel, CarouselViewModel? carouselViewModel) =>
+                    carouselViewModel!
                       ..updateSettings(settingViewModel)
                       ..loadAllVocables(saveSelection: false),
                 lazy: false),
@@ -99,14 +97,11 @@ void main() async {
             ],
             title: 'Flutter Test Wrapper',
             home: FlatButton(
-              onPressed: () =>
-                  key.currentState!.push(
-                    MaterialPageRoute<void>(
-                        settings: RouteSettings(
-                            arguments: VocableSearchScreenArguments(
-                                navigationOnly: false)),
-                        builder: (_) => VocableSearchScreen()),
-                  ),
+              onPressed: () => key.currentState!.push(
+                MaterialPageRoute<void>(
+                    settings: RouteSettings(arguments: VocableSearchScreenArguments(navigationOnly: false)),
+                    builder: (_) => VocableSearchScreen()),
+              ),
               child: const SizedBox(),
             ),
           ),
@@ -139,7 +134,7 @@ void main() async {
       await tester.enterText(find.byType(TextField), "Baum");
       await tester.pumpAndSettle();
 
-      final findBaumElement = find.text("Baum");
+      final findBaumElement = find.descendant(of: find.byType(ListView), matching: find.text("Baum"));
       expect(findBaumElement, findsOneWidget);
       expect(find.byIcon(Icons.subject), findsNothing);
       expect(find.text("Haus"), findsNothing);

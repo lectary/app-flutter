@@ -3,17 +3,17 @@ import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/test.dart';
 
-class MockLectureRepository extends Mock implements LectureRepository {}
+import '../shared_mocks.mocks.dart';
 
+@GenerateMocks([LectureRepository])
 void main() async {
   group('Tests for SettingViewModel', () {
-
     group('Group 1 - Testing behaviour of updating of learning languages', () {
-
       test('Test 1 - a local language, that is not in the remote list, appears in the result list', () async {
         List<Lecture> localLectures = List.of({
           Lecture(
@@ -25,7 +25,8 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ÖGS"),
+              langMedia: "ÖGS",
+              date: '2021-04-04'),
           Lecture(
               id: 1,
               fileName: "",
@@ -35,7 +36,8 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "DGS")
+              langMedia: "DGS",
+              date: '2021-04-04')
         });
         List<Lecture> remoteLectures = List.of({
           Lecture(
@@ -47,7 +49,8 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ÖGS"),
+              langMedia: "ÖGS",
+              date: '2021-04-04'),
           Lecture(
               id: 1,
               fileName: "",
@@ -57,11 +60,10 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ES")
-
-
+              langMedia: "ES",
+              date: '2021-04-04')
         });
-        LectaryData lectaryData = LectaryData(lessons: remoteLectures);
+        LectaryData lectaryData = LectaryData(lessons: remoteLectures, codings: [], abstracts: []);
 
         SharedPreferences.setMockInitialValues({});
 
@@ -78,8 +80,7 @@ void main() async {
       });
 
       test('Test 2 - with empty local list, only the remote list appears in the result list', () async {
-        List<Lecture> localLectures = List.of({
-        });
+        List<Lecture> localLectures = List.of({});
         List<Lecture> remoteLectures = List.of({
           Lecture(
               id: 1,
@@ -90,7 +91,8 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ÖGS"),
+              langMedia: "ÖGS",
+              date: '2021-04-04'),
           Lecture(
               id: 1,
               fileName: "",
@@ -100,9 +102,10 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ES"),
+              langMedia: "ES",
+              date: '2021-04-04'),
         });
-        LectaryData lectaryData = LectaryData(lessons: remoteLectures);
+        LectaryData lectaryData = LectaryData(lessons: remoteLectures, abstracts: [], codings: []);
 
         SharedPreferences.setMockInitialValues({});
 
@@ -129,7 +132,8 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ÖGS"),
+              langMedia: "ÖGS",
+              date: '2021-04-04'),
           Lecture(
               id: 1,
               fileName: "",
@@ -139,11 +143,11 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ES"),
+              langMedia: "ES",
+              date: '2021-04-04'),
         });
-        List<Lecture> remoteLectures = List.of({
-        });
-        LectaryData lectaryData = LectaryData(lessons: remoteLectures);
+        List<Lecture> remoteLectures = List.of({});
+        LectaryData lectaryData = LectaryData(lessons: remoteLectures, abstracts: [], codings: []);
 
         SharedPreferences.setMockInitialValues({});
 
@@ -170,7 +174,8 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ÖGS"),
+              langMedia: "ÖGS",
+              date: '2021-04-04'),
           Lecture(
               id: 1,
               fileName: "",
@@ -180,7 +185,8 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "DGS"),
+              langMedia: "DGS",
+              date: '2021-04-04'),
         });
         List<Lecture> remoteLectures = List.of({
           Lecture(
@@ -192,7 +198,8 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "DGS"),
+              langMedia: "DGS",
+              date: '2021-04-04'),
           Lecture(
               id: 1,
               fileName: "",
@@ -202,9 +209,10 @@ void main() async {
               lesson: "",
               lessonSort: "",
               langVocable: "",
-              langMedia: "ES"),
+              langMedia: "ES",
+              date: '2021-04-04'),
         });
-        LectaryData lectaryData = LectaryData(lessons: remoteLectures);
+        LectaryData lectaryData = LectaryData(lessons: remoteLectures, abstracts: [], codings: []);
 
         List<String> savedLangs = List.of({
           'FR',
