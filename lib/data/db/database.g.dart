@@ -129,7 +129,7 @@ class _$LectureDao extends LectureDao {
         _lectureInsertionAdapter = InsertionAdapter(
             database,
             'lectures',
-            (Lecture item) => <String, dynamic>{
+            (Lecture item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'file_size': item.fileSize,
@@ -148,7 +148,7 @@ class _$LectureDao extends LectureDao {
             database,
             'lectures',
             ['id'],
-            (Lecture item) => <String, dynamic>{
+            (Lecture item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'file_size': item.fileSize,
@@ -167,7 +167,7 @@ class _$LectureDao extends LectureDao {
             database,
             'lectures',
             ['id'],
-            (Lecture item) => <String, dynamic>{
+            (Lecture item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'file_size': item.fileSize,
@@ -189,20 +189,6 @@ class _$LectureDao extends LectureDao {
 
   final QueryAdapter _queryAdapter;
 
-  static final _lecturesMapper = (Map<String, dynamic> row) => Lecture(
-      id: row['id'] as int?,
-      fileName: row['file_name'] as String,
-      fileSize: row['file_size'] as int,
-      vocableCount: row['vocable_count'] as int,
-      pack: row['pack'] as String,
-      lesson: row['lesson'] as String,
-      lessonSort: row['lesson_sort'] as String,
-      langMedia: row['lang_media'] as String,
-      langVocable: row['lang_vocable'] as String,
-      audio: row['audio'] as String?,
-      date: row['date'] as String,
-      sort: row['sort'] as String?);
-
   final InsertionAdapter<Lecture> _lectureInsertionAdapter;
 
   final UpdateAdapter<Lecture> _lectureUpdateAdapter;
@@ -212,21 +198,59 @@ class _$LectureDao extends LectureDao {
   @override
   Stream<List<Lecture>> watchAllLectures() {
     return _queryAdapter.queryListStream('SELECT * FROM lectures',
-        queryableName: 'lectures', isView: false, mapper: _lecturesMapper);
+        mapper: (Map<String, Object?> row) => Lecture(
+            id: row['id'] as int?,
+            fileName: row['file_name'] as String,
+            fileSize: row['file_size'] as int,
+            vocableCount: row['vocable_count'] as int,
+            pack: row['pack'] as String,
+            lesson: row['lesson'] as String,
+            lessonSort: row['lesson_sort'] as String,
+            langMedia: row['lang_media'] as String,
+            langVocable: row['lang_vocable'] as String,
+            audio: row['audio'] as String?,
+            date: row['date'] as String,
+            sort: row['sort'] as String?),
+        queryableName: 'lectures',
+        isView: false);
   }
 
   @override
   Future<List<Lecture>> findAllLectures() async {
     return _queryAdapter.queryList('SELECT * FROM lectures',
-        mapper: _lecturesMapper);
+        mapper: (Map<String, Object?> row) => Lecture(
+            id: row['id'] as int?,
+            fileName: row['file_name'] as String,
+            fileSize: row['file_size'] as int,
+            vocableCount: row['vocable_count'] as int,
+            pack: row['pack'] as String,
+            lesson: row['lesson'] as String,
+            lessonSort: row['lesson_sort'] as String,
+            langMedia: row['lang_media'] as String,
+            langVocable: row['lang_vocable'] as String,
+            audio: row['audio'] as String?,
+            date: row['date'] as String,
+            sort: row['sort'] as String?));
   }
 
   @override
   Future<List<Lecture>> findAllLecturesWithLang(String langMedia) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM lectures WHERE lang_media = ?',
-        (arguments: <dynamic>[langMedia]) as List<Object>?,
-        mapper: _lecturesMapper);
+        'SELECT * FROM lectures WHERE lang_media = ?1',
+        mapper: (Map<String, Object?> row) => Lecture(
+            id: row['id'] as int?,
+            fileName: row['file_name'] as String,
+            fileSize: row['file_size'] as int,
+            vocableCount: row['vocable_count'] as int,
+            pack: row['pack'] as String,
+            lesson: row['lesson'] as String,
+            lessonSort: row['lesson_sort'] as String,
+            langMedia: row['lang_media'] as String,
+            langVocable: row['lang_vocable'] as String,
+            audio: row['audio'] as String?,
+            date: row['date'] as String,
+            sort: row['sort'] as String?),
+        arguments: [langMedia]);
   }
 
   @override
@@ -257,7 +281,7 @@ class _$VocableDao extends VocableDao {
         _vocableInsertionAdapter = InsertionAdapter(
             database,
             'vocables',
-            (Vocable item) => <String, dynamic>{
+            (Vocable item) => <String, Object?>{
                   'id': item.id,
                   'lecture_id': item.lectureId,
                   'vocable': item.vocable,
@@ -272,7 +296,7 @@ class _$VocableDao extends VocableDao {
             database,
             'vocables',
             ['id'],
-            (Vocable item) => <String, dynamic>{
+            (Vocable item) => <String, Object?>{
                   'id': item.id,
                   'lecture_id': item.lectureId,
                   'vocable': item.vocable,
@@ -290,17 +314,6 @@ class _$VocableDao extends VocableDao {
 
   final QueryAdapter _queryAdapter;
 
-  static final _vocablesMapper = (Map<String, dynamic> row) => Vocable(
-      id: row['id'] as int?,
-      lectureId: row['lecture_id'] as int,
-      vocable: row['vocable'] as String,
-      vocableSort: row['vocable_sort'] as String,
-      mediaType: row['media_type'] as String,
-      media: row['media'] as String,
-      audio: row['audio'] as String?,
-      sort: row['sort'] as String?,
-      vocableProgress: row['vocable_progress'] as int);
-
   final InsertionAdapter<Vocable> _vocableInsertionAdapter;
 
   final UpdateAdapter<Vocable> _vocableUpdateAdapter;
@@ -308,42 +321,42 @@ class _$VocableDao extends VocableDao {
   @override
   Future<List<Vocable>> findVocablesByLangMedia(String langMedia) async {
     return _queryAdapter.queryList(
-        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lang_media = ? ORDER BY vocable_sort ASC',
-        (arguments: <dynamic>[langMedia]) as List<Object>?,
-        mapper: _vocablesMapper);
+        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lang_media = ?1 ORDER BY vocable_sort ASC',
+        mapper: (Map<String, Object?> row) => Vocable(id: row['id'] as int?, lectureId: row['lecture_id'] as int, vocable: row['vocable'] as String, vocableSort: row['vocable_sort'] as String, mediaType: row['media_type'] as String, media: row['media'] as String, audio: row['audio'] as String?, sort: row['sort'] as String?, vocableProgress: row['vocable_progress'] as int),
+        arguments: [langMedia]);
   }
 
   @override
   Future<List<Vocable>> findVocablesByLectureIdAndLangMedia(
       int lectureId, String langMedia) async {
     return _queryAdapter.queryList(
-        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lecture_id = ? AND lang_media = ? ORDER BY vocable_sort ASC',
-        (arguments: <dynamic>[lectureId, langMedia]) as List<Object>?,
-        mapper: _vocablesMapper);
+        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lecture_id = ?1 AND lang_media = ?2 ORDER BY vocable_sort ASC',
+        mapper: (Map<String, Object?> row) => Vocable(id: row['id'] as int?, lectureId: row['lecture_id'] as int, vocable: row['vocable'] as String, vocableSort: row['vocable_sort'] as String, mediaType: row['media_type'] as String, media: row['media'] as String, audio: row['audio'] as String?, sort: row['sort'] as String?, vocableProgress: row['vocable_progress'] as int),
+        arguments: [lectureId, langMedia]);
   }
 
   @override
   Future<List<Vocable>> findVocablesByLecturePackAndLangMedia(
       String lecturePack, String langMedia) async {
     return _queryAdapter.queryList(
-        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ? AND lang_media = ? ORDER BY vocable_sort ASC',
-        (arguments: <dynamic>[lecturePack, langMedia]) as List<Object>?,
-        mapper: _vocablesMapper);
+        'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ?1 AND lang_media = ?2 ORDER BY vocable_sort ASC',
+        mapper: (Map<String, Object?> row) => Vocable(id: row['id'] as int?, lectureId: row['lecture_id'] as int, vocable: row['vocable'] as String, vocableSort: row['vocable_sort'] as String, mediaType: row['media_type'] as String, media: row['media'] as String, audio: row['audio'] as String?, sort: row['sort'] as String?, vocableProgress: row['vocable_progress'] as int),
+        arguments: [lecturePack, langMedia]);
   }
 
   @override
   Future<List<Vocable>> findVocablesByLectureId(int lectureId) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM vocables WHERE lecture_id = ? ORDER BY vocable_sort ASC',
-        (arguments: <dynamic>[lectureId]) as List<Object>?,
-        mapper: _vocablesMapper);
+        'SELECT * FROM vocables WHERE lecture_id = ?1 ORDER BY vocable_sort ASC',
+        mapper: (Map<String, Object?> row) => Vocable(id: row['id'] as int?, lectureId: row['lecture_id'] as int, vocable: row['vocable'] as String, vocableSort: row['vocable_sort'] as String, mediaType: row['media_type'] as String, media: row['media'] as String, audio: row['audio'] as String?, sort: row['sort'] as String?, vocableProgress: row['vocable_progress'] as int),
+        arguments: [lectureId]);
   }
 
   @override
   Future<void> deleteVocablesByLectureId(int lectureId) async {
     await _queryAdapter.queryNoReturn(
-        'DELETE FROM vocables WHERE lecture_id = ?',
-        (arguments: <dynamic>[lectureId]) as List<Object>?);
+        'DELETE FROM vocables WHERE lecture_id = ?1',
+        arguments: [lectureId]);
   }
 
   @override
@@ -354,8 +367,8 @@ class _$VocableDao extends VocableDao {
   @override
   Future<void> deleteAllVocablesByLangMedia(String langMedia) async {
     await _queryAdapter.queryNoReturn(
-        'DELETE FROM vocables WHERE lecture_id IN(SELECT vocables.lecture_id FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lang_media = ?)',
-        (arguments: <dynamic>[langMedia]) as List<Object>?);
+        'DELETE FROM vocables WHERE lecture_id IN(SELECT vocables.lecture_id FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lang_media = ?1)',
+        arguments: [langMedia]);
   }
 
   @override
@@ -387,7 +400,7 @@ class _$AbstractDao extends AbstractDao {
         _abstractInsertionAdapter = InsertionAdapter(
             database,
             'abstracts',
-            (Abstract item) => <String, dynamic>{
+            (Abstract item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'pack': item.pack,
@@ -398,7 +411,7 @@ class _$AbstractDao extends AbstractDao {
             database,
             'abstracts',
             ['id'],
-            (Abstract item) => <String, dynamic>{
+            (Abstract item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'pack': item.pack,
@@ -409,7 +422,7 @@ class _$AbstractDao extends AbstractDao {
             database,
             'abstracts',
             ['id'],
-            (Abstract item) => <String, dynamic>{
+            (Abstract item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'pack': item.pack,
@@ -423,13 +436,6 @@ class _$AbstractDao extends AbstractDao {
 
   final QueryAdapter _queryAdapter;
 
-  static final _abstractsMapper = (Map<String, dynamic> row) => Abstract(
-      id: row['id'] as int?,
-      fileName: row['file_name'] as String,
-      pack: row['pack'] as String,
-      text: row['text'] as String,
-      date: row['date'] as String);
-
   final InsertionAdapter<Abstract> _abstractInsertionAdapter;
 
   final UpdateAdapter<Abstract> _abstractUpdateAdapter;
@@ -439,7 +445,12 @@ class _$AbstractDao extends AbstractDao {
   @override
   Future<List<Abstract>> findAllAbstracts() async {
     return _queryAdapter.queryList('SELECT * FROM abstracts',
-        mapper: _abstractsMapper);
+        mapper: (Map<String, Object?> row) => Abstract(
+            id: row['id'] as int?,
+            fileName: row['file_name'] as String,
+            pack: row['pack'] as String,
+            text: row['text'] as String,
+            date: row['date'] as String));
   }
 
   @override
@@ -465,7 +476,7 @@ class _$CodingDao extends CodingDao {
         _codingInsertionAdapter = InsertionAdapter(
             database,
             'codings',
-            (Coding item) => <String, dynamic>{
+            (Coding item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'lang': item.lang,
@@ -474,7 +485,7 @@ class _$CodingDao extends CodingDao {
         _codingEntryInsertionAdapter = InsertionAdapter(
             database,
             'coding_entries',
-            (CodingEntry item) => <String, dynamic>{
+            (CodingEntry item) => <String, Object?>{
                   'id': item.id,
                   'coding_id': item.codingId,
                   'char': item.char,
@@ -484,7 +495,7 @@ class _$CodingDao extends CodingDao {
             database,
             'codings',
             ['id'],
-            (Coding item) => <String, dynamic>{
+            (Coding item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'lang': item.lang,
@@ -494,7 +505,7 @@ class _$CodingDao extends CodingDao {
             database,
             'coding_entries',
             ['id'],
-            (CodingEntry item) => <String, dynamic>{
+            (CodingEntry item) => <String, Object?>{
                   'id': item.id,
                   'coding_id': item.codingId,
                   'char': item.char,
@@ -504,7 +515,7 @@ class _$CodingDao extends CodingDao {
             database,
             'codings',
             ['id'],
-            (Coding item) => <String, dynamic>{
+            (Coding item) => <String, Object?>{
                   'id': item.id,
                   'file_name': item.fileName,
                   'lang': item.lang,
@@ -516,19 +527,6 @@ class _$CodingDao extends CodingDao {
   final StreamController<String> changeListener;
 
   final QueryAdapter _queryAdapter;
-
-  static final _codingsMapper = (Map<String, dynamic> row) => Coding(
-      id: row['id'] as int?,
-      fileName: row['file_name'] as String,
-      lang: row['lang'] as String,
-      date: row['date'] as String);
-
-  static final _coding_entriesMapper = (Map<String, dynamic> row) =>
-      CodingEntry(
-          id: row['id'] as int?,
-          codingId: row['coding_id'] as int,
-          char: row['char'] as String,
-          ascii: row['ascii'] as String);
 
   final InsertionAdapter<Coding> _codingInsertionAdapter;
 
@@ -543,7 +541,11 @@ class _$CodingDao extends CodingDao {
   @override
   Future<List<Coding>> findAllCodings() async {
     return _queryAdapter.queryList('SELECT * FROM codings',
-        mapper: _codingsMapper);
+        mapper: (Map<String, Object?> row) => Coding(
+            id: row['id'] as int?,
+            fileName: row['file_name'] as String,
+            lang: row['lang'] as String,
+            date: row['date'] as String));
   }
 
   @override
@@ -554,22 +556,30 @@ class _$CodingDao extends CodingDao {
   @override
   Future<List<CodingEntry>> findAllCodingEntries() async {
     return _queryAdapter.queryList('SELECT * FROM coding_entries',
-        mapper: _coding_entriesMapper);
+        mapper: (Map<String, Object?> row) => CodingEntry(
+            id: row['id'] as int?,
+            codingId: row['coding_id'] as int,
+            char: row['char'] as String,
+            ascii: row['ascii'] as String));
   }
 
   @override
   Future<List<CodingEntry>> findAllCodingEntriesByCodingId(int codingId) async {
     return _queryAdapter.queryList(
-        'SELECT * FROM coding_entries WHERE coding_id = ?',
-        (arguments: <dynamic>[codingId]) as List<Object>?,
-        mapper: _coding_entriesMapper);
+        'SELECT * FROM coding_entries WHERE coding_id = ?1',
+        mapper: (Map<String, Object?> row) => CodingEntry(
+            id: row['id'] as int?,
+            codingId: row['coding_id'] as int,
+            char: row['char'] as String,
+            ascii: row['ascii'] as String),
+        arguments: [codingId]);
   }
 
   @override
-  Future<void> deleteCodingEntriesByCodingId(int? codingId) async {
+  Future<void> deleteCodingEntriesByCodingId(int codingId) async {
     await _queryAdapter.queryNoReturn(
-        'DELETE FROM coding_entries WHERE coding_id = ?',
-        (arguments: <dynamic>[codingId]) as List<Object>?);
+        'DELETE FROM coding_entries WHERE coding_id = ?1',
+        arguments: [codingId]);
   }
 
   @override
