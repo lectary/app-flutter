@@ -28,7 +28,7 @@ class SearchResultPackageItem extends StatelessWidget {
   // root level
   Widget _buildTiles(SearchResultPackage pack, bool uppercase) {
     if (pack.children.isEmpty) return ListTile(title: Text(pack.lectureTitle));
-    List<Widget> childs = List<Widget>();
+    List<Widget> childs = [];
 
     if (entry.lectureTitle.isNotEmpty) {
       childs.add(

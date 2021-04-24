@@ -39,7 +39,7 @@ class Utils {
   /// Returns a [List] of [LecturePackage]
   static List<LecturePackage> groupLecturesByPack(List<Lecture> lectureList) {
     final lecturesByPack = groupBy(lectureList, (dynamic lecture) => (lecture as Lecture).pack);
-    List<LecturePackage> packList = List();
+    List<LecturePackage> packList = [];
     lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
     return packList;
   }
@@ -233,7 +233,7 @@ class Utils {
     math.Random random = new math.Random();
     int rndPage;
     if (vocableProgressEnabled) {
-      List<Vocable> distributedVocableList = List();
+      List<Vocable> distributedVocableList = [];
       vocables.forEach((voc) {
         switch(voc.vocableProgress) {
           case 0:

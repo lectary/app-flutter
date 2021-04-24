@@ -18,7 +18,7 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
-  List<TapGestureRecognizer> _tapGestureRecognizerList = List();
+  List<TapGestureRecognizer> _tapGestureRecognizerList = [];
 
   @override
   void dispose() {

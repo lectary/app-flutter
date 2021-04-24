@@ -45,19 +45,19 @@ class LectureViewModel with ChangeNotifier {
   bool get offlineMode => _offlineMode;
 
   /// contains all [LecturePackage] that are available (persisted and remote ones)
-  List<LecturePackage> _availableLectures = List();
+  List<LecturePackage> _availableLectures = [];
   /// contains all filtered [LecturePackage] by reference from [_availableLectures]
-  List<LecturePackage> _filteredLectures = List();
+  List<LecturePackage> _filteredLectures = [];
   List<LecturePackage> get availableLectures => _filteredLectures;
 
   String? _currentFilter;
 
   /// contains all persisted [Vocable]
-  List<Vocable> _currentVocables = List();
+  List<Vocable> _currentVocables = [];
   List<Vocable> get currentVocables => _currentVocables;
 
   /// contains all available (local and remote) [Coding]
-  List<Coding> _availableCodings = List();
+  List<Coding> _availableCodings = [];
 
   /// Constructor with passed in [LectureRepository]
   LectureViewModel({required lectureRepository})
@@ -158,7 +158,7 @@ class LectureViewModel with ChangeNotifier {
   /// Merges the remote and local lecture list
   /// Returns a list of [Lecture] containing all locally persisted and remote available lectures with the corresponding [LectureStatus]
   List<Lecture> _mergeLectureLists(List<Lecture> localList, List<Lecture> remoteList) {
-    List<Lecture> resultList = List();
+    List<Lecture> resultList = [];
 
     // comparing local with remote list and adding all local persisted lectures to the result list and checking if updates are available (i.e. identical lecture with never date)
     localList.forEach((local) {
@@ -438,7 +438,7 @@ class LectureViewModel with ChangeNotifier {
     // get the path to the device's application directory
     String dir = (await getApplicationDocumentsDirectory()).path;
 
-    List<Vocable> vocables = List();
+    List<Vocable> vocables = [];
 
     for (ArchiveFile file in archive) {
       if (!file.isFile) continue;
@@ -466,7 +466,7 @@ class LectureViewModel with ChangeNotifier {
   void filterLectureList(String filter) {
     _currentFilter = filter;
 
-    List<Lecture> tempListLectures = List();
+    List<Lecture> tempListLectures = [];
     _availableLectures.forEach((pack) => pack.children.forEach((lecture) {
       if (lecture.pack.toLowerCase().contains(filter.toLowerCase()) ||
           lecture.lesson.toLowerCase().contains(filter.toLowerCase())) {
@@ -488,7 +488,7 @@ class LectureViewModel with ChangeNotifier {
   /// Returns a list of [Abstract] with the corresponding [AbstractStatus]
   @visibleForTesting
   List<Abstract> mergeAndCheckAbstracts(List<Abstract> localList, List<Abstract> remoteList) {
-    List<Abstract> resultList = List();
+    List<Abstract> resultList = [];
 
     // comparing local with remote list and adding all local persisted lectures to the result list and checking if updates are available (i.e. identical lecture with never date)
     localList.forEach((local) {
@@ -604,7 +604,7 @@ class LectureViewModel with ChangeNotifier {
   /// Returns a list of [Coding] with the corresponding [CodingStatus]
   @visibleForTesting
   List<Coding> mergeAndCheckCodings(List<Coding> localList, List<Coding> remoteList) {
-    List<Coding> resultList = List();
+    List<Coding> resultList = [];
 
     // comparing local with remote list and adding all local persisted lectures to the result list and checking if updates are available (i.e. identical lecture with never date)
     localList.forEach((local) {
@@ -690,7 +690,7 @@ class LectureViewModel with ChangeNotifier {
     if (lecture.langVocable == "DE" || lecture.langVocable == "EN") {
       return;
     }
-    List<Lecture> lecturesThatNeedCoding = List();
+    List<Lecture> lecturesThatNeedCoding = [];
     // retrieve all persisted lectures with the corresponding language besides the passed one
     _availableLectures.forEach((pack) =>
         lecturesThatNeedCoding.addAll(pack.children.where((lec) => lec.id != lecture.id && lec.lectureStatus == LectureStatus.persisted && lec.langVocable == lecture.langVocable)));
@@ -728,7 +728,7 @@ class LectureViewModel with ChangeNotifier {
     log("updating coding: $coding");
     List<CodingEntry>? newCodingEntries;
     try {
-      await _lectureRepository.deleteCodingEntriesByCodingId(coding.id);
+      await _lectureRepository.deleteCodingEntriesByCodingId(coding.id!);
       // update coding infos
       coding.fileName = coding.fileNameUpdate!;
       coding.fileNameUpdate = null;
@@ -759,7 +759,7 @@ class LectureViewModel with ChangeNotifier {
           )
       );
       // deAsciify all found vocables and update db
-      List<Vocable> vocablesToUpdate = List();
+      List<Vocable> vocablesToUpdate = [];
       results.forEach((element) => vocablesToUpdate.addAll(element));
       vocablesToUpdate.forEach((voc) => voc.vocable = Utils.deAsciify(voc.vocable, codingEntries: newCodingEntries));
       await _lectureRepository.updateVocables(vocablesToUpdate);
@@ -774,7 +774,7 @@ class LectureViewModel with ChangeNotifier {
   Future<void> _deleteCoding(Coding coding) async {
     log("deleting coding: $coding");
     try {
-      await _lectureRepository.deleteCodingEntriesByCodingId(coding.id);
+      await _lectureRepository.deleteCodingEntriesByCodingId(coding.id!);
       await _lectureRepository.deleteCoding(coding);
       _availableCodings.firstWhere((element) => element.lang == coding.lang).codingStatus = CodingStatus.notPersisted;
     } catch(e) {
