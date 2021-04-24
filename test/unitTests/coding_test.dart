@@ -13,7 +13,7 @@ void main() {
   group('Testing status handling of "mergeAndCheckCodings" |', () {
     LectureViewModel lectureViewModel = LectureViewModel(lectureRepository: MockLectureRepository());
     test('should set status to "notPersisted"', () {
-      List<Coding> localList = List();
+      List<Coding> localList = [];
       List<Coding> remoteList = List.of({
         Coding(
             fileName: "CODING--CZ---DATE--2020-05-26.json",
@@ -52,7 +52,7 @@ void main() {
             date: "2020-06-21"
         )
       });
-      List<Coding> remoteList = List();
+      List<Coding> remoteList = [];
 
       List<Coding> mergedCodings = lectureViewModel.mergeAndCheckCodings(localList, remoteList);
       expect(mergedCodings[0].codingStatus, CodingStatus.removed);

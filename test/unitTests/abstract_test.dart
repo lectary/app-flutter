@@ -11,7 +11,7 @@ void main() {
   group('Testing status handling of "mergeAndCheckAbstracts" |', () {
     LectureViewModel lectureViewModel = LectureViewModel(lectureRepository: MockLectureRepository());
     test('should set status to "notPersisted"', () {
-      List<Abstract> localList = List();
+      List<Abstract> localList = [];
       List<Abstract> remoteList = List.of({
         Abstract(
           fileName: "ABSTRACT--Geb_aerden__lernen---DATE--2020-06-21.txt",
@@ -54,7 +54,7 @@ void main() {
             date: "2020-06-21"
         )
       });
-      List<Abstract> remoteList = List();
+      List<Abstract> remoteList = [];
 
       List<Abstract> mergedAbstracts = lectureViewModel.mergeAndCheckAbstracts(localList, remoteList);
       expect(mergedAbstracts[0].abstractStatus, AbstractStatus.removed);

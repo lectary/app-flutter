@@ -30,7 +30,7 @@ void main() async {
           lesson: "",
           lessonSort: "",
           langVocable: "CZ",
-          langMedia: "ÖGS"),
+          langMedia: "ÖGS", date: '2021-04-04'),
       Lecture(
           id: 2,
           fileName: "",
@@ -40,7 +40,7 @@ void main() async {
           lesson: "",
           lessonSort: "",
           langVocable: "CZ",
-          langMedia: "ÖGS"),
+          langMedia: "ÖGS", date: '2021-04-04'),
       Lecture(
           id: 3,
           fileName: "",
@@ -50,7 +50,7 @@ void main() async {
           lesson: "",
           lessonSort: "",
           langVocable: "CZ",
-          langMedia: "ÖGS")
+          langMedia: "ÖGS", date: '2021-04-04')
     });
     List<Vocable> vocablesWithDuplicates = List.of({
       Vocable(id: 1, lectureId: 1, vocable: "Haus", vocableSort: "Haus", media: "", mediaType: "PNG"),
@@ -80,7 +80,7 @@ void main() async {
                     CarouselViewModel(lectureRepository: mockRepo),
                 update: (context, settingViewModel, carouselViewModel) =>
                     carouselViewModel
-                      ..updateSettings(settingViewModel)
+                      ?..updateSettings(settingViewModel)
                       ..loadAllVocables(saveSelection: false),
                 lazy: false),
           ],
