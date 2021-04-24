@@ -29,7 +29,7 @@ class LecturePackageItem extends StatelessWidget {
     Selection? selection = Provider.of<CarouselViewModel>(context, listen: false).currentSelection;
     // return when there are no children, although this should never happen
     if (pack.children.isEmpty) return ListTile(title: Text(pack.title));
-    List<Widget> childs = List<Widget>();
+    List<Widget> childs = [];
     childs.add(Container(
         height: 70,
         alignment: Alignment.centerLeft,

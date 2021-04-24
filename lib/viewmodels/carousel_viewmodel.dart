@@ -105,7 +105,7 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// A [List] of the current loaded [Vocable], that should be displayed in the [Carousel].
-  List<Vocable> _currentVocables = List();
+  List<Vocable> _currentVocables = [];
   List<Vocable> get currentVocables => _currentVocables;
   set currentVocables(List<Vocable> value) {
     _currentVocables = value;
@@ -115,7 +115,7 @@ class CarouselViewModel with ChangeNotifier {
   /// A copy of [currentVocables], used for filtering.
   /// If the filter result will be accepted [filteredVocables] will be assigned
   /// as new value of [currentVocables], otherwise discarded
-  List<Vocable> _filteredVocables = List();
+  List<Vocable> _filteredVocables = [];
   List<Vocable> get filteredVocables => _filteredVocables;
 
   void clearFilteredVocables() {
@@ -129,7 +129,7 @@ class CarouselViewModel with ChangeNotifier {
 
   /// /// A copy of [currentVocables], but for display purposes only.
   /// Contains the same vocables as [filteredVocables] but packaged as [List] of type [SearchResultPackage].
-  List<SearchResultPackage> _searchResults = List();
+  List<SearchResultPackage> _searchResults = [];
   List<SearchResultPackage> get searchResults => _searchResults;
 
   /// Used in the carousel for keeping track of the index of the current [Vocable].
@@ -150,7 +150,7 @@ class CarouselViewModel with ChangeNotifier {
   List<Lecture>? localLectures;
 
   /// Used for global search and loaded when the search is first used.
-  List<Vocable> _allLocalVocables = List();
+  List<Vocable> _allLocalVocables = [];
 
   void clearAllLocalVocables() {
     _allLocalVocables.clear();
@@ -346,6 +346,7 @@ class CarouselViewModel with ChangeNotifier {
     // remove key (and possible value) if null is passed as selection-value
     if (selection == null) {
       await prefs.remove(Constants.keySelection);
+      return;
     }
     // save needed selection info corresponding to the SelectionType
     switch (selection.type) {
@@ -566,7 +567,7 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentVocables] and assigns it by reference again to [_filteredVocables] and notifies listeners.
   /// Operations on the original list [_currentVocables] will therefore also affect the corresponding elements in [_filteredVocables]
   Future<void> filterVocablesForNavigation(String filter) async {
-    List<Vocable> localResults = List();
+    List<Vocable> localResults = [];
     _currentVocables.forEach((voc) {
       if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
         localResults.add(voc);
@@ -603,7 +604,7 @@ class CarouselViewModel with ChangeNotifier {
     List<Vocable> allVocables = List.from(_allLocalVocables);
 
     // filter the list of current selected vocables
-    List<Vocable> localResults = List();
+    List<Vocable> localResults = [];
     _currentVocables.forEach((voc) {
       if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
         localResults.add(voc);
@@ -615,7 +616,7 @@ class CarouselViewModel with ChangeNotifier {
         allVocables.removeWhere((globalVoc) => globalVoc.id == localVoc.id)
     );
     // filter remaining vocables in the global list
-    List<Vocable> globalResults = List();
+    List<Vocable> globalResults = [];
     allVocables.forEach((voc) {
       if (voc.vocable.toLowerCase().contains(filter.toLowerCase())) {
         globalResults.add(voc);
@@ -639,7 +640,7 @@ class CarouselViewModel with ChangeNotifier {
     List<SearchResult> searchResultList = vocables.map((vocable) => SearchResult(vocable)).toList();
 
     // Result list of type [SearchResultPackage]
-    List<SearchResultPackage> tmpList = List();
+    List<SearchResultPackage> tmpList = [];
 
     // Optionally grouping the searchResults after lecture id and replacing the id
     // with the corresponding lecture name by a lookup in the list of local lectures.
@@ -663,7 +664,7 @@ class CarouselViewModel with ChangeNotifier {
     }
 
     // sorting grouped lists excluding first one
-    List<SearchResultPackage> searchResultPackageList = List();
+    List<SearchResultPackage> searchResultPackageList = [];
     // If a lecture is selected, show results from the selected lecture first
     if (currentSelection!.type == SelectionType.lecture && tmpList.length > 1 && currentSelection!.lesson == tmpList[0].lectureTitle) {
       searchResultPackageList.add(tmpList.removeAt(0));

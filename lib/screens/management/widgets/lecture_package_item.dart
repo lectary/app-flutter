@@ -36,7 +36,7 @@ class LecturePackageItem extends StatelessWidget {
   Widget _buildTiles(LecturePackage pack, bool uppercase) {
     // return when there are no children, although this should never happen
     if (pack.children.isEmpty) return ListTile(title: Text(uppercase ? pack.title.toUpperCase() : pack.title));
-    List<Widget> childs = List<Widget>();
+    List<Widget> childs = [];
     childs.add(
       Container(
         height: 70,

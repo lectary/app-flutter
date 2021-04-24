@@ -89,7 +89,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
       case Status.completed:
         // build list of widgets in the body
-        List<Widget> bodyWidgets = List();
+        List<Widget> bodyWidgets = [];
         // check if widgets for offline-mode are needed
         if (lectureViewModel.offlineMode) {
           bodyWidgets.add(Container(
