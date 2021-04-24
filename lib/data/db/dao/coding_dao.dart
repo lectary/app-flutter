@@ -35,7 +35,7 @@ abstract class CodingDao {
   Future<void> updateCodingEntry(CodingEntry codingEntry);
 
   @Query("DELETE FROM coding_entries WHERE coding_id = :codingId")
-  Future<void> deleteCodingEntriesByCodingId(int? codingId);
+  Future<void> deleteCodingEntriesByCodingId(int codingId);
 
   @Query("DELETE FROM coding_entries")
   Future<void> deleteAllCodingEntries();

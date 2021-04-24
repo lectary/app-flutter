@@ -19,7 +19,7 @@ class LectaryVideoPlayer extends StatefulWidget {
   final bool autoMode;
   final bool loopMode;
 
-  final String audio;
+  final String? audio;
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 

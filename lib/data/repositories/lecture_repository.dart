@@ -181,7 +181,7 @@ class LectureRepository {
     return _lectureDatabase.codingDao.updateCodingEntry(codingEntry);
   }
 
-  Future<void> deleteCodingEntriesByCodingId(int? codingId) {
+  Future<void> deleteCodingEntriesByCodingId(int codingId) {
     return _lectureDatabase.codingDao.deleteCodingEntriesByCodingId(codingId);
   }
 
