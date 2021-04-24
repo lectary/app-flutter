@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
