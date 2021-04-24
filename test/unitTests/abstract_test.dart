@@ -1,12 +1,13 @@
 import 'package:lectary/data/db/entities/abstract.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
+import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 
-import 'package:mockito/mockito.dart';
+import '../shared_mocks.mocks.dart';
 
-class MockLectureRepository extends Mock implements LectureRepository {}
-
+// class MockLectureRepository extends Mock implements LectureRepository {}
+@GenerateMocks([LectureRepository])
 void main() {
   group('Testing status handling of "mergeAndCheckAbstracts" |', () {
     LectureViewModel lectureViewModel = LectureViewModel(lectureRepository: MockLectureRepository());
@@ -14,11 +15,10 @@ void main() {
       List<Abstract> localList = [];
       List<Abstract> remoteList = List.of({
         Abstract(
-          fileName: "ABSTRACT--Geb_aerden__lernen---DATE--2020-06-21.txt",
-          pack: "Gebärden lernen",
-          text: "",
-          date: "2020-06-21"
-        )
+            fileName: "ABSTRACT--Geb_aerden__lernen---DATE--2020-06-21.txt",
+            pack: "Gebärden lernen",
+            text: "",
+            date: "2020-06-21")
       });
 
       List<Abstract> mergedAbstracts = lectureViewModel.mergeAndCheckAbstracts(localList, remoteList);
@@ -30,16 +30,14 @@ void main() {
             fileName: "ABSTRACT--Geb_aerden__lernen---DATE--2020-06-21.txt",
             pack: "Gebärden lernen",
             text: "",
-            date: "2020-06-20"
-        )
+            date: "2020-06-20")
       });
       List<Abstract> remoteList = List.of({
         Abstract(
             fileName: "ABSTRACT--Geb_aerden__lernen---DATE--2020-06-21.txt",
             pack: "Gebärden lernen",
             text: "",
-            date: "2020-06-21"
-        )
+            date: "2020-06-21")
       });
 
       List<Abstract> mergedAbstracts = lectureViewModel.mergeAndCheckAbstracts(localList, remoteList);
@@ -51,8 +49,7 @@ void main() {
             fileName: "ABSTRACT--Geb_aerden__lernen---DATE--2020-06-21.txt",
             pack: "Gebärden lernen",
             text: "",
-            date: "2020-06-21"
-        )
+            date: "2020-06-21")
       });
       List<Abstract> remoteList = [];
 

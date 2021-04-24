@@ -5,11 +5,13 @@ import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class MockLectureRepository extends Mock implements LectureRepository {}
+import '../shared_mocks.mocks.dart';
 
+@GenerateMocks([LectureRepository])
 void main() async {
   List<dynamic> json = [
     {"char": "Á", "asciify": "_CZXA"},
@@ -43,10 +45,8 @@ void main() async {
     {"char": "Ž", "asciify": "_CZZ"},
     {"char": "ž", "asciify": "_CZz"}
   ];
-  List<CodingEntry> newCodingEntries = json
-      .map((entry) => CodingEntry(char: entry["char"], ascii: entry["asciify"]))
-      .where((element) => element != null)
-      .toList();
+  List<CodingEntry> newCodingEntries =
+      json.map((entry) => CodingEntry(char: entry["char"], ascii: entry["asciify"])).toList();
 
   Coding coding = Coding(id: 1, fileName: "CODING--CZ---DATE--2020-05-26.json", lang: "CZ", date: "2020-05-26");
   coding.codingStatus = CodingStatus.updateAvailable;
@@ -100,19 +100,15 @@ void main() async {
     file.writeAsStringSync(fileContent);
 
     test('Test1 - updating coding updates vocables with corresponding lang', () async {
-      when(mockRepo.deleteCodingEntriesByCodingId(1)).thenAnswer((_) async => Future.value());
       when(mockRepo.downloadCoding(coding)).thenAnswer((_) async => Future.value(file));
-      when(mockRepo.updateCoding(coding)).thenAnswer((_) async => Future.value());
-      when(mockRepo.insertCodingEntries(newCodingEntries)).thenAnswer((_) async => Future.value());
       when(mockRepo.findAllLecturesWithLang(coding.lang))
           .thenAnswer((_) async => Future.value(persistedLecturesWithLangCZ));
       when(mockRepo.findVocablesByLectureId(1)).thenAnswer((_) async => Future.value(persistedVocablesLectureId1));
       when(mockRepo.findVocablesByLectureId(2)).thenAnswer((_) async => Future.value(persistedVocablesLectureId2));
-      when(mockRepo.updateVocables(any!)).thenAnswer((_) async => Future.value(any));
 
       try {
         await lectureViewModel.updateCoding(coding);
-        expect(verify(mockRepo.updateVocables(captureAny!)).captured.single.toString(), updatedVocables.toString());
+        expect(verify(mockRepo.updateVocables(captureAny)).captured.single.toString(), updatedVocables.toString());
       } finally {
         file.deleteSync();
       }

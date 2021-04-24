@@ -3,12 +3,14 @@ import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/test.dart';
 
-class MockLectureRepository extends Mock implements LectureRepository {}
+import '../shared_mocks.mocks.dart';
 
+@GenerateMocks([LectureRepository])
 void main() async {
   group('Tests for SettingViewModel', () {
     group('Group 1 - Testing behaviour of updating of learning languages', () {

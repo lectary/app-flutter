@@ -64,7 +64,6 @@ void main() async {
       List<CodingEntry> coding = json
           .map((entry) =>
           CodingEntry(char: entry["char"], ascii: entry["asciify"]))
-          .where((element) => element != -1)
           .toList();
 
       Vocable vocable = Vocable(lectureId: -1,
