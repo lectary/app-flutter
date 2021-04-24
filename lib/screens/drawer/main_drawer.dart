@@ -21,7 +21,7 @@ class MainDrawer extends StatefulWidget {
 }
 
 class _MainDrawerState extends State<MainDrawer> {
-  CarouselViewModel _carouselViewModel;
+  late CarouselViewModel _carouselViewModel;
 
   /// Listening to drawer init(opened) and disposed(closed) to interrupt
   /// medias corresponding.
@@ -30,7 +30,7 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _carouselViewModel = Provider.of<CarouselViewModel>(context, listen: false);
       _carouselViewModel.interrupted = true;
     });
@@ -38,7 +38,7 @@ class _MainDrawerState extends State<MainDrawer> {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (!_carouselViewModel.interruptedCauseNavigation) _carouselViewModel.interrupted = false;
     });
     super.dispose();
@@ -98,7 +98,7 @@ class _MainDrawerState extends State<MainDrawer> {
   }
 
   /// Creates a horizontal stretched button with passed icon, text and route navigation tapEvent
-  Widget _buildButton({BuildContext context, int flex, IconData icon, String text, String routeName}) {
+  Widget _buildButton({required BuildContext context, required int flex, required IconData icon, required String text, required String routeName}) {
     return Container(
       height: 60,
       child: RaisedButton(
@@ -121,16 +121,16 @@ class _MainDrawerState extends State<MainDrawer> {
   /// as [Stream], via a [StreamBuilder]. Retrieves the stream from the viewModel [CarouselViewModel]
   /// The items of the [ListView] are of type [LecturePackage]
   Widget _generateListView(BuildContext context) {
-    Selection selection = context.select((CarouselViewModel model) => model.currentSelection);
+    Selection? selection = context.select((CarouselViewModel model) => model.currentSelection);
     return StreamBuilder<List<LecturePackage>>(
       stream: Provider.of<CarouselViewModel>(context, listen: false).loadLocalLecturesAsStream(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data.isNotEmpty) {
+          if (snapshot.data!.isNotEmpty) {
             return ListView.separated(
                 padding: EdgeInsets.all(0),
                 separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
-                  itemCount: snapshot.data.length + 1,
+                  itemCount: snapshot.data!.length + 1,
                   itemBuilder: (context, index) {
                     if (index == 0) {
                       return Container(
@@ -140,7 +140,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         child: ListTile(
                           title: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyText1.copyWith(
+                            child: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyText1!.copyWith(
                               color: selection != null && selection.type == SelectionType.all
                                   ? ColorsLectary.white
                                   : Colors.black
@@ -154,7 +154,7 @@ class _MainDrawerState extends State<MainDrawer> {
                         ),
                       );
                     }
-                    return LecturePackageItem(context, snapshot.data[index - 1]);
+                    return LecturePackageItem(context, snapshot.data![index - 1]);
                   });
             } else {
             return Center(

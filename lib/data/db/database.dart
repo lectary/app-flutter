@@ -32,19 +32,19 @@ class DatabaseProvider {
 
   DatabaseProvider._internal();
 
-  static LectureDatabase _db;
+  static LectureDatabase? _db;
 
   Future<LectureDatabase> get db async {
     if (_db == null) {
       _db = await $FloorLectureDatabase.databaseBuilder(Constants.databaseName)
           .build();
     }
-    return _db;
+    return _db!;
   }
 
   Future<void> closeDB() async {
     if (_db != null) {
-      _db.close();
+      _db!.close();
     }
   }
 }

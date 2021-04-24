@@ -15,11 +15,11 @@ class SearchBar extends StatefulWidget {
   final Function filterFunction;
 
   SearchBar(
-      {@required this.textEditingController,
-      @required this.focusNode,
+      {required this.textEditingController,
+      required this.focusNode,
       this.initOpen = false,
-      @required this.filterFunction,
-      Key key})
+      required this.filterFunction,
+      Key? key})
       : super(key: key);
 
   @override
@@ -31,7 +31,7 @@ class _SearchBarState extends State<SearchBar> {
   void initState() {
     if (widget.initOpen) {
       // open keyboard after widget is built
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         FocusScope.of(context).requestFocus(widget.focusNode);
         setState(() {});
       });
@@ -78,7 +78,7 @@ class _SearchBarState extends State<SearchBar> {
                 // clears the focus and closes keyboard
                 final FocusScopeNode currentScope = FocusScope.of(context);
                 if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                  FocusManager.instance.primaryFocus.unfocus();
+                  FocusManager.instance.primaryFocus!.unfocus();
                 }
               },
               child: Text(

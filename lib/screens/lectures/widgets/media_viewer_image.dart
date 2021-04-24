@@ -24,7 +24,7 @@ class ImageViewer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  ImageViewer({this.imagePath, this.mediaIndex, this.slowMode, this.autoMode, Key key}) : super(key: key);
+  ImageViewer({required this.imagePath, required this.mediaIndex, required this.slowMode, required this.autoMode, Key? key}) : super(key: key);
 
   @override
   _ImageViewerState createState() => _ImageViewerState();
@@ -38,8 +38,8 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
   /// E.g. for avoiding that the animation is played when pressing autoPlay
   bool readyForAutoMode = false;
 
-  AnimationController _animationController;
-  Animation<double> _animation;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {

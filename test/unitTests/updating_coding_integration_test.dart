@@ -106,11 +106,11 @@ void main() async {
       when(mockRepo.findAllLecturesWithLang(coding.lang)).thenAnswer((_) async => Future.value(persistedLecturesWithLangCZ));
       when(mockRepo.findVocablesByLectureId(1)).thenAnswer((_) async => Future.value(persistedVocablesLectureId1));
       when(mockRepo.findVocablesByLectureId(2)).thenAnswer((_) async => Future.value(persistedVocablesLectureId2));
-      when(mockRepo.updateVocables(any)).thenAnswer((_) async => Future.value(any));
+      when(mockRepo.updateVocables(any!)).thenAnswer((_) async => Future.value(any));
 
       try {
         await lectureViewModel.updateCoding(coding);
-        expect(verify(mockRepo.updateVocables(captureAny)).captured.single.toString(), updatedVocables.toString());
+        expect(verify(mockRepo.updateVocables(captureAny!)).captured.single.toString(), updatedVocables.toString());
       } finally {
         file.deleteSync();
       }

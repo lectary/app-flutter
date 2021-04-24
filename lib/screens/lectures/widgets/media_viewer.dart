@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
@@ -18,9 +19,9 @@ import 'package:lectary/screens/lectures/widgets/media_viewer_video.dart';
 /// Listens on [CarouselViewModel] for changes regarding media-modes and vocable visibility.
 class MediaViewer extends StatelessWidget {
   const MediaViewer({
-    Key key,
-    @required this.vocable,
-    @required this.vocableIndex,
+    Key? key,
+    required this.vocable,
+    required this.vocableIndex,
   }) : super(key: key);
 
   final Vocable vocable;
@@ -32,9 +33,8 @@ class MediaViewer extends StatelessWidget {
     final model = Provider.of<CarouselViewModel>(context, listen: false);
     String lectureName = "";
     if (model.localLectures != null) {
-      Lecture lecture = model.localLectures.firstWhere(
-              (lecture) => lecture.id == vocable.lectureId,
-          orElse: () => null);
+      Lecture? lecture = model.localLectures!.firstWhereOrNull(
+              (lecture) => lecture.id == vocable.lectureId);
       lectureName = lecture == null ? "" : lecture.lesson;
     }
     return lectureName;

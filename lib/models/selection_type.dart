@@ -9,13 +9,13 @@
 class Selection {
   SelectionType type;
   // for package
-  String packTitle;
+  String? packTitle;
   // for lecture
-  int lectureId;
-  String lesson;
+  int? lectureId;
+  String? lesson;
   // for search
-  String filter;
-  Selection originSelection;
+  String? filter;
+  Selection? originSelection;
 
   Selection.all() : type = SelectionType.all;
   Selection.package(this.packTitle) : type = SelectionType.package;

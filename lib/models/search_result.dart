@@ -17,7 +17,7 @@ class SearchResultPackage {
 /// Contains mandatory [Vocable] and optional [Vocable.mediaType]
 class SearchResult {
   final Vocable vocable;
-  String mediaType;
+  String? mediaType;
 
   SearchResult(this.vocable, {this.mediaType});
 }

@@ -1,6 +1,6 @@
 import 'dart:developer';
+
 import 'package:floor/floor.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:lectary/utils/exceptions/coding_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
@@ -12,14 +12,14 @@ enum CodingStatus { notPersisted, persisted, removed, updateAvailable }
 @Entity(tableName: "codings")
 class Coding {
   @PrimaryKey(autoGenerate: true)
-  int id;
+  int? id;
 
   /// Used for automatically managing (e.g. downloading) codings
   @ignore
-  CodingStatus codingStatus;
+  CodingStatus? codingStatus;
   /// Used for saving the fileName of an available update
   @ignore
-  String fileNameUpdate;
+  String? fileNameUpdate;
 
   @ColumnInfo(name: "file_name")
   String fileName;
@@ -28,19 +28,12 @@ class Coding {
 
   String date;
 
-  Coding(
-      {this.id,
-      @required this.fileName,
-      @required this.lang,
-      @required this.date})
-      : assert(fileName != null),
-        assert(lang != null),
-        assert(date != null);
+  Coding({this.id, required this.fileName, required this.lang, required this.date});
 
   /// Factory constructor to create a new coding instance from a json.
   /// Returns a new [Coding] on successful json deserialization.
   /// Returns [Null] on [CodingException] i.e. when metadata are malformed.
-  factory Coding.fromJson(Map<String, dynamic> json) {
+  static Coding? fromJson(Map<String, dynamic> json) {
     String fileName = json['fileName'];
     Map<String, dynamic> metadata;
     try {
@@ -113,7 +106,7 @@ class Coding {
 )
 class CodingEntry {
   @PrimaryKey(autoGenerate: true)
-  int id;
+  int? id;
 
   @ColumnInfo(name: "coding_id")
   int codingId;
@@ -125,5 +118,5 @@ class CodingEntry {
   String ascii;
 
   CodingEntry(
-      {this.id, this.codingId, @required this.char, @required this.ascii});
+      {this.id, this.codingId = -1, required this.char, required this.ascii});
 }

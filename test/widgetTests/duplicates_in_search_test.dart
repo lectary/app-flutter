@@ -65,7 +65,7 @@ void main() async {
         mockRepo.insertLecture(lecture);
       });
       when(mockRepo.findVocablesByLangMedia("ÖGS")).thenAnswer((_) async => Future.value(vocablesWithDuplicates));
-      when(mockRepo.watchAllLectures()).thenAnswer((_) => lectureStream);
+      when(mockRepo.watchAllLectures()).thenAnswer((_) => lectureStream as Stream<List<Lecture>>);
 
       final key = GlobalKey<NavigatorState>();
       await tester.pumpWidget(
@@ -75,7 +75,7 @@ void main() async {
                 create: (BuildContext context) =>
                     SettingViewModel(lectureRepository: mockRepo)..settingLearningLanguage = "ÖGS"
             ),
-            ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel>(
+            ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel?>(
                 create: (BuildContext context) =>
                     CarouselViewModel(lectureRepository: mockRepo),
                 update: (context, settingViewModel, carouselViewModel) =>
@@ -100,7 +100,7 @@ void main() async {
             title: 'Flutter Test Wrapper',
             home: FlatButton(
               onPressed: () =>
-                  key.currentState.push(
+                  key.currentState!.push(
                     MaterialPageRoute<void>(
                         settings: RouteSettings(
                             arguments: VocableSearchScreenArguments(

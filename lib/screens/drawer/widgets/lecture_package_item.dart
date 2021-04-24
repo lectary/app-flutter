@@ -26,7 +26,7 @@ class LecturePackageItem extends StatelessWidget {
 
   // builds the header tile for the package and standard tiles for the children
   Widget _buildTiles(LecturePackage pack, bool uppercase) {
-    Selection selection = Provider.of<CarouselViewModel>(context, listen: false).currentSelection;
+    Selection? selection = Provider.of<CarouselViewModel>(context, listen: false).currentSelection;
     // return when there are no children, although this should never happen
     if (pack.children.isEmpty) return ListTile(title: Text(pack.title));
     List<Widget> childs = List<Widget>();
@@ -42,7 +42,7 @@ class LecturePackageItem extends StatelessWidget {
           title: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Text(uppercase ? pack.title.toUpperCase() : pack.title,
-                style: Theme.of(context).textTheme.headline6.copyWith(
+                style: Theme.of(context).textTheme.headline6!.copyWith(
                     color: selection != null && selection.packTitle == pack.title
                         ? ColorsLectary.white
                         : ColorsLectary.lightBlue)),
@@ -64,7 +64,7 @@ class LecturePackageItem extends StatelessWidget {
 
   // builds the children of an package
   List<Widget> _buildChildren(Lecture lecture, bool uppercase) {
-    Selection selection = Provider.of<CarouselViewModel>(context, listen: false).currentSelection;
+    Selection? selection = Provider.of<CarouselViewModel>(context, listen: false).currentSelection;
     return <Widget>[
       Divider(height: 1,thickness: 1),
       Container(
@@ -75,14 +75,14 @@ class LecturePackageItem extends StatelessWidget {
           title: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson,
-                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                style: Theme.of(context).textTheme.bodyText1!.copyWith(
                     color:
                         selection != null && selection.lesson == lecture.lesson
                             ? ColorsLectary.white
                             : Colors.black)),
           ),
           onTap: () {
-            Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfLecture(lecture.id, lecture.lesson);
+            Provider.of<CarouselViewModel>(context, listen: false).loadVocablesOfLecture(lecture.id!, lecture.lesson);
             Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
             Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
           },

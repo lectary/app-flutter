@@ -120,7 +120,7 @@ class LectaryApi {
   /// Function for reporting errors back to the lectary server.
   /// Params are the [timestamp], in the format 'yyyy-MM-dd-HH_mm', and an [errorMessage].
   /// Returns a [Future] with a [http.Response].
-  static Future<http.Response> reportErrorToServer(String timestamp, String errorMessage) async {
+  static Future<http.Response?> reportErrorToServer(String timestamp, String errorMessage) async {
     // check correct timestamp format
     try {
       final format = DateFormat('yyyy-MM-dd-HH_mm');
@@ -130,7 +130,7 @@ class LectaryApi {
       return null;
     }
 
-    http.Response response;
+    http.Response? response;
     try {
       http.post(
         Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiErrorEndpoint),

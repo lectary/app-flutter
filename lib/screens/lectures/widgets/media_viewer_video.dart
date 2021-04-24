@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
@@ -19,19 +20,19 @@ class LectaryVideoPlayer extends StatefulWidget {
   final bool autoMode;
   final bool loopMode;
 
-  final String audio;
+  final String? audio;
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  LectaryVideoPlayer({this.videoPath, this.mediaIndex, this.slowMode, this.autoMode, this.loopMode, Key key, this.audio}) : super(key: key);
+  LectaryVideoPlayer({required this.videoPath, required this.mediaIndex, required this.slowMode, required this.autoMode, required this.loopMode, Key? key, required this.audio}) : super(key: key);
 
   @override
   _LectaryVideoPlayerState createState() => _LectaryVideoPlayerState();
 }
 
 class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
-  VideoPlayerController _controller;
-  Future<void> _initializeVideoPlayerFuture;
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
 
   bool isVideoFinished = false;
   /// Used for indicating if video is played once due to autoMode for avoiding looping.
@@ -61,17 +62,15 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   void _restartVideoListener() async {
     if (isVideoFinished) return;
 
-    if (_controller.value != null) {
-      if ( _controller.value.position >= _controller.value.duration) {
-        isVideoFinished = true;
+    if (_controller.value.position >= _controller.value.duration) {
+      isVideoFinished = true;
 
-        if (!_controller.value.isPlaying) {
-          await _controller.seekTo(Duration.zero);
-          await _controller.pause();
-          setState(() {
-            isVideoFinished = false;
-          });
-        }
+      if (!_controller.value.isPlaying) {
+        await _controller.seekTo(Duration.zero);
+        await _controller.pause();
+        setState(() {
+          isVideoFinished = false;
+        });
       }
     }
   }

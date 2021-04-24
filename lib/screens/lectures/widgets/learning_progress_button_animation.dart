@@ -15,8 +15,8 @@ class LearningProgressButtonAnimation extends StatefulWidget {
 }
 
 class _LearningProgressButtonAnimationState extends State<LearningProgressButtonAnimation> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
+  late AnimationController _controller;
+  late Animation<double> _animation;
   bool _buttonEnabled = false;
 
   @override

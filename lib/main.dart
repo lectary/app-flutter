@@ -36,7 +36,7 @@ void main() async {
 class LectaryApp extends StatelessWidget {
   final LectureDatabase lectureDatabase;
 
-  LectaryApp({this.lectureDatabase});
+  LectaryApp({required this.lectureDatabase});
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +52,11 @@ class LectaryApp extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel>(
             create: (BuildContext context) => CarouselViewModel(lectureRepository: lectureRepository),
-            update: (context, settingViewModel, carouselViewModel) => carouselViewModel..updateSettings(settingViewModel),
+            update: (context, settingViewModel, carouselViewModel) => carouselViewModel!..updateSettings(settingViewModel),
             lazy: false),
         ChangeNotifierProxyProvider<SettingViewModel, LectureViewModel>(
           create: (BuildContext context) => LectureViewModel(lectureRepository: lectureRepository),
-          update: (context, settingViewModel, lectureViewModel) => lectureViewModel..updateSettings(settingViewModel),
+          update: (context, settingViewModel, lectureViewModel) => lectureViewModel!..updateSettings(settingViewModel),
           lazy: false,
         ),
       ],
@@ -72,7 +72,7 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 /// Provides a static [setLocale] method for changing the locale everywhere in the app
 class LocalizedApp extends StatefulWidget {
   const LocalizedApp({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -82,7 +82,7 @@ class LocalizedApp extends StatefulWidget {
   /// from everywhere in the app and setting a new locale, which rebuilds the entire application.
   /// Also loads all application settings via [SettingViewModel] on initialization
   static void setLocale(BuildContext context, Locale newLocale) {
-    _LocalizedAppState state = context.findAncestorStateOfType();
+    _LocalizedAppState state = context.findAncestorStateOfType() as _LocalizedAppState;
     state.setState(() {
       state.locale = newLocale;
     });
@@ -90,7 +90,7 @@ class LocalizedApp extends StatefulWidget {
 }
 
 class _LocalizedAppState extends State<LocalizedApp> {
-  Locale locale;
+  Locale? locale;
 
   @override
   void initState() {

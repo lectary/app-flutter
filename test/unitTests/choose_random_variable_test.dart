@@ -27,7 +27,7 @@ void main() {
       print("Selection rate when vocable progress is enabled: \n" + resultMap1.toString());
 
       // Computing the average value
-      int specialValue = resultMap1.remove(0);
+      int? specialValue = resultMap1.remove(0);
       double average = resultMap1.keys.map((key) {
         return resultMap1[key];
       }).toList().reduce((a, b) => a + b) / resultMap1.length;
@@ -75,7 +75,7 @@ void main() {
 
       // Computing the average value
       int specialValue = resultMap1.remove(5);
-      double average = resultMap1.keys.map((key) {
+      double? average = resultMap1.keys.map((key) {
         return resultMap1[key];
       }).toList().reduce((a, b) => a + b) / resultMap1.length;
       print("Special selection rate: $specialValue");

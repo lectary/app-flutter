@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 /// pointing to [LectureManagementScreen] and setting the corresponding [SettingViewModel.learningLanguagesList]
 /// at the same time.
 class LectureStartupScreen extends StatelessWidget {
-  LectureStartupScreen({Key key}) : super(key: key);
+  LectureStartupScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +51,10 @@ class LectureStartupScreen extends StatelessWidget {
               AppLocalizations.of(context).learningLanguageCanBeChanged,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme
-                  .subtitle1
+                  .subtitle1!
                   .copyWith(fontSize: Theme.of(context).textTheme
-                  .subtitle1
-                  .fontSize - 2),
+                  .subtitle1!
+                  .fontSize! - 2),
             )
           ],
         ),
@@ -71,7 +71,7 @@ class LectureStartupScreen extends StatelessWidget {
     return RaisedButton(
       onPressed: () {
         Provider.of<SettingViewModel>(context, listen: false).setSettingLearningLanguage(langMedia);
-        return Navigator.pushNamed(context, LectureManagementScreen.routeName);
+        Navigator.pushNamed(context, LectureManagementScreen.routeName);
       },
       padding: EdgeInsets.all(15.0),
       shape: RoundedRectangleBorder(
@@ -90,7 +90,7 @@ class LectureStartupScreen extends StatelessWidget {
           // FutureBuilder for loading the corresponding flag-widget asynchronously
           FutureBuilder(
             future: _buildFlagWidget(langMedia, flagHeight, flagWidth),
-            builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Widget?> snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
                 return Row(
@@ -101,7 +101,7 @@ class LectureStartupScreen extends StatelessWidget {
                         Icons.cloud_download,
                         size: flagHeight,
                       ),
-                      snapshot.data
+                      snapshot.data!
                     ]);
               } else {
                 return Icon(
@@ -120,7 +120,7 @@ class LectureStartupScreen extends StatelessWidget {
   /// load the corresponding flag.
   /// Maps languages "ÖGS" to "AT" and "DGS" to "DE.
   /// Returns [Null] if langMedia does not match an country isoCode.
-  Future<Widget> _buildFlagWidget(String langMedia, double flagHeight, double flagWidth) async {
+  Future<Widget?> _buildFlagWidget(String langMedia, double flagHeight, double flagWidth) async {
     String isoCode;
     switch (langMedia) {
       case "ÖGS":
@@ -155,7 +155,7 @@ class LectureStartupScreen extends StatelessWidget {
 
   /// Utility function to check if an asset with the passed path exists
   /// and to catch any possible exception to handle them gracefully.
-  Future<bool> checkIfAssetExists(String assetPath, {String package}) async {
+  Future<bool> checkIfAssetExists(String assetPath, {String? package}) async {
     try {
       String path = package == null ? assetPath : "packages/$package/$assetPath";
       await rootBundle.load(path);
