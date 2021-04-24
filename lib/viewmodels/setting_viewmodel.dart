@@ -129,7 +129,7 @@ class SettingViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setSettingLearningLanguage(String/*!*/ lang) async {
+  Future<void> setSettingLearningLanguage(String lang) async {
     settingLearningLanguage = lang;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(Constants.keySettingLearningLanguage, settingLearningLanguage);

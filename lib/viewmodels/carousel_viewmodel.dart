@@ -58,7 +58,7 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Represents the current [Selection] (i.e. the selection of loaded vocables).
-  Selection?/*!*//*!*/ _currentSelection;
+  Selection? _currentSelection;
   Selection? get currentSelection => _currentSelection;
   set currentSelection(Selection? currentSelection) {
     _currentSelection = currentSelection;
@@ -163,7 +163,7 @@ class CarouselViewModel with ChangeNotifier {
 
   @override
   void dispose() {
-    _localLectureStreamSubscription!.cancel();
+    _localLectureStreamSubscription?.cancel();
     super.dispose();
   }
 
@@ -349,7 +349,7 @@ class CarouselViewModel with ChangeNotifier {
       return;
     }
     // save needed selection info corresponding to the SelectionType
-    switch (selection!.type) {
+    switch (selection.type) {
       case SelectionType.all:
         await prefs.setString(Constants.keySelection, Constants.keySelectionAll);
         break;

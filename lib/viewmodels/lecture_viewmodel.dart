@@ -794,7 +794,6 @@ class LectureViewModel with ChangeNotifier {
       List<CodingEntry> codingEntries = jsonData
           .map((entry) =>
           CodingEntry(char: entry["char"], ascii: entry["asciify"]))
-          .where((element) => element != null)
           .toList();
 
       return codingEntries;

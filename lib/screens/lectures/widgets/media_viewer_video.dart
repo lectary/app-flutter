@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
@@ -61,17 +62,15 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   void _restartVideoListener() async {
     if (isVideoFinished) return;
 
-    if (_controller.value != null) {
-      if ( _controller.value.position >= _controller.value.duration) {
-        isVideoFinished = true;
+    if (_controller.value.position >= _controller.value.duration) {
+      isVideoFinished = true;
 
-        if (!_controller.value.isPlaying) {
-          await _controller.seekTo(Duration.zero);
-          await _controller.pause();
-          setState(() {
-            isVideoFinished = false;
-          });
-        }
+      if (!_controller.value.isPlaying) {
+        await _controller.seekTo(Duration.zero);
+        await _controller.pause();
+        setState(() {
+          isVideoFinished = false;
+        });
       }
     }
   }
