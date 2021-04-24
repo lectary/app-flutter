@@ -25,15 +25,15 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: FlatButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(0))),
-        color: color,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: color,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0))),
+        ),
         child: Container(
           /// additional container for aligning rectangular icons correctly
           width: iconContainerWidth == 0 ? iconSize : iconContainerWidth,
-          child: Icon(iconData,
-              size: iconSize, color: iconColor, semanticLabel: semanticLabel),
+          child: Icon(iconData, size: iconSize, color: iconColor, semanticLabel: semanticLabel),
         ),
         onPressed: func as void Function()?,
       ),

@@ -37,18 +37,18 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
     return MergeSemantics(
       child: Semantics(
         label: Constants.semanticLearningProgress + (progress + 1).toString(),
-        child: FlatButton(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(0))),
-          color: widget.color,
+        child: TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: widget.color,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0))),
+          ),
           child: Container(
             /// additional container for aligning rectangular icons correctly
             width: widget.iconSize,
             child: FittedBox(child: _buildIconsForProgress(progress)),
           ),
           onPressed: () {
-            Provider.of<CarouselViewModel>(context, listen: false)
-                .increaseVocableProgress(vocableIndex);
+            Provider.of<CarouselViewModel>(context, listen: false).increaseVocableProgress(vocableIndex);
           },
         ),
       ),

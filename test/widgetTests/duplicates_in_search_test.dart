@@ -96,7 +96,7 @@ void main() async {
               const Locale('de', 'DE'),
             ],
             title: 'Flutter Test Wrapper',
-            home: FlatButton(
+            home: TextButton(
               onPressed: () => key.currentState!.push(
                 MaterialPageRoute<void>(
                     settings: RouteSettings(arguments: VocableSearchScreenArguments(navigationOnly: false)),
@@ -107,7 +107,7 @@ void main() async {
           ),
         ),
       );
-      await tester.tap(find.byType(FlatButton));
+      await tester.tap(find.byType(TextButton));
       await tester.pumpAndSettle();
 
       // assert title

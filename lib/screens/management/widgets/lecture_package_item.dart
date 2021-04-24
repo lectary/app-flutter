@@ -262,7 +262,7 @@ class LecturePackageItem extends StatelessWidget {
   Container _buildButton({required IconData icon, required String text, Function func=emptyFunction}) {
     return Container(
         height: 50,
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: () => func(),
           child: Container(
             child: Row(

@@ -73,7 +73,7 @@ class _SearchBarState extends State<SearchBar> {
           ),
           Visibility(
             visible: widget.focusNode.hasFocus ? true : false,
-            child: FlatButton(
+            child: TextButton(
               onPressed: () {
                 // clears the focus and closes keyboard
                 final FocusScopeNode currentScope = FocusScope.of(context);
