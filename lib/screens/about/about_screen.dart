@@ -145,8 +145,8 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
             Container(
               height: 70,
-              child: RaisedButton(
-                color: ColorsLectary.lightBlue,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: ColorsLectary.lightBlue),
                 child: Text(
                   AppLocalizations.of(context).okUppercase,
                   style: TextStyle(color: Colors.black, fontSize: 32),

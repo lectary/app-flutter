@@ -12,6 +12,10 @@ ThemeData lectaryThemeLight() {
     brightness: Brightness.light,
     accentColor: ColorsLectary.lightBlue,
 
+    elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(
+      primary: Colors.grey[300],
+    )),
+
     toggleableActiveColor: ColorsLectary.lightBlue,
 
     primaryIconTheme: base.primaryIconTheme.copyWith(color: ColorsLectary.lightBlue),
@@ -28,10 +32,11 @@ ThemeData lectaryThemeLight() {
 ThemeData lectaryThemeDark() {
   final ThemeData base = lectaryThemeLight();
   return base.copyWith(
-      buttonTheme: base.buttonTheme.copyWith(
-        buttonColor: ColorsLectary.lightBlue,
-      ),
-      brightness: Brightness.dark,
+    elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(
+      primary: ColorsLectary.lightBlue,
+    )),
+
+    brightness: Brightness.dark,
       scaffoldBackgroundColor: ColorsLectary.darkBlue,
 
     textTheme: base.textTheme.copyWith(

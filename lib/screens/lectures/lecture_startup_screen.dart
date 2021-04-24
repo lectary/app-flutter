@@ -65,17 +65,19 @@ class LectureStartupScreen extends StatelessWidget {
   /// Builds a button for a specific language.
   /// Navigates to [LectureManagementScreen] when pressed.
   /// Loads async a corresponding flag-image for the passed language.
-  RaisedButton _buildButtonWithLang(BuildContext context, String langMedia) {
+  ElevatedButton _buildButtonWithLang(BuildContext context, String langMedia) {
     final double flagHeight = 60;
     final double flagWidth = 100;
-    return RaisedButton(
+    return ElevatedButton(
       onPressed: () {
         Provider.of<SettingViewModel>(context, listen: false).setSettingLearningLanguage(langMedia);
         Navigator.pushNamed(context, LectureManagementScreen.routeName);
       },
-      padding: EdgeInsets.all(15.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,18 +93,15 @@ class LectureStartupScreen extends StatelessWidget {
           FutureBuilder(
             future: _buildFlagWidget(langMedia, flagHeight, flagWidth),
             builder: (BuildContext context, AsyncSnapshot<Widget?> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      snapshot.data == null ? Container() : SizedBox(width: flagWidth),
-                      Icon(
-                        Icons.cloud_download,
-                        size: flagHeight,
-                      ),
-                      snapshot.data!
-                    ]);
+              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  snapshot.data == null ? Container() : SizedBox(width: flagWidth),
+                  Icon(
+                    Icons.cloud_download,
+                    size: flagHeight,
+                  ),
+                  snapshot.data!
+                ]);
               } else {
                 return Icon(
                   Icons.cloud_download,

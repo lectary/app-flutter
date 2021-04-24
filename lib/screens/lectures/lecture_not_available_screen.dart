@@ -24,27 +24,29 @@ class LectureNotAvailableScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.headline6,
             ),
             SizedBox(height: 10,), // separator
-            RaisedButton(
+            ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, LectureManagementScreen.routeName),
-              padding: EdgeInsets.all(15.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      AppLocalizations.of(context).downloadAndManageLectures,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    Icon(
-                        Icons.cloud_download,
-                        size: 55,
-                    ),
-                  ],
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.all(15.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context).downloadAndManageLectures,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  Icon(
+                    Icons.cloud_download,
+                    size: 55,
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: 10,), // separator
             Text(
               AppLocalizations.of(context).minMaxLectureSizes,

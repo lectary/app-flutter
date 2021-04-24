@@ -101,7 +101,7 @@ class _MainDrawerState extends State<MainDrawer> {
   Widget _buildButton({required BuildContext context, required int flex, required IconData icon, required String text, required String routeName}) {
     return Container(
       height: 60,
-      child: RaisedButton(
+      child: ElevatedButton(
         onPressed: () {
           Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
           Navigator.pushNamedAndRemoveUntil(context, routeName, ModalRoute.withName(LectureMainScreen.routeName));
