@@ -7,11 +7,20 @@ This time, it is Flutter.
 In this project, the existing Lectary-app is reimplemented and extended using the flutter framework.
 
 ## Getting Started
-First install the flutter framework and setup your environment based on your OS:
+First install the Flutter framework and setup your environment based on your OS:
+
+You can setup Flutter manually or use the version management tool FVM (see next point).
 
 [Install Flutter](https://flutter.dev/docs/get-started/install)
 
 Have a look on [online documentation](https://flutter.dev/docs) for further information.
+
+## FVM - flutter version management 
+For using [FVM](https://pub.dev/packages/fvm), follow the installation instructions on the package site.
+
+Then, for installing flutter based on the specified version in the `pubspec.yaml` file, just run the command `fvm install`.
+
+All further dart or flutter commands can be executed by means of fvm command proxy, e.g. `fvm flutter run`. 
 
 ### Building and running on Android.
 For running the app on android, just connect your device or start an android-emulator and run the following command from your console window
