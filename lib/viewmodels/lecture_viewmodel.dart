@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
@@ -27,7 +28,7 @@ import 'package:path_provider/path_provider.dart';
 /// uses [ChangeNotifier] for propagating changes to UI components
 class LectureViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
-  SettingViewModel _settingViewModel;
+  late SettingViewModel _settingViewModel;
 
   /// Updates the local reference to [SettingViewModel].
   void updateSettings(SettingViewModel settingViewModel) {
@@ -49,7 +50,7 @@ class LectureViewModel with ChangeNotifier {
   List<LecturePackage> _filteredLectures = List();
   List<LecturePackage> get availableLectures => _filteredLectures;
 
-  String _currentFilter;
+  String? _currentFilter;
 
   /// contains all persisted [Vocable]
   List<Vocable> _currentVocables = List();
@@ -59,7 +60,7 @@ class LectureViewModel with ChangeNotifier {
   List<Coding> _availableCodings = List();
 
   /// Constructor with passed in [LectureRepository]
-  LectureViewModel({@required lectureRepository})
+  LectureViewModel({required lectureRepository})
       : _lectureRepository = lectureRepository;
 
   void resetCurrentFilter() {
@@ -108,7 +109,7 @@ class LectureViewModel with ChangeNotifier {
       // Sorting
       // 1) sort lessons with SORT-meta info by SORT
       List<Lecture> lecturesWithSortMeta = mergedLectureList.where((lecture) => lecture.sort != null).toList();
-      lecturesWithSortMeta.sort((l1, l2) => l1.sort.compareTo(l2.sort));
+      lecturesWithSortMeta.sort((l1, l2) => l1.sort!.compareTo(l2.sort!));
       // 2) sort lessons without SORT-meta info lexicographic by lesson
       List<Lecture> lecturesWithoutSortMeta = mergedLectureList.where((lecture) => lecture.sort == null).toList();
       lecturesWithoutSortMeta.sort((l1, l2) => Utils.customCompareTo(l1.lesson, l2.lesson));
@@ -120,8 +121,8 @@ class LectureViewModel with ChangeNotifier {
       groupedLectureList.sort((p1, p2) => Utils.customCompareTo(p1.title, p2.title));
 
       _availableLectures = groupedLectureList;
-      if (_currentFilter != null && _currentFilter.isNotEmpty) {
-        filterLectureList(_currentFilter);
+      if (_currentFilter != null && _currentFilter!.isNotEmpty) {
+        filterLectureList(_currentFilter!);
       } else {
         _filteredLectures = _availableLectures; // assignment by reference
       }
@@ -130,7 +131,7 @@ class LectureViewModel with ChangeNotifier {
       // load again all persisted abstracts and add them to the corresponding packs
       List<Abstract> availableAbstracts = await _lectureRepository.findAllAbstracts();
       availableAbstracts.forEach((abstract) {
-        groupedLectureList.firstWhere((pack) => pack.title == abstract.pack, orElse: () => null)?.abstract = abstract.text;
+        groupedLectureList.firstWhereOrNull((pack) => pack.title == abstract.pack)?.abstract = abstract.text;
       });
       log("loaded abstracts");
 
@@ -210,7 +211,7 @@ class LectureViewModel with ChangeNotifier {
     notifyListeners();
 
     // Check if additional coding files are needed
-    List<CodingEntry> codingEntries;
+    List<CodingEntry>? codingEntries;
     try {
       codingEntries = await _checkNeedForCoding(lecture);
     } catch(e) {
@@ -273,13 +274,13 @@ class LectureViewModel with ChangeNotifier {
 
     // updating object values for downloading and saving
     lecture.id = null;
-    lecture.fileName = lecture.fileNameUpdate;
+    lecture.fileName = lecture.fileNameUpdate!;
     lecture.fileNameUpdate = null;
     String newDate = Utils.extractDateMetadatumFromFileName(lecture.fileName);
     lecture.date = newDate;
 
     // Check if additional coding files are needed
-    List<CodingEntry> codingEntries;
+    List<CodingEntry>? codingEntries;
     try {
       codingEntries = await _checkNeedForCoding(lecture);
     } catch(e) {
@@ -294,7 +295,7 @@ class LectureViewModel with ChangeNotifier {
       // delete media files and database entries
       log("deleting old lecture: ${oldLecture.toString()}");
       await _deleteMediaFiles(oldLecture);
-      await _lectureRepository.deleteVocablesByLectureId(oldLecture.id);
+      await _lectureRepository.deleteVocablesByLectureId(oldLecture.id!);
       await _lectureRepository.deleteLecture(oldLecture);
 
       log("saving new lecture: ${lecture.toString()}");
@@ -356,14 +357,14 @@ class LectureViewModel with ChangeNotifier {
     try {
       // delete media files and database entries
       await _deleteMediaFiles(lecture);
-      await _lectureRepository.deleteVocablesByLectureId(lecture.id);
+      await _lectureRepository.deleteVocablesByLectureId(lecture.id!);
       await _lectureRepository.deleteLecture(lecture);
 
       // check if removed lecture is still available remotely
       if (oldLectureStatus == LectureStatus.removed) {
         // remove lecture from lecture list as well from the filtered list if not available anymore remotely
         _availableLectures[indexPack].children.removeAt(indexLecture);
-        if (_currentFilter != null && _currentFilter.isNotEmpty) {
+        if (_currentFilter != null && _currentFilter!.isNotEmpty) {
           int indexPackFilter = _filteredLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
           int indexLectureFilter = _filteredLectures[indexPackFilter].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
           _filteredLectures[indexPackFilter].children.removeAt(indexLectureFilter);
@@ -386,10 +387,10 @@ class LectureViewModel with ChangeNotifier {
     log("querying all lectures");
     List<Lecture> lectures = await _lectureRepository.loadLecturesLocal();
     log("deleting all media files");
-    await Future.forEach(lectures, (lecture) => _deleteMediaFiles(lecture));
+    await Future.forEach(lectures, (dynamic lecture) => _deleteMediaFiles(lecture));
     log("deleting database entries");
     await _lectureRepository.deleteAllVocables();
-    await Future.forEach(lectures, (lecture) => _lectureRepository.deleteLecture(lecture));
+    await Future.forEach(lectures, (dynamic lecture) => _lectureRepository.deleteLecture(lecture));
     await _lectureRepository.deleteAllCodingEntries();
     await _lectureRepository.deleteAllCoding();
   }
@@ -400,10 +401,10 @@ class LectureViewModel with ChangeNotifier {
     log("deleting all lectures and their contents of language $langMedia");
     List<Lecture> lectures = await _lectureRepository.findAllLecturesWithLang(langMedia);
     log("deleting media files");
-    await Future.forEach(lectures, (lecture) => _deleteMediaFiles(lecture));
+    await Future.forEach(lectures, (dynamic lecture) => _deleteMediaFiles(lecture));
     log("deleting database entries");
     await _lectureRepository.deleteAllVocablesByLangMedia(langMedia);
-    await Future.forEach(lectures, (lecture) {
+    await Future.forEach(lectures, (dynamic lecture) {
       // Check if coding needs to be deleted
       try {
         _checkDeletingOfCoding(lecture);
@@ -445,8 +446,8 @@ class LectureViewModel with ChangeNotifier {
       // file.name holds archive name plus actual filename
       String filePath = '$dir/${file.name}';
 
-      Vocable newVocable = Vocable.fromFilePath(filePath);
-      vocables.add(newVocable);
+      Vocable? newVocable = Vocable.fromFilePath(filePath);
+      if (newVocable != null) vocables.add(newVocable);
 
       // saving media file locally
       File outFile = File(filePath);
@@ -528,7 +529,7 @@ class LectureViewModel with ChangeNotifier {
   /// Downloads, updates or deletes an [Abstract] corresponding to its [AbstractStatus]
   /// Returns a [Future] of type [Void]
   Future<void> _progressAbstracts(List<Abstract> mergedAbstracts) async {
-    await Future.forEach(mergedAbstracts, (abstract) async {
+    await Future.forEach(mergedAbstracts, (dynamic abstract) async {
       switch(abstract.abstractStatus) {
         case AbstractStatus.notPersisted:
           log("downloading new abstract");
@@ -569,7 +570,7 @@ class LectureViewModel with ChangeNotifier {
   /// Throws [AbstractException] on error
   Future<void> _updateAbstract(Abstract abstract) async {
     try {
-      abstract.fileName = abstract.fileNameUpdate;
+      abstract.fileName = abstract.fileNameUpdate!;
       abstract.fileNameUpdate = null;
       String newDate = Utils.extractDateMetadatumFromFileName(abstract.fileName);
       abstract.date = newDate;
@@ -644,7 +645,7 @@ class LectureViewModel with ChangeNotifier {
   /// Updates or removes a [Coding] corresponding to its [CodingStatus]
   /// Returns a [Future] of type [Void]
   Future<void> _progressCodings(List<Coding> mergedCodings) async {
-    await Future.forEach(mergedCodings, (coding) async {
+    await Future.forEach(mergedCodings, (dynamic coding) async {
       switch(coding.codingStatus) {
         case CodingStatus.updateAvailable:
           await updateCoding(coding);
@@ -660,21 +661,21 @@ class LectureViewModel with ChangeNotifier {
 
   /// Checks if a [Lecture] needs an additional [Coding] and downloads it
   /// Returns a [Future] of type [Void]
-  Future<List<CodingEntry>> _checkNeedForCoding(Lecture lecture) async {
+  Future<List<CodingEntry>?> _checkNeedForCoding(Lecture lecture) async {
     if (lecture.langVocable == "DE" || lecture.langVocable == "EN") {
       return null;
     }
     log("additional coding needed for language: ${lecture.langVocable}");
 
-    Coding coding = _availableCodings.firstWhere((element) => element.lang == lecture.langVocable, orElse: () => null);
+    Coding? coding = _availableCodings.firstWhereOrNull((element) => element.lang == lecture.langVocable);
     if (coding != null) {
       if (coding.codingStatus == CodingStatus.notPersisted) {
         log("coding needed for language: ${lecture.langVocable} is not already persisted...downloading...");
-        List<CodingEntry> codingEntries = await _downloadAndSaveCoding(coding);
+        List<CodingEntry>? codingEntries = await _downloadAndSaveCoding(coding);
         return codingEntries;
       } else if (coding.codingStatus == CodingStatus.persisted) {
         log("coding needed for language: ${lecture.langVocable} is already persisted...querying...");
-        List<CodingEntry> codingEntries = await _lectureRepository.findAllCodingEntriesByCodingId(coding.id);
+        List<CodingEntry> codingEntries = await _lectureRepository.findAllCodingEntriesByCodingId(coding.id!);
         return codingEntries;
       } else
         return null;
@@ -702,7 +703,7 @@ class LectureViewModel with ChangeNotifier {
   /// Downloads and saves a [Coding]
   /// Returns a [Future] of type [Void]
   /// Throws [CodingException] on error
-  Future<List<CodingEntry>> _downloadAndSaveCoding(Coding coding) async {
+  Future<List<CodingEntry>?> _downloadAndSaveCoding(Coding coding) async {
     log("downloading coding: $coding");
     try{
       File file = await _lectureRepository.downloadCoding(coding);
@@ -725,11 +726,11 @@ class LectureViewModel with ChangeNotifier {
   @visibleForTesting
   Future<void> updateCoding(Coding coding) async {
     log("updating coding: $coding");
-    List<CodingEntry> newCodingEntries;
+    List<CodingEntry>? newCodingEntries;
     try {
       await _lectureRepository.deleteCodingEntriesByCodingId(coding.id);
       // update coding infos
-      coding.fileName = coding.fileNameUpdate;
+      coding.fileName = coding.fileNameUpdate!;
       coding.fileNameUpdate = null;
       String newDate = Utils.extractDateMetadatumFromFileName(coding.fileName);
       coding.date = newDate;
@@ -737,10 +738,10 @@ class LectureViewModel with ChangeNotifier {
       File file = await _lectureRepository.downloadCoding(coding);
       newCodingEntries = extractCodingEntries(file);
       await _lectureRepository.updateCoding(coding);
-      newCodingEntries.forEach((entry) => entry.codingId = coding.id);
+      newCodingEntries.forEach((entry) => entry.codingId = coding.id!);
       await _lectureRepository.insertCodingEntries(newCodingEntries);
       // set coding status in corresponding coding
-      Coding cod = _availableCodings.firstWhere((element) => element.lang == coding.lang, orElse: () => null);
+      Coding? cod = _availableCodings.firstWhereOrNull((element) => element.lang == coding.lang);
       if (cod != null) {
         cod.codingStatus = CodingStatus.persisted;
       }
@@ -754,7 +755,7 @@ class LectureViewModel with ChangeNotifier {
       List<Lecture> lecturesWithCoding = await _lectureRepository.findAllLecturesWithLang(coding.lang);
       List<List<Vocable>> results = await Future.wait(
           lecturesWithCoding.map((lecture) async =>
-          await _lectureRepository.findVocablesByLectureId(lecture.id)
+          await _lectureRepository.findVocablesByLectureId(lecture.id!)
           )
       );
       // deAsciify all found vocables and update db

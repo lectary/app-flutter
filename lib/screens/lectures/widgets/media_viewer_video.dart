@@ -23,15 +23,15 @@ class LectaryVideoPlayer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  LectaryVideoPlayer({this.videoPath, this.mediaIndex, this.slowMode, this.autoMode, this.loopMode, Key key, this.audio}) : super(key: key);
+  LectaryVideoPlayer({required this.videoPath, required this.mediaIndex, required this.slowMode, required this.autoMode, required this.loopMode, Key? key, required this.audio}) : super(key: key);
 
   @override
   _LectaryVideoPlayerState createState() => _LectaryVideoPlayerState();
 }
 
 class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
-  VideoPlayerController _controller;
-  Future<void> _initializeVideoPlayerFuture;
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
 
   bool isVideoFinished = false;
   /// Used for indicating if video is played once due to autoMode for avoiding looping.

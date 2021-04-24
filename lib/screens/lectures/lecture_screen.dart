@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 class LectureScreen extends StatefulWidget {
   final List<Vocable> vocables;
 
-  LectureScreen({this.vocables, Key key}) : super(key: key);
+  LectureScreen({required this.vocables, Key? key}) : super(key: key);
 
   @override
   _LectureScreenState createState() => _LectureScreenState();

@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: context.select((SettingViewModel model) => model.settingAppLanguage),
             items: Constants.appLanguagesList
                 .map((e) => DropdownMenuItem(child: Text(e.toUpperCase()), value: e)).toList(),
-            onChanged: (value) async {
+            onChanged: (dynamic value) async {
               if (settings.settingAppLanguage != value) {
                 await settings.setSettingAppLanguage(value);
                 log("setting new locale: $value");
@@ -91,7 +91,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ));
                   return items;
                 })(),
-                onChanged: (value) {
+                onChanged: (dynamic value) {
                   if (value != "_update") { // filter the update value
                     settings.setSettingLearningLanguage(value);
                   }

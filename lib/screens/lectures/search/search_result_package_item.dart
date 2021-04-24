@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 /// its children list of [SearchResult] to a standard [ListTile].
 /// If [showPackage] is false, then the [ListTile] header for the package is omitted.
 class SearchResultPackageItem extends StatelessWidget {
-  const SearchResultPackageItem({this.context, this.entry, this.textEditingController});
+  const SearchResultPackageItem({required this.context, required this.entry, required this.textEditingController});
 
   final BuildContext context;
   final SearchResultPackage entry;
@@ -43,7 +43,7 @@ class SearchResultPackageItem extends StatelessWidget {
                     uppercase
                         ? pack.lectureTitle.toUpperCase()
                         : pack.lectureTitle,
-                    style: Theme.of(context).textTheme.headline6.copyWith(
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: ColorsLectary.lightBlue)),
               ),
@@ -74,7 +74,7 @@ class SearchResultPackageItem extends StatelessWidget {
                   : searchResult.vocable.vocable)),
             trailing: (() {
               if (searchResult.mediaType == null) return SizedBox();
-              MediaType mediaType = MediaType.fromString(searchResult.mediaType);
+              MediaType mediaType = MediaType.fromString(searchResult.mediaType!);
               switch (mediaType) {
                 case MediaType.PNG:
                 case MediaType.JPG:

@@ -7,7 +7,7 @@ class Dialogs {
 
   /// A simple [AlertDialog] for loading actions
   static Future<void> showLoadingDialog(
-      {@required BuildContext context, @required String text}) async {
+      {required BuildContext context, required String text}) async {
     showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -30,10 +30,10 @@ class Dialogs {
 
   /// A simple [AlertDialog] for confirming user action
   static Future<void> showAlertDialog(
-      {@required BuildContext context,
-      @required String title,
-      @required String submitText,
-      @required Function submitFunc}) async {
+      {required BuildContext context,
+      required String title,
+      required String submitText,
+      required Function submitFunc}) async {
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -64,12 +64,12 @@ class Dialogs {
   }
 
   static Future<void> showAlertDialogThreeButtons(
-      {@required BuildContext context,
-        @required String title,
-        @required String submitText1,
-        @required String submitText2,
-        @required Function submitFunc1,
-        @required Function submitFunc2}) async {
+      {required BuildContext context,
+        required String title,
+        required String submitText1,
+        required String submitText2,
+        required Function submitFunc1,
+        required Function submitFunc2}) async {
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -120,10 +120,10 @@ class Dialogs {
 
   /// A simple [AlertDialog], which automatically calls the passed [reportCallback].
   static Future<void> showErrorReportDialog(
-      {@required BuildContext context,
-      @required String errorContext,
-      @required String errorMessage,
-      @required reportCallback}) async {
+      {required BuildContext context,
+      required String errorContext,
+      required String? errorMessage,
+      required reportCallback}) async {
     showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!

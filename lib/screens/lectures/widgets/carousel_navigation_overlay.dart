@@ -14,7 +14,7 @@ class CarouselNavigationOverlay extends StatelessWidget {
 
   final widthFactorOfNavigationArrows = 0.5;
 
-  CarouselNavigationOverlay({this.carouselController});
+  CarouselNavigationOverlay({required this.carouselController});
 
   @override
   Widget build(BuildContext context) {

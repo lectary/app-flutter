@@ -26,7 +26,7 @@ class SettingViewModel with ChangeNotifier {
 
   final LectureRepository _lectureRepository;
 
-  SettingViewModel({@required lectureRepository})
+  SettingViewModel({required lectureRepository})
       :_lectureRepository = lectureRepository {
     log("settings instance created");
     loadLocalSettings();
@@ -129,7 +129,7 @@ class SettingViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setSettingLearningLanguage(String lang) async {
+  Future<void> setSettingLearningLanguage(String/*!*/ lang) async {
     settingLearningLanguage = lang;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(Constants.keySettingLearningLanguage, settingLearningLanguage);

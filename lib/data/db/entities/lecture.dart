@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/exceptions/lecture_exception.dart';
@@ -12,14 +13,14 @@ enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvaila
 @Entity(tableName: "lectures")
 class Lecture {
   @PrimaryKey(autoGenerate: true)
-  int id;
+  int? id;
 
   /// Used for showing corresponding status information and providing further actions in the lecture management list
   @ignore
   LectureStatus lectureStatus = LectureStatus.notPersisted;
   /// Used for saving the fileName of an available update
   @ignore
-  String fileNameUpdate;
+  String? fileNameUpdate;
 
   /// Lecture fileName containing all the metadata
   @ColumnInfo(name: "file_name")
@@ -46,56 +47,47 @@ class Lecture {
   @ColumnInfo(name: "lang_vocable")
   String langVocable;
 
-  String audio;
+  String? audio;
 
   String date;
 
-  String sort;
+  String? sort;
 
   Lecture(
       {this.id,
-      @required this.fileName,
-      @required this.fileSize,
-      @required this.vocableCount,
-      @required this.pack,
-      @required this.lesson,
-      @required this.lessonSort,
-      @required this.langMedia,
-      @required this.langVocable,
+      required this.fileName,
+      required this.fileSize,
+      required this.vocableCount,
+      required this.pack,
+      required this.lesson,
+      required this.lessonSort,
+      required this.langMedia,
+      required this.langVocable,
       this.audio,
-      this.date,
-      this.sort})
-      : assert(fileName != null),
-        assert(fileSize != null),
-        assert(vocableCount != null),
-        assert(pack != null),
-        assert(lesson != null),
-        assert(lessonSort != null),
-        assert(langMedia != null),
-        assert(langVocable != null);
+      required this.date,
+      this.sort});
 
   @ignore
-  Lecture.clone(Lecture lecture) {
-    this.id = lecture.id;
-    this.lectureStatus = lecture.lectureStatus;
-    this.fileNameUpdate = lecture.fileNameUpdate;
-    this.fileName = lecture.fileName;
-    this.fileSize = lecture.fileSize;
-    this.vocableCount = lecture.vocableCount;
-    this.pack = lecture.pack;
-    this.lesson = lecture.lesson;
-    this.lessonSort = lecture.lessonSort;
-    this.langMedia = lecture.langMedia;
-    this.langVocable = lecture.langVocable;
-    this.audio = lecture.audio;
-    this.date = lecture.date;
-    this.sort = lecture.sort;
-  }
+  Lecture.clone(Lecture lecture)
+      : this.id = lecture.id,
+        this.lectureStatus = lecture.lectureStatus,
+        this.fileNameUpdate = lecture.fileNameUpdate,
+        this.fileName = lecture.fileName,
+        this.fileSize = lecture.fileSize,
+        this.vocableCount = lecture.vocableCount,
+        this.pack = lecture.pack,
+        this.lesson = lecture.lesson,
+        this.lessonSort = lecture.lessonSort,
+        this.langMedia = lecture.langMedia,
+        this.langVocable = lecture.langVocable,
+        this.audio = lecture.audio,
+        this.date = lecture.date,
+        this.sort = lecture.sort;
 
   /// Factory constructor to create a new lecture instance from a json.
   /// Returns a new [Lecture] on successful json deserialization.
   /// Returns [Null] on [LectureException] i.e. when mandatory metadata are missing.
-  factory Lecture.fromJson(Map<String, dynamic> json) {
+  static Lecture? fromJson(Map<String, dynamic> json) {
     String fileName = json['fileName'];
     Map<String, dynamic> metadata;
     try {
@@ -152,14 +144,14 @@ class Lecture {
     int keyMatchCount = metadataKeys.map((key) => RegExp(key + r'\b-{2}\b').hasMatch(fileName) ? 1 : 0).reduce((i, j) => i + j);
     // The following regex finds all groups of '<key>--<value>' which are followed by at least 2x '-' or '.zip'.
     // Therefore, it doesn't matter if the formal key-separator '---' is malformed and contains only two or more chars of '-'
-    List<String> metadata = RegExp(r'([a-zA-Z0-9]+\b--\b.*?)(?=\b--|.zip)').allMatches(fileName).map((e) => e.group(0)).toList();
+    List<String?> metadata = RegExp(r'([a-zA-Z0-9]+\b--\b.*?)(?=\b--|.zip)').allMatches(fileName).map((e) => e.group(0)).toList();
     // checking if as many key-value pairs could be extracted as the number of matching keys
     if (metadata.length != keyMatchCount) {
       throw new LectureException("Malformed metadata: $fileName");
     }
 
-    for (String metadatum in metadata) {
-      List<String> split = metadatum.split("--");
+    for (String? metadatum in metadata) {
+      List<String> split = metadatum!.split("--");
       if (split.length != 2) {
         throw new LectureException("Malformed metadatum: $metadatum of lecture $fileName");
       }

@@ -7,5 +7,5 @@ class LecturePackage {
 
   final String title;
   final List<Lecture> children;
-  String abstract;
+  String? abstract;
 }

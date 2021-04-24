@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 class MediaControlArea extends StatefulWidget {
   final int flex;
 
-  MediaControlArea({this.flex});
+  MediaControlArea({required this.flex});
 
   @override
   _MediaControlAreaState createState() => _MediaControlAreaState();

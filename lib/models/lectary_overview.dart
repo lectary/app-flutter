@@ -9,7 +9,7 @@ class LectaryData {
   List<Abstract> abstracts;
   List<Coding> codings;
 
-  LectaryData({this.lessons, this.abstracts, this.codings});
+  LectaryData({required this.lessons, required this.abstracts, required this.codings});
 
   factory LectaryData.fromJson(Map<String, dynamic> json) {
     // extract json list first to avoid some exceptions
@@ -17,17 +17,17 @@ class LectaryData {
     List<Lecture> lessons = jsonLessons
         .map((element) => Lecture.fromJson(element))
         .where((element) => element != null)
-        .toList();
+        .toList().cast<Lecture>();
     List<dynamic> jsonAbstracts = json['abstract'];
     List<Abstract> abstracts = jsonAbstracts
         .map((element) => Abstract.fromJson(element))
         .where((element) => element != null)
-        .toList();
+        .toList().cast<Abstract>();
     List<dynamic> jsonCodings = json['asciify'];
     List<Coding> codings = jsonCodings
         .map((element) => Coding.fromJson(element))
         .where((element) => element != null)
-        .toList();
+        .toList().cast<Coding>();
 
     log("extracted LectaryData from json");
 

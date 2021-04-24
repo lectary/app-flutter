@@ -14,10 +14,10 @@ class CustomButton extends StatelessWidget {
   final Function func;
 
   CustomButton(
-      {@required this.color,
-      @required this.iconData,
-      @required this.semanticLabel,
-      @required this.iconSize,
+      {required this.color,
+      required this.iconData,
+      required this.semanticLabel,
+      required this.iconSize,
       this.iconColor = ColorsLectary.white,
       this.iconContainerWidth = 0,
       this.func = emptyFunction});
@@ -35,7 +35,7 @@ class CustomButton extends StatelessWidget {
           child: Icon(iconData,
               size: iconSize, color: iconColor, semanticLabel: semanticLabel),
         ),
-        onPressed: func,
+        onPressed: func as void Function()?,
       ),
     );
   }

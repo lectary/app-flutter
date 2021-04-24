@@ -64,7 +64,7 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the bottom-modal-sheet for the abstract
-  _showAbstract(String packTitle, String abstractText, bool uppercase) {
+  _showAbstract(String packTitle, String? abstractText, bool uppercase) {
     return showModalBottomSheet(
       context: context,
       builder: (_) {
@@ -82,11 +82,11 @@ class LecturePackageItem extends StatelessWidget {
                     child: Html(
                       data: uppercase ? abstractText.toUpperCase() : abstractText,
                       style: {
-                        "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyText1), // default text style
+                        "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyText1!), // default text style
                         "a": Style.fromTextStyle(CustomTextStyle.hyperlink(context)),
                       },
                       onLinkTap: (String? url, unused1, unused2, unused3) async {
-                        if (await canLaunch(url)) {
+                        if (url != null && await canLaunch(url)) {
                           await launch(url);
                         } else {
                           log('Could not launch url: $url of abstract: $abstractText');
@@ -237,7 +237,7 @@ class LecturePackageItem extends StatelessWidget {
                     (uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText1
+                    .bodyText1!
                     .copyWith(fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Text(
@@ -260,7 +260,7 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the buttons
-  Container _buildButton({IconData icon, String text, Function func=emptyFunction}) {
+  Container _buildButton({required IconData icon, required String text, Function func=emptyFunction}) {
     return Container(
         height: 50,
         child: RaisedButton(

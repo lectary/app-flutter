@@ -14,7 +14,7 @@ class LectureRepository {
   final LectaryApi _lectaryApi;
   final LectureDatabase _lectureDatabase;
 
-  LectureRepository({@required lectaryApi, @required lectureDatabase})
+  LectureRepository({ required lectaryApi,  required lectureDatabase})
       : _lectaryApi = lectaryApi,
         _lectureDatabase = lectureDatabase;
 
@@ -181,7 +181,7 @@ class LectureRepository {
     return _lectureDatabase.codingDao.updateCodingEntry(codingEntry);
   }
 
-  Future<void> deleteCodingEntriesByCodingId(int codingId) {
+  Future<void> deleteCodingEntriesByCodingId(int? codingId) {
     return _lectureDatabase.codingDao.deleteCodingEntriesByCodingId(codingId);
   }
 

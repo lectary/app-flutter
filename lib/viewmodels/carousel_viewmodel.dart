@@ -26,7 +26,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Has [LectureRepository] as dependency.
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
-  SettingViewModel _settingViewModel;
+  SettingViewModel? _settingViewModel;
 
   /// Updates the local reference to [SettingViewModel].
   void updateSettings(SettingViewModel settingViewModel) {
@@ -37,7 +37,7 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
-  CarouselController carouselController;
+  late CarouselController carouselController;
 
   /// Used to interrupt videos or animations of the carousel when another route is pushed
   bool _interrupted = false;
@@ -58,9 +58,9 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Represents the current [Selection] (i.e. the selection of loaded vocables).
-  Selection _currentSelection;
-  Selection get currentSelection => _currentSelection;
-  set currentSelection(Selection currentSelection) {
+  Selection?/*!*//*!*/ _currentSelection;
+  Selection? get currentSelection => _currentSelection;
+  set currentSelection(Selection? currentSelection) {
     _currentSelection = currentSelection;
     notifyListeners();
   }
@@ -142,12 +142,12 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture].
-  Stream<List<Lecture>> _localLecturesStream;
-  StreamSubscription _localLectureStreamSubscription;
+  late Stream<List<Lecture>> _localLecturesStream;
+  StreamSubscription? _localLectureStreamSubscription;
 
   /// Used for retrieving the lecture name for corresponding vocables (e.g. when packaging
   /// vocables in [_findDuplicatesAndConvert]).
-  List<Lecture> localLectures;
+  List<Lecture>? localLectures;
 
   /// Used for global search and loaded when the search is first used.
   List<Vocable> _allLocalVocables = List();
@@ -158,19 +158,19 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Constructor with passed in [LectureRepository] dependency.
   /// Loads and listens to the [Stream] of local [Lecture].
-  CarouselViewModel({@required lectureRepository})
+  CarouselViewModel({required lectureRepository})
       : _lectureRepository = lectureRepository;
 
   @override
   void dispose() {
-    _localLectureStreamSubscription.cancel();
+    _localLectureStreamSubscription!.cancel();
     super.dispose();
   }
 
   /// Retrieves a [Stream] of the [List] of all local persisted [Lecture].
   /// Additionally listens to changes via [_localLectureStreamListener].
   void listenOnLocalLectures() {
-    if (_localLectureStreamSubscription != null) _localLectureStreamSubscription.cancel();
+    if (_localLectureStreamSubscription != null) _localLectureStreamSubscription!.cancel();
     _localLecturesStream = _lectureRepository.watchAllLectures();
     _localLectureStreamSubscription = _localLecturesStream.listen(_localLectureStreamListener);
     log("carousel view model instances!");
@@ -181,7 +181,7 @@ class CarouselViewModel with ChangeNotifier {
   /// Loads all vocables when a new lecture list gets emitted and no vocables are currently loaded.
   /// Resets [_currentVocables] when no lectures are available or got deleted
   void _localLectureStreamListener(List<Lecture> list) {
-    list = list.where((lecture) => lecture.langMedia == _settingViewModel.settingLearningLanguage).toList();
+    list = list.where((lecture) => lecture.langMedia == _settingViewModel!.settingLearningLanguage).toList();
     localLectures = list;
 
     if (list.isEmpty) {
@@ -197,12 +197,12 @@ class CarouselViewModel with ChangeNotifier {
         loadAllVocables();
         return;
       }
-      if (currentSelection.type == SelectionType.all) {
+      if (currentSelection!.type == SelectionType.all) {
         log("reloading all vocables selection");
         loadAllVocables(saveSelection: false);
         return;
       }
-      if (currentSelection.type == SelectionType.package && currentSelection.packTitle == list[0].pack) {
+      if (currentSelection!.type == SelectionType.package && currentSelection!.packTitle == list[0].pack) {
         log("reloading package selection");
         reloadCurrentSelection();
         return;
@@ -212,17 +212,17 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Auto updating [Stream] by the [FloorDatabase], containing all local persisted [Lecture]
   /// grouped as [LecturePackage] and properly sorted.
-  Stream<List<LecturePackage>> loadLocalLecturesAsStream() {
+  Stream<List<LecturePackage>>? loadLocalLecturesAsStream() {
     if (_settingViewModel == null) return null;
 
-    String langMedia = _settingViewModel.settingLearningLanguage;
+    String langMedia = _settingViewModel!.settingLearningLanguage;
     return _lectureRepository.watchAllLectures().map((list) {
       // filtering lectures by Settings.settingLearningLanguage
       list = list.where((lecture) => lecture.langMedia == langMedia).toList();
       // Sorting
       // 1) sort lessons with SORT-meta info by SORT
       List<Lecture> lecturesWithSortMeta = list.where((lecture) => lecture.sort != null).toList();
-      lecturesWithSortMeta.sort((l1, l2) => l1.sort.compareTo(l2.sort));
+      lecturesWithSortMeta.sort((l1, l2) => l1.sort!.compareTo(l2.sort!));
       // 2) sort lessons without SORT-meta info lexicographic by lesson
       List<Lecture> lecturesWithoutSortMeta = list.where((lecture) => lecture.sort == null).toList();
       lecturesWithoutSortMeta.sort((l1, l2) => Utils.customCompareTo(l1.lesson, l2.lesson));
@@ -248,7 +248,7 @@ class CarouselViewModel with ChangeNotifier {
   /// Returns a [Future] with [List] of type [Vocable].
   Future<List<Vocable>> loadAllVocables({bool saveSelection=true}) async {
     _currentVocables = await _lectureRepository.findVocablesByLangMedia(
-      _settingViewModel.settingLearningLanguage
+      _settingViewModel!.settingLearningLanguage
     );
     isVirtualLecture = false;
     Selection newSelection = Selection.all();
@@ -273,10 +273,10 @@ class CarouselViewModel with ChangeNotifier {
   /// if they are already restored from cache by other means.
   ///
   /// Returns a [Future] with [List] of type [Vocable].
-  Future<List<Vocable>> loadVocablesOfLecture(int lectureId, String lesson, {bool saveSelection=true}) async {
+  Future<List<Vocable>> loadVocablesOfLecture(int lectureId, String? lesson, {bool saveSelection=true}) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLectureIdAndLangMedia(
         lectureId,
-        _settingViewModel.settingLearningLanguage
+        _settingViewModel!.settingLearningLanguage
     );
     _currentVocables = _sortVocables(vocables);
     isVirtualLecture = false;
@@ -305,7 +305,7 @@ class CarouselViewModel with ChangeNotifier {
   Future<List<Vocable>> loadVocablesOfPackage(String packTitle, {bool saveSelection=true}) async {
     List<Vocable> vocables = await _lectureRepository.findVocablesByLecturePackAndLangMedia(
         packTitle,
-        _settingViewModel.settingLearningLanguage
+        _settingViewModel!.settingLearningLanguage
     );
     _currentVocables = _sortVocables(vocables);
     isVirtualLecture = false;
@@ -331,7 +331,7 @@ class CarouselViewModel with ChangeNotifier {
   /// [_currentItemIndex] and [initialCarouselValue].
   Future<void> _restoreItemIndexPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int index = prefs.get(Constants.keyItemIndex) ?? 0;
+    int index = prefs.get(Constants.keyItemIndex) as int? ?? 0;
     _currentItemIndex = index;
     initialCarouselValue = index;
   }
@@ -341,14 +341,14 @@ class CarouselViewModel with ChangeNotifier {
   /// [SelectionType.package] gets saved with the value 'package:<package-title>'.
   /// [SelectionType.lecture] gets saved with the value 'lecture:<lecture-id>:<lecture-lesson>'.
   /// If [Null] is passed, then the saved selection will be removed.
-  Future<void> _saveSelection(Selection selection) async {
+  Future<void> _saveSelection(Selection? selection) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // remove key (and possible value) if null is passed as selection-value
     if (selection == null) {
-      return await prefs.remove(Constants.keySelection);
+      await prefs.remove(Constants.keySelection);
     }
     // save needed selection info corresponding to the SelectionType
-    switch (selection.type) {
+    switch (selection!.type) {
       case SelectionType.all:
         await prefs.setString(Constants.keySelection, Constants.keySelectionAll);
         break;
@@ -368,13 +368,16 @@ class CarouselViewModel with ChangeNotifier {
   Future<void> reloadCurrentSelection() async {
     if (currentSelection == null) return null;
 
-    switch (currentSelection.type) {
+    switch (currentSelection!.type) {
       case SelectionType.all:
-        return await loadAllVocables(saveSelection: false);
+        await loadAllVocables(saveSelection: false);
+        break;
       case SelectionType.package:
-        return await loadVocablesOfPackage(currentSelection.packTitle, saveSelection: false);
+        await loadVocablesOfPackage(currentSelection!.packTitle!, saveSelection: false);
+        break;
       case SelectionType.lecture:
-        return await loadVocablesOfLecture(currentSelection.lectureId, currentSelection.lesson, saveSelection: false);
+        await loadVocablesOfLecture(currentSelection!.lectureId!, currentSelection!.lesson, saveSelection: false);
+        break;
       default:
         return;
     }
@@ -383,10 +386,10 @@ class CarouselViewModel with ChangeNotifier {
   /// Loads the last vocable-selection from [SharedPreferences].
   /// Returns a [Future] of type [Selection] or [Null] if no last selection
   /// is available.
-  Future<Selection> loadLastSelection() async {
+  Future<Selection?> loadLastSelection() async {
     // load selection value
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String selectionString = prefs.getString(Constants.keySelection);
+    String? selectionString = prefs.getString(Constants.keySelection);
 
     if (selectionString == null) {
       return null;
@@ -428,7 +431,7 @@ class CarouselViewModel with ChangeNotifier {
   Future<List<Vocable>> initVocables() async {
     _initialization = true;
 
-    Selection lastSelection = await loadLastSelection();
+    Selection? lastSelection = await loadLastSelection();
     log("loaded last selection: ${lastSelection == null ? "<null>" : lastSelection.type}");
 
     if (lastSelection == null) {
@@ -446,11 +449,11 @@ class CarouselViewModel with ChangeNotifier {
         await _restoreItemIndexPref();
         break;
       case SelectionType.package:
-        vocables = await loadVocablesOfPackage(lastSelection.packTitle, saveSelection: false);
+        vocables = await loadVocablesOfPackage(lastSelection.packTitle!, saveSelection: false);
         await _restoreItemIndexPref();
         break;
       case SelectionType.lecture:
-        vocables = await loadVocablesOfLecture(lastSelection.lectureId, lastSelection.lesson, saveSelection: false);
+        vocables = await loadVocablesOfLecture(lastSelection.lectureId!, lastSelection.lesson, saveSelection: false);
         await _restoreItemIndexPref();
         break;
       default:
@@ -470,7 +473,7 @@ class CarouselViewModel with ChangeNotifier {
   List<Vocable> _sortVocables(List<Vocable> vocables) {
     // extract and sort sublist of vocables with or without vocable.sort value
     List<Vocable> vocablesWithSort = vocables.where((vocable) => vocable.sort != null).toList();
-    vocablesWithSort.sort((v1, v2) => v1.sort.compareTo(v2.sort));
+    vocablesWithSort.sort((v1, v2) => v1.sort!.compareTo(v2.sort!));
     // assert that the vocables are already sorted via the database query
     List<Vocable> vocablesWithoutSort = vocables.where((vocable) => vocable.sort == null).toList();
 
@@ -549,10 +552,10 @@ class CarouselViewModel with ChangeNotifier {
   /// Sets [isVirtualLecture] to [False].
   /// Restores selection and itemIndex that where set prior to the virtual lecture.
   void closeVirtualLecture() async {
-    if (!isVirtualLecture && _currentSelection.type!= SelectionType.search) return;
+    if (!isVirtualLecture && _currentSelection!.type!= SelectionType.search) return;
     isVirtualLecture = false;
     // retrieve last selection
-    _currentSelection = _currentSelection.originSelection;
+    _currentSelection = _currentSelection!.originSelection;
     // reload selection
     await reloadCurrentSelection();
   }
@@ -592,7 +595,7 @@ class CarouselViewModel with ChangeNotifier {
 
     // Load all local variables if not already done.
     if (_allLocalVocables.isEmpty) {
-      _allLocalVocables = await _lectureRepository.findVocablesByLangMedia(_settingViewModel.settingLearningLanguage);
+      _allLocalVocables = await _lectureRepository.findVocablesByLangMedia(_settingViewModel!.settingLearningLanguage);
       log("loaded all local vocables");
     }
 
@@ -642,10 +645,10 @@ class CarouselViewModel with ChangeNotifier {
     // with the corresponding lecture name by a lookup in the list of local lectures.
     // Then possible vocable duplicates are determined and sorted and the mediaType is set correspondingly.
     if (toPackages) {
-      final groupedByLectureId = groupBy(searchResultList, (searchResult) => (searchResult as SearchResult).vocable.lectureId);
+      final groupedByLectureId = groupBy(searchResultList, (dynamic searchResult) => (searchResult as SearchResult).vocable.lectureId);
       groupedByLectureId.forEach((key, groupedSearchResultList) {
         if (localLectures != null) {
-          Lecture lecture = localLectures.firstWhere((lecture) => lecture.id == key, orElse: () => null);
+          Lecture? lecture = localLectures!.firstWhereOrNull((lecture) => lecture.id == key);
           if (lecture != null) {
             Map<String, bool> hasDuplicates = _determineDuplicates(groupedSearchResultList);
             _sortDuplicates(hasDuplicates, groupedSearchResultList);
@@ -662,7 +665,7 @@ class CarouselViewModel with ChangeNotifier {
     // sorting grouped lists excluding first one
     List<SearchResultPackage> searchResultPackageList = List();
     // If a lecture is selected, show results from the selected lecture first
-    if (currentSelection.type == SelectionType.lecture && tmpList.length > 1 && currentSelection.lesson == tmpList[0].lectureTitle) {
+    if (currentSelection!.type == SelectionType.lecture && tmpList.length > 1 && currentSelection!.lesson == tmpList[0].lectureTitle) {
       searchResultPackageList.add(tmpList.removeAt(0));
     }
     tmpList.sort((lec1, lec2) => Utils.customCompareTo(lec1.lectureTitle, lec2.lectureTitle));
@@ -690,7 +693,7 @@ class CarouselViewModel with ChangeNotifier {
       }
     });
     searchResultList.forEach((searchResult) {
-      if (hasDuplicates[searchResult.vocable.vocable]) {
+      if (hasDuplicates[searchResult.vocable.vocable]!) {
         searchResult.mediaType = searchResult.vocable.mediaType;
       }
     });
@@ -716,9 +719,9 @@ class CarouselViewModel with ChangeNotifier {
         // sort only searchResults with same vocable and not-null mediaType
         if (a.mediaType != null && b.mediaType != null && a.vocable.vocable == b.vocable.vocable) {
           // convert to MediaType and sort by sort-table of MediaType
-          MediaType typeA = MediaType.fromString(a.mediaType);
-          MediaType typeB = MediaType.fromString(b.mediaType);
-          return MediaType.sortValues[typeA] - MediaType.sortValues[typeB];
+          MediaType typeA = MediaType.fromString(a.mediaType!);
+          MediaType typeB = MediaType.fromString(b.mediaType!);
+          return MediaType.sortValues[typeA]! - MediaType.sortValues[typeB]!;
         } else {
           return 0;
         }

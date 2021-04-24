@@ -29,7 +29,7 @@ class TextViewer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  TextViewer({this.textPath, this.mediaIndex, this.slowMode, this.autoMode, Key key}) : super(key: key);
+  TextViewer({required this.textPath, required this.mediaIndex, required this.slowMode, required this.autoMode, Key? key}) : super(key: key);
 
   @override
   _TextViewerState createState() => _TextViewerState();
@@ -43,13 +43,13 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
   /// E.g. for avoiding that the animation is played when pressing autoPlay
   bool readyForAutoMode = false;
 
-  AnimationController _animationController;
-  Animation<int> _characterCount;
+  late AnimationController _animationController;
+  late Animation<int> _characterCount;
 
-  String text;
-  String finalText;
+  late String text;
+  late String finalText;
   int index = -1;
-  List<int> randomBox;
+  late List<int> randomBox;
 
   @override
   void initState() {

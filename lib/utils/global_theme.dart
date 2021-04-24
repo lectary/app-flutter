@@ -42,6 +42,6 @@ ThemeData lectaryThemeDark() {
 
 class CustomTextStyle {
   static TextStyle hyperlink(BuildContext context) {
-    return Theme.of(context).textTheme.bodyText1.copyWith(color: ColorsLectary.red);
+    return Theme.of(context).textTheme.bodyText1!.copyWith(color: ColorsLectary.red);
   }
 }

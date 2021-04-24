@@ -10,11 +10,11 @@ class AppLocalizations {
   AppLocalizations(this.locale);
 
   final Locale locale;
-  static bool _settingUppercase;
+  static late bool _settingUppercase;
 
   static AppLocalizations of(BuildContext context) {
     _settingUppercase = Provider.of<SettingViewModel>(context, listen: false).settingUppercase;
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
@@ -27,7 +27,7 @@ class AppLocalizations {
 
   // Getters for localized values
   _getValue(String key) {
-    String value = _localizedValues[locale.languageCode][key] ?? "<no translation>";
+    String value = _localizedValues[locale.languageCode]![key] ?? "<no translation>";
     return _settingUppercase
         ? value.toUpperCase()
         : value;
@@ -133,11 +133,9 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   bool isSupported(Locale locale) => _isSupported(locale);
 
   bool _isSupported(Locale locale) {
-    if (locale != null) {
-      for (Locale supportedLocale in supportedLocales) {
-        if (supportedLocale.languageCode == locale.languageCode) {
-          return true;
-        }
+    for (Locale supportedLocale in supportedLocales) {
+      if (supportedLocale.languageCode == locale.languageCode) {
+        return true;
       }
     }
     return false;

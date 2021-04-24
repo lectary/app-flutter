@@ -38,7 +38,7 @@ class Utils {
   /// Groups a lecture list by the lecture pack
   /// Returns a [List] of [LecturePackage]
   static List<LecturePackage> groupLecturesByPack(List<Lecture> lectureList) {
-    final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
+    final lecturesByPack = groupBy(lectureList, (dynamic lecture) => (lecture as Lecture).pack);
     List<LecturePackage> packList = List();
     lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
     return packList;
@@ -125,7 +125,7 @@ class Utils {
   }
 
   /// Returns a string where all asciified parts are replaced with the corresponding characters
-  static String deAsciify(String asciifiedString, {List<CodingEntry> codingEntries}) {
+  static String deAsciify(String asciifiedString, {List<CodingEntry>? codingEntries}) {
     String text = asciifiedString;
 
     // 2020-04-19

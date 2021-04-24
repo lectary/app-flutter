@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 class LectureMainScreen extends StatelessWidget {
   static const String routeName  = '/';
 
-  LectureMainScreen({Key key}) : super(key: key);
+  LectureMainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class LectureMainScreen extends StatelessWidget {
               // retrieve current vocable list and keep listening for future changes in the vocable selection
               List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
               bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
-              Selection selection = context.select((CarouselViewModel model) => model.currentSelection);
+              Selection? selection = context.select((CarouselViewModel model) => model.currentSelection);
               bool freshAppInstallation = Provider.of<SettingViewModel>(context, listen: false).settingAppFreshInstalled;
               log("build lecture-main-screen--lectures");
               return Scaffold(
@@ -73,7 +73,7 @@ class LectureMainScreen extends StatelessWidget {
                                         navigationOnly: true));
                               }),
                           actions: [
-                            selection.type == SelectionType.search
+                            selection!.type == SelectionType.search
                                 ? IconButton(
                                     icon: Icon(
                                       Icons.close,
@@ -128,17 +128,17 @@ class LectureMainScreen extends StatelessWidget {
   }
 
   /// Helper class for extracting correct header text depending on the passed [Selection].
-  String _getHeaderText({BuildContext context, Selection selection, bool uppercase}) {
+  String _getHeaderText({required BuildContext context, Selection? selection, required bool uppercase}) {
     if (selection == null) return "";
     switch (selection.type) {
       case SelectionType.all:
         return AppLocalizations.of(context).allVocables;
       case SelectionType.package:
-        return uppercase ? selection.packTitle.toUpperCase() : selection.packTitle;
+        return uppercase ? selection.packTitle!.toUpperCase() : selection.packTitle!;
       case SelectionType.lecture:
-        return uppercase ? selection.lesson.toUpperCase() : selection.lesson;
+        return uppercase ? selection.lesson!.toUpperCase() : selection.lesson!;
       case SelectionType.search:
-        return AppLocalizations.of(context).searchLabel + (uppercase ? selection.filter.toUpperCase() : selection.filter);
+        return AppLocalizations.of(context).searchLabel + (uppercase ? selection.filter!.toUpperCase() : selection.filter!);
       default:
         return "";
     }

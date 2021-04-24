@@ -22,7 +22,7 @@ class VocableSearchScreenArguments {
   /// Also indicates whether the keyboard should get focus on widget init.
   final bool navigationOnly;
 
-  VocableSearchScreenArguments({this.navigationOnly});
+  VocableSearchScreenArguments({required this.navigationOnly});
 }
 
 
@@ -50,12 +50,12 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
   Widget build(BuildContext context) {
     final model = Provider.of<CarouselViewModel>(context, listen: false);
     // Retrieving arguments from route
-    VocableSearchScreenArguments args = ModalRoute.of(context).settings.arguments;
+    VocableSearchScreenArguments args = ModalRoute.of(context)!.settings.arguments as VocableSearchScreenArguments;
     model.searchForNavigationOnly = args.navigationOnly;
     // listen on changes of the list of filtered vocables
     List<SearchResultPackage> searchResults = context.select((CarouselViewModel model) => model.searchResults);
     bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
-    Selection selection = context.select((CarouselViewModel model) => model.currentSelection);
+    Selection? selection = context.select((CarouselViewModel model) => model.currentSelection);
 
     return Theme(
       data: lectaryThemeDark(),
@@ -77,7 +77,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                     final FocusScopeNode currentScope = FocusScope.of(context);
                     if (!currentScope.hasPrimaryFocus &&
                         currentScope.hasFocus) {
-                      FocusManager.instance.primaryFocus.unfocus();
+                      FocusManager.instance.primaryFocus!.unfocus();
                     }
                     model.clearFilteredVocables(); // clear filter result
                     model.clearAllLocalVocables(); // clear list of all local vocables which is not needed anymore
@@ -134,17 +134,17 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
   }
 
   /// Helper class for extracting correct header text depending on the passed [Selection].
-  String _getHeaderText({BuildContext context, Selection selection, bool uppercase}) {
+  String _getHeaderText({required BuildContext context, Selection? selection, required bool uppercase}) {
     if (selection == null) return "";
     switch (selection.type) {
       case SelectionType.all:
         return AppLocalizations.of(context).allVocables;
       case SelectionType.package:
-        return uppercase ? selection.packTitle.toUpperCase() : selection.packTitle;
+        return uppercase ? selection.packTitle!.toUpperCase() : selection.packTitle!;
       case SelectionType.lecture:
-        return uppercase ? selection.lesson.toUpperCase() : selection.lesson;
+        return uppercase ? selection.lesson!.toUpperCase() : selection.lesson!;
       case SelectionType.search:
-        return AppLocalizations.of(context).searchLabel + (uppercase ? selection.filter.toUpperCase() : selection.filter);
+        return AppLocalizations.of(context).searchLabel + (uppercase ? selection.filter!.toUpperCase() : selection.filter!);
       default:
         return "";
     }

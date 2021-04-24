@@ -22,11 +22,11 @@ class $FloorLectureDatabase {
 class _$LectureDatabaseBuilder {
   _$LectureDatabaseBuilder(this.name);
 
-  final String name;
+  final String? name;
 
   final List<Migration> _migrations = [];
 
-  Callback _callback;
+  Callback? _callback;
 
   /// Adds migrations to the builder.
   _$LectureDatabaseBuilder addMigrations(List<Migration> migrations) {
@@ -43,7 +43,7 @@ class _$LectureDatabaseBuilder {
   /// Creates the database and initializes it.
   Future<LectureDatabase> build() async {
     final path = name != null
-        ? await sqfliteDatabaseFactory.getDatabasePath(name)
+        ? await sqfliteDatabaseFactory.getDatabasePath(name!)
         : ':memory:';
     final database = _$LectureDatabase();
     database.database = await database.open(
@@ -56,20 +56,20 @@ class _$LectureDatabaseBuilder {
 }
 
 class _$LectureDatabase extends LectureDatabase {
-  _$LectureDatabase([StreamController<String> listener]) {
+  _$LectureDatabase([StreamController<String>? listener]) {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  LectureDao _lectureDaoInstance;
+  LectureDao? _lectureDaoInstance;
 
-  VocableDao _vocableDaoInstance;
+  VocableDao? _vocableDaoInstance;
 
-  AbstractDao _abstractDaoInstance;
+  AbstractDao? _abstractDaoInstance;
 
-  CodingDao _codingDaoInstance;
+  CodingDao? _codingDaoInstance;
 
   Future<sqflite.Database> open(String path, List<Migration> migrations,
-      [Callback callback]) async {
+      [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
       version: 1,
       onConfigure: (database) async {
@@ -190,7 +190,7 @@ class _$LectureDao extends LectureDao {
   final QueryAdapter _queryAdapter;
 
   static final _lecturesMapper = (Map<String, dynamic> row) => Lecture(
-      id: row['id'] as int,
+      id: row['id'] as int?,
       fileName: row['file_name'] as String,
       fileSize: row['file_size'] as int,
       vocableCount: row['vocable_count'] as int,
@@ -199,9 +199,9 @@ class _$LectureDao extends LectureDao {
       lessonSort: row['lesson_sort'] as String,
       langMedia: row['lang_media'] as String,
       langVocable: row['lang_vocable'] as String,
-      audio: row['audio'] as String,
+      audio: row['audio'] as String?,
       date: row['date'] as String,
-      sort: row['sort'] as String);
+      sort: row['sort'] as String?);
 
   final InsertionAdapter<Lecture> _lectureInsertionAdapter;
 
@@ -225,7 +225,7 @@ class _$LectureDao extends LectureDao {
   Future<List<Lecture>> findAllLecturesWithLang(String langMedia) async {
     return _queryAdapter.queryList(
         'SELECT * FROM lectures WHERE lang_media = ?',
-        arguments: <dynamic>[langMedia],
+        (arguments: <dynamic>[langMedia]) as List<Object>?,
         mapper: _lecturesMapper);
   }
 
@@ -291,14 +291,14 @@ class _$VocableDao extends VocableDao {
   final QueryAdapter _queryAdapter;
 
   static final _vocablesMapper = (Map<String, dynamic> row) => Vocable(
-      id: row['id'] as int,
+      id: row['id'] as int?,
       lectureId: row['lecture_id'] as int,
       vocable: row['vocable'] as String,
       vocableSort: row['vocable_sort'] as String,
       mediaType: row['media_type'] as String,
       media: row['media'] as String,
-      audio: row['audio'] as String,
-      sort: row['sort'] as String,
+      audio: row['audio'] as String?,
+      sort: row['sort'] as String?,
       vocableProgress: row['vocable_progress'] as int);
 
   final InsertionAdapter<Vocable> _vocableInsertionAdapter;
@@ -309,7 +309,7 @@ class _$VocableDao extends VocableDao {
   Future<List<Vocable>> findVocablesByLangMedia(String langMedia) async {
     return _queryAdapter.queryList(
         'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lang_media = ? ORDER BY vocable_sort ASC',
-        arguments: <dynamic>[langMedia],
+        (arguments: <dynamic>[langMedia]) as List<Object>?,
         mapper: _vocablesMapper);
   }
 
@@ -318,7 +318,7 @@ class _$VocableDao extends VocableDao {
       int lectureId, String langMedia) async {
     return _queryAdapter.queryList(
         'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lecture_id = ? AND lang_media = ? ORDER BY vocable_sort ASC',
-        arguments: <dynamic>[lectureId, langMedia],
+        (arguments: <dynamic>[lectureId, langMedia]) as List<Object>?,
         mapper: _vocablesMapper);
   }
 
@@ -327,7 +327,7 @@ class _$VocableDao extends VocableDao {
       String lecturePack, String langMedia) async {
     return _queryAdapter.queryList(
         'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ? AND lang_media = ? ORDER BY vocable_sort ASC',
-        arguments: <dynamic>[lecturePack, langMedia],
+        (arguments: <dynamic>[lecturePack, langMedia]) as List<Object>?,
         mapper: _vocablesMapper);
   }
 
@@ -335,7 +335,7 @@ class _$VocableDao extends VocableDao {
   Future<List<Vocable>> findVocablesByLectureId(int lectureId) async {
     return _queryAdapter.queryList(
         'SELECT * FROM vocables WHERE lecture_id = ? ORDER BY vocable_sort ASC',
-        arguments: <dynamic>[lectureId],
+        (arguments: <dynamic>[lectureId]) as List<Object>?,
         mapper: _vocablesMapper);
   }
 
@@ -343,7 +343,7 @@ class _$VocableDao extends VocableDao {
   Future<void> deleteVocablesByLectureId(int lectureId) async {
     await _queryAdapter.queryNoReturn(
         'DELETE FROM vocables WHERE lecture_id = ?',
-        arguments: <dynamic>[lectureId]);
+        (arguments: <dynamic>[lectureId]) as List<Object>?);
   }
 
   @override
@@ -355,7 +355,7 @@ class _$VocableDao extends VocableDao {
   Future<void> deleteAllVocablesByLangMedia(String langMedia) async {
     await _queryAdapter.queryNoReturn(
         'DELETE FROM vocables WHERE lecture_id IN(SELECT vocables.lecture_id FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lang_media = ?)',
-        arguments: <dynamic>[langMedia]);
+        (arguments: <dynamic>[langMedia]) as List<Object>?);
   }
 
   @override
@@ -424,7 +424,7 @@ class _$AbstractDao extends AbstractDao {
   final QueryAdapter _queryAdapter;
 
   static final _abstractsMapper = (Map<String, dynamic> row) => Abstract(
-      id: row['id'] as int,
+      id: row['id'] as int?,
       fileName: row['file_name'] as String,
       pack: row['pack'] as String,
       text: row['text'] as String,
@@ -518,14 +518,14 @@ class _$CodingDao extends CodingDao {
   final QueryAdapter _queryAdapter;
 
   static final _codingsMapper = (Map<String, dynamic> row) => Coding(
-      id: row['id'] as int,
+      id: row['id'] as int?,
       fileName: row['file_name'] as String,
       lang: row['lang'] as String,
       date: row['date'] as String);
 
   static final _coding_entriesMapper = (Map<String, dynamic> row) =>
       CodingEntry(
-          id: row['id'] as int,
+          id: row['id'] as int?,
           codingId: row['coding_id'] as int,
           char: row['char'] as String,
           ascii: row['ascii'] as String);
@@ -561,15 +561,15 @@ class _$CodingDao extends CodingDao {
   Future<List<CodingEntry>> findAllCodingEntriesByCodingId(int codingId) async {
     return _queryAdapter.queryList(
         'SELECT * FROM coding_entries WHERE coding_id = ?',
-        arguments: <dynamic>[codingId],
+        (arguments: <dynamic>[codingId]) as List<Object>?,
         mapper: _coding_entriesMapper);
   }
 
   @override
-  Future<void> deleteCodingEntriesByCodingId(int codingId) async {
+  Future<void> deleteCodingEntriesByCodingId(int? codingId) async {
     await _queryAdapter.queryNoReturn(
         'DELETE FROM coding_entries WHERE coding_id = ?',
-        arguments: <dynamic>[codingId]);
+        (arguments: <dynamic>[codingId]) as List<Object>?);
   }
 
   @override
