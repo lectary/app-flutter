@@ -13,6 +13,7 @@ import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
+import 'package:lectary/widgets/download_progress_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -116,7 +117,7 @@ class LecturePackageItem extends StatelessWidget {
     return <Widget>[
       Divider(height: 1,thickness: 1),
       ListTile(
-          leading: _getIconForLectureStatus(lecture.lectureStatus),
+          leading: _getIconForLectureStatus(lecture),
           title: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Text(
@@ -129,11 +130,10 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // return the icon for the corresponding lectureStatus
-  Widget _getIconForLectureStatus(LectureStatus lectureStatus) {
-    switch (lectureStatus) {
+  Widget _getIconForLectureStatus(Lecture lecture) {
+    switch (lecture.lectureStatus) {
       case LectureStatus.downloading:
-        return SizedBox(
-            width: 24, height: 24, child: CircularProgressIndicator());
+        return DownloadProgressIndicator(lecture);
       case LectureStatus.persisted:
         return Icon(Icons.check_circle);
       case LectureStatus.removed:
