@@ -63,6 +63,32 @@ class LectaryApi {
     }
   }
 
+  /// Downloads the lecture archive from the passed [Lecture].
+  /// Returns a [http.StreamedResponse] as [Future].
+  /// Throws [NoInternetException] if there is no internet connection
+  /// and [ServerResponseException] on any other errors or if the lecture could
+  /// not be found, with corresponding error messages.
+  Future<http.StreamedResponse> downloadLectureZipAsStream(Lecture lecture) async {
+    http.Client httpClient = http.Client();
+    http.Request request = http.Request('GET', Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + lecture.fileName));
+
+    http.StreamedResponse response;
+    try {
+      response = await httpClient.send(request);
+    } on SocketException {
+      throw NoInternetException("No internet! Check your connection!");
+    }
+
+    if (response.statusCode == 200) {
+      return response;
+    } else if (response.statusCode == 404) {
+      throw ServerResponseException("Lecture: ${lecture.lesson} not found!");
+    } else {
+      throw ServerResponseException(
+          "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
+    }
+  }
+
   /// Downloads the abstract file from the passed [Abstract].
   /// Returns a [File] as [Future].
   /// Throws [NoInternetException] if there is no internet connection

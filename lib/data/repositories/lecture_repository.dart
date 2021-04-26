@@ -6,6 +6,7 @@ import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/lectary_overview.dart';
+import 'package:http/http.dart' as http;
 
 
 /// Repository class for encapsulating data access independent of the source
@@ -34,6 +35,10 @@ class LectureRepository {
   ///////////////////
   Future<File> downloadLecture(Lecture lecture) async {
     return _lectaryApi.downloadLectureZip(lecture);
+  }
+
+  Future<http.StreamedResponse> downloadLectureAsStream(Lecture lecture) async {
+    return _lectaryApi.downloadLectureZipAsStream(lecture);
   }
 
   Stream<List<Lecture>> watchAllLectures() {
