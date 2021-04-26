@@ -41,13 +41,13 @@ class Dialogs {
         return AlertDialog(
           title: Text(title),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
                 child: Text(
                   AppLocalizations.of(context).cancel,
                   style: TextStyle(color: ColorsLectary.lightBlue),
                 ),
                 onPressed: () => Navigator.of(context).pop()),
-            FlatButton(
+            TextButton(
               child: Text(
                 submitText,
                 style: TextStyle(color: ColorsLectary.red),
@@ -80,7 +80,7 @@ class Dialogs {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                FlatButton(
+                TextButton(
                   child: Text(
                     submitText1,
                     textAlign: TextAlign.right,
@@ -91,7 +91,7 @@ class Dialogs {
                     submitFunc1();
                   },
                 ),
-                FlatButton(
+                TextButton(
                   child: Text(
                     submitText2,
                     textAlign: TextAlign.right,
@@ -102,7 +102,7 @@ class Dialogs {
                     submitFunc2();
                   },
                 ),
-                FlatButton(
+                TextButton(
                     child: Text(
                       AppLocalizations.of(context).cancel,
                       style: TextStyle(color: ColorsLectary.lightBlue),
@@ -142,7 +142,7 @@ class Dialogs {
             ),
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
                 child: Text(
                   AppLocalizations.of(context).close,
                   style: TextStyle(color: ColorsLectary.lightBlue),
