@@ -18,7 +18,7 @@ Have a look on [online documentation](https://flutter.dev/docs) for further info
 ## FVM - flutter version management 
 For using [FVM](https://pub.dev/packages/fvm), follow the installation instructions on the package site.
 
-Then, for installing flutter based on the specified version in the `pubspec.yaml` file, just run the command `fvm install`.
+Then, for installing flutter based on the specified version in the fvm config file `.fvm/fvm_config.json`, just run the command `fvm install`.
 
 All further dart or flutter commands can be executed by means of fvm command proxy, e.g. `fvm flutter run`. 
 
