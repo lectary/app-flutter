@@ -18,46 +18,39 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
-  flutter: ^2.0.5
+  sdk:  '>=3.0.1 <4.0.0'
+  flutter: ^3.10.1
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  provider: ^5.0.0
-  http: ^0.13.1
-  floor: ^1.0.1
-  path_provider: ^2.0.1
-  archive: ^3.1.2
-  url_launcher: ^6.0.3
-  flutter_html: ^2.0.0-nullsafety.0
-  video_player: ^2.1.1
-  carousel_slider: ^4.0.0-nullsafety.0
-  shared_preferences: ^2.0.5
-  country_icons: ^1.1.1
-  intl: ^0.17.0
+  intl: any
+  provider: ^6.0.5
+  http: ^0.13.6
+  floor: ^1.4.2
+  path_provider: ^2.0.15
+  archive: ^3.3.7
+  url_launcher: ^6.1.11
+  flutter_html: ^2.2.1
+  video_player: ^2.6.1
+  carousel_slider: ^4.2.1
+  shared_preferences: ^2.1.1
+  country_icons: ^2.0.2
+  collection: any
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  collection: ^1.15.0-nullsafety.4
-
-dependency_overrides:
-  build_config: '>=1.0.0 <1.1.0'
-  code_builder: ^4.0.0
-#  flutter_svg: ^0.19.0
-#  analyzer: '0.39.14'
-#  video_player: ^0.11.0
+  cupertino_icons: ^1.0.5
 
 dev_dependencies:
-  test: ^1.16.5
+  test: any
   flutter_test:
     sdk: flutter
-  mockito: ^5.0.5
-  floor_generator: ^1.0.1
-  build_runner: ^2.0.1
+  mockito: ^5.4.0
+  floor_generator: ^1.4.2
+  build_runner: ^2.4.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
