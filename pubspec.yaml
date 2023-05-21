@@ -33,7 +33,7 @@ dependencies:
   path_provider: ^2.0.15
   archive: ^3.3.7
   url_launcher: ^6.1.11
-  flutter_html: ^2.2.1
+  flutter_html: ^3.0.0-beta.1 # FIXME (dart3 compatibility) change back to stable version
   video_player: ^2.6.1
   carousel_slider: ^4.2.1
   shared_preferences: ^2.1.1
