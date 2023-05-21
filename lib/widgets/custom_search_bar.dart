@@ -8,13 +8,13 @@ import 'package:lectary/utils/constants.dart';
 /// Opens keyboard and sets focus immediately after initialization if [initOpen] is set to true.
 /// The search bar uses a [TextField] with a [TextEditingController] for listening to text input/changes.
 /// The input text will then be passed to the custom filter function.
-class SearchBar extends StatefulWidget {
+class CustomSearchBar extends StatefulWidget {
   final TextEditingController textEditingController;
   final FocusNode focusNode;
   final bool initOpen;
   final Function filterFunction;
 
-  SearchBar(
+  CustomSearchBar(
       {required this.textEditingController,
       required this.focusNode,
       this.initOpen = false,
@@ -23,10 +23,10 @@ class SearchBar extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SearchBarState createState() => _SearchBarState();
+  _CustomSearchBarState createState() => _CustomSearchBarState();
 }
 
-class _SearchBarState extends State<SearchBar> {
+class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   void initState() {
     if (widget.initOpen) {

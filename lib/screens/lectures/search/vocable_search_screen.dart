@@ -10,7 +10,7 @@ import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
-import 'package:lectary/widgets/search_bar.dart';
+import 'package:lectary/widgets/custom_search_bar.dart';
 import 'package:provider/provider.dart';
 
 
@@ -116,7 +116,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
               Column(
                 children: [
                   Divider(height: 1, thickness: 1, color: ColorsLectary.white),
-                  SearchBar(
+                  CustomSearchBar(
                     textEditingController: textEditingController,
                     focusNode: focus,
                     initOpen: !model.searchForNavigationOnly,

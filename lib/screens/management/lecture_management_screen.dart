@@ -10,7 +10,7 @@ import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/dialogs.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
-import 'package:lectary/widgets/search_bar.dart';
+import 'package:lectary/widgets/custom_search_bar.dart';
 import 'package:provider/provider.dart';
 
 
@@ -67,7 +67,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                 Divider(height: 1, thickness: 1),
                 Container(
                   height: 60,
-                  child: SearchBar(
+                  child: CustomSearchBar(
                     textEditingController: textEditingController,
                     focusNode: focus,
                     filterFunction: Provider.of<LectureViewModel>(context, listen: false).filterLectureList,
