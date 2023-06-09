@@ -29,7 +29,7 @@ class LectureMainScreen extends StatelessWidget {
     Future<List<Vocable>> _vocableFuture = model.initVocables();
     model.listenOnLocalLectures();
     return Theme(
-      data: lectaryThemeDark(),
+      data: CustomAppTheme.defaultDarkTheme,
       // Future builder will wait till the vocables are loaded initially, then the snapshot
       // stays the same and we are constantly in the first if-branch. On vocable updates
       // only the builder function of the FutureBuilder will be called.

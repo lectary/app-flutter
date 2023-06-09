@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
-import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
@@ -57,7 +57,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
                           children: [
                             TextSpan(
                               text: "Lectary.net.\n",
-                              style: CustomTextStyle.hyperlink(context),
+                              style: CustomAppTheme.hyperlink(context),
                               recognizer: _buildTapGestureRecognizer('https://lectary.net'),
                             ),
                             TextSpan(
@@ -69,7 +69,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
                           children: [
                             TextSpan(
                               text: "info@lectary.net.\n\n",
-                              style: CustomTextStyle.hyperlink(context),
+                              style: CustomAppTheme.hyperlink(context),
                               recognizer: _buildTapGestureRecognizer('mailto:info@lectary.net')
                             ),
                           ]),
@@ -78,7 +78,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
                           children: [
                             TextSpan(
                               text: "lectary.net/anleitung\n\n",
-                              style: CustomTextStyle.hyperlink(context),
+                              style: CustomAppTheme.hyperlink(context),
                               recognizer:_buildTapGestureRecognizer('https://lectary.net/anleitung4.html')
                             ),
                           ]),
@@ -87,7 +87,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
                           children: [
                             TextSpan(
                               text: "Flutter.dev.\n\n",
-                              style: CustomTextStyle.hyperlink(context),
+                              style: CustomAppTheme.hyperlink(context),
                               recognizer: _buildTapGestureRecognizer('https://flutter.dev')
                             ),
                             TextSpan(
@@ -95,13 +95,13 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
                                 children: [
                                   TextSpan(
                                     text: "Material Icons",
-                                    style: CustomTextStyle.hyperlink(context),
+                                    style: CustomAppTheme.hyperlink(context),
                                     recognizer: _buildTapGestureRecognizer('https://material.io/resources/icons/')
                                   ),
                                   TextSpan(text: " & "),
                                   TextSpan(
                                     text: "FontAwesome\n\n",
-                                    style: CustomTextStyle.hyperlink(context),
+                                    style: CustomAppTheme.hyperlink(context),
                                     recognizer: _buildTapGestureRecognizer('https://fontawesome.com/')
                                   ),
                                 ]),
@@ -110,7 +110,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
                                 children: [
                                   TextSpan(
                                     text: "FreePik ",
-                                    style: CustomTextStyle.hyperlink(context),
+                                    style: CustomAppTheme.hyperlink(context),
                                     recognizer: _buildTapGestureRecognizer('https://www.flaticon.com/authors/freepik')
                                   ),
                                   TextSpan(
@@ -118,7 +118,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
                                           .aboutIconCreationCreditPart2),
                                   TextSpan(
                                     text: "flaticon.com",
-                                    style: CustomTextStyle.hyperlink(context),
+                                    style: CustomAppTheme.hyperlink(context),
                                     recognizer: _buildTapGestureRecognizer('https://flaticon.com')
                                   ),
                                 ]),
@@ -143,7 +143,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
             Container(
               height: 70,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: ColorsLectary.lightBlue),
+                style: ElevatedButton.styleFrom(backgroundColor: ColorsLectary.lightBlue),
                 child: Text(
                   AppLocalizations.of(context).okUppercase,
                   style: TextStyle(color: Colors.black, fontSize: 32),

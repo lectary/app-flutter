@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
+import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -74,6 +75,7 @@ class LectureStartupScreen extends StatelessWidget {
         Navigator.pushNamed(context, LectureManagementScreen.routeName);
       },
       style: ElevatedButton.styleFrom(
+        backgroundColor: ColorsLectary.lightBlue,
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),

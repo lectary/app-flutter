@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
-
+import 'package:lectary/utils/global_theme.dart';
 
 /// Custom searchBar widget.
 /// Opens keyboard and sets focus immediately after initialization if [initOpen] is set to true.
@@ -14,13 +14,13 @@ class CustomSearchBar extends StatefulWidget {
   final bool initOpen;
   final Function filterFunction;
 
-  CustomSearchBar(
-      {required this.textEditingController,
-      required this.focusNode,
-      this.initOpen = false,
-      required this.filterFunction,
-      Key? key})
-      : super(key: key);
+  CustomSearchBar({
+    required this.textEditingController,
+    required this.focusNode,
+    this.initOpen = false,
+    required this.filterFunction,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _CustomSearchBarState createState() => _CustomSearchBarState();
@@ -31,7 +31,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   void initState() {
     if (widget.initOpen) {
       // open keyboard after widget is built
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         FocusScope.of(context).requestFocus(widget.focusNode);
         setState(() {});
       });
@@ -41,53 +41,56 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: ColorsLectary.white,
-      child: Row(
-        children: <Widget>[
-          SizedBox(width: 15),
-          Icon(Icons.search),
-          SizedBox(width: 10),
-          Expanded( // needed because textField has no intrinsic width, that the row wants to know!
-            child: TextField(
-              style: TextStyle(color: Colors.black),
-              onTap: () => setState(() {}),
-              onChanged: (value) => widget.filterFunction(value),
-              focusNode: widget.focusNode,
-              controller: widget.textEditingController,
-              decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context).screenManagementSearchHint,
-                  border: InputBorder.none
+    return Theme(
+      data: CustomAppTheme.defaultLightTheme,
+      child: Container(
+        color: ColorsLectary.white,
+        child: Row(
+          children: <Widget>[
+            SizedBox(width: 15),
+            Icon(Icons.search),
+            SizedBox(width: 10),
+            Expanded(
+              // needed because textField has no intrinsic width, that the row wants to know!
+              child: TextField(
+                cursorColor: ColorsLectary.lightBlue,
+                onTap: () => setState(() {}),
+                onChanged: (value) => widget.filterFunction(value),
+                focusNode: widget.focusNode,
+                controller: widget.textEditingController,
+                decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context).screenManagementSearchHint,
+                    border: InputBorder.none),
               ),
             ),
-          ),
-          Visibility(
-            visible: widget.textEditingController.text.isNotEmpty ? true : false,
-            child: IconButton(
-              onPressed: () {
-                widget.textEditingController.clear();
-                widget.filterFunction("");
-              },
-              icon: Icon(Icons.cancel, semanticLabel: Constants.semanticClearFilter),
-            ),
-          ),
-          Visibility(
-            visible: widget.focusNode.hasFocus ? true : false,
-            child: TextButton(
-              onPressed: () {
-                // clears the focus and closes keyboard
-                final FocusScopeNode currentScope = FocusScope.of(context);
-                if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                  FocusManager.instance.primaryFocus!.unfocus();
-                }
-              },
-              child: Text(
-                AppLocalizations.of(context).cancel,
-                style: TextStyle(color: ColorsLectary.lightBlue),
+            Visibility(
+              visible: widget.textEditingController.text.isNotEmpty ? true : false,
+              child: IconButton(
+                onPressed: () {
+                  widget.textEditingController.clear();
+                  widget.filterFunction("");
+                },
+                icon: Icon(Icons.cancel, semanticLabel: Constants.semanticClearFilter),
               ),
             ),
-          )
-        ],
+            Visibility(
+              visible: widget.focusNode.hasFocus ? true : false,
+              child: TextButton(
+                onPressed: () {
+                  // clears the focus and closes keyboard
+                  final FocusScopeNode currentScope = FocusScope.of(context);
+                  if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                    FocusManager.instance.primaryFocus!.unfocus();
+                  }
+                },
+                child: Text(
+                  AppLocalizations.of(context).cancel,
+                  style: TextStyle(color: ColorsLectary.lightBlue),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

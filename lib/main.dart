@@ -127,7 +127,7 @@ class _LocalizedAppState extends State<LocalizedApp> {
             const Locale('de', ''),
             const Locale('en', ''),
           ],
-          theme: lectaryThemeLight(),
+          theme: CustomAppTheme.defaultLightTheme,
           initialRoute: LectureMainScreen.routeName,
           routes: {
             LectureMainScreen.routeName: (context) => LectureMainScreen(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
+import 'package:lectary/utils/colors.dart';
 
 
 /// Lecture screen if no lectures are available.
@@ -27,6 +28,7 @@ class LectureNotAvailableScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, LectureManagementScreen.routeName),
               style: ElevatedButton.styleFrom(
+                backgroundColor: ColorsLectary.lightBlue,
                 padding: EdgeInsets.all(15.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),

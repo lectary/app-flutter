@@ -81,7 +81,7 @@ class LecturePackageItem extends StatelessWidget {
                       data: uppercase ? abstractText.toUpperCase() : abstractText,
                       style: {
                         "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyText1!), // default text style
-                        "a": Style.fromTextStyle(CustomTextStyle.hyperlink(context)),
+                        "a": Style.fromTextStyle(CustomAppTheme.hyperlink(context)),
                       },
                       onLinkTap: (String? url, unused1, unused2) async {
                         if (url != null && await canLaunch(url)) {
