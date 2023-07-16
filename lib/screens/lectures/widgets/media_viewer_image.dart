@@ -23,10 +23,10 @@ class ImageViewer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  ImageViewer({required this.imagePath, required this.mediaIndex, required this.slowMode, required this.autoMode, Key? key}) : super(key: key);
+  const ImageViewer({required this.imagePath, required this.mediaIndex, required this.slowMode, required this.autoMode, Key? key}) : super(key: key);
 
   @override
-  _ImageViewerState createState() => _ImageViewerState();
+  State<ImageViewer> createState() => _ImageViewerState();
 }
 
 class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin {
@@ -44,7 +44,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: Constants.mediaAnimationDurationMilliseconds),
+      duration: const Duration(milliseconds: Constants.mediaAnimationDurationMilliseconds),
       vsync: this,
     );
     _animation = Tween<double>(begin: 50, end: 0).animate(_animationController)
@@ -133,7 +133,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
                         ),
                       ),
                     ])
-                  : Icon(
+                  : const Icon(
                       Icons.image,
                       size: 120,
                     )),

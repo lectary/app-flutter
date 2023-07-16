@@ -1,5 +1,5 @@
 class AbstractException implements Exception {
-  String _message;
+  final String _message;
 
   AbstractException(this._message);
 

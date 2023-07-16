@@ -35,10 +35,8 @@ class DatabaseProvider {
   static LectureDatabase? _db;
 
   Future<LectureDatabase> get db async {
-    if (_db == null) {
-      _db = await $FloorLectureDatabase.databaseBuilder(Constants.databaseName)
+    _db ??= await $FloorLectureDatabase.databaseBuilder(Constants.databaseName)
           .build();
-    }
     return _db!;
   }
 

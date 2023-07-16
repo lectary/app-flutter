@@ -29,8 +29,10 @@ class VocableSearchScreenArguments {
 class VocableSearchScreen extends StatefulWidget {
   static const String routeName = '/search';
 
+  const VocableSearchScreen({super.key});
+
   @override
-  _VocableSearchScreenState createState() => _VocableSearchScreenState();
+  State<VocableSearchScreen> createState() => _VocableSearchScreenState();
 }
 
 class _VocableSearchScreenState extends State<VocableSearchScreen> {
@@ -72,7 +74,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
             ),
             appBarActions: [
               IconButton(
-                  icon: Icon(Icons.cancel, semanticLabel: Constants.semanticCloseSearch),
+                  icon: const Icon(Icons.cancel, semanticLabel: Constants.semanticCloseSearch),
                   onPressed: () {
                     // clearing focus i.e. closing keyboard
                     final FocusScopeNode currentScope = FocusScope.of(context);
@@ -91,8 +93,8 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                 Expanded(
                     child: searchResults.isNotEmpty
                         ? ListView.separated(
-                            padding: EdgeInsets.all(0),
-                            separatorBuilder: (context, index) => Divider(
+                            padding: const EdgeInsets.all(0),
+                            separatorBuilder: (context, index) => const Divider(
                                   height: 1,
                                   thickness: 1,
                                   color: ColorsLectary.white,
@@ -106,7 +108,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                               if (item is ItemRow) {
                                 return SearchResultRow(item.searchResult, textEditingController.text);
                               }
-                              throw new Exception("Unsupported type for search result: ${item.runtimeType}");
+                              throw Exception("Unsupported type for search result: ${item.runtimeType}");
                             })
                         : Center(
                             child: Text(AppLocalizations.of(context).noVocablesFound,
@@ -114,7 +116,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                           )),
                 Column(
                   children: [
-                    Divider(height: 1, thickness: 1, color: ColorsLectary.white),
+                    const Divider(height: 1, thickness: 1, color: ColorsLectary.white),
                     CustomSearchBar(
                       textEditingController: textEditingController,
                       focusNode: focus,

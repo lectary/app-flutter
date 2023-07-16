@@ -14,10 +14,10 @@ import 'package:provider/provider.dart';
 class MediaControlArea extends StatefulWidget {
   final int flex;
 
-  MediaControlArea({required this.flex});
+  const MediaControlArea({super.key, required this.flex});
 
   @override
-  _MediaControlAreaState createState() => _MediaControlAreaState();
+  State<MediaControlArea> createState() => _MediaControlAreaState();
 }
 
 class _MediaControlAreaState extends State<MediaControlArea> {

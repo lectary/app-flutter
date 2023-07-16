@@ -27,7 +27,7 @@ class CustomScaffold extends StatelessWidget {
         title: appBarTitle,
         actions: appBarActions,
       ),
-      drawer: CustomDrawer(),
+      drawer: const CustomDrawer(),
       body: body,
     );
   }

@@ -24,10 +24,10 @@ class LectaryVideoPlayer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  LectaryVideoPlayer({required this.videoPath, required this.mediaIndex, required this.slowMode, required this.autoMode, required this.loopMode, Key? key, required this.audio}) : super(key: key);
+  const LectaryVideoPlayer({required this.videoPath, required this.mediaIndex, required this.slowMode, required this.autoMode, required this.loopMode, Key? key, required this.audio}) : super(key: key);
 
   @override
-  _LectaryVideoPlayerState createState() => _LectaryVideoPlayerState();
+  State<LectaryVideoPlayer> createState() => _LectaryVideoPlayerState();
 }
 
 class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
@@ -113,7 +113,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
             child: _buildVideoPlayerWithOverlay(context),
           );
         } else {
-          return AspectRatio(
+          return const AspectRatio(
             aspectRatio: Constants.aspectRatio,
             child: Center(
               child: CircularProgressIndicator(),
@@ -151,7 +151,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
                 children: [
                   Container(
                     alignment: Alignment.center,
-                    child: Opacity(
+                    child: const Opacity(
                       opacity: Constants.opacityOfCarouselOverLay,
                         child: Icon(Icons.play_circle_filled, size: 120, color: ColorsLectary.white,),
                     ),
@@ -162,10 +162,10 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
             Visibility(
               visible: isOverlayOn && widget.audio != null,
               child: Container(
-                margin: EdgeInsets.only(left: 10, bottom: 10),
+                margin: const EdgeInsets.only(left: 10, bottom: 10),
                 alignment: Alignment.bottomLeft,
                 child: Container(
-                  padding: EdgeInsets.only(left: 8, right: 10, top: 3, bottom: 3),
+                  padding: const EdgeInsets.only(left: 8, right: 10, top: 3, bottom: 3),
                   decoration: BoxDecoration(
                     color: ColorsLectary.darkBlue,
                     borderRadius: BorderRadius.circular(10),
@@ -174,8 +174,8 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(isAudioOn ? Icons.volume_up : Icons.volume_off, color: ColorsLectary.lightBlue,),
-                      Text(" - ", style: TextStyle(color: ColorsLectary.lightBlue),),
-                      Text(widget.audio ?? "", style: TextStyle(color: ColorsLectary.lightBlue),),
+                      const Text(" - ", style: TextStyle(color: ColorsLectary.lightBlue),),
+                      Text(widget.audio ?? "", style: const TextStyle(color: ColorsLectary.lightBlue),),
                     ],
                   ),
                 ),
@@ -184,7 +184,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
             Visibility(
               visible: isVideoTimelineOn,
               child: VideoProgressIndicator(_controller, allowScrubbing: false,
-                colors: VideoProgressColors(
+                colors: const VideoProgressColors(
                   backgroundColor: Color.fromRGBO(0, 0, 0, 0),
                   bufferedColor: Color.fromRGBO(0, 0, 0, 0),
                   playedColor: ColorsLectary.yellow

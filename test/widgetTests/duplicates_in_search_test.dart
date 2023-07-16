@@ -84,23 +84,23 @@ void main() async {
           ],
           child: MaterialApp(
             navigatorKey: key,
-            locale: Locale('de', 'DE'),
-            localizationsDelegates: [
+            locale: const Locale('de', 'DE'),
+            localizationsDelegates: const [
               AppLocalizations.delegate,
               // following localizations are needed!
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate
             ],
-            supportedLocales: [
-              const Locale('de', 'DE'),
+            supportedLocales: const [
+              Locale('de', 'DE'),
             ],
             title: 'Flutter Test Wrapper',
             home: TextButton(
               onPressed: () => key.currentState!.push(
                 MaterialPageRoute<void>(
                     settings: RouteSettings(arguments: VocableSearchScreenArguments(navigationOnly: false)),
-                    builder: (_) => VocableSearchScreen()),
+                    builder: (_) => const VocableSearchScreen()),
               ),
               child: const SizedBox(),
             ),

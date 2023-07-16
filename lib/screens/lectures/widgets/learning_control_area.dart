@@ -17,10 +17,10 @@ class LearningControlArea extends StatefulWidget {
   final int flex;
   final CarouselController carouselController;
 
-  LearningControlArea({required this.flex, required this.carouselController});
+  const LearningControlArea({super.key, required this.flex, required this.carouselController});
 
   @override
-  _LearningControlAreaState createState() => _LearningControlAreaState();
+  State<LearningControlArea> createState() => _LearningControlAreaState();
 }
 
 class _LearningControlAreaState extends State<LearningControlArea> {
@@ -56,7 +56,7 @@ class _LearningControlAreaState extends State<LearningControlArea> {
               widget.carouselController.jumpToPage(rndPage);
             }
           ),
-          LearningProgressButtonAnimation()
+          const LearningProgressButtonAnimation()
         ],
       ),
     );

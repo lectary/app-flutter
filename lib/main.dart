@@ -36,7 +36,7 @@ void main() async {
 class LectaryApp extends StatelessWidget {
   final LectureDatabase lectureDatabase;
 
-  LectaryApp({required this.lectureDatabase});
+  const LectaryApp({super.key, required this.lectureDatabase});
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class LectaryApp extends StatelessWidget {
           lazy: false,
         ),
       ],
-      child: LocalizedApp(),
+      child: const LocalizedApp(),
     );
   }
 }
@@ -76,7 +76,7 @@ class LocalizedApp extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _LocalizedAppState createState() => _LocalizedAppState();
+  State<LocalizedApp> createState() => _LocalizedAppState();
 
   /// Static method for changing the [Locale] by finding [_LocalizedAppState] via [BuildContext]
   /// from everywhere in the app and setting a new locale, which rebuilds the entire application.
@@ -100,7 +100,7 @@ class _LocalizedAppState extends State<LocalizedApp> {
     settings.loadLocalSettings().then((_) {
       setState(() {
         String lang = settings.settingAppLanguage;
-        this.locale = Locale(lang, '');
+        locale = Locale(lang, '');
       });
     });
   }
@@ -112,29 +112,29 @@ class _LocalizedAppState extends State<LocalizedApp> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     if (locale == null) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     } else {
       return MaterialApp(
           onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).appTitle, // used by os task switcher
           locale: locale,
-          localizationsDelegates: [
+          localizationsDelegates: const [
             AppLocalizations.delegate, // custom localization
             GlobalMaterialLocalizations.delegate, // provides localized values for the material component library
             GlobalWidgetsLocalizations.delegate, // defines text direction (right2left/left2right)
             GlobalCupertinoLocalizations.delegate, // ios
           ],
-          supportedLocales: [
-            const Locale('de', ''),
-            const Locale('en', ''),
+          supportedLocales: const [
+            Locale('de', ''),
+            Locale('en', ''),
           ],
           theme: CustomAppTheme.defaultLightTheme,
           initialRoute: LectureMainScreen.routeName,
           routes: {
-            LectureMainScreen.routeName: (context) => LectureMainScreen(),
-            VocableSearchScreen.routeName: (context) => VocableSearchScreen(),
-            LectureManagementScreen.routeName : (context) => LectureManagementScreen(),
-            SettingsScreen.routeName: (context) => SettingsScreen(),
-            AboutScreen.routeName: (context) => AboutScreen(),
+            LectureMainScreen.routeName: (context) => const LectureMainScreen(),
+            VocableSearchScreen.routeName: (context) => const VocableSearchScreen(),
+            LectureManagementScreen.routeName : (context) => const LectureManagementScreen(),
+            SettingsScreen.routeName: (context) => const SettingsScreen(),
+            AboutScreen.routeName: (context) => const AboutScreen(),
           },
           navigatorObservers: [routeObserver],
       );

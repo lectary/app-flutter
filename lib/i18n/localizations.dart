@@ -20,7 +20,7 @@ class AppLocalizations {
   static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   // uses string-mapping defined in localizations_strings.dart
-  static Map<String, Map<String, String>> _localizedValues = {
+  static final Map<String, Map<String, String>> _localizedValues = {
     'de': de,
     'en': en,
   };

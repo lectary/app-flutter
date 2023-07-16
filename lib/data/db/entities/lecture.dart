@@ -69,20 +69,20 @@ class Lecture {
 
   @ignore
   Lecture.clone(Lecture lecture)
-      : this.id = lecture.id,
-        this.lectureStatus = lecture.lectureStatus,
-        this.fileNameUpdate = lecture.fileNameUpdate,
-        this.fileName = lecture.fileName,
-        this.fileSize = lecture.fileSize,
-        this.vocableCount = lecture.vocableCount,
-        this.pack = lecture.pack,
-        this.lesson = lecture.lesson,
-        this.lessonSort = lecture.lessonSort,
-        this.langMedia = lecture.langMedia,
-        this.langVocable = lecture.langVocable,
-        this.audio = lecture.audio,
-        this.date = lecture.date,
-        this.sort = lecture.sort;
+      : id = lecture.id,
+        lectureStatus = lecture.lectureStatus,
+        fileNameUpdate = lecture.fileNameUpdate,
+        fileName = lecture.fileName,
+        fileSize = lecture.fileSize,
+        vocableCount = lecture.vocableCount,
+        pack = lecture.pack,
+        lesson = lecture.lesson,
+        lessonSort = lecture.lessonSort,
+        langMedia = lecture.langMedia,
+        langVocable = lecture.langVocable,
+        audio = lecture.audio,
+        date = lecture.date,
+        sort = lecture.sort;
 
   /// Factory constructor to create a new lecture instance from a json.
   /// Returns a new [Lecture] on successful json deserialization.
@@ -93,7 +93,7 @@ class Lecture {
     try {
       metadata = extractMetadata(fileName);
     } on LectureException catch(e) {
-      String errorMessage = "Invalid lecture: " + e.toString();
+      String errorMessage = "Invalid lecture: $e";
       log(errorMessage);
       LectureViewModel.reportErrorToLectaryServer(errorMessage);
       return null;
@@ -122,17 +122,18 @@ class Lecture {
     const List<String> mandatoryMetadataKeys = ["PACK", "LESSON", "LANG"];
     const List<String> optionalMetadataKeys = ["AUDIO", "DATE", "SORT"];
     const List<String> metadataKeys = [...mandatoryMetadataKeys, ...optionalMetadataKeys];
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
     const List<String> mandatoryResultMetadataKeys = ["PACK", "LESSON", "LESSON-SORT", "LANG-MEDIA", "LANG-VOCABLE"];
 
     // check fileType
-    if (!fileName.contains(".zip"))
-      throw new LectureException("Missing .zip ending in filename: $fileName");
+    if (!fileName.contains(".zip")) {
+      throw LectureException("Missing .zip ending in filename: $fileName");
+    }
 
     // checking if fileName contains mandatory metadata with key-value separator e.g. 'PACK--'
     mandatoryMetadataKeys.forEach((key) {
       if (!RegExp(key + r'\b-{2}\b').hasMatch(fileName)) {
-        throw new LectureException("Lecture has not mandatory metadata!\n"
+        throw LectureException("Lecture has not mandatory metadata!\n"
             "Missing: "
             "$key"
             "\nFile: $fileName"
@@ -147,13 +148,13 @@ class Lecture {
     List<String?> metadata = RegExp(r'([a-zA-Z0-9]+\b--\b.*?)(?=\b--|.zip)').allMatches(fileName).map((e) => e.group(0)).toList();
     // checking if as many key-value pairs could be extracted as the number of matching keys
     if (metadata.length != keyMatchCount) {
-      throw new LectureException("Malformed metadata: $fileName");
+      throw LectureException("Malformed metadata: $fileName");
     }
 
     for (String? metadatum in metadata) {
       List<String> split = metadatum!.split("--");
       if (split.length != 2) {
-        throw new LectureException("Malformed metadatum: $metadatum of lecture $fileName");
+        throw LectureException("Malformed metadatum: $metadatum of lecture $fileName");
       }
       String metadatumType = split[0];
       String metadatumValue = split[1];
@@ -170,7 +171,7 @@ class Lecture {
         case "LANG":
           List<String> langs = metadatumValue.split("-");
           if (langs.length != 2) {
-            throw new LectureException("Malformed LANG metadatum: $metadatumValue");
+            throw LectureException("Malformed LANG metadatum: $metadatumValue");
           }
           String langMedia = Utils.deAsciify(langs[0]);
           if (langMedia == "OGS") langMedia = "ÖGS"; // convert legacy 'OGS'-lectures to 'ÖGS'
@@ -186,16 +187,16 @@ class Lecture {
             DateTime.parse(metadatumValue);
             result.putIfAbsent("DATE", () => metadatumValue);
           } on FormatException {
-            throw new LectureException("Malformed DATE metadatum: $metadatumValue");
+            throw LectureException("Malformed DATE metadatum: $metadatumValue");
           }
           break;
         case "SORT":
           // ensure that SORT consists of only numbers with a length of 1 to max 5
-          var _parseFormat = RegExp(r'^[0-9]{1,5}$');
-          if (_parseFormat.hasMatch(metadatumValue)) {
+          var parseFormat = RegExp(r'^[0-9]{1,5}$');
+          if (parseFormat.hasMatch(metadatumValue)) {
             result.putIfAbsent("SORT", () => metadatumValue);
           } else {
-            throw new LectureException("Malformed SORT metadatum: $metadatumValue");
+            throw LectureException("Malformed SORT metadatum: $metadatumValue");
           }
           break;
       }
@@ -204,7 +205,7 @@ class Lecture {
     // Check again if all mandatory keys could be processed
     mandatoryResultMetadataKeys.forEach((key) {
       if (!result.containsKey(key)) {
-        throw new LectureException("Lecture has not mandatory metadata!\n"
+        throw LectureException("Lecture has not mandatory metadata!\n"
             "Missing: "
             "$key"
             "\nFile: $fileName"

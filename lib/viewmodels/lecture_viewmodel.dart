@@ -52,10 +52,6 @@ class LectureViewModel with ChangeNotifier {
 
   String? _currentFilter;
 
-  /// contains all persisted [Vocable]
-  List<Vocable> _currentVocables = [];
-  List<Vocable> get currentVocables => _currentVocables;
-
   /// contains all available (local and remote) [Coding]
   List<Coding> _availableCodings = [];
 
@@ -204,7 +200,7 @@ class LectureViewModel with ChangeNotifier {
 
     // retrieve index of pack and index of lecture of the lecture-parameter to change LectureStatus
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
-    int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+    int indexLecture = _availableLectures[indexPack].children.indexWhere((l) => l.lesson == lecture.lesson);
 
     // update LectureStatus and notify listeners for updating UI
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
@@ -264,7 +260,7 @@ class LectureViewModel with ChangeNotifier {
 
     // retrieve index of pack and index of lecture of the lecture-parameter to change LectureStatus
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
-    int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+    int indexLecture = _availableLectures[indexPack].children.indexWhere((l) => l.lesson == lecture.lesson);
 
     // update LectureStatus and notify listeners for updating UI
     _availableLectures[indexPack].children[indexLecture].lectureStatus = LectureStatus.downloading;
@@ -339,7 +335,7 @@ class LectureViewModel with ChangeNotifier {
 
     // retrieve index of pack and index of lecture of the lecture-parameter to change LectureStatus
     int indexPack = _availableLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
-    int indexLecture = _availableLectures[indexPack].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+    int indexLecture = _availableLectures[indexPack].children.indexWhere((l) => l.lesson == lecture.lesson);
 
     LectureStatus oldLectureStatus = _availableLectures[indexPack].children[indexLecture].lectureStatus;
 
@@ -366,7 +362,7 @@ class LectureViewModel with ChangeNotifier {
         _availableLectures[indexPack].children.removeAt(indexLecture);
         if (_currentFilter != null && _currentFilter!.isNotEmpty) {
           int indexPackFilter = _filteredLectures.indexWhere((lecturePack) => lecturePack.title == lecture.pack);
-          int indexLectureFilter = _filteredLectures[indexPackFilter].children.indexWhere((_lecture) => _lecture.lesson == lecture.lesson);
+          int indexLectureFilter = _filteredLectures[indexPackFilter].children.indexWhere((l) => l.lesson == lecture.lesson);
           _filteredLectures[indexPackFilter].children.removeAt(indexLectureFilter);
         }
       } else {
@@ -421,7 +417,7 @@ class LectureViewModel with ChangeNotifier {
     String dir = (await getApplicationDocumentsDirectory()).path;
 
     final dirName = lecture.fileName.split('.')[0];
-    final lectureDir = Directory(dir + '/' + dirName);
+    final lectureDir = Directory('$dir/$dirName');
     lectureDir.deleteSync(recursive: true);
   }
 
@@ -677,8 +673,9 @@ class LectureViewModel with ChangeNotifier {
         log("coding needed for language: ${lecture.langVocable} is already persisted...querying...");
         List<CodingEntry> codingEntries = await _lectureRepository.findAllCodingEntriesByCodingId(coding.id!);
         return codingEntries;
-      } else
+      } else {
         return null;
+      }
     } else {
       log("coding needed for language: ${lecture.langVocable} is not available");
       return null;

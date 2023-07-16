@@ -16,8 +16,10 @@ import 'package:provider/provider.dart';
 class SettingsScreen extends StatefulWidget {
   static const String routeName = '/settings';
 
+  const SettingsScreen({super.key});
+
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
@@ -58,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         trailing: DropdownButton(
             value: context.select((SettingViewModel model) => model.settingAppLanguage),
             items: Constants.appLanguagesList
-                .map((e) => DropdownMenuItem(child: Text(e.toUpperCase()), value: e))
+                .map((e) => DropdownMenuItem(value: e, child: Text(e.toUpperCase())))
                 .toList(),
             onChanged: (dynamic value) async {
               if (settings.settingAppLanguage != value) {
@@ -71,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ListTile(
         title: Text(AppLocalizations.of(context).settingChooseLearningLanguage),
         trailing: context.select((SettingViewModel model) => model.isUpdatingLanguages)
-            ? SizedBox(width: 24, height: 24, child: CircularProgressIndicator())
+            ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator())
             : DropdownButton<String>(
                 value: context.select((SettingViewModel model) => model.settingLearningLanguage),
                 items: _buildDropdownItems(settings),
@@ -102,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       // link to about-screen
       ListTile(
-          leading: Icon(
+          leading: const Icon(
             Icons.info,
             color: ColorsLectary.lightBlue,
           ),
@@ -116,8 +118,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return CustomScaffold(
       appBarTitle: Text(AppLocalizations.of(context).screenSettingsTitle),
       body: ListView.separated(
-          padding: EdgeInsets.all(0),
-          separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
+          padding: const EdgeInsets.all(0),
+          separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1),
           itemCount: settingWidgetList.length,
           itemBuilder: (BuildContext context, int index) {
             return settingWidgetList[index];
@@ -128,18 +130,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   List<DropdownMenuItem<String>> _buildDropdownItems(SettingViewModel settings) {
     List<DropdownMenuItem<String>> items = context
         .select((SettingViewModel model) => model.learningLanguagesList)
-        .map((e) => DropdownMenuItem<String>(child: Center(child: Text(e)), value: e))
+        .map((e) => DropdownMenuItem<String>(value: e, child: Center(child: Text(e))))
         .toList();
     // adding custom dropdown item for updating languages
     items.add(DropdownMenuItem<String>(
+      value: "_update", // special 'key' value for filtering it later
+      onTap: settings.updateLearningLanguages,
       child: Column(
         children: [
-          Divider(),
+          const Divider(),
           Text(AppLocalizations.of(context).update),
         ],
       ),
-      value: "_update", // special 'key' value for filtering it later
-      onTap: settings.updateLearningLanguages,
     ));
     return items;
   }

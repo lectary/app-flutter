@@ -56,12 +56,12 @@ class Abstract {
   /// Throws [AbstractException] if mandatory metadata are missing
   /// Used keys: ABSTRACT, DATE
   static Map<String, dynamic> _extractMetadata(String fileName) {
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
 
     String fileWithoutType = fileName.split(".txt")[0];
     if (!fileWithoutType.contains("ABSTRACT") || !fileWithoutType.contains("DATE")) {
-      log("Abstract has not mandatory metadata! Abstract: " + fileWithoutType);
-      throw new AbstractException("Abstract has not mandatory metadata!\n"
+      log("Abstract has not mandatory metadata! Abstract: $fileWithoutType");
+      throw AbstractException("Abstract has not mandatory metadata!\n"
           "Missing:"
           "${!fileWithoutType.contains("ABSTRACT") ? " ABSTRACT " : ""}"
           "${!fileWithoutType.contains("DATE") ? " DATE " : ""}"
@@ -83,7 +83,7 @@ class Abstract {
             DateTime.parse(metadatumValue);
             result.putIfAbsent("DATE", () => metadatumValue);
           } on FormatException {
-            throw new AbstractException("Malformed DATE metadatum: $metadatumValue");
+            throw AbstractException("Malformed DATE metadatum: $metadatumValue");
           }
           break;
       }

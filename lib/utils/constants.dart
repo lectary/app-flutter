@@ -11,8 +11,8 @@ class Constants {
   static const lectaryApiUrl = "lectary.net";
   static const _lectaryApiVersionPath = "/l4/";
   static const lectaryApiDownloadPath = _lectaryApiVersionPath;
-  static const lectaryApiLectureOverviewEndpoint = _lectaryApiVersionPath + "info.php";
-  static const lectaryApiErrorEndpoint = _lectaryApiVersionPath + "error.php";
+  static const lectaryApiLectureOverviewEndpoint = "${_lectaryApiVersionPath}info.php";
+  static const lectaryApiErrorEndpoint = "${_lectaryApiVersionPath}error.php";
 
   // carousel
   static const opacityOfCarouselOverLay = 0.5;

@@ -14,16 +14,16 @@ class CustomAppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.grey[300],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
         ),
       ),
-      progressIndicatorTheme: ProgressIndicatorThemeData(
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: ColorsLectary.lightBlue,
       ),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: ColorsLectary.lightBlue,
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         foregroundColor: Colors.black,
         backgroundColor: ColorsLectary.white,
         /// Tricky one here:
@@ -46,16 +46,16 @@ class CustomAppTheme {
 
   static TextTheme _lightTextTheme(ThemeData baseTheme) {
     return baseTheme.textTheme.copyWith(
-      headlineSmall: TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
-      titleLarge: TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
-      bodySmall: TextStyle(color: ColorsLectary.lightBlue),
+      headlineSmall: const TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
+      titleLarge: const TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
+      bodySmall: const TextStyle(color: ColorsLectary.lightBlue),
     );
   }
 
   static TextTheme _darkTextTheme(ThemeData baseTheme) {
     return baseTheme.textTheme.copyWith(
-      titleLarge: TextStyle(color: ColorsLectary.white),
-      titleMedium: TextStyle(color: ColorsLectary.white),
+      titleLarge: const TextStyle(color: ColorsLectary.white),
+      titleMedium: const TextStyle(color: ColorsLectary.white),
     );
   }
 

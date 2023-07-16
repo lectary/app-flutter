@@ -42,7 +42,7 @@ class MediaType {
         return element;
       }
     }
-    throw new MediaTypeException("Type is not supported");
+    throw MediaTypeException("Type is not supported");
   }
 }
 
