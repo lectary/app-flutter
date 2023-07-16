@@ -71,7 +71,7 @@ class Vocable {
       fileName = Utils.extractFileName(filePath);
       metadata = _extractMetadata(fileName);
     } catch(e) {
-      log("Invalid vocable: " + e.toString());
+      log("Invalid vocable: $e");
       return null;
     }
     return Vocable(
@@ -91,7 +91,7 @@ class Vocable {
   /// Returns a [Map] with the vocable and meta data.
   /// Used keys {optional}: VOCABLES, {AUDIO}, {SORT}
   static Map<String, dynamic> _extractMetadata(String fileName) {
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
 
     // check if there are metaData
     if (fileName.contains("---")) {
@@ -119,8 +119,8 @@ class Vocable {
             break;
           case "SORT":
             // ensure that SORT consists of only numbers with a length of 1 to max 5
-            var _parseFormat = RegExp(r'^[0-9]{1,5}$');
-            if (_parseFormat.hasMatch(metadatumValue)) {
+            var parseFormat = RegExp(r'^[0-9]{1,5}$');
+            if (parseFormat.hasMatch(metadatumValue)) {
               result.putIfAbsent("SORT", () => metadatumValue);
             } else {
               // throw new VocableException("Malformed SORT metadatum: $metadatumValue");

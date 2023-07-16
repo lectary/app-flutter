@@ -1,5 +1,5 @@
 class LectureException implements Exception {
-  String _message;
+  final String _message;
 
   LectureException(this._message);
 

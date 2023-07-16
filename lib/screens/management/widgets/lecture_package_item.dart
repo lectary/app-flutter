@@ -20,7 +20,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 /// Creates for every [LecturePackageItem] one special header [ListTile] and maps
 /// its children list of [Lecture] to a standard [ListTile].
 class LecturePackageItem extends StatelessWidget {
-  const LecturePackageItem(this.context, this.entry);
+  const LecturePackageItem(this.context, this.entry, {super.key});
 
   final BuildContext context;
   final LecturePackage entry;
@@ -48,7 +48,7 @@ class LecturePackageItem extends StatelessWidget {
           trailing: IconButton(
               onPressed: () =>
                   _showAbstract(pack.title, pack.abstract, uppercase),
-              icon: Icon(Icons.more_horiz,
+              icon: const Icon(Icons.more_horiz,
                   semanticLabel: Constants.semanticOpenAbstract)),
         ),
       ),
@@ -69,14 +69,14 @@ class LecturePackageItem extends StatelessWidget {
         return Wrap(
           children: <Widget>[
             Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: Text(uppercase ? packTitle.toUpperCase() : packTitle,
                     style: Theme.of(context).textTheme.titleLarge)),
-            Divider(thickness: 1, height: 1),
+            const Divider(thickness: 1, height: 1),
             abstractText != null
                 ? Container(
-                    padding: EdgeInsets.only(left: 10, right: 10),
+                    padding: const EdgeInsets.only(left: 10, right: 10),
                     child: Html(
                       data: uppercase ? abstractText.toUpperCase() : abstractText,
                       style: {
@@ -97,11 +97,11 @@ class LecturePackageItem extends StatelessWidget {
                       },
                     ))
                 : Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Center(
                         child: Text(AppLocalizations.of(context).noDescription,
                             style: Theme.of(context).textTheme.bodyLarge))),
-            Divider(height: 1, thickness: 1),
+            const Divider(height: 1, thickness: 1),
             _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
                 func: () => Navigator.pop(context)),
           ],
@@ -113,7 +113,7 @@ class LecturePackageItem extends StatelessWidget {
   // builds the children of an package
   List<Widget> _buildChildren(Lecture lecture, bool uppercase) {
     return <Widget>[
-      Divider(height: 1,thickness: 1),
+      const Divider(height: 1,thickness: 1),
       ListTile(
           leading: _getIconForLectureStatus(lecture.lectureStatus),
           title: SingleChildScrollView(
@@ -122,7 +122,7 @@ class LecturePackageItem extends StatelessWidget {
                   uppercase ? lecture.lesson.toUpperCase() : lecture.lesson)),
           trailing: IconButton(
               onPressed: () => _showLectureMenu(lecture),
-              icon: Icon(Icons.more_horiz,
+              icon: const Icon(Icons.more_horiz,
                   semanticLabel: Constants.semanticOpenMenu))),
     ];
   }
@@ -131,16 +131,16 @@ class LecturePackageItem extends StatelessWidget {
   Widget _getIconForLectureStatus(LectureStatus lectureStatus) {
     switch (lectureStatus) {
       case LectureStatus.downloading:
-        return SizedBox(
+        return const SizedBox(
             width: 24, height: 24, child: CircularProgressIndicator());
       case LectureStatus.persisted:
-        return Icon(Icons.check_circle);
+        return const Icon(Icons.check_circle);
       case LectureStatus.removed:
-        return Icon(Icons.error, color: ColorsLectary.red,);
+        return const Icon(Icons.error, color: ColorsLectary.red,);
       case LectureStatus.updateAvailable:
-        return Icon(Icons.loop);
+        return const Icon(Icons.loop);
       default:
-        return Icon(null);
+        return const Icon(null);
     }
   }
 
@@ -160,9 +160,9 @@ class LecturePackageItem extends StatelessWidget {
           child: Wrap(
             children: <Widget>[
               _buildLectureInfoWidget(lecture, settingViewModel),
-              Divider(height: 1, thickness: 1),
+              const Divider(height: 1, thickness: 1),
               _buildButtonForLectureStatus(lecture, lectureViewModel),
-              Divider(height: 1, thickness: 1),
+              const Divider(height: 1, thickness: 1),
               _buildButton(
                   icon: Icons.close,
                   text: AppLocalizations.of(context).cancel,
@@ -226,7 +226,7 @@ class LecturePackageItem extends StatelessWidget {
   Container _buildLectureInfoWidget(Lecture lecture, SettingViewModel settingViewModel) {
     final uppercase = settingViewModel.settingUppercase;
     return Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -237,18 +237,18 @@ class LecturePackageItem extends StatelessWidget {
                     .textTheme
                     .bodyLarge!
                     .copyWith(fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
                 AppLocalizations.of(context).lectureInfoPack +
                     (uppercase ? lecture.pack.toUpperCase() : lecture.pack),
                 style: Theme.of(context).textTheme.bodyLarge),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
                 AppLocalizations.of(context).lectureInfoFileSize +
                     lecture.fileSize.toString() +
                     AppLocalizations.of(context).lectureInfoFileSizeUnit,
                 style: Theme.of(context).textTheme.bodyLarge),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
                 AppLocalizations.of(context).lectureInfoVocableCount +
                     lecture.vocableCount.toString(),
@@ -258,19 +258,17 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the buttons
-  Container _buildButton({required IconData icon, required String text, Function func=emptyFunction}) {
-    return Container(
+  Widget _buildButton({required IconData icon, required String text, Function func=emptyFunction}) {
+    return SizedBox(
         height: 50,
         child: ElevatedButton(
           onPressed: () => func(),
-          child: Container(
-            child: Row(
-              children: <Widget>[
-                Icon(icon, color: ColorsLectary.lightBlue,),
-                SizedBox(width: 10), // spacer
-                Text(text),
-              ],
-            ),
+          child: Row(
+            children: <Widget>[
+              Icon(icon, color: ColorsLectary.lightBlue,),
+              const SizedBox(width: 10), // spacer
+              Text(text),
+            ],
           ),
         )
     );

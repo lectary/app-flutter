@@ -19,8 +19,10 @@ import 'package:provider/provider.dart';
 class LectureManagementScreen extends StatefulWidget {
   static const String routeName = '/lectureManagement';
 
+  const LectureManagementScreen({super.key});
+
   @override
-  _LectureManagementScreenState createState() => _LectureManagementScreenState();
+  State<LectureManagementScreen> createState() => _LectureManagementScreenState();
 }
 
 class _LectureManagementScreenState extends State<LectureManagementScreen> {
@@ -61,8 +63,8 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             ),
             Column(
               children: <Widget>[
-                Divider(height: 1, thickness: 1),
-                Container(
+                const Divider(height: 1, thickness: 1),
+                SizedBox(
                   height: 60,
                   child: CustomSearchBar(
                     textEditingController: textEditingController,
@@ -83,7 +85,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
     switch (lectureViewModel.availableLectureStatus.status) {
       case Status.loading:
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
 
       case Status.completed:
         // build list of widgets in the body
@@ -92,14 +94,14 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         if (lectureViewModel.offlineMode) {
           bodyWidgets.add(Container(
             color: ColorsLectary.red,
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(AppLocalizations.of(context).noInternetConnection),
                 Text(
                   AppLocalizations.of(context).offlineMode,
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
               ],
             ),
@@ -166,15 +168,15 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         Provider.of<LectureViewModel>(context, listen: false).loadLectaryData();
       },
       child: ListView.separated(
-        padding: EdgeInsets.all(0),
-        separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
+        padding: const EdgeInsets.all(0),
+        separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1),
         itemCount: lectures.length + 1, // + 1 due to custom listTile for deleting lectures
         itemBuilder: (context, index) {
           // special last listTile with the option to delete all lectures
           if (index == lectures.length) {
             return Column(
               children: <Widget>[
-                Divider(
+                const Divider(
                   height: 10,
                   thickness: 10,
                 ),
@@ -182,7 +184,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                   iconColor: ColorsLectary.red,
                   textColor: ColorsLectary.red,
                   child: ListTile(
-                    leading: Icon(Icons.delete_forever),
+                    leading: const Icon(Icons.delete_forever),
                     title: Text(AppLocalizations.of(context).deleteAllLectures),
                     onTap: () => Dialogs.showAlertDialogThreeButtons(
                         context: context,

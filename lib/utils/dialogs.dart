@@ -12,16 +12,16 @@ class Dialogs {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return new WillPopScope(
+          return WillPopScope(
               onWillPop: () async => false,
               child: SimpleDialog(children: <Widget>[
                 Center(
                   child: Column(children: [
                     Text(text),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    CircularProgressIndicator(),
+                    const CircularProgressIndicator(),
                   ]),
                 )
               ]));
@@ -44,13 +44,13 @@ class Dialogs {
             TextButton(
                 child: Text(
                   AppLocalizations.of(context).cancel,
-                  style: TextStyle(color: ColorsLectary.lightBlue),
+                  style: const TextStyle(color: ColorsLectary.lightBlue),
                 ),
                 onPressed: () => Navigator.of(context).pop()),
             TextButton(
               child: Text(
                 submitText,
-                style: TextStyle(color: ColorsLectary.red),
+                style: const TextStyle(color: ColorsLectary.red),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -84,7 +84,7 @@ class Dialogs {
                   child: Text(
                     submitText1,
                     textAlign: TextAlign.right,
-                    style: TextStyle(color: ColorsLectary.red),
+                    style: const TextStyle(color: ColorsLectary.red),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -95,7 +95,7 @@ class Dialogs {
                   child: Text(
                     submitText2,
                     textAlign: TextAlign.right,
-                    style: TextStyle(color: ColorsLectary.red),
+                    style: const TextStyle(color: ColorsLectary.red),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -105,7 +105,7 @@ class Dialogs {
                 TextButton(
                     child: Text(
                       AppLocalizations.of(context).cancel,
-                      style: TextStyle(color: ColorsLectary.lightBlue),
+                      style: const TextStyle(color: ColorsLectary.lightBlue),
                     ),
                     onPressed: () => Navigator.of(context).pop()
                 )
@@ -136,7 +136,7 @@ class Dialogs {
             child: ListBody(
               children: <Widget>[
                 Text(errorContext),
-                Divider(),
+                const Divider(),
                 Text(AppLocalizations.of(context).reportErrorText),
               ],
             ),
@@ -145,7 +145,7 @@ class Dialogs {
             TextButton(
                 child: Text(
                   AppLocalizations.of(context).close,
-                  style: TextStyle(color: ColorsLectary.lightBlue),
+                  style: const TextStyle(color: ColorsLectary.lightBlue),
                 ),
                 onPressed: () => Navigator.of(context).pop()),
           ],

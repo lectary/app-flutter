@@ -61,22 +61,25 @@ class Utils {
       String fileName = file.name.replaceAll('\\', '/');
       if (!file.isFile) continue;
       // check if there are media files without a name i.e. missing vocable
-      if (Utils.extractFileName(fileName).isEmpty)
-        throw new ArchiveStructureException("File without fileName found");
+      if (Utils.extractFileName(fileName).isEmpty) {
+        throw ArchiveStructureException("File without fileName found");
+      }
       // check if there are nested directories by splitting fileName by path divider '/'
-      if (fileName.split('/').length > 2)
-        throw new ArchiveStructureException(
+      if (fileName.split('/').length > 2) {
+        throw ArchiveStructureException(
             "Wrong archive structure: $fileName");
+      }
       // check if inner directory name matches zip-fileName
-      if (dirName != Utils.extractDirName(fileName))
-        throw new ArchiveStructureException(
+      if (dirName != Utils.extractDirName(fileName)) {
+        throw ArchiveStructureException(
             "Inner directory name should be equal the archive name!\nZipArchive: $dirName <-> directory: $fileName");
+      }
       // check if archive consists only of valid file types
       try {
         String extension = Utils.extractFileExtension(fileName);
         MediaType.fromString(extension);
       } on MediaTypeException catch (e) {
-        throw new ArchiveStructureException(e.toString());
+        throw ArchiveStructureException(e.toString());
       }
     }
 
@@ -118,7 +121,7 @@ class Utils {
     List<String> fileNameSplit = fileName.split('.');
     if (fileNameSplit.length != 2) return "";
     List<String> metaInfo = fileNameSplit[0].split('---');
-    if (metaInfo.length == 0) return "";
+    if (metaInfo.isEmpty) return "";
     List<String> dateSplit = metaInfo.firstWhere((element) => element.contains("DATE")).split('--');
     if (dateSplit.length != 2) return "";
     return dateSplit[1];
@@ -221,7 +224,7 @@ class Utils {
 
   /// Returns a string filled with leading zeros up to a length of 5
   static String fillWithLeadingZeros(String string) {
-    final int maxLength = 5;
+    const int maxLength = 5;
     return string.padLeft(maxLength, '0');
   }
 
@@ -230,7 +233,7 @@ class Utils {
   /// be considered when choosing a vocable, the better the progress, the rarer a
   /// vocable will be chosen
   static int chooseRandomVocable(bool vocableProgressEnabled, List<Vocable> vocables) {
-    math.Random random = new math.Random();
+    math.Random random = math.Random();
     int rndPage;
     if (vocableProgressEnabled) {
       List<Vocable> distributedVocableList = [];

@@ -20,13 +20,13 @@ import 'package:provider/provider.dart';
 class LectureMainScreen extends StatelessWidget {
   static const String routeName  = '/';
 
-  LectureMainScreen({Key? key}) : super(key: key);
+  const LectureMainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     log("build lecture-main-screen--theme");
     final model = Provider.of<CarouselViewModel>(context, listen: false);
-    Future<List<Vocable>> _vocableFuture = model.initVocables();
+    Future<List<Vocable>> vocableFuture = model.initVocables();
     model.listenOnLocalLectures();
     return Theme(
       data: CustomAppTheme.defaultDarkTheme,
@@ -34,7 +34,7 @@ class LectureMainScreen extends StatelessWidget {
       // stays the same and we are constantly in the first if-branch. On vocable updates
       // only the builder function of the FutureBuilder will be called.
       child: FutureBuilder(
-          future: _vocableFuture,
+          future: vocableFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
               // retrieve current vocable list and keep listening for future changes in the vocable selection
@@ -52,14 +52,14 @@ class LectureMainScreen extends StatelessWidget {
                   body: vocables.isNotEmpty
                       ? LectureScreen(vocables: vocables)
                       : freshAppInstallation
-                          ? LectureStartupScreen()
-                          : LectureNotAvailableScreen());
+                          ? const LectureStartupScreen()
+                          : const LectureNotAvailableScreen());
             } else {
               log("build lecture-main-screen--loading");
               return CustomScaffold(
                   resizeToAvoidBottomInset: false,
                   appBarTitle: Text(AppLocalizations.of(context).appTitle),
-                  body: Center(child: CircularProgressIndicator()));
+                  body: const Center(child: CircularProgressIndicator()));
             }
           }),
     );
@@ -69,14 +69,14 @@ class LectureMainScreen extends StatelessWidget {
     return [
       selection!.type == SelectionType.search
           ? IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.close,
                 semanticLabel: Constants.semanticCloseVirtualLecture,
               ),
               onPressed: () =>
                   Provider.of<CarouselViewModel>(context, listen: false).closeVirtualLecture())
           : IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.search,
                 semanticLabel: Constants.semanticSearch,
               ),

@@ -10,8 +10,10 @@ import 'package:provider/provider.dart';
 /// Uses a [SizeTransition] and a [CurvedAnimation] with [Curves.fastOutSlowIn] for showing and hiding the button via tap on the
 /// arrow-button on the side.
 class LearningProgressButtonAnimation extends StatefulWidget {
+  const LearningProgressButtonAnimation({super.key});
+
   @override
-  _LearningProgressButtonAnimationState createState() => _LearningProgressButtonAnimationState();
+  State<LearningProgressButtonAnimation> createState() => _LearningProgressButtonAnimationState();
 }
 
 class _LearningProgressButtonAnimationState extends State<LearningProgressButtonAnimation> with SingleTickerProviderStateMixin {
@@ -25,7 +27,7 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
     // controls the animation and sets its duration
     _controller = AnimationController(
         vsync: this,
-        duration: Duration(milliseconds: 500)
+        duration: const Duration(milliseconds: 500)
     );
     // defines the kind of animation
     _animation = CurvedAnimation(
@@ -62,7 +64,7 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
+                SizedBox(
                   // the size needs to be set manually
                   width: widthButton,
                   child: LearningProgressButton(
@@ -77,15 +79,15 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
               widthFactor: 0.5,
               alignment: Alignment.center,
               child: IconButton(
-                  padding: EdgeInsets.all(0.0),
+                  padding: const EdgeInsets.all(0.0),
                   iconSize: widthControl * 2,
                   icon: _buttonEnabled
-                      ? Icon(
+                      ? const Icon(
                           Icons.keyboard_arrow_right,
                           color: ColorsLectary.white,
                           semanticLabel: Constants.semanticDeactivateLearningProgress,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.keyboard_arrow_left,
                           color: ColorsLectary.white,
                           semanticLabel: Constants.semanticActivateLearningProgress,

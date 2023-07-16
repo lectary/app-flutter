@@ -18,10 +18,10 @@ import 'package:provider/provider.dart';
 class LectureScreen extends StatefulWidget {
   final List<Vocable> vocables;
 
-  LectureScreen({required this.vocables, Key? key}) : super(key: key);
+  const LectureScreen({required this.vocables, Key? key}) : super(key: key);
 
   @override
-  _LectureScreenState createState() => _LectureScreenState();
+  State<LectureScreen> createState() => _LectureScreenState();
 }
 
 class _LectureScreenState extends State<LectureScreen> {
@@ -60,7 +60,7 @@ class _LectureScreenState extends State<LectureScreen> {
             ],
           ),
         ),
-        MediaControlArea(flex: 1),
+        const MediaControlArea(flex: 1),
         LearningControlArea(flex: 2, carouselController: carouselController),
       ],
     );

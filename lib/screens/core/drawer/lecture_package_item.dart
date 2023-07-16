@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 /// Creates for every [LecturePackageItem] one special header [ListTile] and maps
 /// its children list of [Lecture] to a standard [ListTile].
 class LecturePackageItem extends StatelessWidget {
-  const LecturePackageItem(this.context, this.entry);
+  const LecturePackageItem(this.context, this.entry, {super.key});
 
   final BuildContext context;
   final LecturePackage entry;
@@ -66,7 +66,7 @@ class LecturePackageItem extends StatelessWidget {
   List<Widget> _buildChildren(Lecture lecture, bool uppercase) {
     Selection? selection = Provider.of<CarouselViewModel>(context, listen: false).currentSelection;
     return <Widget>[
-      Divider(height: 1,thickness: 1),
+      const Divider(height: 1,thickness: 1),
       Container(
         color: selection != null && selection.lesson == lecture.lesson
             ? ColorsLectary.lightBlue

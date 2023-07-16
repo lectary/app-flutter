@@ -11,13 +11,13 @@ import 'package:provider/provider.dart';
 /// The [Vocable.vocableProgress] can be changed by pressing the button.
 /// The button accepts [iconSize] and [color], used for its size and color
 class LearningProgressButton extends StatefulWidget {
-  final iconSize;
-  final color;
+  final double iconSize;
+  final Color color;
 
-  LearningProgressButton({this.iconSize, this.color});
+  const LearningProgressButton({required this.iconSize, required this.color, super.key});
 
   @override
-  _LearningProgressButtonState createState() => _LearningProgressButtonState();
+  State<LearningProgressButton> createState() => _LearningProgressButtonState();
 }
 
 class _LearningProgressButtonState extends State<LearningProgressButton> {
@@ -39,9 +39,9 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
         child: TextButton(
           style: TextButton.styleFrom(
             backgroundColor: widget.color,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0))),
+            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0))),
           ),
-          child: Container(
+          child: SizedBox(
             /// additional container for aligning rectangular icons correctly
             width: widget.iconSize,
             child: FittedBox(child: _buildIconsForProgress(progress)),
@@ -100,7 +100,7 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
   // returns either a circle or smiley widget
   Icon _buildIcon(bool filled) {
     return filled
-        ? Icon(Icons.insert_emoticon, color: ColorsLectary.white)
-        : Icon(Icons.radio_button_unchecked, color: ColorsLectary.white);
+        ? const Icon(Icons.insert_emoticon, color: ColorsLectary.white)
+        : const Icon(Icons.radio_button_unchecked, color: ColorsLectary.white);
   }
 }

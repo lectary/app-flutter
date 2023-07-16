@@ -29,10 +29,10 @@ class TextViewer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  TextViewer({required this.textPath, required this.mediaIndex, required this.slowMode, required this.autoMode, Key? key}) : super(key: key);
+  const TextViewer({required this.textPath, required this.mediaIndex, required this.slowMode, required this.autoMode, Key? key}) : super(key: key);
 
   @override
-  _TextViewerState createState() => _TextViewerState();
+  State<TextViewer> createState() => _TextViewerState();
 }
 
 class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
@@ -59,10 +59,10 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
     // placeholder of empty chars that get replaced during the animation
     finalText = " " * text.length;
     // array of indices representing the content, to pick one index randomly
-    randomBox = List.generate(text.length, (_index) => _index);
+    randomBox = List.generate(text.length, (index) => index);
 
     _animationController = AnimationController(
-      duration: Duration(milliseconds: Constants.mediaAnimationDurationMilliseconds),
+      duration: const Duration(milliseconds: Constants.mediaAnimationDurationMilliseconds),
       vsync: this,
     );
     _characterCount = StepTween(begin: 0, end: text.length-1).animate(_animationController)
@@ -136,7 +136,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
               child: showText
                   ? Container(
                       alignment: Alignment.center,
-                      padding: EdgeInsets.all(50),
+                      padding: const EdgeInsets.all(50),
                       child: SingleChildScrollView(
                         child: Text(
                           uppercase
@@ -145,11 +145,11 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
                                   : text.toUpperCase())
                               : (widget.slowMode ? finalText : text),
                           style:
-                              TextStyle(fontSize: 28, color: ColorsLectary.white),
+                              const TextStyle(fontSize: 28, color: ColorsLectary.white),
                           textAlign: TextAlign.center,
                         ),
                       ))
-                  : Icon(
+                  : const Icon(
                       Icons.subject,
                       size: 120,
                     )),
@@ -162,6 +162,6 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
     _animationController.reset();
     finalText = " " * text.length;
     index = -1;
-    randomBox = List.generate(text.length, (_index) => _index);
+    randomBox = List.generate(text.length, (index) => index);
   }
 }

@@ -12,12 +12,14 @@ import 'package:url_launcher/url_launcher_string.dart';
 class AboutScreen extends StatefulWidget {
   static const String routeName = '/about';
 
+  const AboutScreen({super.key});
+
   @override
-  _AboutScreenState createState() => _AboutScreenState();
+  State<AboutScreen> createState() => _AboutScreenState();
 }
 
 class _AboutScreenState extends State<AboutScreen> {
-  List<TapGestureRecognizer> _tapGestureRecognizerList = [];
+  final List<TapGestureRecognizer> _tapGestureRecognizerList = [];
 
   @override
   void dispose() {
@@ -46,7 +48,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     child: Image.asset("assets/images/logo_1024.png",
                         height: height / 4, fit: BoxFit.fitHeight))),
             Container(
-              padding: EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               child: RichText(
                 text: TextSpan(
                   style: Theme.of(context).textTheme.bodyLarge,
@@ -92,7 +94,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                 style: CustomAppTheme.hyperlink(context),
                                 recognizer: _buildTapGestureRecognizer(
                                     'https://material.io/resources/icons/')),
-                            TextSpan(text: " & "),
+                            const TextSpan(text: " & "),
                             TextSpan(
                                 text: "FontAwesome\n\n",
                                 style: CustomAppTheme.hyperlink(context),
@@ -122,25 +124,25 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
+              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
               child: RichText(
                 textAlign: TextAlign.right,
                 text: TextSpan(
                   text: AppLocalizations.of(context).aboutVersion + Constants.versionCommitHash,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color: Colors.black,
                   ),
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               height: 70,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: ColorsLectary.lightBlue),
                 child: Text(
                   AppLocalizations.of(context).okUppercase,
-                  style: TextStyle(color: Colors.black, fontSize: 32),
+                  style: const TextStyle(color: Colors.black, fontSize: 32),
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),

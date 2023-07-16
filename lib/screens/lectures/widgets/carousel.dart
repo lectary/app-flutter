@@ -14,14 +14,14 @@ class Carousel extends StatefulWidget {
   final List<Vocable> vocables;
   final CarouselController carouselController;
 
-  Carousel({
+  const Carousel({
     required this.vocables,
     required this.carouselController,
     Key? key,
   }) : super(key: key);
 
   @override
-  _CarouselState createState() => _CarouselState();
+  State<Carousel> createState() => _CarouselState();
 }
 
 class _CarouselState extends State<Carousel> with RouteAware {

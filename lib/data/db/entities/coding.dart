@@ -54,12 +54,12 @@ class Coding {
   /// Throws [CodingException] if mandatory metadata are missing
   /// Used keys: CODING, DATE
   static Map<String, dynamic> _extractMetadata(String fileName) {
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
 
     String fileWithoutType = fileName.split(".json")[0];
     if (!fileWithoutType.contains("CODING") || !fileWithoutType.contains("DATE")) {
-      log("Coding has not mandatory metadata! Coding: " + fileWithoutType);
-      throw new CodingException("Coding has not mandatory metadata!\n"
+      log("Coding has not mandatory metadata! Coding: $fileWithoutType");
+      throw CodingException("Coding has not mandatory metadata!\n"
           "Missing:"
           "${!fileWithoutType.contains("CODING") ? " CODING " : ""}"
           "${!fileWithoutType.contains("DATE") ? " DATE " : ""}"
@@ -81,7 +81,7 @@ class Coding {
             DateTime.parse(metadatumValue);
             result.putIfAbsent("DATE", () => metadatumValue);
           } on FormatException {
-            throw new CodingException("Malformed DATE metadatum: $metadatumValue");
+            throw CodingException("Malformed DATE metadatum: $metadatumValue");
           }
           break;
       }

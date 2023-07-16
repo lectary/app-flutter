@@ -14,7 +14,7 @@ class CustomSearchBar extends StatefulWidget {
   final bool initOpen;
   final Function filterFunction;
 
-  CustomSearchBar({
+  const CustomSearchBar({
     required this.textEditingController,
     required this.focusNode,
     this.initOpen = false,
@@ -23,7 +23,7 @@ class CustomSearchBar extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CustomSearchBarState createState() => _CustomSearchBarState();
+  State<CustomSearchBar> createState() => _CustomSearchBarState();
 }
 
 class _CustomSearchBarState extends State<CustomSearchBar> {
@@ -47,9 +47,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         color: ColorsLectary.white,
         child: Row(
           children: <Widget>[
-            SizedBox(width: 15),
-            Icon(Icons.search),
-            SizedBox(width: 10),
+            const SizedBox(width: 15),
+            const Icon(Icons.search),
+            const SizedBox(width: 10),
             Expanded(
               // needed because textField has no intrinsic width, that the row wants to know!
               child: TextField(
@@ -70,7 +70,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   widget.textEditingController.clear();
                   widget.filterFunction("");
                 },
-                icon: Icon(Icons.cancel, semanticLabel: Constants.semanticClearFilter),
+                icon: const Icon(Icons.cancel, semanticLabel: Constants.semanticClearFilter),
               ),
             ),
             Visibility(
@@ -85,7 +85,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 },
                 child: Text(
                   AppLocalizations.of(context).cancel,
-                  style: TextStyle(color: ColorsLectary.lightBlue),
+                  style: const TextStyle(color: ColorsLectary.lightBlue),
                 ),
               ),
             )

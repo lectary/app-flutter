@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:test/test.dart';
@@ -15,7 +17,7 @@ void main() {
         Vocable(id: 6, lectureId: 1, vocable: "voc6", vocableProgress: 2, vocableSort: "", media: "", mediaType: ""),
       });
 
-      Map resultMap1 = Map();
+      Map resultMap1 = {};
       for (int i=0; i < 1000; i++) {
         int index = Utils.chooseRandomVocable(true, listOf6WithOneStandardVocable);
         if (resultMap1.containsKey(index)) {
@@ -24,19 +26,19 @@ void main() {
           resultMap1.putIfAbsent(index, () => 1);
         }
       }
-      print("Selection rate when vocable progress is enabled: \n" + resultMap1.toString());
+      log("Selection rate when vocable progress is enabled: \n$resultMap1");
 
       // Computing the average value
       int? specialValue = resultMap1.remove(0);
       double average = resultMap1.keys.map((key) {
         return resultMap1[key];
       }).toList().reduce((a, b) => a + b) / resultMap1.length;
-      print("Special selection rate: $specialValue");
-      print("Average selection rate: $average");
+      log("Special selection rate: $specialValue");
+      log("Average selection rate: $average");
 
       expect(specialValue, greaterThan(average * 2));
 
-      Map resultMap2 = Map();
+      Map resultMap2 = {};
       for (int i=0; i < 1000; i++) {
         int index = Utils.chooseRandomVocable(false, listOf6WithOneStandardVocable);
         if (resultMap2.containsKey(index)) {
@@ -45,7 +47,7 @@ void main() {
           resultMap2.putIfAbsent(index, () => 1);
         }
       }
-      print("Selection rate when vocable progress is disabled: \n" + resultMap2.toString());
+      log("Selection rate when vocable progress is disabled: \n$resultMap2");
 
     });
 
@@ -62,7 +64,7 @@ void main() {
         Vocable(id: 6, lectureId: 1, vocable: "voc6", vocableProgress: 2, vocableSort: "", media: "", mediaType: ""),
       });
 
-      Map resultMap1 = Map();
+      Map resultMap1 = {};
       for (int i = 0; i < 1000; i++) {
         int index = Utils.chooseRandomVocable(true, listOf6WithOneReallyGoodVocable);
         if (resultMap1.containsKey(index)) {
@@ -71,19 +73,19 @@ void main() {
           resultMap1.putIfAbsent(index, () => 1);
         }
       }
-      print("Selection rate when vocable progress is enabled: \n" + resultMap1.toString());
+      log("Selection rate when vocable progress is enabled: \n$resultMap1");
 
       // Computing the average value
       int specialValue = resultMap1.remove(5);
       double? average = resultMap1.keys.map((key) {
         return resultMap1[key];
       }).toList().reduce((a, b) => a + b) / resultMap1.length;
-      print("Special selection rate: $specialValue");
-      print("Average selection rate: $average");
+      log("Special selection rate: $specialValue");
+      log("Average selection rate: $average");
 
       expect(average, greaterThan(specialValue * 2));
 
-      Map resultMap2 = Map();
+      Map resultMap2 = {};
       for (int i = 0; i < 1000; i++) {
         int index = Utils.chooseRandomVocable(false, listOf6WithOneReallyGoodVocable);
         if (resultMap2.containsKey(index)) {
@@ -93,7 +95,7 @@ void main() {
         }
       }
 
-      print("Selection rate when vocable progress is disabled: \n" + resultMap2.toString());
+      log("Selection rate when vocable progress is disabled: \n$resultMap2");
     });
   });
 }

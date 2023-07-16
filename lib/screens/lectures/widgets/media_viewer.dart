@@ -56,7 +56,7 @@ class MediaViewer extends StatelessWidget {
               hideVocableModeOn: hideVocableModeOn,
               mediaIndex: vocableIndex,
               text: isVirtualLecture
-                  ? vocable.vocable + "\n[${_getLectureName(context)}]"
+                  ? "${vocable.vocable}\n[${_getLectureName(context)}]"
                   : vocable.vocable,
             );
           },

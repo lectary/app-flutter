@@ -13,8 +13,8 @@ class CustomButton extends StatelessWidget {
   final double iconContainerWidth;
   final Function func;
 
-  CustomButton(
-      {required this.color,
+  const CustomButton(
+      {super.key, required this.color,
       required this.iconData,
       required this.semanticLabel,
       required this.iconSize,
@@ -28,14 +28,14 @@ class CustomButton extends StatelessWidget {
       child: TextButton(
         style: TextButton.styleFrom(
           backgroundColor: color,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0))),
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(0))),
         ),
-        child: Container(
+        onPressed: func as void Function()?,
+        child: SizedBox(
           /// additional container for aligning rectangular icons correctly
           width: iconContainerWidth == 0 ? iconSize : iconContainerWidth,
           child: Icon(iconData, size: iconSize, color: iconColor, semanticLabel: semanticLabel),
         ),
-        onPressed: func as void Function()?,
       ),
     );
   }

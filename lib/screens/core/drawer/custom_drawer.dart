@@ -17,9 +17,11 @@ import 'lecture_package_item.dart';
 /// Drawer screen, handling the navigation and loading of local [Lecture]s
 /// Used for further navigation to [LectureManagementScreen] and [SettingsScreen]
 class CustomDrawer extends StatefulWidget {
+  const CustomDrawer({super.key});
+
 
   @override
-  _CustomDrawerState createState() => _CustomDrawerState();
+  State<CustomDrawer> createState() => _CustomDrawerState();
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
@@ -57,18 +59,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Container(
+                SizedBox(
                   height: 80,
                   child: DrawerHeader(
-                    margin: EdgeInsets.all(0.0),
-                    padding: EdgeInsets.all(0.0),
+                    margin: const EdgeInsets.all(0.0),
+                    padding: const EdgeInsets.all(0.0),
                     child: Row(
                       children: <Widget>[
                         IconButton(
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: Icon(Icons.arrow_back_ios),
+                          icon: const Icon(Icons.arrow_back_ios),
                         ),
                         Text(
                           learningLanguage,
@@ -85,21 +87,21 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     child: _generateListView(context),
                   ),
                 ),
-                Divider(height: 1, thickness: 1),
+                const Divider(height: 1, thickness: 1),
                 _buildButton(
                     context: context,
                     flex: 1,
                     icon: Icons.cloud_download,
                     text: AppLocalizations.of(context).drawerButtonLectureManagement,
                     routeName: LectureManagementScreen.routeName),
-                Divider(height: 1, thickness: 1),
+                const Divider(height: 1, thickness: 1),
                 _buildButton(
                     context: context,
                     flex: 1,
                     icon: Icons.settings,
                     text: AppLocalizations.of(context).drawerButtonSettings,
                     routeName: SettingsScreen.routeName),
-                Divider(height: 1, thickness: 1),
+                const Divider(height: 1, thickness: 1),
               ],
             ),
           );
@@ -110,7 +112,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   /// Creates a horizontal stretched button with passed icon, text and route navigation tapEvent
   Widget _buildButton({required BuildContext context, required int flex, required IconData icon, required String text, required String routeName}) {
-    return Container(
+    return SizedBox(
       height: 60,
       child: ElevatedButton(
         onPressed: () {
@@ -120,7 +122,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: Row(
           children: <Widget>[
             Icon(icon, color: ColorsLectary.lightBlue,),
-            SizedBox(width: 10), // spacer
+            const SizedBox(width: 10), // spacer
             Text(text),
           ],
         ),
@@ -139,8 +141,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
           if (snapshot.hasData) {
             if (snapshot.data!.isNotEmpty) {
               return ListView.separated(
-                  padding: EdgeInsets.all(0),
-                  separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
+                  padding: const EdgeInsets.all(0),
+                  separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1),
                   itemCount: snapshot.data!.length + 1,
                   itemBuilder: (context, index) {
                     if (index == 0) {
@@ -173,7 +175,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               );
             }
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         }
     );

@@ -14,7 +14,7 @@ class CarouselNavigationOverlay extends StatelessWidget {
 
   final widthFactorOfNavigationArrows = 0.5;
 
-  CarouselNavigationOverlay({required this.carouselController});
+  const CarouselNavigationOverlay({super.key, required this.carouselController});
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +35,14 @@ class CarouselNavigationOverlay extends StatelessWidget {
                 children: [
                   Expanded(
                     child: IconButton(
-                      padding: EdgeInsets.all(0.0),
+                      padding: const EdgeInsets.all(0.0),
                       iconSize: navigationIconSize,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.keyboard_arrow_left,
                         color: ColorsLectary.white,
                       ),
                       onPressed: () => carouselController.previousPage(
-                          duration: Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 300),
                           curve: Curves.linear),
                     ),
                   ),
@@ -61,14 +61,14 @@ class CarouselNavigationOverlay extends StatelessWidget {
                 children: [
                   Expanded(
                     child: IconButton(
-                      padding: EdgeInsets.all(0.0),
+                      padding: const EdgeInsets.all(0.0),
                       iconSize: navigationIconSize,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.keyboard_arrow_right,
                         color: ColorsLectary.white,
                       ),
                       onPressed: () => carouselController.nextPage(
-                          duration: Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 300),
                           curve: Curves.linear),
                     ),
                   ),

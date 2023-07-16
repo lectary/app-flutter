@@ -42,7 +42,7 @@ void main() {
     LectureViewModel lectureViewModel = LectureViewModel(lectureRepository: MockLectureRepository());
     test('testing replacing of unescaped characters', () {
       String fileContent =
-          '[\n{\n\"char\": "¿",\n\"asciify\": "_ESQM"\n},\n{\n\"char\": "¡",\n\"asciify\": "_ESRR"\n}\n]';
+          '[\n{\n"char": "¿",\n"asciify": "_ESQM"\n},\n{\n"char": "¡",\n"asciify": "_ESRR"\n}\n]';
       File jsonFile = File('test/codingTest.json');
       jsonFile.createSync();
       jsonFile.writeAsStringSync(fileContent);

@@ -24,18 +24,18 @@ class SearchResultRow extends StatelessWidget {
                 : searchResult.vocable.vocable)),
         trailing: (() {
           final mediaTypeString = searchResult.mediaType;
-          if (mediaTypeString == null) return SizedBox();
+          if (mediaTypeString == null) return const SizedBox();
           MediaType mediaType = MediaType.fromString(mediaTypeString);
           switch (mediaType) {
             case MediaType.PNG:
             case MediaType.JPG:
-              return Icon(Icons.insert_photo);
+              return const Icon(Icons.insert_photo);
             case MediaType.MP4:
-              return Icon(Icons.movie);
+              return const Icon(Icons.movie);
             case MediaType.TXT:
-              return Icon(Icons.subject);
+              return const Icon(Icons.subject);
             default:
-              return SizedBox();
+              return const SizedBox();
           }
         })(),
       ),

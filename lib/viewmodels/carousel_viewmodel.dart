@@ -367,7 +367,7 @@ class CarouselViewModel with ChangeNotifier {
   /// Method for reloading current selection.
   /// Main purpose is for reloading current state after the setting-resetLearningProgress.
   Future<void> reloadCurrentSelection() async {
-    if (currentSelection == null) return null;
+    if (currentSelection == null) return;
 
     switch (currentSelection!.type) {
       case SelectionType.all:

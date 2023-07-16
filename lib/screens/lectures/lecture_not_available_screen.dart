@@ -8,13 +8,13 @@ import 'package:lectary/utils/colors.dart';
 /// Shows a corresponding message and a button linked with the
 /// [LectureManagementScreen]
 class LectureNotAvailableScreen extends StatelessWidget {
-  LectureNotAvailableScreen({Key? key}) : super(key: key);
+  const LectureNotAvailableScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        padding: EdgeInsets.all(30.0),
+        padding: const EdgeInsets.all(30.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -24,12 +24,12 @@ class LectureNotAvailableScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 10,), // separator
+            const SizedBox(height: 10,), // separator
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, LectureManagementScreen.routeName),
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorsLectary.lightBlue,
-                padding: EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(15.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -42,14 +42,14 @@ class LectureNotAvailableScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  Icon(
+                  const Icon(
                     Icons.cloud_download,
                     size: 55,
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 10,), // separator
+            const SizedBox(height: 10,), // separator
             Text(
               AppLocalizations.of(context).minMaxLectureSizes,
               textAlign: TextAlign.center,

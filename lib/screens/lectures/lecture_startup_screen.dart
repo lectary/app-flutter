@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lectary/i18n/localizations.dart';
@@ -13,7 +15,7 @@ import 'package:provider/provider.dart';
 /// pointing to [LectureManagementScreen] and setting the corresponding [SettingViewModel.learningLanguagesList]
 /// at the same time.
 class LectureStartupScreen extends StatelessWidget {
-  LectureStartupScreen({Key? key}) : super(key: key);
+  const LectureStartupScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class LectureStartupScreen extends StatelessWidget {
     final List<Widget> buttons = languages.map((langMedia) => _buildButtonWithLang(context, langMedia)).toList();
     return Center(
       child: Container(
-        padding: EdgeInsets.all(30.0),
+        padding: const EdgeInsets.all(30.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -32,22 +34,22 @@ class LectureStartupScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 10,), // separator
+            const SizedBox(height: 10,), // separator
             Flexible( // expand only if needed and there is available space
               child: ListView.separated(
                 shrinkWrap: true,
-                separatorBuilder: (context, index) => SizedBox(height: 10),
+                separatorBuilder: (context, index) => const SizedBox(height: 10),
                 itemBuilder: (context, index) => buttons[index],
                 itemCount: buttons.length,
               ),
             ),
-            SizedBox(height: 10,), // separator
+            const SizedBox(height: 10,), // separator
             Text(
               AppLocalizations.of(context).minMaxLectureSizes,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            SizedBox(height: 10,), // separator
+            const SizedBox(height: 10,), // separator
             Text(
               AppLocalizations.of(context).learningLanguageCanBeChanged,
               textAlign: TextAlign.center,
@@ -67,8 +69,8 @@ class LectureStartupScreen extends StatelessWidget {
   /// Navigates to [LectureManagementScreen] when pressed.
   /// Loads async a corresponding flag-image for the passed language.
   ElevatedButton _buildButtonWithLang(BuildContext context, String langMedia) {
-    final double flagHeight = 60;
-    final double flagWidth = 100;
+    const double flagHeight = 60;
+    const double flagWidth = 100;
     return ElevatedButton(
       onPressed: () {
         Provider.of<SettingViewModel>(context, listen: false).setSettingLearningLanguage(langMedia);
@@ -76,7 +78,7 @@ class LectureStartupScreen extends StatelessWidget {
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: ColorsLectary.lightBlue,
-        padding: EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -97,15 +99,15 @@ class LectureStartupScreen extends StatelessWidget {
             builder: (BuildContext context, AsyncSnapshot<Widget?> snapshot) {
               if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
                 return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  snapshot.data == null ? Container() : SizedBox(width: flagWidth),
-                  Icon(
+                  snapshot.data == null ? Container() : const SizedBox(width: flagWidth),
+                  const Icon(
                     Icons.cloud_download,
                     size: flagHeight,
                   ),
                   snapshot.data!
                 ]);
               } else {
-                return Icon(
+                return const Icon(
                   Icons.cloud_download,
                   size: flagHeight,
                 );
@@ -139,11 +141,11 @@ class LectureStartupScreen extends StatelessWidget {
     String imageAssetPath = 'icons/flags/png/${isoCode.toLowerCase()}.png';
     bool assetExists = await checkIfAssetExists(imageAssetPath, package: "country_icons");
     if (!assetExists) {
-      print("flag image asset does not exist for $isoCode");
+      log("flag image asset does not exist for $isoCode");
       return null;
     }
     final image = Image.asset(imageAssetPath, package: 'country_icons');
-    return Container(
+    return SizedBox(
         height: flagHeight,
         width: flagWidth,
         child: FittedBox(
