@@ -55,7 +55,8 @@ class _LearningControlAreaState extends State<LearningControlArea> {
                     Provider.of<CarouselViewModel>(context, listen: false).chooseRandomVocable();
                 widget.carouselController.jumpToPage(rndPage);
               }),
-          const LearningProgressButtonAnimation()
+          // TODO: DISABLED FEATURE (LearningProgress)
+          // const LearningProgressButtonAnimation()
         ],
       ),
     );
