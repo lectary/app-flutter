@@ -7,7 +7,6 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer.dart';
 
-
 /// Carousel widget responsible for navigating and displaying the [List] of
 /// [Vocable] and playing its media contents like video, image or text.
 /// Uses the package [CarouselSlider].
@@ -15,20 +14,24 @@ class Carousel extends StatefulWidget {
   final List<Vocable> vocables;
   final CarouselController carouselController;
 
-  Carousel({required this.vocables, required this.carouselController, Key? key}) : super(key: key);
+  Carousel({
+    required this.vocables,
+    required this.carouselController,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _CarouselState createState() => _CarouselState();
 }
 
 class _CarouselState extends State<Carousel> with RouteAware {
-
   @override
   void initState() {
     super.initState();
+
     /// Adding callback for jumping to the selected [Vocable] after the [Carousel] is initialized fully and
     /// the [widget.carouselController] is set properly
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final index = Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex;
       if (index != 0) widget.carouselController.jumpToPage(index);
     });

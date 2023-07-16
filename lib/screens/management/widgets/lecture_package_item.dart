@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
@@ -13,7 +13,7 @@ import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 
 /// Helper class for realizing categorization of [Lecture] by its package name.
@@ -84,8 +84,8 @@ class LecturePackageItem extends StatelessWidget {
                         "a": Style.fromTextStyle(CustomAppTheme.hyperlink(context)),
                       },
                       onLinkTap: (String? url, unused1, unused2) async {
-                        if (url != null && await canLaunch(url)) {
-                          await launch(url);
+                        if (url != null && await canLaunchUrlString(url)) {
+                          await launchUrlString(url);
                         } else {
                           log('Could not launch url: $url of abstract: $abstractText');
                           Dialogs.showErrorReportDialog(

@@ -80,7 +80,7 @@ class Coding {
           try {
             DateTime.parse(metadatumValue);
             result.putIfAbsent("DATE", () => metadatumValue);
-          } catch(FormatException) {
+          } on FormatException {
             throw new CodingException("Malformed DATE metadatum: $metadatumValue");
           }
           break;

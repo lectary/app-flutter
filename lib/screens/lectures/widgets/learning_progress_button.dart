@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';

@@ -35,7 +35,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     super.initState();
 
     /// Callback for loading lectures on first frame once the layout is finished completely
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _lectureViewModel = Provider.of<LectureViewModel>(context, listen: false);
       _lectureViewModel.loadLectaryData();
     });
@@ -43,7 +43,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) => _lectureViewModel.resetCurrentFilter());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _lectureViewModel.resetCurrentFilter());
     super.dispose();
   }
 

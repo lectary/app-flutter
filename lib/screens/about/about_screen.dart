@@ -5,13 +5,12 @@ import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:url_launcher/url_launcher_string.dart';
 
 /// About-Screen with credits, links and further information about the application and
 /// the Lectary-team
 class AboutScreen extends StatefulWidget {
-  static const String routeName  = '/about';
+  static const String routeName = '/about';
 
   @override
   _AboutScreenState createState() => _AboutScreenState();
@@ -27,7 +26,7 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   _buildTapGestureRecognizer(String link) {
-    final recognizer = TapGestureRecognizer()..onTap = () => launch(link);
+    final recognizer = TapGestureRecognizer()..onTap = () => launchUrlString(link);
     _tapGestureRecognizerList.add(recognizer);
     return recognizer;
   }
@@ -36,13 +35,13 @@ class _AboutScreenState extends State<AboutScreen> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return CustomScaffold(
-appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
+      appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
-              color: ColorsLectary.logoDarkBlue,
+                color: ColorsLectary.logoDarkBlue,
                 child: Center(
                     child: Image.asset("assets/images/logo_1024.png",
                         height: height / 4, fit: BoxFit.fitHeight))),
@@ -50,80 +49,76 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
               padding: EdgeInsets.all(15),
               child: RichText(
                 text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    children: [
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  children: [
+                    TextSpan(
+                      text: AppLocalizations.of(context).aboutIntroductionPart1,
+                      children: [
+                        TextSpan(
+                          text: "Lectary.net.\n",
+                          style: CustomAppTheme.hyperlink(context),
+                          recognizer: _buildTapGestureRecognizer('https://lectary.net'),
+                        ),
+                        TextSpan(
+                          text: AppLocalizations.of(context).aboutIntroductionPart2,
+                        ),
+                      ],
+                    ),
+                    TextSpan(text: AppLocalizations.of(context).aboutContact, children: [
                       TextSpan(
-                          text: AppLocalizations.of(context).aboutIntroductionPart1,
-                          children: [
-                            TextSpan(
-                              text: "Lectary.net.\n",
-                              style: CustomAppTheme.hyperlink(context),
-                              recognizer: _buildTapGestureRecognizer('https://lectary.net'),
-                            ),
-                            TextSpan(
-                              text: AppLocalizations.of(context).aboutIntroductionPart2,
-                            ),
-                          ]),
-                      TextSpan(
-                          text: AppLocalizations.of(context).aboutContact,
-                          children: [
-                            TextSpan(
-                              text: "info@lectary.net.\n\n",
-                              style: CustomAppTheme.hyperlink(context),
-                              recognizer: _buildTapGestureRecognizer('mailto:info@lectary.net')
-                            ),
-                          ]),
-                      TextSpan(
-                          text: AppLocalizations.of(context).aboutInstruction,
-                          children: [
-                            TextSpan(
-                              text: "lectary.net/anleitung\n\n",
-                              style: CustomAppTheme.hyperlink(context),
-                              recognizer:_buildTapGestureRecognizer('https://lectary.net/anleitung4.html')
-                            ),
-                          ]),
-                      TextSpan(
-                          text: AppLocalizations.of(context).aboutCredits,
-                          children: [
-                            TextSpan(
-                              text: "Flutter.dev.\n\n",
-                              style: CustomAppTheme.hyperlink(context),
-                              recognizer: _buildTapGestureRecognizer('https://flutter.dev')
-                            ),
-                            TextSpan(
-                                text: AppLocalizations.of(context).aboutIconCredit,
-                                children: [
-                                  TextSpan(
-                                    text: "Material Icons",
-                                    style: CustomAppTheme.hyperlink(context),
-                                    recognizer: _buildTapGestureRecognizer('https://material.io/resources/icons/')
-                                  ),
-                                  TextSpan(text: " & "),
-                                  TextSpan(
-                                    text: "FontAwesome\n\n",
-                                    style: CustomAppTheme.hyperlink(context),
-                                    recognizer: _buildTapGestureRecognizer('https://fontawesome.com/')
-                                  ),
-                                ]),
-                            TextSpan(
-                                text: AppLocalizations.of(context).aboutIconCreationCreditPart1,
-                                children: [
-                                  TextSpan(
-                                    text: "FreePik ",
-                                    style: CustomAppTheme.hyperlink(context),
-                                    recognizer: _buildTapGestureRecognizer('https://www.flaticon.com/authors/freepik')
-                                  ),
-                                  TextSpan(
-                                      text: AppLocalizations.of(context)
-                                          .aboutIconCreationCreditPart2),
-                                  TextSpan(
-                                    text: "flaticon.com",
-                                    style: CustomAppTheme.hyperlink(context),
-                                    recognizer: _buildTapGestureRecognizer('https://flaticon.com')
-                                  ),
-                                ]),
-                          ]),
+                          text: "info@lectary.net.\n\n",
+                          style: CustomAppTheme.hyperlink(context),
+                          recognizer: _buildTapGestureRecognizer('mailto:info@lectary.net')),
                     ]),
+                    TextSpan(text: AppLocalizations.of(context).aboutInstruction, children: [
+                      TextSpan(
+                          text: "lectary.net/anleitung\n\n",
+                          style: CustomAppTheme.hyperlink(context),
+                          recognizer:
+                              _buildTapGestureRecognizer('https://lectary.net/anleitung4.html')),
+                    ]),
+                    TextSpan(
+                      text: AppLocalizations.of(context).aboutCredits,
+                      children: [
+                        TextSpan(
+                            text: "Flutter.dev.\n\n",
+                            style: CustomAppTheme.hyperlink(context),
+                            recognizer: _buildTapGestureRecognizer('https://flutter.dev')),
+                        TextSpan(
+                          text: AppLocalizations.of(context).aboutIconCredit,
+                          children: [
+                            TextSpan(
+                                text: "Material Icons",
+                                style: CustomAppTheme.hyperlink(context),
+                                recognizer: _buildTapGestureRecognizer(
+                                    'https://material.io/resources/icons/')),
+                            TextSpan(text: " & "),
+                            TextSpan(
+                                text: "FontAwesome\n\n",
+                                style: CustomAppTheme.hyperlink(context),
+                                recognizer: _buildTapGestureRecognizer('https://fontawesome.com/')),
+                          ],
+                        ),
+                        TextSpan(
+                          text: AppLocalizations.of(context).aboutIconCreationCreditPart1,
+                          children: [
+                            TextSpan(
+                                text: "FreePik ",
+                                style: CustomAppTheme.hyperlink(context),
+                                recognizer: _buildTapGestureRecognizer(
+                                    'https://www.flaticon.com/authors/freepik')),
+                            TextSpan(
+                                text: AppLocalizations.of(context).aboutIconCreationCreditPart2),
+                            TextSpan(
+                                text: "flaticon.com",
+                                style: CustomAppTheme.hyperlink(context),
+                                recognizer: _buildTapGestureRecognizer('https://flaticon.com')),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             Container(
@@ -131,8 +126,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
               child: RichText(
                 textAlign: TextAlign.right,
                 text: TextSpan(
-                  text: AppLocalizations.of(context).aboutVersion
-                  + Constants.versionCommitHash,
+                  text: AppLocalizations.of(context).aboutVersion + Constants.versionCommitHash,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.black,

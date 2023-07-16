@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/colors.dart';
