@@ -9,7 +9,7 @@ import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
-/// Widget for displaying a [Vocable] of [MediaType.TXT].
+/// Widget for displaying a [Vocable] of [MediaType.txt].
 /// Hides the media behind an [IconButton] initially, which can be changed by tapping.
 /// Uses an [Animation] for an 'slowMode' of the media revealing, where it gets visible continuously over time.
 /// For the animation a [StepTween] is used to generate as many ticks as the length of the vocable string, where in each tick,

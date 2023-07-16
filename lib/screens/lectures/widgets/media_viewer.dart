@@ -69,7 +69,7 @@ class MediaViewer extends StatelessWidget {
 
             Widget resultWidget;
             switch (MediaType.fromString(vocable.mediaType)) {
-              case MediaType.MP4:
+              case MediaType.mp4:
                 resultWidget = LectaryVideoPlayer(
                   videoPath: vocable.media,
                   mediaIndex: vocableIndex,
@@ -79,8 +79,8 @@ class MediaViewer extends StatelessWidget {
                   audio: vocable.audio,
                 );
                 break;
-              case MediaType.PNG:
-              case MediaType.JPG:
+              case MediaType.png:
+              case MediaType.jpg:
                 resultWidget = ImageViewer(
                   imagePath: vocable.media,
                   mediaIndex: vocableIndex,
@@ -88,7 +88,7 @@ class MediaViewer extends StatelessWidget {
                   autoMode: autoModeOn,
                 );
                 break;
-              case MediaType.TXT:
+              case MediaType.txt:
                 resultWidget = TextViewer(
                   textPath: vocable.media,
                   mediaIndex: vocableIndex,

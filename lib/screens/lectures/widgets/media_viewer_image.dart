@@ -8,7 +8,7 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 
-/// Widget for displaying a [Vocable] of [MediaType.PNG] or [MediaType.JPG].
+/// Widget for displaying a [Vocable] of [MediaType.png] or [MediaType.jpg].
 /// Hides the media behind an [IconButton] initially, which can be changed by tapping.
 /// Uses an [Animation] for an 'slowMode' of the media revealing, where it gets visible continuously over time.
 /// For the animation a [Tween] of type [Double] is used to animate values in a specific range, which are then

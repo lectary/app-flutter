@@ -280,13 +280,13 @@ void main() {
   group('MediaType conversion |', () {
     test('should success with mp4 png jpg or txt and should work case insensitive', () {
       MediaType type1 = MediaType.fromString("mp4");
-      expect(type1, MediaType.MP4);
+      expect(type1, MediaType.mp4);
       MediaType type2 = MediaType.fromString("png");
-      expect(type2, MediaType.PNG);
+      expect(type2, MediaType.png);
       MediaType type3 = MediaType.fromString("JPG");
-      expect(type3, MediaType.JPG);
+      expect(type3, MediaType.jpg);
       MediaType type4 = MediaType.fromString("TXT");
-      expect(type4, MediaType.TXT);
+      expect(type4, MediaType.txt);
     });
 
     test('should throw an exception on unknown extension/type', () {

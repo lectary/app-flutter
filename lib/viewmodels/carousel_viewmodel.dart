@@ -728,7 +728,7 @@ class CarouselViewModel with ChangeNotifier {
           // convert to MediaType and sort by sort-table of MediaType
           MediaType typeA = MediaType.fromString(a.mediaType!);
           MediaType typeB = MediaType.fromString(b.mediaType!);
-          return MediaType.sortValues[typeA]! - MediaType.sortValues[typeB]!;
+          return typeA.compareTo(typeB);
         } else {
           return 0;
         }
