@@ -22,7 +22,7 @@ class LectureNotAvailableScreen extends StatelessWidget {
             Text(
               AppLocalizations.of(context).emptyLectures,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(height: 10,), // separator
             ElevatedButton(
@@ -40,7 +40,7 @@ class LectureNotAvailableScreen extends StatelessWidget {
                   Text(
                     AppLocalizations.of(context).downloadAndManageLectures,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Icon(
                     Icons.cloud_download,
@@ -53,7 +53,7 @@ class LectureNotAvailableScreen extends StatelessWidget {
             Text(
               AppLocalizations.of(context).minMaxLectureSizes,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ],
         ),

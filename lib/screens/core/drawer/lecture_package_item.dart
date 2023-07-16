@@ -42,7 +42,7 @@ class LecturePackageItem extends StatelessWidget {
           title: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Text(uppercase ? pack.title.toUpperCase() : pack.title,
-                style: Theme.of(context).textTheme.headline6!.copyWith(
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: selection != null && selection.packTitle == pack.title
                         ? ColorsLectary.white
                         : ColorsLectary.lightBlue)),
@@ -75,7 +75,7 @@ class LecturePackageItem extends StatelessWidget {
           title: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson,
-                style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color:
                         selection != null && selection.lesson == lecture.lesson
                             ? ColorsLectary.white

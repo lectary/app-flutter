@@ -44,7 +44,7 @@ class LecturePackageItem extends StatelessWidget {
           title: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Text(uppercase ? pack.title.toUpperCase() : pack.title,
-                  style: Theme.of(context).textTheme.headline6)),
+                  style: Theme.of(context).textTheme.titleLarge)),
           trailing: IconButton(
               onPressed: () =>
                   _showAbstract(pack.title, pack.abstract, uppercase),
@@ -72,7 +72,7 @@ class LecturePackageItem extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: Text(uppercase ? packTitle.toUpperCase() : packTitle,
-                    style: Theme.of(context).textTheme.headline6)),
+                    style: Theme.of(context).textTheme.titleLarge)),
             Divider(thickness: 1, height: 1),
             abstractText != null
                 ? Container(
@@ -80,7 +80,7 @@ class LecturePackageItem extends StatelessWidget {
                     child: Html(
                       data: uppercase ? abstractText.toUpperCase() : abstractText,
                       style: {
-                        "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyText1!), // default text style
+                        "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyLarge!), // default text style
                         "a": Style.fromTextStyle(CustomAppTheme.hyperlink(context)),
                       },
                       onLinkTap: (String? url, unused1, unused2) async {
@@ -100,7 +100,7 @@ class LecturePackageItem extends StatelessWidget {
                     padding: EdgeInsets.all(10),
                     child: Center(
                         child: Text(AppLocalizations.of(context).noDescription,
-                            style: Theme.of(context).textTheme.bodyText1))),
+                            style: Theme.of(context).textTheme.bodyLarge))),
             Divider(height: 1, thickness: 1),
             _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
                 func: () => Navigator.pop(context)),
@@ -235,24 +235,24 @@ class LecturePackageItem extends StatelessWidget {
                     (uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText1!
+                    .bodyLarge!
                     .copyWith(fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Text(
                 AppLocalizations.of(context).lectureInfoPack +
                     (uppercase ? lecture.pack.toUpperCase() : lecture.pack),
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyLarge),
             SizedBox(height: 10),
             Text(
                 AppLocalizations.of(context).lectureInfoFileSize +
                     lecture.fileSize.toString() +
                     AppLocalizations.of(context).lectureInfoFileSizeUnit,
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyLarge),
             SizedBox(height: 10),
             Text(
                 AppLocalizations.of(context).lectureInfoVocableCount +
                     lecture.vocableCount.toString(),
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyLarge),
           ],
         ));
   }

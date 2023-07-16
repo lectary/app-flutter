@@ -72,7 +72,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         ),
                         Text(
                           learningLanguage,
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue
+                          ),
                         ),
                       ],
                     ),
@@ -149,7 +151,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         child: ListTile(
                           title: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            child: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                 color: selection != null && selection.type == SelectionType.all
                                     ? ColorsLectary.white
                                     : Colors.black

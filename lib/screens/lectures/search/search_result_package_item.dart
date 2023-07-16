@@ -43,7 +43,7 @@ class SearchResultPackageItem extends StatelessWidget {
                     uppercase
                         ? pack.lectureTitle.toUpperCase()
                         : pack.lectureTitle,
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: ColorsLectary.lightBlue)),
               ),

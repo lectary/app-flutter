@@ -50,7 +50,7 @@ appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
               padding: EdgeInsets.all(15),
               child: RichText(
                 text: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyLarge,
                     children: [
                       TextSpan(
                           text: AppLocalizations.of(context).aboutIntroductionPart1,

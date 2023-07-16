@@ -105,7 +105,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                             })
                         : Center(
                             child: Text(AppLocalizations.of(context).noVocablesFound,
-                                style: Theme.of(context).textTheme.subtitle1),
+                                style: Theme.of(context).textTheme.titleMedium),
                           )),
                 Column(
                   children: [

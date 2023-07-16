@@ -30,7 +30,7 @@ class LectureStartupScreen extends StatelessWidget {
             Text(
               AppLocalizations.of(context).emptyLectures,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(height: 10,), // separator
             Flexible( // expand only if needed and there is available space
@@ -45,16 +45,16 @@ class LectureStartupScreen extends StatelessWidget {
             Text(
               AppLocalizations.of(context).minMaxLectureSizes,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             SizedBox(height: 10,), // separator
             Text(
               AppLocalizations.of(context).learningLanguageCanBeChanged,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme
-                  .subtitle1!
+                  .titleMedium!
                   .copyWith(fontSize: Theme.of(context).textTheme
-                  .subtitle1!
+                  .titleMedium!
                   .fontSize! - 2),
             )
           ],
@@ -89,7 +89,7 @@ class LectureStartupScreen extends StatelessWidget {
                 langMedia +
                 AppLocalizations.of(context).downloadAndManageLecturesFromLangPart2,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           // FutureBuilder for loading the corresponding flag-widget asynchronously
           FutureBuilder(
