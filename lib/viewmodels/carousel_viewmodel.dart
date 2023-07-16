@@ -128,9 +128,9 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// /// A copy of [currentVocables], but for display purposes only.
-  /// Contains the same vocables as [filteredVocables] but packaged as [List] of type [SearchResultPackage].
-  List<SearchResultPackage> _searchResults = [];
-  List<SearchResultPackage> get searchResults => _searchResults;
+  /// Contains the same vocables as [filteredVocables] but packaged as [List] of type [SearchResultItem].
+  List<SearchResultItem> _searchResults = [];
+  List<SearchResultItem> get searchResults => _searchResults;
 
   /// Used in the carousel for keeping track of the index of the current [Vocable].
   int _currentItemIndex = 0;
@@ -631,13 +631,13 @@ class CarouselViewModel with ChangeNotifier {
   /// Helper function for finding [Vocable] duplicates, converting them to
   /// [SearchResult] and grouping them to [SearchResultPackage], which is
   /// used by [VocableSearchScreen] for displaying.
-  /// Returns a [List] of [SearchResultPackage].
+  /// Returns a [List] of [SearchResultItem].
   /// Duplicated vocables have their [MediaType] set in the corresponding
   /// [SearchResult.mediaType], which is [Null] otherwise.
   /// Asserts that the vocable list is already sorted as specified
-  List<SearchResultPackage> _findDuplicatesAndConvert(List<Vocable> vocables, {bool toPackages=false}) {
+  List<SearchResultItem> _findDuplicatesAndConvert(List<Vocable> vocables, {bool toPackages=false}) {
     // Mapping the vocable list to the corresponding SearchResult list
-    List<SearchResult> searchResultList = vocables.map((vocable) => SearchResult(vocable)).toList();
+    List<SearchResult> searchResultList = vocables.map(SearchResult.new).toList();
 
     // Result list of type [SearchResultPackage]
     List<SearchResultPackage> tmpList = [];
@@ -672,7 +672,13 @@ class CarouselViewModel with ChangeNotifier {
     tmpList.sort((lec1, lec2) => Utils.customCompareTo(lec1.lectureTitle, lec2.lectureTitle));
     searchResultPackageList.addAll(tmpList);
 
-    return searchResultPackageList;
+    // Flatten structure to be used in a single list view
+    return searchResultPackageList.expand((item) {
+      return [
+        if (item.lectureTitle.isNotEmpty) ItemHeader(item.lectureTitle),
+        ...item.children.map(ItemRow.new)
+      ];
+    }).toList();
   }
 
   /// Determines possible [Vocable] duplicates.

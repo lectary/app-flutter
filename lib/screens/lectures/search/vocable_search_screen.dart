@@ -4,7 +4,8 @@ import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/search_result.dart';
 import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/screens/core/custom_scaffold.dart';
-import 'package:lectary/screens/lectures/search/search_result_package_item.dart';
+import 'package:lectary/screens/lectures/search/search_result_header.dart';
+import 'package:lectary/screens/lectures/search/search_result_row.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
@@ -53,7 +54,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
         ModalRoute.of(context)!.settings.arguments as VocableSearchScreenArguments;
     model.searchForNavigationOnly = args.navigationOnly;
     // listen on changes of the list of filtered vocables
-    List<SearchResultPackage> searchResults =
+    List<SearchResultItem> searchResults =
         context.select((CarouselViewModel model) => model.searchResults);
     bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
     Selection? selection = context.select((CarouselViewModel model) => model.currentSelection);
@@ -98,10 +99,14 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                                 ),
                             itemCount: searchResults.length,
                             itemBuilder: (context, index) {
-                              return SearchResultPackageItem(
-                                  context: context,
-                                  entry: searchResults[index],
-                                  textEditingController: textEditingController);
+                              final item = searchResults[index];
+                              if (item is ItemHeader) {
+                                return SearchResultHeader(item.lectureTitle);
+                              }
+                              if (item is ItemRow) {
+                                return SearchResultRow(item.searchResult, textEditingController.text);
+                              }
+                              throw new Exception("Unsupported type for search result: ${item.runtimeType}");
                             })
                         : Center(
                             child: Text(AppLocalizations.of(context).noVocablesFound,
@@ -129,8 +134,11 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
   }
 
   /// Helper class for extracting correct header text depending on the passed [Selection].
-  String _getHeaderText(
-      {required BuildContext context, Selection? selection, required bool uppercase}) {
+  String _getHeaderText({
+    required BuildContext context,
+    Selection? selection,
+    required bool uppercase,
+  }) {
     if (selection == null) return "";
     switch (selection.type) {
       case SelectionType.all:
