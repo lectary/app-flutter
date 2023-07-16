@@ -4,23 +4,24 @@ Lectary 4 - A sign language learning application.
 
 This time, it is Flutter.
 
-In this project, the existing Lectary-app is reimplemented and extended using the flutter framework.
+In this project, the existing Lectary app is reimplemented and extended using the flutter framework.
 
 ## Getting Started
 First install the Flutter framework and setup your environment based on your OS:
 
-You can setup Flutter manually or use the version management tool FVM (see next point).
+You can [install Flutter](https://flutter.dev/docs/get-started/install) manually or use the version management tool FVM (see next point).
 
-[Install Flutter](https://flutter.dev/docs/get-started/install)
-
-Have a look on [online documentation](https://flutter.dev/docs) for further information.
+Have a look on the [online documentation](https://flutter.dev/docs) for further information.
 
 ## FVM - flutter version management 
 For using [FVM](https://pub.dev/packages/fvm), follow the installation instructions on the package site.
 
-Then, for installing flutter based on the specified version in the fvm config file `.fvm/fvm_config.json`, just run the command `fvm install`.
+The currently used flutter version is specified in the FVM config file `.fvm/fvm_config.json`.
+Just run `fvm install` to install the configured version.
 
 All further dart or flutter commands can be executed by means of fvm command proxy, e.g. `fvm flutter run`. 
+To ease usage, shorthands can be configured [fvm-alias](https://fvm.app/docs/guides/running_flutter#dart)
+for using `f run` instead of `fvm flutter run` or `d pub get` instead of `fvm dart pub get`.
 
 ### Building and running on Android.
 For running the app on android, just connect your device or start an android-emulator and run the following command from your console window
