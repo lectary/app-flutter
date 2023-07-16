@@ -187,31 +187,32 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                     leading: const Icon(Icons.delete_forever),
                     title: Text(AppLocalizations.of(context).deleteAllLectures),
                     onTap: () => Dialogs.showAlert(
-                        context: context,
-                        title: AppLocalizations.of(context).deleteAllLectures,
-                        content: AppLocalizations.of(context).deleteAllLecturesQuestion,
-                        submitText: AppLocalizations.of(context).deleteAllLectures,
-                        submitTextSecondary: AppLocalizations.of(context).deleteOnlyLecturesFromLangPart1 +
-                            langMedia +
-                            AppLocalizations.of(context).deleteOnlyLecturesFromLangPart2,
-                        submitFunc: () async {
-                          Dialogs.showLoadingDialog(
-                              context: context,
-                              text: AppLocalizations.of(context).deletingLectures);
-                          await Provider.of<LectureViewModel>(context, listen: false)
-                              .deleteAllLectures();
-                          Navigator.popUntil(
-                              context, ModalRoute.withName(LectureMainScreen.routeName));
-                        },
-                        submitFuncSecondary: () async {
-                          Dialogs.showLoadingDialog(
-                              context: context,
-                              text: AppLocalizations.of(context).deletingLectures);
-                          await Provider.of<LectureViewModel>(context, listen: false)
-                              .deleteAllLecturesFromLangMedia(langMedia);
-                          Navigator.popUntil(
-                              context, ModalRoute.withName(LectureMainScreen.routeName));
-                        }),
+                      context: context,
+                      title: AppLocalizations.of(context).deleteAllLectures,
+                      content: AppLocalizations.of(context).deleteAllLecturesQuestion,
+                      submitText: AppLocalizations.of(context).deleteAllLectures,
+                      submitFunc: () async {
+                        Dialogs.showLoadingDialog(
+                            context: context, text: AppLocalizations.of(context).deletingLectures);
+                        await Provider.of<LectureViewModel>(context, listen: false)
+                            .deleteAllLectures();
+                        Navigator.popUntil(
+                            context, ModalRoute.withName(LectureMainScreen.routeName));
+                      },
+                      // TODO DISABLED FEATURE (LearningLanguage)
+                      // submitTextSecondary:
+                      //     AppLocalizations.of(context).deleteOnlyLecturesFromLangPart1 +
+                      //         langMedia +
+                      //         AppLocalizations.of(context).deleteOnlyLecturesFromLangPart2,
+                      // submitFuncSecondary: () async {
+                      //   Dialogs.showLoadingDialog(
+                      //       context: context, text: AppLocalizations.of(context).deletingLectures);
+                      //   await Provider.of<LectureViewModel>(context, listen: false)
+                      //       .deleteAllLecturesFromLangMedia(langMedia);
+                      //   Navigator.popUntil(
+                      //       context, ModalRoute.withName(LectureMainScreen.routeName));
+                      // },
+                    ),
                   ),
                 ),
               ],

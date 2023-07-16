@@ -41,7 +41,6 @@ class LectureMainScreen extends StatelessWidget {
               List<Vocable> vocables = context.select((CarouselViewModel model) => model.currentVocables);
               bool uppercase = context.select((SettingViewModel model) => model.settingUppercase);
               Selection? selection = context.select((CarouselViewModel model) => model.currentSelection);
-              bool freshAppInstallation = Provider.of<SettingViewModel>(context, listen: false).settingAppFreshInstalled;
               log("build lecture-main-screen--lectures");
               return CustomScaffold(
                   resizeToAvoidBottomInset: false,
@@ -51,9 +50,7 @@ class LectureMainScreen extends StatelessWidget {
                   appBarActions: vocables.isNotEmpty ? _buildAppBarActions(selection, context) : [],
                   body: vocables.isNotEmpty
                       ? LectureScreen(vocables: vocables)
-                      : freshAppInstallation
-                          ? const LectureStartupScreen()
-                          : const LectureNotAvailableScreen());
+                      : _buildLectureNotFoundScreen(context));
             } else {
               log("build lecture-main-screen--loading");
               return CustomScaffold(
@@ -63,6 +60,15 @@ class LectureMainScreen extends StatelessWidget {
             }
           }),
     );
+  }
+
+  Widget _buildLectureNotFoundScreen(BuildContext context) {
+    return const LectureNotAvailableScreen();
+    // TODO DISABLED FEATURE (LearningLanguage)
+    // bool freshAppInstallation = Provider.of<SettingViewModel>(context, listen: false).settingAppFreshInstalled;
+    // return freshAppInstallation
+    //     ? const LectureStartupScreen()
+    //     : const LectureNotAvailableScreen();
   }
 
   List<Widget> _buildAppBarActions(Selection? selection, BuildContext context) {

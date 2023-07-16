@@ -44,3 +44,8 @@ Some plugins are using code generation.
 For doing so, run the following command from your console window
 ```flutter pub run build_runner build --delete-conflicting-outputs```
 
+## Misc
+
+### Disabled Features
+The current version has some features implemented, but currently not in use/commented out. 
+They are are marked by `TODO DISABLED FEATURE` 

@@ -45,16 +45,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           value: context.select((SettingViewModel model) => model.settingUppercase),
           title: Text(AppLocalizations.of(context).settingUppercase),
           onChanged: (value) => settings.toggleSettingUppercase()),
-      ListTile(
-          title: Text(AppLocalizations.of(context).settingResetLearningProgress),
-          onTap: () => Dialogs.showAlertDialog(
-              context: context,
-              title: AppLocalizations.of(context).settingResetLearningProgressQuestion,
-              submitText: AppLocalizations.of(context).reset,
-              submitFunc: () {
-                settings.resetLearningProgress();
-                Provider.of<CarouselViewModel>(context, listen: false).reloadCurrentSelection();
-              })),
+      // TODO DISABLED FEATURE (LearningProgress)
+      // ListTile(
+      //     title: Text(AppLocalizations.of(context).settingResetLearningProgress),
+      //     onTap: () => Dialogs.showAlertDialog(
+      //         context: context,
+      //         title: AppLocalizations.of(context).settingResetLearningProgressQuestion,
+      //         submitText: AppLocalizations.of(context).reset,
+      //         submitFunc: () {
+      //           settings.resetLearningProgress();
+      //           Provider.of<CarouselViewModel>(context, listen: false).reloadCurrentSelection();
+      //         })),
       ListTile(
         title: Text(AppLocalizations.of(context).settingChooseAppLanguage),
         trailing: DropdownButton(
@@ -70,21 +71,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }
             }),
       ),
-      ListTile(
-        title: Text(AppLocalizations.of(context).settingChooseLearningLanguage),
-        trailing: context.select((SettingViewModel model) => model.isUpdatingLanguages)
-            ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator())
-            : DropdownButton<String>(
-                value: context.select((SettingViewModel model) => model.settingLearningLanguage),
-                items: _buildDropdownItems(settings),
-                onChanged: (String? value) {
-                  if (value != null && value != "_update") {
-                    // filter the update value
-                    settings.setSettingLearningLanguage(value);
-                  }
-                }),
-        onTap: () {},
-      ),
+      // TODO DISABLED FEATURE (LearningLanguage)
+      // ListTile(
+      //   title: Text(AppLocalizations.of(context).settingChooseLearningLanguage),
+      //   trailing: context.select((SettingViewModel model) => model.isUpdatingLanguages)
+      //       ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator())
+      //       : DropdownButton<String>(
+      //           value: context.select((SettingViewModel model) => model.settingLearningLanguage),
+      //           items: _buildDropdownItems(settings),
+      //           onChanged: (String? value) {
+      //             if (value != null && value != "_update") {
+      //               // filter the update value
+      //               settings.setSettingLearningLanguage(value);
+      //             }
+      //           }),
+      //   onTap: () {},
+      // ),
       ListTile(
         title: Text(AppLocalizations.of(context).settingResetSettings),
         onTap: () => Dialogs.showAlert(
