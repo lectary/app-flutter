@@ -6,17 +6,12 @@ import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/vocable_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
-
 /// Entity class representing an vocable, which is part of a [Lecture].
 @Entity(
-    tableName: "vocables",
-    foreignKeys: [
-      ForeignKey(
-        childColumns: ["lecture_id"],
-        parentColumns: ["id"],
-        entity: Lecture
-      )
-    ],
+  tableName: "vocables",
+  foreignKeys: [
+    ForeignKey(childColumns: ["lecture_id"], parentColumns: ["id"], entity: Lecture)
+  ],
 )
 class Vocable {
   @PrimaryKey(autoGenerate: true)
@@ -41,20 +36,21 @@ class Vocable {
   String? audio;
 
   String? sort;
-  
+
   @ColumnInfo(name: "vocable_progress")
   int vocableProgress;
 
-  Vocable(
-      {this.id,
-      required this.lectureId,
-      required this.vocable,
-      required this.vocableSort,
-      required this.mediaType,
-      required this.media,
-      this.audio,
-      this.sort,
-      this.vocableProgress = 0});
+  Vocable({
+    this.id,
+    required this.lectureId,
+    required this.vocable,
+    required this.vocableSort,
+    required this.mediaType,
+    required this.media,
+    this.audio,
+    this.sort,
+    this.vocableProgress = 0,
+  });
 
   /// Factory constructor to create a new vocable instance from a filePath.
   /// Returns a new [Vocable] on successful metadata extraction.
@@ -70,7 +66,7 @@ class Vocable {
       // extracting vocable and possible metadata from fileName (i.e. filename without path and extension)
       fileName = Utils.extractFileName(filePath);
       metadata = _extractMetadata(fileName);
-    } catch(e) {
+    } catch (e) {
       log("Invalid vocable: $e");
       return null;
     }
@@ -84,7 +80,6 @@ class Vocable {
       audio: metadata.containsKey("AUDIO") ? metadata.remove("AUDIO") : null,
       sort: metadata.containsKey("SORT") ? Utils.fillWithLeadingZeros(metadata.remove("SORT")) : null,
     );
-
   }
 
   /// Extracts the vocable itself and possible metadata out of an [Vocable] filename.

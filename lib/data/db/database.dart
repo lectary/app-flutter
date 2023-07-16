@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:floor/floor.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
 import 'package:lectary/data/db/entities/coding.dart';
@@ -14,16 +15,17 @@ import 'entities/vocable.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-
 /// Abstract database, whose functionality is generated via the floor generator.
 @Database(version: 1, entities: [Lecture, Vocable, Abstract, Coding, CodingEntry])
 abstract class LectureDatabase extends FloorDatabase {
   LectureDao get lectureDao;
+
   VocableDao get vocableDao;
+
   AbstractDao get abstractDao;
+
   CodingDao get codingDao;
 }
-
 
 /// Database helper class for creating an instance of the [LectureDatabase] as singleton.
 class DatabaseProvider {
@@ -35,8 +37,7 @@ class DatabaseProvider {
   static LectureDatabase? _db;
 
   Future<LectureDatabase> get db async {
-    _db ??= await $FloorLectureDatabase.databaseBuilder(Constants.databaseName)
-          .build();
+    _db ??= await $FloorLectureDatabase.databaseBuilder(Constants.databaseName).build();
     return _db!;
   }
 

@@ -5,7 +5,6 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// A custom button that is used for managing the learning progress of a vocable
 /// The button displays a number of [Icon], corresponding to the [Vocable.vocableProgress]
 /// The [Vocable.vocableProgress] can be changed by pressing the button.
@@ -21,7 +20,6 @@ class LearningProgressButton extends StatefulWidget {
 }
 
 class _LearningProgressButtonState extends State<LearningProgressButton> {
-
   @override
   Widget build(BuildContext context) {
     int vocableIndex = context.select((CarouselViewModel model) => model.currentItemIndex);
@@ -63,10 +61,7 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
           children: [
             _buildIcon(false),
             Row(
-              children: [
-                _buildIcon(true),
-                _buildIcon(true)
-              ],
+              children: [_buildIcon(true), _buildIcon(true)],
             )
           ],
         );
@@ -75,10 +70,7 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
           children: [
             _buildIcon(true),
             Row(
-              children: [
-                _buildIcon(true),
-                _buildIcon(true)
-              ],
+              children: [_buildIcon(true), _buildIcon(true)],
             )
           ],
         );
@@ -87,10 +79,7 @@ class _LearningProgressButtonState extends State<LearningProgressButton> {
           children: [
             _buildIcon(false),
             Row(
-              children: [
-                _buildIcon(true),
-                _buildIcon(false)
-              ],
+              children: [_buildIcon(true), _buildIcon(false)],
             )
           ],
         );

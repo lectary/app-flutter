@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
-
 
 /// Widget for displaying a [Vocable] of [MediaType.png] or [MediaType.jpg].
 /// Hides the media behind an [IconButton] initially, which can be changed by tapping.
@@ -23,7 +23,13 @@ class ImageViewer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  const ImageViewer({required this.imagePath, required this.mediaIndex, required this.slowMode, required this.autoMode, Key? key}) : super(key: key);
+  const ImageViewer({
+    required this.imagePath,
+    required this.mediaIndex,
+    required this.slowMode,
+    required this.autoMode,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ImageViewer> createState() => _ImageViewerState();
@@ -31,8 +37,10 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin {
   bool showPicture = false;
+
   /// Used for indicating if animation is played once due to autoMode for avoiding looping.
   bool isAutoModeFinished = false;
+
   /// Used for ensuring the animation is only auto-played on swipe in.
   /// E.g. for avoiding that the animation is played when pressing autoPlay
   bool readyForAutoMode = false;
@@ -48,10 +56,10 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
       vsync: this,
     );
     _animation = Tween<double>(begin: 50, end: 0).animate(_animationController)
-    ..addListener(() {
-      // update ui on every tick
-      setState(() {});
-    });
+      ..addListener(() {
+        // update ui on every tick
+        setState(() {});
+      });
     readyForAutoMode = widget.autoMode ? true : false;
   }
 
@@ -91,13 +99,12 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
     return Semantics(
       label: Constants.semanticMediumImage,
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
+        behavior: HitTestBehavior.opaque,
+        // ensures that the whole area can be tapped, not only the area containing the child widget
         onTap: () {
           setState(() {
             if (widget.slowMode) {
-              showPicture
-                  ? _animationController.reset()
-                  : _animationController.forward();
+              showPicture ? _animationController.reset() : _animationController.forward();
             }
             showPicture = showPicture ? false : true;
           });

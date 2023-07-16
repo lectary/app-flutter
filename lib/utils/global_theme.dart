@@ -26,6 +26,7 @@ class CustomAppTheme {
       appBarTheme: const AppBarTheme(
         foregroundColor: Colors.black,
         backgroundColor: ColorsLectary.white,
+
         /// Tricky one here:
         /// If left out, the style will be taken from [TextTheme.titleLarge], however, this is customized later.
         /// It is NOT possible to use [baseTheme.textTheme.titleLarge] (default one before its customized),

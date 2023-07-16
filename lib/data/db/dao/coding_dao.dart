@@ -1,10 +1,8 @@
 import 'package:floor/floor.dart';
 import 'package:lectary/data/db/entities/coding.dart';
 
-
 @dao
 abstract class CodingDao {
-
   @Query("SELECT * FROM codings")
   Future<List<Coding>> findAllCodings();
 
@@ -19,8 +17,6 @@ abstract class CodingDao {
 
   @Query("DELETE FROM codings")
   Future<void> deleteAllCodings();
-
-
 
   @Query("SELECT * FROM coding_entries")
   Future<List<CodingEntry>> findAllCodingEntries();

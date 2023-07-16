@@ -3,7 +3,6 @@ import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/utils/colors.dart';
 
-
 /// Lecture screen if no lectures are available.
 /// Shows a corresponding message and a button linked with the
 /// [LectureManagementScreen]
@@ -24,7 +23,7 @@ class LectureNotAvailableScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            const SizedBox(height: 10,), // separator
+            const SizedBox(height: 10), // separator
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, LectureManagementScreen.routeName),
               style: ElevatedButton.styleFrom(
@@ -42,14 +41,11 @@ class LectureNotAvailableScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const Icon(
-                    Icons.cloud_download,
-                    size: 55,
-                  ),
+                  const Icon(Icons.cloud_download, size: 55),
                 ],
               ),
             ),
-            const SizedBox(height: 10,), // separator
+            const SizedBox(height: 10), // separator
             Text(
               AppLocalizations.of(context).minMaxLectureSizes,
               textAlign: TextAlign.center,

@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
@@ -6,11 +7,10 @@ import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_image.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_text.dart';
-import 'package:lectary/viewmodels/carousel_viewmodel.dart';
-import 'package:provider/provider.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_text_area.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_video.dart';
-
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 /// Class responsible for displaying the correct media player corresponding to the
 /// [MediaType] of the [Vocable].
@@ -33,8 +33,8 @@ class MediaViewer extends StatelessWidget {
     final model = Provider.of<CarouselViewModel>(context, listen: false);
     String lectureName = "";
     if (model.localLectures != null) {
-      Lecture? lecture = model.localLectures!.firstWhereOrNull(
-              (lecture) => lecture.id == vocable.lectureId);
+      Lecture? lecture =
+          model.localLectures!.firstWhereOrNull((lecture) => lecture.id == vocable.lectureId);
       lectureName = lecture == null ? "" : lecture.lesson;
     }
     return lectureName;

@@ -1,7 +1,9 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/i18n/localizations.dart';
+import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
@@ -9,16 +11,14 @@ import 'package:lectary/screens/lectures/lecture_startup_screen.dart';
 import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
-import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Lecture main screen responsible for building the [AppBar] and initially
 /// loading all vocables and showing either [LectureScreen] or [LectureNotAvailableScreen].
 class LectureMainScreen extends StatelessWidget {
-  static const String routeName  = '/';
+  static const String routeName = '/';
 
   const LectureMainScreen({Key? key}) : super(key: key);
 
@@ -109,7 +109,11 @@ class LectureMainScreen extends StatelessWidget {
   }
 
   /// Helper class for extracting correct header text depending on the passed [Selection].
-  String _getHeaderText({required BuildContext context, Selection? selection, required bool uppercase}) {
+  String _getHeaderText({
+    required BuildContext context,
+    Selection? selection,
+    required bool uppercase,
+  }) {
     if (selection == null) return "";
     switch (selection.type) {
       case SelectionType.all:

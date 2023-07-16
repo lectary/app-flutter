@@ -5,7 +5,6 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Class responsible for displaying the actual textual [Vocable] in the [Carousel] header.
 /// The visibility of the vocable can be controlled by tapping the vocable itself
 /// or via the [LearningControlArea].
@@ -14,7 +13,12 @@ class TextArea extends StatefulWidget {
   final int mediaIndex;
   final String text;
 
-  const TextArea({required this.hideVocableModeOn, required this.mediaIndex, required this.text, Key? key}) : super(key: key);
+  const TextArea({
+    required this.hideVocableModeOn,
+    required this.mediaIndex,
+    required this.text,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<TextArea> createState() => _TextAreaState();

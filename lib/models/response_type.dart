@@ -5,7 +5,9 @@ class Response {
   String? message;
 
   Response.loading(this.message) : status = Status.loading;
+
   Response.completed() : status = Status.completed;
+
   Response.error(this.message) : status = Status.error;
 
   @override

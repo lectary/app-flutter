@@ -4,7 +4,6 @@ import 'package:floor/floor.dart';
 import 'package:lectary/utils/exceptions/abstract_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
-
 enum AbstractStatus { notPersisted, persisted, removed, updateAvailable }
 
 /// Entity class representing an abstract, which is used as description for a lecture package.
@@ -16,6 +15,7 @@ class Abstract {
   /// Used for automatically managing (e.g. downloading) abstracts
   @ignore
   AbstractStatus? abstractStatus;
+
   /// Used for saving the fileName of an available update
   @ignore
   String? fileNameUpdate;
@@ -29,7 +29,13 @@ class Abstract {
 
   String date;
 
-  Abstract({this.id, required this.fileName, required this.pack, required this.text, required this.date});
+  Abstract({
+    this.id,
+    required this.fileName,
+    required this.pack,
+    required this.text,
+    required this.date,
+  });
 
   /// Factory constructor to create a new abstract instance from a json.
   /// Returns a new [Abstract] on successful json deserialization.
@@ -39,7 +45,7 @@ class Abstract {
     Map<String, dynamic> metadata;
     try {
       metadata = _extractMetadata(fileName);
-    } on AbstractException catch(e) {
+    } on AbstractException catch (e) {
       log("Invalid abstract: ${e.toString()}");
       return null;
     }
@@ -47,7 +53,7 @@ class Abstract {
       fileName: fileName,
       pack: metadata.remove("ABSTRACT"),
       date: metadata.remove("DATE"),
-      text: "" // temporary default value, will be assigned later when persisted
+      text: "", // temporary default value, will be assigned later when persisted
     );
   }
 
@@ -64,8 +70,7 @@ class Abstract {
       throw AbstractException("Abstract has not mandatory metadata!\n"
           "Missing:"
           "${!fileWithoutType.contains("ABSTRACT") ? " ABSTRACT " : ""}"
-          "${!fileWithoutType.contains("DATE") ? " DATE " : ""}"
-      );
+          "${!fileWithoutType.contains("DATE") ? " DATE " : ""}");
     }
 
     List<String> metadata = fileWithoutType.split("---");
@@ -73,7 +78,7 @@ class Abstract {
       String metadatumType = metadatum.split("--")[0];
       String metadatumValue = metadatum.split("--")[1];
 
-      switch(metadatumType) {
+      switch (metadatumType) {
         case "ABSTRACT":
           result.putIfAbsent("ABSTRACT", () => Utils.deAsciify(metadatumValue));
           break;

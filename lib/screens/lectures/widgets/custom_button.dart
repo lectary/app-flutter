@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
 
-
 /// Customized button widget with a special style, used several times
 /// in the lecture screen
 class CustomButton extends StatelessWidget {
@@ -13,14 +12,16 @@ class CustomButton extends StatelessWidget {
   final double iconContainerWidth;
   final Function func;
 
-  const CustomButton(
-      {super.key, required this.color,
-      required this.iconData,
-      required this.semanticLabel,
-      required this.iconSize,
-      this.iconColor = ColorsLectary.white,
-      this.iconContainerWidth = 0,
-      this.func = emptyFunction});
+  const CustomButton({
+    super.key,
+    required this.color,
+    required this.iconData,
+    required this.semanticLabel,
+    required this.iconSize,
+    this.iconColor = ColorsLectary.white,
+    this.iconContainerWidth = 0,
+    this.func = emptyFunction,
+  });
 
   @override
   Widget build(BuildContext context) {
