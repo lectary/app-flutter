@@ -6,7 +6,6 @@ import 'package:lectary/utils/exceptions/lecture_exception.dart';
 import 'package:lectary/utils/utils.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 
-
 enum LectureStatus { notPersisted, downloading, persisted, removed, updateAvailable }
 
 /// Entity class representing a lecture.
@@ -18,6 +17,7 @@ class Lecture {
   /// Used for showing corresponding status information and providing further actions in the lecture management list
   @ignore
   LectureStatus lectureStatus = LectureStatus.notPersisted;
+
   /// Used for saving the fileName of an available update
   @ignore
   String? fileNameUpdate;
@@ -53,19 +53,20 @@ class Lecture {
 
   String? sort;
 
-  Lecture(
-      {this.id,
-      required this.fileName,
-      required this.fileSize,
-      required this.vocableCount,
-      required this.pack,
-      required this.lesson,
-      required this.lessonSort,
-      required this.langMedia,
-      required this.langVocable,
-      this.audio,
-      required this.date,
-      this.sort});
+  Lecture({
+    this.id,
+    required this.fileName,
+    required this.fileSize,
+    required this.vocableCount,
+    required this.pack,
+    required this.lesson,
+    required this.lessonSort,
+    required this.langMedia,
+    required this.langVocable,
+    this.audio,
+    required this.date,
+    this.sort,
+  });
 
   @ignore
   Lecture.clone(Lecture lecture)
@@ -92,7 +93,7 @@ class Lecture {
     Map<String, dynamic> metadata;
     try {
       metadata = extractMetadata(fileName);
-    } on LectureException catch(e) {
+    } on LectureException catch (e) {
       String errorMessage = "Invalid lecture: $e";
       log(errorMessage);
       LectureViewModel.reportErrorToLectaryServer(errorMessage);
@@ -123,7 +124,13 @@ class Lecture {
     const List<String> optionalMetadataKeys = ["AUDIO", "DATE", "SORT"];
     const List<String> metadataKeys = [...mandatoryMetadataKeys, ...optionalMetadataKeys];
     Map<String, dynamic> result = {};
-    const List<String> mandatoryResultMetadataKeys = ["PACK", "LESSON", "LESSON-SORT", "LANG-MEDIA", "LANG-VOCABLE"];
+    const List<String> mandatoryResultMetadataKeys = [
+      "PACK",
+      "LESSON",
+      "LESSON-SORT",
+      "LANG-MEDIA",
+      "LANG-VOCABLE"
+    ];
 
     // check fileType
     if (!fileName.contains(".zip")) {
@@ -136,16 +143,20 @@ class Lecture {
         throw LectureException("Lecture has not mandatory metadata!\n"
             "Missing: "
             "$key"
-            "\nFile: $fileName"
-        );
+            "\nFile: $fileName");
       }
     });
 
     // counting number of metadata keys with key-value separator ('KEY--<VALUE>')
-    int keyMatchCount = metadataKeys.map((key) => RegExp(key + r'\b-{2}\b').hasMatch(fileName) ? 1 : 0).reduce((i, j) => i + j);
+    int keyMatchCount = metadataKeys
+        .map((key) => RegExp(key + r'\b-{2}\b').hasMatch(fileName) ? 1 : 0)
+        .reduce((i, j) => i + j);
     // The following regex finds all groups of '<key>--<value>' which are followed by at least 2x '-' or '.zip'.
     // Therefore, it doesn't matter if the formal key-separator '---' is malformed and contains only two or more chars of '-'
-    List<String?> metadata = RegExp(r'([a-zA-Z0-9]+\b--\b.*?)(?=\b--|.zip)').allMatches(fileName).map((e) => e.group(0)).toList();
+    List<String?> metadata = RegExp(r'([a-zA-Z0-9]+\b--\b.*?)(?=\b--|.zip)')
+        .allMatches(fileName)
+        .map((e) => e.group(0))
+        .toList();
     // checking if as many key-value pairs could be extracted as the number of matching keys
     if (metadata.length != keyMatchCount) {
       throw LectureException("Malformed metadata: $fileName");
@@ -159,7 +170,7 @@ class Lecture {
       String metadatumType = split[0];
       String metadatumValue = split[1];
 
-      switch(metadatumType) {
+      switch (metadatumType) {
         case "PACK":
           result.putIfAbsent("PACK", () => Utils.deAsciify(metadatumValue).trim());
           break;
@@ -175,8 +186,14 @@ class Lecture {
           }
           String langMedia = Utils.deAsciify(langs[0]);
           if (langMedia == "OGS") langMedia = "ÖGS"; // convert legacy 'OGS'-lectures to 'ÖGS'
-          result.putIfAbsent("LANG-MEDIA", () => langMedia); // deAsciifying due to possible special german characters like in 'ÖGS'
-          result.putIfAbsent("LANG-VOCABLE", () => (langs[1])); // no deAsciifying, because the langs are of ISO 639-1, which does not contain any special characters
+          result.putIfAbsent(
+              "LANG-MEDIA",
+              // deAsciifying due to possible special german characters like in 'ÖGS'
+              () => langMedia);
+          result.putIfAbsent(
+              "LANG-VOCABLE",
+              // no deAsciifying, because the langs are of ISO 639-1, which does not contain any special characters
+              () => (langs[1]));
           break;
         case "AUDIO":
           result.putIfAbsent("AUDIO", () => metadatumValue);
@@ -208,8 +225,7 @@ class Lecture {
         throw LectureException("Lecture has not mandatory metadata!\n"
             "Missing: "
             "$key"
-            "\nFile: $fileName"
-        );
+            "\nFile: $fileName");
       }
     });
     return result;

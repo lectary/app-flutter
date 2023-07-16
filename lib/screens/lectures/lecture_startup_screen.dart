@@ -9,7 +9,6 @@ import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Lecture screen similar to [LectureNotAvailableScreen], but which is meant to be shown only once after app-installation.
 /// Features additional buttons for each available language of [SettingViewModel.learningLanguagesList],
 /// pointing to [LectureManagementScreen] and setting the corresponding [SettingViewModel.learningLanguagesList]
@@ -34,8 +33,9 @@ class LectureStartupScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            const SizedBox(height: 10,), // separator
-            Flexible( // expand only if needed and there is available space
+            const SizedBox(height: 10),
+            Flexible(
+              // expand only if needed and there is available space
               child: ListView.separated(
                 shrinkWrap: true,
                 separatorBuilder: (context, index) => const SizedBox(height: 10),
@@ -43,21 +43,20 @@ class LectureStartupScreen extends StatelessWidget {
                 itemCount: buttons.length,
               ),
             ),
-            const SizedBox(height: 10,), // separator
+            const SizedBox(height: 10),
             Text(
               AppLocalizations.of(context).minMaxLectureSizes,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: 10,), // separator
+            const SizedBox(height: 10),
             Text(
               AppLocalizations.of(context).learningLanguageCanBeChanged,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme
+              style: Theme.of(context)
+                  .textTheme
                   .titleMedium!
-                  .copyWith(fontSize: Theme.of(context).textTheme
-                  .titleMedium!
-                  .fontSize! - 2),
+                  .copyWith(fontSize: Theme.of(context).textTheme.titleMedium!.fontSize! - 2),
             )
           ],
         ),
@@ -163,7 +162,7 @@ class LectureStartupScreen extends StatelessWidget {
       String path = package == null ? assetPath : "packages/$package/$assetPath";
       await rootBundle.load(path);
       return true;
-    } catch(_) {
+    } catch (_) {
       return false;
     }
   }

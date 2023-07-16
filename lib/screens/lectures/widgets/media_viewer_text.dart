@@ -8,7 +8,6 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Widget for displaying a [Vocable] of [MediaType.txt].
 /// Hides the media behind an [IconButton] initially, which can be changed by tapping.
 /// Uses an [Animation] for an 'slowMode' of the media revealing, where it gets visible continuously over time.
@@ -29,7 +28,13 @@ class TextViewer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  const TextViewer({required this.textPath, required this.mediaIndex, required this.slowMode, required this.autoMode, Key? key}) : super(key: key);
+  const TextViewer({
+    required this.textPath,
+    required this.mediaIndex,
+    required this.slowMode,
+    required this.autoMode,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<TextViewer> createState() => _TextViewerState();
@@ -37,8 +42,10 @@ class TextViewer extends StatefulWidget {
 
 class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
   bool showText = false;
+
   /// Used for indicating if animation is played once due to autoMode for avoiding looping.
   bool isAutoModeFinished = false;
+
   /// Used for ensuring the animation is only auto-played on swipe in.
   /// E.g. for avoiding that the animation is played when pressing autoPlay
   bool readyForAutoMode = false;
@@ -65,7 +72,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: Constants.mediaAnimationDurationMilliseconds),
       vsync: this,
     );
-    _characterCount = StepTween(begin: 0, end: text.length-1).animate(_animationController)
+    _characterCount = StepTween(begin: 0, end: text.length - 1).animate(_animationController)
       ..addListener(() {
         // update only when index changed
         if (index < _characterCount.value) {
@@ -73,7 +80,7 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
           randomBox.shuffle();
           int rndIndex = randomBox.removeLast();
           setState(() {
-            finalText = finalText.replaceRange(rndIndex, rndIndex+1, text[rndIndex]);
+            finalText = finalText.replaceRange(rndIndex, rndIndex + 1, text[rndIndex]);
           });
         }
       });
@@ -116,7 +123,8 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
     return Semantics(
       label: Constants.semanticMediumText,
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
+        behavior: HitTestBehavior.opaque,
+        // ensures that the whole area can be tapped, not only the area containing the child widget
         onTap: () {
           setState(() {
             if (widget.slowMode) {
@@ -140,12 +148,9 @@ class _TextViewerState extends State<TextViewer> with TickerProviderStateMixin {
                       child: SingleChildScrollView(
                         child: Text(
                           uppercase
-                              ? (widget.slowMode
-                                  ? finalText.toUpperCase()
-                                  : text.toUpperCase())
+                              ? (widget.slowMode ? finalText.toUpperCase() : text.toUpperCase())
                               : (widget.slowMode ? finalText : text),
-                          style:
-                              const TextStyle(fontSize: 28, color: ColorsLectary.white),
+                          style: const TextStyle(fontSize: 28, color: ColorsLectary.white),
                           textAlign: TextAlign.center,
                         ),
                       ))

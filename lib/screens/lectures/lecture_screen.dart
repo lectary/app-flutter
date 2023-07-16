@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,6 @@ import 'package:lectary/screens/lectures/widgets/media_control_area.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
-
 
 /// Lecture screen in case there are available [Vocable].
 /// Consists of the [Carousel] with its [CarouselNavigationOverlay],
@@ -54,8 +54,7 @@ class _LectureScreenState extends State<LectureScreen> {
                 right: 0,
                 child: AspectRatio(
                     aspectRatio: Constants.aspectRatio,
-                    child: CarouselNavigationOverlay(
-                        carouselController: carouselController)),
+                    child: CarouselNavigationOverlay(carouselController: carouselController)),
               )
             ],
           ),

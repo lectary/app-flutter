@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:lectary/data/api/lectary_api.dart';
 import 'package:lectary/data/db/database.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
@@ -7,13 +8,12 @@ import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/lectary_overview.dart';
 
-
 /// Repository class for encapsulating data access independent of the source
 class LectureRepository {
   final LectaryApi _lectaryApi;
   final LectureDatabase _lectureDatabase;
 
-  LectureRepository({ required lectaryApi,  required lectureDatabase})
+  LectureRepository({required lectaryApi, required lectureDatabase})
       : _lectaryApi = lectaryApi,
         _lectureDatabase = lectureDatabase;
 
@@ -75,8 +75,10 @@ class LectureRepository {
     return _lectureDatabase.vocableDao.findVocablesByLectureIdAndLangMedia(lectureId, langMedia);
   }
 
-  Future<List<Vocable>> findVocablesByLecturePackAndLangMedia(String lecturePack, String langMedia) {
-    return _lectureDatabase.vocableDao.findVocablesByLecturePackAndLangMedia(lecturePack, langMedia);
+  Future<List<Vocable>> findVocablesByLecturePackAndLangMedia(
+      String lecturePack, String langMedia) {
+    return _lectureDatabase.vocableDao
+        .findVocablesByLecturePackAndLangMedia(lecturePack, langMedia);
   }
 
   Future<List<Vocable>> findVocablesByLectureId(int lectureId) {
@@ -91,7 +93,7 @@ class LectureRepository {
     return _lectureDatabase.vocableDao.updateVocable(vocable);
   }
 
-  Future<void >updateVocables(List<Vocable> vocables) {
+  Future<void> updateVocables(List<Vocable> vocables) {
     return _lectureDatabase.vocableDao.updateVocables(vocables);
   }
 

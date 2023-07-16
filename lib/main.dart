@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:lectary/data/api/lectary_api.dart';
+import 'package:lectary/data/db/database.dart';
 import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/about/about_screen.dart';
@@ -15,9 +17,6 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:lectary/data/api/lectary_api.dart';
-import 'package:lectary/data/db/database.dart';
-
 
 /// Entry point, opens and loads an instance of the database provided by [DatabaseProvider]
 /// and runs [LectaryApp]
@@ -28,7 +27,6 @@ void main() async {
 
   runApp(LectaryApp(lectureDatabase: database));
 }
-
 
 /// This first widget is the root of the application and responsible for creating all needed providers
 /// Providers in usage: [SettingViewModel], [LectureViewModel], [CarouselViewModel]
@@ -48,15 +46,18 @@ class LectaryApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<SettingViewModel>(
-          create: (BuildContext context) => SettingViewModel(lectureRepository: lectureRepository)
+          create: (BuildContext context) => SettingViewModel(lectureRepository: lectureRepository),
         ),
         ChangeNotifierProxyProvider<SettingViewModel, CarouselViewModel>(
-            create: (BuildContext context) => CarouselViewModel(lectureRepository: lectureRepository),
-            update: (context, settingViewModel, carouselViewModel) => carouselViewModel!..updateSettings(settingViewModel),
-            lazy: false),
+          create: (BuildContext context) => CarouselViewModel(lectureRepository: lectureRepository),
+          update: (context, settingViewModel, carouselViewModel) =>
+              carouselViewModel!..updateSettings(settingViewModel),
+          lazy: false,
+        ),
         ChangeNotifierProxyProvider<SettingViewModel, LectureViewModel>(
           create: (BuildContext context) => LectureViewModel(lectureRepository: lectureRepository),
-          update: (context, settingViewModel, lectureViewModel) => lectureViewModel!..updateSettings(settingViewModel),
+          update: (context, settingViewModel, lectureViewModel) =>
+              lectureViewModel!..updateSettings(settingViewModel),
           lazy: false,
         ),
       ],
@@ -115,28 +116,33 @@ class _LocalizedAppState extends State<LocalizedApp> {
       return const Center(child: CircularProgressIndicator());
     } else {
       return MaterialApp(
-          onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).appTitle, // used by os task switcher
-          locale: locale,
-          localizationsDelegates: const [
-            AppLocalizations.delegate, // custom localization
-            GlobalMaterialLocalizations.delegate, // provides localized values for the material component library
-            GlobalWidgetsLocalizations.delegate, // defines text direction (right2left/left2right)
-            GlobalCupertinoLocalizations.delegate, // ios
-          ],
-          supportedLocales: const [
-            Locale('de', ''),
-            Locale('en', ''),
-          ],
-          theme: CustomAppTheme.defaultLightTheme,
-          initialRoute: LectureMainScreen.routeName,
-          routes: {
-            LectureMainScreen.routeName: (context) => const LectureMainScreen(),
-            VocableSearchScreen.routeName: (context) => const VocableSearchScreen(),
-            LectureManagementScreen.routeName : (context) => const LectureManagementScreen(),
-            SettingsScreen.routeName: (context) => const SettingsScreen(),
-            AboutScreen.routeName: (context) => const AboutScreen(),
-          },
-          navigatorObservers: [routeObserver],
+        onGenerateTitle: (BuildContext context) => AppLocalizations.of(context).appTitle,
+        // used by os task switcher
+        locale: locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          // custom localization
+          GlobalMaterialLocalizations.delegate,
+          // provides localized values for the material component library
+          GlobalWidgetsLocalizations.delegate,
+          // defines text direction (right2left/left2right)
+          GlobalCupertinoLocalizations.delegate,
+          // ios
+        ],
+        supportedLocales: const [
+          Locale('de', ''),
+          Locale('en', ''),
+        ],
+        theme: CustomAppTheme.defaultLightTheme,
+        initialRoute: LectureMainScreen.routeName,
+        routes: {
+          LectureMainScreen.routeName: (context) => const LectureMainScreen(),
+          VocableSearchScreen.routeName: (context) => const VocableSearchScreen(),
+          LectureManagementScreen.routeName: (context) => const LectureManagementScreen(),
+          SettingsScreen.routeName: (context) => const SettingsScreen(),
+          AboutScreen.routeName: (context) => const AboutScreen(),
+        },
+        navigatorObservers: [routeObserver],
       );
     }
   }

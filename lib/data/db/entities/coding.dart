@@ -4,7 +4,6 @@ import 'package:floor/floor.dart';
 import 'package:lectary/utils/exceptions/coding_exception.dart';
 import 'package:lectary/utils/utils.dart';
 
-
 enum CodingStatus { notPersisted, persisted, removed, updateAvailable }
 
 /// Entity class representing a coding which is linked to a set of [CodingEntry].
@@ -17,6 +16,7 @@ class Coding {
   /// Used for automatically managing (e.g. downloading) codings
   @ignore
   CodingStatus? codingStatus;
+
   /// Used for saving the fileName of an available update
   @ignore
   String? fileNameUpdate;
@@ -28,7 +28,12 @@ class Coding {
 
   String date;
 
-  Coding({this.id, required this.fileName, required this.lang, required this.date});
+  Coding({
+    this.id,
+    required this.fileName,
+    required this.lang,
+    required this.date,
+  });
 
   /// Factory constructor to create a new coding instance from a json.
   /// Returns a new [Coding] on successful json deserialization.
@@ -38,15 +43,12 @@ class Coding {
     Map<String, dynamic> metadata;
     try {
       metadata = _extractMetadata(fileName);
-    } on CodingException catch(e) {
+    } on CodingException catch (e) {
       log("Invalid abstract: ${e.toString()}");
       return null;
     }
     return Coding(
-      fileName: fileName,
-      lang: metadata.remove("CODING"),
-      date: metadata.remove("DATE")
-    );
+        fileName: fileName, lang: metadata.remove("CODING"), date: metadata.remove("DATE"));
   }
 
   /// Extracts metadata of the coding fileName.
@@ -62,8 +64,7 @@ class Coding {
       throw CodingException("Coding has not mandatory metadata!\n"
           "Missing:"
           "${!fileWithoutType.contains("CODING") ? " CODING " : ""}"
-          "${!fileWithoutType.contains("DATE") ? " DATE " : ""}"
-      );
+          "${!fileWithoutType.contains("DATE") ? " DATE " : ""}");
     }
 
     List<String> metadata = fileWithoutType.split("---");
@@ -71,7 +72,7 @@ class Coding {
       String metadatumType = metadatum.split("--")[0];
       String metadatumValue = metadatum.split("--")[1];
 
-      switch(metadatumType) {
+      switch (metadatumType) {
         case "CODING":
           result.putIfAbsent("CODING", () => Utils.deAsciify(metadatumValue));
           break;
@@ -95,13 +96,11 @@ class Coding {
   }
 }
 
-
 /// Entity class representing a specific coding entry (a char with the corresponding ascii encoding).
 @Entity(
   tableName: "coding_entries",
   foreignKeys: [
-    ForeignKey(
-        childColumns: ["coding_id"], parentColumns: ["id"], entity: Coding)
+    ForeignKey(childColumns: ["coding_id"], parentColumns: ["id"], entity: Coding)
   ],
 )
 class CodingEntry {
@@ -111,12 +110,9 @@ class CodingEntry {
   @ColumnInfo(name: "coding_id")
   int codingId;
 
-
   String char;
-
 
   String ascii;
 
-  CodingEntry(
-      {this.id, this.codingId = -1, required this.char, required this.ascii});
+  CodingEntry({this.id, this.codingId = -1, required this.char, required this.ascii});
 }

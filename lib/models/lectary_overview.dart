@@ -1,8 +1,8 @@
 import 'dart:developer';
+
 import 'package:lectary/data/db/entities/abstract.dart';
 import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
-
 
 class LectaryData {
   List<Lecture> lessons;
@@ -17,17 +17,20 @@ class LectaryData {
     List<Lecture> lessons = jsonLessons
         .map((element) => Lecture.fromJson(element))
         .where((element) => element != null)
-        .toList().cast<Lecture>();
+        .toList()
+        .cast<Lecture>();
     List<dynamic> jsonAbstracts = json['abstract'];
     List<Abstract> abstracts = jsonAbstracts
         .map((element) => Abstract.fromJson(element))
         .where((element) => element != null)
-        .toList().cast<Abstract>();
+        .toList()
+        .cast<Abstract>();
     List<dynamic> jsonCodings = json['asciify'];
     List<Coding> codings = jsonCodings
         .map((element) => Coding.fromJson(element))
         .where((element) => element != null)
-        .toList().cast<Coding>();
+        .toList()
+        .cast<Coding>();
 
     log("extracted LectaryData from json");
 

@@ -13,12 +13,10 @@ import 'package:provider/provider.dart';
 
 import 'lecture_package_item.dart';
 
-
 /// Drawer screen, handling the navigation and loading of local [Lecture]s
 /// Used for further navigation to [LectureManagementScreen] and [SettingsScreen]
 class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
-
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -50,78 +48,88 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final String learningLanguage = context.select((SettingViewModel model) => model.settingLearningLanguage);
+    final String learningLanguage =
+        context.select((SettingViewModel model) => model.settingLearningLanguage);
     return Theme(
       data: CustomAppTheme.defaultLightTheme,
-      child: Builder(
-        builder: (context) {
-          return Drawer(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                SizedBox(
-                  height: 80,
-                  child: DrawerHeader(
-                    margin: const EdgeInsets.all(0.0),
-                    padding: const EdgeInsets.all(0.0),
-                    child: Row(
-                      children: <Widget>[
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.arrow_back_ios),
-                        ),
-                        Text(
-                          learningLanguage,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue
-                          ),
-                        ),
-                      ],
-                    ),
+      child: Builder(builder: (context) {
+        return Drawer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              SizedBox(
+                height: 80,
+                child: DrawerHeader(
+                  margin: const EdgeInsets.all(0.0),
+                  padding: const EdgeInsets.all(0.0),
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back_ios),
+                      ),
+                      Text(
+                        learningLanguage,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                    child: _generateListView(context),
-                  ),
+              ),
+              Expanded(
+                child: Container(
+                  child: _generateListView(context),
                 ),
-                const Divider(height: 1, thickness: 1),
-                _buildButton(
-                    context: context,
-                    flex: 1,
-                    icon: Icons.cloud_download,
-                    text: AppLocalizations.of(context).drawerButtonLectureManagement,
-                    routeName: LectureManagementScreen.routeName),
-                const Divider(height: 1, thickness: 1),
-                _buildButton(
-                    context: context,
-                    flex: 1,
-                    icon: Icons.settings,
-                    text: AppLocalizations.of(context).drawerButtonSettings,
-                    routeName: SettingsScreen.routeName),
-                const Divider(height: 1, thickness: 1),
-              ],
-            ),
-          );
-        }
-      ),
+              ),
+              const Divider(height: 1, thickness: 1),
+              _buildButton(
+                  context: context,
+                  flex: 1,
+                  icon: Icons.cloud_download,
+                  text: AppLocalizations.of(context).drawerButtonLectureManagement,
+                  routeName: LectureManagementScreen.routeName),
+              const Divider(height: 1, thickness: 1),
+              _buildButton(
+                  context: context,
+                  flex: 1,
+                  icon: Icons.settings,
+                  text: AppLocalizations.of(context).drawerButtonSettings,
+                  routeName: SettingsScreen.routeName),
+              const Divider(height: 1, thickness: 1),
+            ],
+          ),
+        );
+      }),
     );
   }
 
   /// Creates a horizontal stretched button with passed icon, text and route navigation tapEvent
-  Widget _buildButton({required BuildContext context, required int flex, required IconData icon, required String text, required String routeName}) {
+  Widget _buildButton({
+    required BuildContext context,
+    required int flex,
+    required IconData icon,
+    required String text,
+    required String routeName,
+  }) {
     return SizedBox(
       height: 60,
       child: ElevatedButton(
         onPressed: () {
           Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-          Navigator.pushNamedAndRemoveUntil(context, routeName, ModalRoute.withName(LectureMainScreen.routeName));
+          Navigator.pushNamedAndRemoveUntil(
+              context, routeName, ModalRoute.withName(LectureMainScreen.routeName));
         },
         child: Row(
           children: <Widget>[
-            Icon(icon, color: ColorsLectary.lightBlue,),
+            Icon(
+              icon,
+              color: ColorsLectary.lightBlue,
+            ),
             const SizedBox(width: 10), // spacer
             Text(text),
           ],
@@ -138,46 +146,46 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return StreamBuilder<List<LecturePackage>>(
         stream: Provider.of<CarouselViewModel>(context, listen: false).loadLocalLecturesAsStream(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data!.isNotEmpty) {
-              return ListView.separated(
-                  padding: const EdgeInsets.all(0),
-                  separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1),
-                  itemCount: snapshot.data!.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return Container(
-                        color: selection != null && selection.type == SelectionType.all
-                            ? ColorsLectary.lightBlue
-                            : ColorsLectary.white,
-                        child: ListTile(
-                          title: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                color: selection != null && selection.type == SelectionType.all
-                                    ? ColorsLectary.white
-                                    : Colors.black
-                            ),),
-                          ),
-                          onTap: () {
-                            Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
-                            Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
-                            Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
-                          },
-                        ),
-                      );
-                    }
-                    return LecturePackageItem(context, snapshot.data![index - 1]);
-                  });
-            } else {
-              return Center(
-                child: Text(AppLocalizations.of(context).drawerNoLecturesAvailable),
-              );
-            }
-          } else {
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-        }
-    );
+          if (snapshot.data!.isEmpty) {
+            return Center(
+              child: Text(AppLocalizations.of(context).drawerNoLecturesAvailable),
+            );
+          }
+          return ListView.separated(
+              padding: const EdgeInsets.all(0),
+              separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1),
+              itemCount: snapshot.data!.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Container(
+                    color: selection != null && selection.type == SelectionType.all
+                        ? ColorsLectary.lightBlue
+                        : ColorsLectary.white,
+                    child: ListTile(
+                      title: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(
+                          AppLocalizations.of(context).allVocables,
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: selection != null && selection.type == SelectionType.all
+                                  ? ColorsLectary.white
+                                  : Colors.black),
+                        ),
+                      ),
+                      onTap: () {
+                        Provider.of<CarouselViewModel>(context, listen: false).loadAllVocables();
+                        Navigator.pop(context); // close drawer first to avoid unwanted behaviour!
+                        Navigator.popUntil(
+                            context, ModalRoute.withName(LectureMainScreen.routeName));
+                      },
+                    ),
+                  );
+                }
+                return LecturePackageItem(context, snapshot.data![index - 1]);
+              });
+        });
   }
 }

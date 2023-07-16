@@ -5,7 +5,6 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Class for handling the [Animation] of showing and hiding the learning-progress-button
 /// Uses a [SizeTransition] and a [CurvedAnimation] with [Curves.fastOutSlowIn] for showing and hiding the button via tap on the
 /// arrow-button on the side.
@@ -16,7 +15,8 @@ class LearningProgressButtonAnimation extends StatefulWidget {
   State<LearningProgressButtonAnimation> createState() => _LearningProgressButtonAnimationState();
 }
 
-class _LearningProgressButtonAnimationState extends State<LearningProgressButtonAnimation> with SingleTickerProviderStateMixin {
+class _LearningProgressButtonAnimationState extends State<LearningProgressButtonAnimation>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _buttonEnabled = false;
@@ -25,10 +25,7 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
   void initState() {
     super.initState();
     // controls the animation and sets its duration
-    _controller = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 500)
-    );
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     // defines the kind of animation
     _animation = CurvedAnimation(
       parent: _controller,
@@ -67,8 +64,7 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
                 SizedBox(
                   // the size needs to be set manually
                   width: widthButton,
-                  child: LearningProgressButton(
-                      iconSize: iconSize, color: ColorsLectary.lightBlue),
+                  child: LearningProgressButton(iconSize: iconSize, color: ColorsLectary.lightBlue),
                 ),
               ],
             )),

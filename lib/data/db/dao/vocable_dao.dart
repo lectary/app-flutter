@@ -1,10 +1,8 @@
 import 'package:floor/floor.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 
-
 @dao
 abstract class VocableDao {
-
   @Query("SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id "
       "WHERE lang_media = :langMedia ORDER BY vocable_sort ASC")
   Future<List<Vocable>> findVocablesByLangMedia(String langMedia);
@@ -37,7 +35,8 @@ abstract class VocableDao {
 
   @Query("DELETE FROM vocables WHERE lecture_id IN"
       "(SELECT vocables.lecture_id FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id "
-      "WHERE lang_media = :langMedia"")")
+      "WHERE lang_media = :langMedia"
+      ")")
   Future<void> deleteAllVocablesByLangMedia(String langMedia);
 
   @Query("UPDATE vocables SET vocable_progress = 0")

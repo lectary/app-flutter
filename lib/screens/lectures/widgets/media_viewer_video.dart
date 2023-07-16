@@ -8,7 +8,6 @@ import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
-
 /// Widget for displaying a [Vocable] of [MediaType.mp4].
 /// Custom video player wrapper around the [VideoPlayer] plugin for extended functionality.
 /// Supports lopping, slowMode and autoStarting of videos.
@@ -24,7 +23,15 @@ class LectaryVideoPlayer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  const LectaryVideoPlayer({required this.videoPath, required this.mediaIndex, required this.slowMode, required this.autoMode, required this.loopMode, Key? key, required this.audio}) : super(key: key);
+  const LectaryVideoPlayer({
+    required this.videoPath,
+    required this.mediaIndex,
+    required this.slowMode,
+    required this.autoMode,
+    required this.loopMode,
+    Key? key,
+    required this.audio,
+  }) : super(key: key);
 
   @override
   State<LectaryVideoPlayer> createState() => _LectaryVideoPlayerState();
@@ -35,8 +42,10 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   late Future<void> _initializeVideoPlayerFuture;
 
   bool isVideoFinished = false;
+
   /// Used for indicating if video is played once due to autoMode for avoiding looping.
   bool isAutoModeFinished = false;
+
   /// Used for ensuring the video is only auto-played on swipe in.
   /// E.g. for avoiding that video is played when pressing autoPlay
   bool readyForAutoMode = false;
@@ -46,7 +55,7 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
     // loads the video asset and retrieves a controller
     _controller = VideoPlayerController.file(File(widget.videoPath));
     // init controller content and show first frame via setState()
-    _initializeVideoPlayerFuture = _controller.initialize().then((_) => setState((){}));
+    _initializeVideoPlayerFuture = _controller.initialize().then((_) => setState(() {}));
     readyForAutoMode = widget.autoMode ? true : false;
     super.initState();
   }
@@ -87,41 +96,42 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
     }
     bool interrupted = context.select((CarouselViewModel model) => model.interrupted);
     return FutureBuilder(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          _controller.addListener(_restartVideoListener);
+        future: _initializeVideoPlayerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            _controller.addListener(_restartVideoListener);
 
-          widget.slowMode ? _controller.setPlaybackSpeed(widget.slowModeSpeed) : _controller.setPlaybackSpeed(1);
-          widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
+            widget.slowMode
+                ? _controller.setPlaybackSpeed(widget.slowModeSpeed)
+                : _controller.setPlaybackSpeed(1);
+            widget.loopMode ? _controller.setLooping(true) : _controller.setLooping(false);
 
-          // resets video if its running but its not the current visible one in the carousel
-          if (currentItemIndex != widget.mediaIndex || interrupted) {
-            isAutoModeFinished = false;
-            _controller.pause();
-            _controller.seekTo(Duration.zero);
-            // check-variable for ensuring that autoMode starts only on swipe in
-            readyForAutoMode = widget.autoMode ? true : false;
-          // else auto start video and use bool switch for avoiding looping
-          } else if (widget.autoMode && readyForAutoMode && !isAutoModeFinished) {
-            _controller.play();
-            // play video only once due to autoMode to avoid looping
-            isAutoModeFinished = true;
+            // resets video if its running but its not the current visible one in the carousel
+            if (currentItemIndex != widget.mediaIndex || interrupted) {
+              isAutoModeFinished = false;
+              _controller.pause();
+              _controller.seekTo(Duration.zero);
+              // check-variable for ensuring that autoMode starts only on swipe in
+              readyForAutoMode = widget.autoMode ? true : false;
+              // else auto start video and use bool switch for avoiding looping
+            } else if (widget.autoMode && readyForAutoMode && !isAutoModeFinished) {
+              _controller.play();
+              // play video only once due to autoMode to avoid looping
+              isAutoModeFinished = true;
+            }
+            return AspectRatio(
+              aspectRatio: Constants.aspectRatio,
+              child: _buildVideoPlayerWithOverlay(context),
+            );
+          } else {
+            return const AspectRatio(
+              aspectRatio: Constants.aspectRatio,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
-          return AspectRatio(
-            aspectRatio: Constants.aspectRatio,
-            child: _buildVideoPlayerWithOverlay(context),
-          );
-        } else {
-          return const AspectRatio(
-            aspectRatio: Constants.aspectRatio,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-      }
-    );
+        });
   }
 
   // custom overlay for the video player displaying a play button and a video timeline
@@ -153,7 +163,11 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
                     alignment: Alignment.center,
                     child: const Opacity(
                       opacity: Constants.opacityOfCarouselOverLay,
-                        child: Icon(Icons.play_circle_filled, size: 120, color: ColorsLectary.white,),
+                      child: Icon(
+                        Icons.play_circle_filled,
+                        size: 120,
+                        color: ColorsLectary.white,
+                      ),
                     ),
                   ),
                 ],
@@ -173,9 +187,18 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(isAudioOn ? Icons.volume_up : Icons.volume_off, color: ColorsLectary.lightBlue,),
-                      const Text(" - ", style: TextStyle(color: ColorsLectary.lightBlue),),
-                      Text(widget.audio ?? "", style: const TextStyle(color: ColorsLectary.lightBlue),),
+                      Icon(
+                        isAudioOn ? Icons.volume_up : Icons.volume_off,
+                        color: ColorsLectary.lightBlue,
+                      ),
+                      const Text(
+                        " - ",
+                        style: TextStyle(color: ColorsLectary.lightBlue),
+                      ),
+                      Text(
+                        widget.audio ?? "",
+                        style: const TextStyle(color: ColorsLectary.lightBlue),
+                      ),
                     ],
                   ),
                 ),
@@ -183,12 +206,13 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
             ),
             Visibility(
               visible: isVideoTimelineOn,
-              child: VideoProgressIndicator(_controller, allowScrubbing: false,
+              child: VideoProgressIndicator(
+                _controller,
+                allowScrubbing: false,
                 colors: const VideoProgressColors(
-                  backgroundColor: Color.fromRGBO(0, 0, 0, 0),
-                  bufferedColor: Color.fromRGBO(0, 0, 0, 0),
-                  playedColor: ColorsLectary.yellow
-                ),
+                    backgroundColor: Color.fromRGBO(0, 0, 0, 0),
+                    bufferedColor: Color.fromRGBO(0, 0, 0, 0),
+                    playedColor: ColorsLectary.yellow),
               ),
             )
           ],

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/utils/colors.dart';
 
-
 class Dialogs {
-
   /// A simple [AlertDialog] for loading actions
-  static Future<void> showLoadingDialog(
-      {required BuildContext context, required String text}) async {
+  static Future<void> showLoadingDialog({
+    required BuildContext context,
+    required String text,
+  }) async {
     showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -29,11 +29,12 @@ class Dialogs {
   }
 
   /// A simple [AlertDialog] for confirming user action
-  static Future<void> showAlertDialog(
-      {required BuildContext context,
-      required String title,
-      required String submitText,
-      required Function submitFunc}) async {
+  static Future<void> showAlertDialog({
+    required BuildContext context,
+    required String title,
+    required String submitText,
+    required Function submitFunc,
+  }) async {
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -63,13 +64,14 @@ class Dialogs {
     );
   }
 
-  static Future<void> showAlertDialogThreeButtons(
-      {required BuildContext context,
-        required String title,
-        required String submitText1,
-        required String submitText2,
-        required Function submitFunc1,
-        required Function submitFunc2}) async {
+  static Future<void> showAlertDialogThreeButtons({
+    required BuildContext context,
+    required String title,
+    required String submitText1,
+    required String submitText2,
+    required Function submitFunc1,
+    required Function submitFunc2,
+  }) async {
     showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -107,8 +109,7 @@ class Dialogs {
                       AppLocalizations.of(context).cancel,
                       style: const TextStyle(color: ColorsLectary.lightBlue),
                     ),
-                    onPressed: () => Navigator.of(context).pop()
-                )
+                    onPressed: () => Navigator.of(context).pop())
               ],
             ),
           ],
@@ -117,13 +118,13 @@ class Dialogs {
     );
   }
 
-
   /// A simple [AlertDialog], which automatically calls the passed [reportCallback].
-  static Future<void> showErrorReportDialog(
-      {required BuildContext context,
-      required String errorContext,
-      required String? errorMessage,
-      required reportCallback}) async {
+  static Future<void> showErrorReportDialog({
+    required BuildContext context,
+    required String errorContext,
+    required String? errorMessage,
+    required reportCallback,
+  }) async {
     showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!

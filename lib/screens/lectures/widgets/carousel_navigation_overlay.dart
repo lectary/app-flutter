@@ -6,7 +6,6 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Overlay with two buttons for navigating the [Carousel]
 /// Can be disabled via the settings
 class CarouselNavigationOverlay extends StatelessWidget {
@@ -42,8 +41,7 @@ class CarouselNavigationOverlay extends StatelessWidget {
                         color: ColorsLectary.white,
                       ),
                       onPressed: () => carouselController.previousPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.linear),
+                          duration: const Duration(milliseconds: 300), curve: Curves.linear),
                     ),
                   ),
                 ],
@@ -68,8 +66,7 @@ class CarouselNavigationOverlay extends StatelessWidget {
                         color: ColorsLectary.white,
                       ),
                       onPressed: () => carouselController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.linear),
+                          duration: const Duration(milliseconds: 300), curve: Curves.linear),
                     ),
                   ),
                 ],

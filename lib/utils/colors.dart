@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 /// Color.class needs Integer values
 /// #FFDA5D (yellow) converts to 0xFFDA5D
 /// Opacity has to be considered and added with two leading hex-values (0x00-0xFF)
