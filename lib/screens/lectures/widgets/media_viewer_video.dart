@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 
-/// Widget for displaying a [Vocable] of [MediaType.MP4].
+/// Widget for displaying a [Vocable] of [MediaType.mp4].
 /// Custom video player wrapper around the [VideoPlayer] plugin for extended functionality.
 /// Supports lopping, slowMode and autoStarting of videos.
 class LectaryVideoPlayer extends StatefulWidget {

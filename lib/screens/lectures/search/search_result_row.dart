@@ -27,12 +27,12 @@ class SearchResultRow extends StatelessWidget {
           if (mediaTypeString == null) return const SizedBox();
           MediaType mediaType = MediaType.fromString(mediaTypeString);
           switch (mediaType) {
-            case MediaType.PNG:
-            case MediaType.JPG:
+            case MediaType.png:
+            case MediaType.jpg:
               return const Icon(Icons.insert_photo);
-            case MediaType.MP4:
+            case MediaType.mp4:
               return const Icon(Icons.movie);
-            case MediaType.TXT:
+            case MediaType.txt:
               return const Icon(Icons.subject);
             default:
               return const SizedBox();

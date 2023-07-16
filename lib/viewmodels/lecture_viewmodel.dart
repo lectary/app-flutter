@@ -226,7 +226,7 @@ class LectureViewModel with ChangeNotifier {
         vocable.vocable = deAsciified;
         vocable.vocableSort = Utils.replaceForSort(deAsciified);
         // inherit audio metaDatum from lecture if requirements are met
-        if (vocable.audio == null && MediaType.fromString(vocable.mediaType) == MediaType.MP4 && lecture.audio != null) {
+        if (vocable.audio == null && MediaType.fromString(vocable.mediaType) == MediaType.mp4 && lecture.audio != null) {
           vocable.audio = lecture.audio;
         }
       }); // set id in every vocable and deAsciify
