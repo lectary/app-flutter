@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/search_result.dart';
-import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/screens/lectures/search/search_result_package_item.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
@@ -59,36 +59,29 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
 
     return Theme(
       data: lectaryThemeDark(),
-      child: Builder( // used to create a new buildContext from which the above new theme is accessible
-        builder: (BuildContext context) => Scaffold(
-          appBar: AppBar(
-            title: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(_getHeaderText(
-                  context: context,
-                  selection: selection,
-                  uppercase: uppercase)),
-            ),
-            actions: [
-              IconButton(
-                  icon: Icon(Icons.cancel, semanticLabel: Constants.semanticCloseSearch),
-                  onPressed: () {
-                    // clearing focus i.e. closing keyboard
-                    final FocusScopeNode currentScope = FocusScope.of(context);
-                    if (!currentScope.hasPrimaryFocus &&
-                        currentScope.hasFocus) {
-                      FocusManager.instance.primaryFocus!.unfocus();
-                    }
-                    model.clearFilteredVocables(); // clear filter result
-                    model.clearAllLocalVocables(); // clear list of all local vocables which is not needed anymore
-                    Navigator.pop(context); // close search-screen
-                  }),
-            ],
+      child: Builder(
+        // used to create a new buildContext from which the above new theme is accessible
+        builder: (BuildContext context) => CustomScaffold(
+          appBarTitle: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child:
+                Text(_getHeaderText(context: context, selection: selection, uppercase: uppercase)),
           ),
-          drawer: Theme(
-            data: lectaryThemeLight(),
-            child: MainDrawer(),
-          ),
+          appBarActions: [
+            IconButton(
+                icon: Icon(Icons.cancel, semanticLabel: Constants.semanticCloseSearch),
+                onPressed: () {
+                  // clearing focus i.e. closing keyboard
+                  final FocusScopeNode currentScope = FocusScope.of(context);
+                  if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                    FocusManager.instance.primaryFocus!.unfocus();
+                  }
+                  model.clearFilteredVocables(); // clear filter result
+                  model
+                      .clearAllLocalVocables(); // clear list of all local vocables which is not needed anymore
+                  Navigator.pop(context); // close search-screen
+                }),
+          ],
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -109,8 +102,7 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
                                 textEditingController: textEditingController);
                           })
                       : Center(
-                          child: Text(
-                              AppLocalizations.of(context).noVocablesFound,
+                          child: Text(AppLocalizations.of(context).noVocablesFound,
                               style: Theme.of(context).textTheme.subtitle1),
                         )),
               Column(

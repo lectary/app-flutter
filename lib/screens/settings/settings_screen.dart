@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/main.dart';
 import 'package:lectary/screens/about/about_screen.dart';
-import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/dialogs.dart';
@@ -113,11 +113,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
 
     // building body with the listView and the list of setting-widgets
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context).screenSettingsTitle),
-      ),
-      drawer: MainDrawer(),
+    return CustomScaffold(
+      appBarTitle: Text(AppLocalizations.of(context).screenSettingsTitle),
       body: ListView.separated(
           padding: EdgeInsets.all(0),
           separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),

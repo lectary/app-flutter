@@ -1,9 +1,8 @@
 import 'dart:developer';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/i18n/localizations.dart';
-import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/lectures/lecture_screen.dart';
 import 'package:lectary/screens/lectures/lecture_startup_screen.dart';
@@ -44,87 +43,69 @@ class LectureMainScreen extends StatelessWidget {
               Selection? selection = context.select((CarouselViewModel model) => model.currentSelection);
               bool freshAppInstallation = Provider.of<SettingViewModel>(context, listen: false).settingAppFreshInstalled;
               log("build lecture-main-screen--lectures");
-              return Scaffold(
-                  // to avoid bottom overflow when keyboard on search-screen is opened
+              return CustomScaffold(
                   resizeToAvoidBottomInset: false,
-                  appBar: vocables.isNotEmpty
-                      ? AppBar(
-                          title: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Text(
-                                        _getHeaderText(
-                                            context: context,
-                                            selection: selection,
-                                            uppercase: uppercase),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, VocableSearchScreen.routeName,
-                                    arguments: VocableSearchScreenArguments(
-                                        navigationOnly: true));
-                              }),
-                          actions: [
-                            selection!.type == SelectionType.search
-                                ? IconButton(
-                                    icon: Icon(
-                                      Icons.close,
-                                      semanticLabel:
-                                          Constants.semanticCloseVirtualLecture,
-                                    ),
-                                    onPressed: () =>
-                                        Provider.of<CarouselViewModel>(context, listen: false)
-                                            .closeVirtualLecture())
-                                : IconButton(
-                                    icon: Icon(
-                                      Icons.search,
-                                      semanticLabel: Constants.semanticSearch,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pushNamed(context,
-                                          VocableSearchScreen.routeName,
-                                          arguments:
-                                              VocableSearchScreenArguments(
-                                                  navigationOnly: false));
-                                    }),
-                          ],
-                        )
-                      : AppBar(
-                          title: Text(AppLocalizations.of(context).appTitle),
-                        ),
-                  drawer: Theme(
-                    data: lectaryThemeLight(),
-                    child: MainDrawer(),
-                  ),
+                  appBarTitle: vocables.isNotEmpty
+                      ? _buildAppBarTitle(context, selection, uppercase)
+                      : Text(AppLocalizations.of(context).appTitle),
+                  appBarActions: vocables.isNotEmpty ? _buildAppBarActions(selection, context) : [],
                   body: vocables.isNotEmpty
                       ? LectureScreen(vocables: vocables)
-                      : freshAppInstallation ? LectureStartupScreen()
-                      : LectureNotAvailableScreen()
-              );
+                      : freshAppInstallation
+                          ? LectureStartupScreen()
+                          : LectureNotAvailableScreen());
             } else {
               log("build lecture-main-screen--loading");
-              return Scaffold(
-                  // to avoid bottom overflow when keyboard on search-screen is opened
+              return CustomScaffold(
                   resizeToAvoidBottomInset: false,
-                  appBar: AppBar(
-                    title: Text(AppLocalizations.of(context).appTitle),
-                  ),
-                  drawer: Theme(
-                    data: lectaryThemeLight(),
-                    child: MainDrawer(),
-                  ),
+                  appBarTitle: Text(AppLocalizations.of(context).appTitle),
                   body: Center(child: CircularProgressIndicator()));
             }
           }),
     );
+  }
+
+  List<Widget> _buildAppBarActions(Selection? selection, BuildContext context) {
+    return [
+      selection!.type == SelectionType.search
+          ? IconButton(
+              icon: Icon(
+                Icons.close,
+                semanticLabel: Constants.semanticCloseVirtualLecture,
+              ),
+              onPressed: () =>
+                  Provider.of<CarouselViewModel>(context, listen: false).closeVirtualLecture())
+          : IconButton(
+              icon: Icon(
+                Icons.search,
+                semanticLabel: Constants.semanticSearch,
+              ),
+              onPressed: () {
+                Navigator.pushNamed(context, VocableSearchScreen.routeName,
+                    arguments: VocableSearchScreenArguments(navigationOnly: false));
+              }),
+    ];
+  }
+
+  GestureDetector _buildAppBarTitle(BuildContext context, Selection? selection, bool uppercase) {
+    return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        child: Row(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  _getHeaderText(context: context, selection: selection, uppercase: uppercase),
+                ),
+              ),
+            ),
+          ],
+        ),
+        onTap: () {
+          Navigator.pushNamed(context, VocableSearchScreen.routeName,
+              arguments: VocableSearchScreenArguments(navigationOnly: true));
+        });
   }
 
   /// Helper class for extracting correct header text depending on the passed [Selection].

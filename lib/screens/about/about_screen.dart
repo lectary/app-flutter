@@ -35,11 +35,8 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context).screenAboutTitle),
-      ),
-      drawer: MainDrawer(),
+    return CustomScaffold(
+appBarTitle: Text(AppLocalizations.of(context).screenAboutTitle),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

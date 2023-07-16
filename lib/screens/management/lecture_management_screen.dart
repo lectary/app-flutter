@@ -3,7 +3,7 @@ import 'package:lectary/data/api/lectary_api.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/response_type.dart';
-import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/widgets/lecture_package_item.dart';
 import 'package:lectary/utils/colors.dart';
@@ -13,12 +13,11 @@ import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:lectary/widgets/custom_search_bar.dart';
 import 'package:provider/provider.dart';
 
-
 /// Lecture management screen for downloading, updating and deleting [Lecture].
 /// Retrieves all available [Lecture] from the [LectaryApi] and displays on success
 /// a [ListView] of [LecturePackage] which are [Lecture] grouped by their package name.
 class LectureManagementScreen extends StatefulWidget {
-  static const String routeName  = '/lectureManagement';
+  static const String routeName = '/lectureManagement';
 
   @override
   _LectureManagementScreenState createState() => _LectureManagementScreenState();
@@ -26,6 +25,7 @@ class LectureManagementScreen extends StatefulWidget {
 
 class _LectureManagementScreenState extends State<LectureManagementScreen> {
   TextEditingController textEditingController = TextEditingController();
+
   // needed to control screen focus, i.e. handle the keyboard
   FocusNode focus = FocusNode();
   late LectureViewModel _lectureViewModel;
@@ -33,6 +33,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
   @override
   void initState() {
     super.initState();
+
     /// Callback for loading lectures on first frame once the layout is finished completely
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       _lectureViewModel = Provider.of<LectureViewModel>(context, listen: false);
@@ -42,21 +43,17 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
   @override
   void dispose() {
-    WidgetsBinding.instance!
-        .addPostFrameCallback((_) => _lectureViewModel.resetCurrentFilter());
+    WidgetsBinding.instance!.addPostFrameCallback((_) => _lectureViewModel.resetCurrentFilter());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(AppLocalizations.of(context).screenManagementTitle)),
-        ),
-      drawer: MainDrawer(),
-      body: Column(
+    return CustomScaffold(
+        appBarTitle: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(AppLocalizations.of(context).screenManagementTitle)),
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Expanded(
@@ -70,7 +67,8 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                   child: CustomSearchBar(
                     textEditingController: textEditingController,
                     focusNode: focus,
-                    filterFunction: Provider.of<LectureViewModel>(context, listen: false).filterLectureList,
+                    filterFunction:
+                        Provider.of<LectureViewModel>(context, listen: false).filterLectureList,
                   ),
                 ),
               ],
@@ -99,7 +97,10 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(AppLocalizations.of(context).noInternetConnection),
-                Text(AppLocalizations.of(context).offlineMode, style: TextStyle(fontSize: 20),),
+                Text(
+                  AppLocalizations.of(context).offlineMode,
+                  style: TextStyle(fontSize: 20),
+                ),
               ],
             ),
           ));
@@ -114,8 +115,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             ? RefreshIndicator(
                 color: ColorsLectary.lightBlue,
                 onRefresh: () async {
-                  Provider.of<LectureViewModel>(context, listen: false)
-                      .loadLectaryData();
+                  Provider.of<LectureViewModel>(context, listen: false).loadLectaryData();
                 },
                 // refreshIndicator needs a scrollable child widget
                 // using stack with listView to retain center position of error text
@@ -138,8 +138,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
         return RefreshIndicator(
           color: ColorsLectary.lightBlue,
           onRefresh: () async {
-            Provider.of<LectureViewModel>(context, listen: false)
-                .loadLectaryData();
+            Provider.of<LectureViewModel>(context, listen: false).loadLectaryData();
           },
           // refreshIndicator needs a scrollable child widget
           // using stack with listView to retain center position of error text
@@ -147,8 +146,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
           child: Stack(
             children: <Widget>[
               ListView(),
-              Center(
-                  child: Text(lectureViewModel.availableLectureStatus.message!)),
+              Center(child: Text(lectureViewModel.availableLectureStatus.message!)),
             ],
           ),
         );
@@ -160,7 +158,8 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
 
   // builds a listView with ListTiles based on the generated item-list
   Widget _generateListView(List<LecturePackage> lectures) {
-    final String langMedia = Provider.of<SettingViewModel>(context, listen: false).settingLearningLanguage;
+    final String langMedia =
+        Provider.of<SettingViewModel>(context, listen: false).settingLearningLanguage;
     return RefreshIndicator(
       color: ColorsLectary.lightBlue,
       onRefresh: () async {
@@ -190,16 +189,25 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                         title: AppLocalizations.of(context).deleteAllLecturesQuestion,
                         submitText1: AppLocalizations.of(context).deleteAllLectures,
                         submitText2: AppLocalizations.of(context).deleteOnlyLecturesFromLangPart1 +
-                            langMedia + AppLocalizations.of(context).deleteOnlyLecturesFromLangPart2,
+                            langMedia +
+                            AppLocalizations.of(context).deleteOnlyLecturesFromLangPart2,
                         submitFunc1: () async {
-                          Dialogs.showLoadingDialog(context: context, text: AppLocalizations.of(context).deletingLectures);
-                          await Provider.of<LectureViewModel>(context, listen: false).deleteAllLectures();
-                          Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
+                          Dialogs.showLoadingDialog(
+                              context: context,
+                              text: AppLocalizations.of(context).deletingLectures);
+                          await Provider.of<LectureViewModel>(context, listen: false)
+                              .deleteAllLectures();
+                          Navigator.popUntil(
+                              context, ModalRoute.withName(LectureMainScreen.routeName));
                         },
                         submitFunc2: () async {
-                          Dialogs.showLoadingDialog(context: context, text: AppLocalizations.of(context).deletingLectures);
-                          await Provider.of<LectureViewModel>(context, listen: false).deleteAllLecturesFromLangMedia(langMedia);
-                          Navigator.popUntil(context, ModalRoute.withName(LectureMainScreen.routeName));
+                          Dialogs.showLoadingDialog(
+                              context: context,
+                              text: AppLocalizations.of(context).deletingLectures);
+                          await Provider.of<LectureViewModel>(context, listen: false)
+                              .deleteAllLecturesFromLangMedia(langMedia);
+                          Navigator.popUntil(
+                              context, ModalRoute.withName(LectureMainScreen.routeName));
                         }),
                   ),
                 ),
@@ -216,4 +224,3 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
     );
   }
 }
-

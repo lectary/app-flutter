@@ -2,25 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/selection_type.dart';
-import 'package:lectary/screens/drawer/widgets/lecture_package_item.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/colors.dart';
+import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
+import 'lecture_package_item.dart';
+
 
 /// Drawer screen, handling the navigation and loading of local [Lecture]s
 /// Used for further navigation to [LectureManagementScreen] and [SettingsScreen]
-class MainDrawer extends StatefulWidget {
+class CustomDrawer extends StatefulWidget {
 
   @override
-  _MainDrawerState createState() => _MainDrawerState();
+  _CustomDrawerState createState() => _CustomDrawerState();
 }
 
-class _MainDrawerState extends State<MainDrawer> {
+class _CustomDrawerState extends State<CustomDrawer> {
   late CarouselViewModel _carouselViewModel;
 
   /// Listening to drawer init(opened) and disposed(closed) to interrupt
@@ -30,7 +32,7 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _carouselViewModel = Provider.of<CarouselViewModel>(context, listen: false);
       _carouselViewModel.interrupted = true;
     });
@@ -38,7 +40,7 @@ class _MainDrawerState extends State<MainDrawer> {
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_carouselViewModel.interruptedCauseNavigation) _carouselViewModel.interrupted = false;
     });
     super.dispose();
@@ -47,52 +49,59 @@ class _MainDrawerState extends State<MainDrawer> {
   @override
   Widget build(BuildContext context) {
     final String learningLanguage = context.select((SettingViewModel model) => model.settingLearningLanguage);
-    return Drawer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-            height: 80,
-            child: DrawerHeader(
-              margin: EdgeInsets.all(0.0),
-              padding: EdgeInsets.all(0.0),
-              child: Row(
-                children: <Widget>[
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.arrow_back_ios),
+    return Theme(
+      data: CustomAppTheme.defaultLightTheme,
+      child: Builder(
+        builder: (context) {
+          return Drawer(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Container(
+                  height: 80,
+                  child: DrawerHeader(
+                    margin: EdgeInsets.all(0.0),
+                    padding: EdgeInsets.all(0.0),
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(Icons.arrow_back_ios),
+                        ),
+                        Text(
+                          learningLanguage,
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    learningLanguage,
-                    style: Theme.of(context).textTheme.headline5,
+                ),
+                Expanded(
+                  child: Container(
+                    child: _generateListView(context),
                   ),
-                ],
-              ),
+                ),
+                Divider(height: 1, thickness: 1),
+                _buildButton(
+                    context: context,
+                    flex: 1,
+                    icon: Icons.cloud_download,
+                    text: AppLocalizations.of(context).drawerButtonLectureManagement,
+                    routeName: LectureManagementScreen.routeName),
+                Divider(height: 1, thickness: 1),
+                _buildButton(
+                    context: context,
+                    flex: 1,
+                    icon: Icons.settings,
+                    text: AppLocalizations.of(context).drawerButtonSettings,
+                    routeName: SettingsScreen.routeName),
+                Divider(height: 1, thickness: 1),
+              ],
             ),
-          ),
-          Expanded(
-            child: Container(
-              child: _generateListView(context),
-            ),
-          ),
-          Divider(height: 1, thickness: 1),
-          _buildButton(
-              context: context,
-              flex: 1,
-              icon: Icons.cloud_download,
-              text: AppLocalizations.of(context).drawerButtonLectureManagement,
-              routeName: LectureManagementScreen.routeName),
-          Divider(height: 1, thickness: 1),
-          _buildButton(
-              context: context,
-              flex: 1,
-              icon: Icons.settings,
-              text: AppLocalizations.of(context).drawerButtonSettings,
-              routeName: SettingsScreen.routeName),
-          Divider(height: 1, thickness: 1),
-        ],
+          );
+        }
       ),
     );
   }
@@ -123,13 +132,13 @@ class _MainDrawerState extends State<MainDrawer> {
   Widget _generateListView(BuildContext context) {
     Selection? selection = context.select((CarouselViewModel model) => model.currentSelection);
     return StreamBuilder<List<LecturePackage>>(
-      stream: Provider.of<CarouselViewModel>(context, listen: false).loadLocalLecturesAsStream(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isNotEmpty) {
-            return ListView.separated(
-                padding: EdgeInsets.all(0),
-                separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
+        stream: Provider.of<CarouselViewModel>(context, listen: false).loadLocalLecturesAsStream(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.isNotEmpty) {
+              return ListView.separated(
+                  padding: EdgeInsets.all(0),
+                  separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
                   itemCount: snapshot.data!.length + 1,
                   itemBuilder: (context, index) {
                     if (index == 0) {
@@ -141,9 +150,9 @@ class _MainDrawerState extends State<MainDrawer> {
                           title: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Text(AppLocalizations.of(context).allVocables, style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                              color: selection != null && selection.type == SelectionType.all
-                                  ? ColorsLectary.white
-                                  : Colors.black
+                                color: selection != null && selection.type == SelectionType.all
+                                    ? ColorsLectary.white
+                                    : Colors.black
                             ),),
                           ),
                           onTap: () {
@@ -157,14 +166,14 @@ class _MainDrawerState extends State<MainDrawer> {
                     return LecturePackageItem(context, snapshot.data![index - 1]);
                   });
             } else {
-            return Center(
-              child: Text(AppLocalizations.of(context).drawerNoLecturesAvailable),
-            );
+              return Center(
+                child: Text(AppLocalizations.of(context).drawerNoLecturesAvailable),
+              );
+            }
+          } else {
+            return Center(child: CircularProgressIndicator());
           }
-        } else {
-          return Center(child: CircularProgressIndicator());
         }
-      }
     );
   }
 }
