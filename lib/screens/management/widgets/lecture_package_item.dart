@@ -115,13 +115,15 @@ class LecturePackageItem extends StatelessWidget {
     return <Widget>[
       const Divider(height: 1, thickness: 1),
       ListTile(
-          leading: _getIconForLectureStatus(lecture.lectureStatus),
-          title: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson)),
-          trailing: IconButton(
-              onPressed: () => _showLectureMenu(lecture),
-              icon: const Icon(Icons.more_horiz, semanticLabel: Constants.semanticOpenMenu))),
+        leading: _getIconForLectureStatus(lecture.lectureStatus),
+        title: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson)),
+        trailing: IconButton(
+            onPressed: () => _showLectureMenu(lecture),
+            icon: const Icon(Icons.more_horiz, semanticLabel: Constants.semanticOpenMenu)),
+        onTap: () => _showLectureMenu(lecture),
+      ),
     ];
   }
 
