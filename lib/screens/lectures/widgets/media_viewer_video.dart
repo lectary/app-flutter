@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:lectary/screens/lectures/widgets/audio_indicator.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
@@ -137,7 +138,6 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
   // custom overlay for the video player displaying a play button and a video timeline
   Widget _buildVideoPlayerWithOverlay(BuildContext context) {
     bool isOverlayOn = context.select((SettingViewModel model) => model.settingShowMediaOverlay);
-    bool isAudioOn = context.select((SettingViewModel model) => model.settingPlayMediaWithSound);
     bool isVideoTimelineOn = context.select((SettingViewModel model) => model.settingShowVideoTimeline);
     return Semantics(
       label: Constants.semanticMediumVideo,
@@ -173,37 +173,8 @@ class _LectaryVideoPlayerState extends State<LectaryVideoPlayer> {
                 ],
               ),
             ),
-            Visibility(
-              visible: isOverlayOn && widget.audio != null,
-              child: Container(
-                margin: const EdgeInsets.only(left: 10, bottom: 10),
-                alignment: Alignment.bottomLeft,
-                child: Container(
-                  padding: const EdgeInsets.only(left: 8, right: 10, top: 3, bottom: 3),
-                  decoration: BoxDecoration(
-                    color: ColorsLectary.darkBlue,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isAudioOn ? Icons.volume_up : Icons.volume_off,
-                        color: ColorsLectary.lightBlue,
-                      ),
-                      const Text(
-                        " - ",
-                        style: TextStyle(color: ColorsLectary.lightBlue),
-                      ),
-                      Text(
-                        widget.audio ?? "",
-                        style: const TextStyle(color: ColorsLectary.lightBlue),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            if (isOverlayOn && widget.audio != null)
+              AudioIndicator(audio: widget.audio!),
             Visibility(
               visible: isVideoTimelineOn,
               child: VideoProgressIndicator(

@@ -27,12 +27,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CarouselViewModel with ChangeNotifier {
   final LectureRepository _lectureRepository;
   SettingViewModel? _settingViewModel;
+  bool? _settingPlayMediaWithSound; // acts like a filter for this setting, to avoid global rebuild of carousel
 
   /// Updates the local reference to [SettingViewModel].
   void updateSettings(SettingViewModel settingViewModel) {
     _settingViewModel = settingViewModel;
-    listenOnLocalLectures();
-    loadAllVocables();
+    if (_settingPlayMediaWithSound == null || _settingPlayMediaWithSound == settingViewModel.settingPlayMediaWithSound) {
+      listenOnLocalLectures();
+      loadAllVocables();
+    }
+    _settingPlayMediaWithSound = _settingViewModel?.settingPlayMediaWithSound;
     log("updated settings reference in carouselViewModel");
   }
 
