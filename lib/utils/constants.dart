@@ -23,7 +23,7 @@ class Constants {
   static const int mediaAnimationDurationMilliseconds = 2000;
 
   // settings
-  static const bool defaultPlayMediaWithSound = true;
+  static const bool defaultPlayMediaWithSound = false;
   static const bool defaultShowVideoTimeline = true;
   static const bool defaultShowMediaOverlay = true;
   static const bool defaultUppercase = false;
