@@ -418,7 +418,13 @@ class LectureViewModel with ChangeNotifier {
 
     final dirName = lecture.fileName.split('.')[0];
     final lectureDir = Directory('$dir/$dirName');
-    lectureDir.deleteSync(recursive: true);
+    try {
+      lectureDir.deleteSync(recursive: true);
+    } on Exception catch (e) {
+      final format = DateFormat('yyyy-MM-dd-HH_mm');
+      final timestamp = format.format(DateTime.now());
+      LectureRepository.reportErrorToServer(timestamp, 'Failed to delete media files: $e');
+    }
   }
 
   /// Extracts and saves the content of a zip-file
