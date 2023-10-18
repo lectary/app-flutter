@@ -83,7 +83,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       text: AppLocalizations.of(context).aboutCredits,
                       children: [
                         TextSpan(
-                            text: "Flutter.dev.\n\n",
+                            text: "Flutter.dev\n\n",
                             style: CustomAppTheme.hyperlink(context),
                             recognizer: _buildTapGestureRecognizer('https://flutter.dev')),
                         TextSpan(
@@ -128,7 +128,7 @@ class _AboutScreenState extends State<AboutScreen> {
               child: RichText(
                 textAlign: TextAlign.right,
                 text: TextSpan(
-                  text: AppLocalizations.of(context).aboutVersion + Constants.versionCommitHash,
+                  text: '${AppLocalizations.of(context).aboutVersion}  ${Constants.versionCommitHash}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.black,
@@ -142,7 +142,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 style: ElevatedButton.styleFrom(backgroundColor: ColorsLectary.lightBlue),
                 child: Text(
                   AppLocalizations.of(context).okUppercase,
-                  style: const TextStyle(color: Colors.black, fontSize: 32),
+                  style: const TextStyle(color: Colors.white, fontSize: 32),
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
