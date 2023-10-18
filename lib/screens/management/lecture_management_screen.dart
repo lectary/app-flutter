@@ -186,14 +186,15 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                   child: ListTile(
                     leading: const Icon(Icons.delete_forever),
                     title: Text(AppLocalizations.of(context).deleteAllLectures),
-                    onTap: () => Dialogs.showAlertDialogThreeButtons(
+                    onTap: () => Dialogs.showAlert(
                         context: context,
-                        title: AppLocalizations.of(context).deleteAllLecturesQuestion,
-                        submitText1: AppLocalizations.of(context).deleteAllLectures,
-                        submitText2: AppLocalizations.of(context).deleteOnlyLecturesFromLangPart1 +
+                        title: AppLocalizations.of(context).deleteAllLectures,
+                        content: AppLocalizations.of(context).deleteAllLecturesQuestion,
+                        submitText: AppLocalizations.of(context).deleteAllLectures,
+                        submitTextSecondary: AppLocalizations.of(context).deleteOnlyLecturesFromLangPart1 +
                             langMedia +
                             AppLocalizations.of(context).deleteOnlyLecturesFromLangPart2,
-                        submitFunc1: () async {
+                        submitFunc: () async {
                           Dialogs.showLoadingDialog(
                               context: context,
                               text: AppLocalizations.of(context).deletingLectures);
@@ -202,7 +203,7 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
                           Navigator.popUntil(
                               context, ModalRoute.withName(LectureMainScreen.routeName));
                         },
-                        submitFunc2: () async {
+                        submitFuncSecondary: () async {
                           Dialogs.showLoadingDialog(
                               context: context,
                               text: AppLocalizations.of(context).deletingLectures);

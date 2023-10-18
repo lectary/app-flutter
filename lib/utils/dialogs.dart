@@ -28,91 +28,63 @@ class Dialogs {
         });
   }
 
-  /// A simple [AlertDialog] for confirming user action
-  static Future<void> showAlertDialog({
+  /// A simple [AlertDialog] for confirming user actions, with an optional secondary submit button.
+  static Future<void> showAlert({
     required BuildContext context,
     required String title,
+    String? content,
     required String submitText,
     required Function submitFunc,
+    String? submitTextSecondary,
+    Function? submitFuncSecondary,
   }) async {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          actions: <Widget>[
-            TextButton(
-                child: Text(
-                  AppLocalizations.of(context).cancel,
-                  style: const TextStyle(color: ColorsLectary.lightBlue),
-                ),
-                onPressed: () => Navigator.of(context).pop()),
-            TextButton(
-              child: Text(
-                submitText,
-                style: const TextStyle(color: ColorsLectary.red),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                submitFunc();
-              },
-            ),
-          ],
-        );
+    final primaryButton = TextButton(
+      child: Text(
+        submitText,
+        textAlign: TextAlign.right,
+        style: const TextStyle(color: ColorsLectary.red),
+      ),
+      onPressed: () {
+        Navigator.of(context).pop();
+        submitFunc();
       },
     );
-  }
-
-  static Future<void> showAlertDialogThreeButtons({
-    required BuildContext context,
-    required String title,
-    required String submitText1,
-    required String submitText2,
-    required Function submitFunc1,
-    required Function submitFunc2,
-  }) async {
+    final cancelButton = TextButton(
+      child: Text(
+        AppLocalizations.of(context).cancel,
+        style: const TextStyle(color: ColorsLectary.lightBlue),
+      ),
+      onPressed: () => Navigator.of(context).pop(),
+    );
     showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
-          actions: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                TextButton(
-                  child: Text(
-                    submitText1,
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(color: ColorsLectary.red),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    submitFunc1();
-                  },
-                ),
-                TextButton(
-                  child: Text(
-                    submitText2,
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(color: ColorsLectary.red),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    submitFunc2();
-                  },
-                ),
-                TextButton(
-                    child: Text(
-                      AppLocalizations.of(context).cancel,
-                      style: const TextStyle(color: ColorsLectary.lightBlue),
-                    ),
-                    onPressed: () => Navigator.of(context).pop())
-              ],
-            ),
-          ],
+          content: content == null ? null : Text(content),
+          actions: submitTextSecondary != null && submitFuncSecondary != null
+              ? [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      primaryButton,
+                      TextButton(
+                        child: Text(
+                          submitTextSecondary,
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(color: ColorsLectary.red),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          submitFuncSecondary();
+                        },
+                      ),
+                      cancelButton
+                    ],
+                  )
+                ]
+              : [primaryButton, cancelButton],
         );
       },
     );

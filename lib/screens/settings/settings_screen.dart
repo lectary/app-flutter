@@ -87,9 +87,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       ListTile(
         title: Text(AppLocalizations.of(context).settingResetSettings),
-        onTap: () => Dialogs.showAlertDialog(
+        onTap: () => Dialogs.showAlert(
             context: context,
-            title: AppLocalizations.of(context).settingResetSettingsQuestion,
+            title: AppLocalizations.of(context).settingResetSettings,
+            content: AppLocalizations.of(context).settingResetSettingsQuestion,
             submitText: AppLocalizations.of(context).reset,
             submitFunc: () async {
               String oldLang = settings.settingAppLanguage;
