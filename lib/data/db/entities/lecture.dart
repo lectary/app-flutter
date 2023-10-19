@@ -53,6 +53,9 @@ class Lecture {
 
   String? sort;
 
+  @ignore
+  bool debug = false;
+
   Lecture({
     this.id,
     required this.fileName,
@@ -66,7 +69,8 @@ class Lecture {
     this.audio,
     required this.date,
     this.sort,
-  });
+    bool? debug,
+  }) : debug = debug ?? false;
 
   @ignore
   Lecture.clone(Lecture lecture)
@@ -83,7 +87,8 @@ class Lecture {
         langVocable = lecture.langVocable,
         audio = lecture.audio,
         date = lecture.date,
-        sort = lecture.sort;
+        sort = lecture.sort,
+        debug = lecture.debug;
 
   /// Factory constructor to create a new lecture instance from a json.
   /// Returns a new [Lecture] on successful json deserialization.
@@ -111,6 +116,7 @@ class Lecture {
       audio: metadata.containsKey("AUDIO") ? metadata.remove("AUDIO") : null,
       date: metadata.containsKey("DATE") ? metadata.remove("DATE") : Utils.currentDate(),
       sort: metadata.containsKey("SORT") ? Utils.fillWithLeadingZeros(metadata.remove("SORT")) : null,
+      debug: fileName.contains('---DEBUG.zip'),
     );
   }
 

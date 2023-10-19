@@ -13,35 +13,45 @@ import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
+import 'package:lectary/utils/utils.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 /// Entry point, opens and loads an instance of the database provided by [DatabaseProvider]
 /// and runs [LectaryApp]
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   final database = await DatabaseProvider.instance.db;
   log("database initialized!");
 
-  runApp(LectaryApp(lectureDatabase: database));
+  final isDebug = await Utils.isDebugMode();
+  final api = LectaryApi(http.Client(), isDebug: isDebug);
+
+  runApp(LectaryApp(lectaryApi: api, lectureDatabase: database));
 }
 
 /// This first widget is the root of the application and responsible for creating all needed providers
 /// Providers in usage: [SettingViewModel], [LectureViewModel], [CarouselViewModel]
 /// Retrieves the instance of the [LectureDatabase]
 class LectaryApp extends StatelessWidget {
+  final LectaryApi lectaryApi;
   final LectureDatabase lectureDatabase;
 
-  const LectaryApp({super.key, required this.lectureDatabase});
+  const LectaryApp({
+    super.key,
+    required this.lectaryApi,
+    required this.lectureDatabase,
+  });
 
   @override
   Widget build(BuildContext context) {
     log("build lectary app providers!");
     // initializing immutable dependencies that are not provided to child widgets
-    final api = LectaryApi();
-    final lectureRepository = LectureRepository(lectaryApi: api, lectureDatabase: lectureDatabase);
+    final lectureRepository = LectureRepository(lectaryApi: lectaryApi, lectureDatabase: lectureDatabase);
 
     return MultiProvider(
       providers: [

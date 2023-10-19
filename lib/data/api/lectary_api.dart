@@ -16,6 +16,11 @@ import 'package:path_provider/path_provider.dart';
 
 /// Endpoint for the communication with the lectary API.
 class LectaryApi {
+  final http.Client _client;
+  final bool isDebug;
+
+  LectaryApi(this._client, {this.isDebug = false});
+
   /// Fetches all available data from the lectary API.
   /// Returns a [LectaryData] as [Future].
   /// Throws [NoInternetException] if there is no internet connection
@@ -23,14 +28,14 @@ class LectaryApi {
   Future<LectaryData> fetchLectaryData() async {
     http.Response response;
     try {
-      response = await http
+      response = await _client
           .get(Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiLectureOverviewEndpoint));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
 
     if (response.statusCode == 200) {
-      return LectaryData.fromJson(json.decode(response.body));
+      return LectaryData.fromJson(json.decode(response.body), isDebug);
     } else {
       throw ServerResponseException(
           "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
@@ -47,7 +52,7 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(
+      response = await _client.get(
           Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + lecture.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
@@ -75,7 +80,7 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(
+      response = await _client.get(
           Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + abstract.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
@@ -103,7 +108,7 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(
+      response = await _client.get(
           Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + coding.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");

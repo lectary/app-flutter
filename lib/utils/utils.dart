@@ -10,9 +10,16 @@ import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Helper class with multiple static functions for sorting, validation or string operations.
 class Utils {
+  static Future<bool> isDebugMode() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String packageName = packageInfo.packageName;
+    return packageName.contains('.debug');
+  }
+
   /// Custom compare function which uses [replaceForSort] to replace special
   /// german letters with equivalent characters used for sorting.
   static int customCompareTo(String a, String b) {
