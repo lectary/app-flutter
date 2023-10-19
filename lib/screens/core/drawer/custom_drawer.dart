@@ -53,15 +53,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return Theme(
       data: CustomAppTheme.defaultLightTheme,
       child: Builder(builder: (context) {
+        final paddingTop = MediaQuery.paddingOf(context).top;
         return Drawer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SizedBox(
-                height: 80,
-                child: DrawerHeader(
-                  margin: const EdgeInsets.all(0.0),
-                  padding: const EdgeInsets.all(0.0),
+              Padding(
+                padding: EdgeInsets.only(top: paddingTop),
+                child: SizedBox(
+                  height: kToolbarHeight,
                   child: Row(
                     children: <Widget>[
                       IconButton(
