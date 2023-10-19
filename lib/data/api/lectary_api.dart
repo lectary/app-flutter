@@ -17,9 +17,16 @@ import 'package:path_provider/path_provider.dart';
 /// Endpoint for the communication with the lectary API.
 class LectaryApi {
   final http.Client _client;
-  final bool isDebug;
+  final bool _isDebug;
 
-  LectaryApi(this._client, {this.isDebug = false});
+  static bool isDebugOverride = false;
+
+  LectaryApi(this._client, {bool isDebug = false}) : _isDebug = isDebug;
+
+  bool _isDebugMode() {
+    if (isDebugOverride) return true;
+    return _isDebug;
+  }
 
   /// Fetches all available data from the lectary API.
   /// Returns a [LectaryData] as [Future].
@@ -35,7 +42,7 @@ class LectaryApi {
     }
 
     if (response.statusCode == 200) {
-      return LectaryData.fromJson(json.decode(response.body), isDebug);
+      return LectaryData.fromJson(json.decode(response.body), _isDebugMode());
     } else {
       throw ServerResponseException(
           "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");

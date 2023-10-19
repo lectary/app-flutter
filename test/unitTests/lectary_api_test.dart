@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -50,12 +48,30 @@ void main() {
     final api = LectaryApi(client);
     verifyLessonIsPresent(bool isPresent) => verifyLessonIsPresentWrapper(api, isPresent);
 
-    test('test_whenTrue_thenEmpty', () async {
+    test('test_whenFlagMissing_thenLecturePresent', () async {
+      LectaryApi.isDebugOverride = false;
+      mockApiAnswerWithDebugFlagValue(false);
+      verifyLessonIsPresent(true);
+    });
+    test('test_whenFlagPresent_thenLectureEmpty', () async {
+      LectaryApi.isDebugOverride = false;
       mockApiAnswerWithDebugFlagValue(true);
       verifyLessonIsPresent(false);
     });
-    test('test_whenFalse_thenPresent', () async {
+  });
+
+  group('Test debug flag with prod api and debug override', () {
+    final api = LectaryApi(client);
+    verifyLessonIsPresent(bool isPresent) => verifyLessonIsPresentWrapper(api, isPresent);
+
+    test('test_whenFlagMissing_thenLectureEmpty', () async {
+      LectaryApi.isDebugOverride = true;
       mockApiAnswerWithDebugFlagValue(false);
+      verifyLessonIsPresent(true);
+    });
+    test('test_whenFlagPresent_thenLectureEmpty', () async {
+      LectaryApi.isDebugOverride = true;
+      mockApiAnswerWithDebugFlagValue(true);
       verifyLessonIsPresent(true);
     });
   });
@@ -64,12 +80,30 @@ void main() {
     final api = LectaryApi(client, isDebug: true);
     verifyLessonIsPresent(bool isPresent) => verifyLessonIsPresentWrapper(api, isPresent);
 
-    test('test_whenTrue_thenPresent', () async {
+    test('test_whenFlagMissing_thenLectureEmpty', () async {
+      LectaryApi.isDebugOverride = false;
+      mockApiAnswerWithDebugFlagValue(false);
+      verifyLessonIsPresent(true);
+    });
+    test('test_whenFlagPresent_thenLectureEmpty', () async {
+      LectaryApi.isDebugOverride = false;
       mockApiAnswerWithDebugFlagValue(true);
       verifyLessonIsPresent(true);
     });
-    test('test_whenFalse_thenPresent', () async {
+  });
+
+  group('Test debug flag with debug api and debug override', () {
+    final api = LectaryApi(client, isDebug: true);
+    verifyLessonIsPresent(bool isPresent) => verifyLessonIsPresentWrapper(api, isPresent);
+
+    test('test_whenFlagMissing_thenLectureEmpty', () async {
+      LectaryApi.isDebugOverride = true;
       mockApiAnswerWithDebugFlagValue(false);
+      verifyLessonIsPresent(true);
+    });
+    test('test_whenFlagPresent_thenLectureEmpty', () async {
+      LectaryApi.isDebugOverride = true;
+      mockApiAnswerWithDebugFlagValue(true);
       verifyLessonIsPresent(true);
     });
   });

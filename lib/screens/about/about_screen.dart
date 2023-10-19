@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:lectary/data/api/lectary_api.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/utils/colors.dart';
@@ -20,6 +21,9 @@ class AboutScreen extends StatefulWidget {
 
 class _AboutScreenState extends State<AboutScreen> {
   final List<TapGestureRecognizer> _tapGestureRecognizerList = [];
+
+  static int _debugCounter = 0;
+  static const _magicNumberDebugMode = 17;
 
   @override
   void dispose() {
@@ -42,6 +46,12 @@ class _AboutScreenState extends State<AboutScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            if (_debugCounter == _magicNumberDebugMode)
+              Container(
+                color: ColorsLectary.red,
+                padding: const EdgeInsets.all(10),
+                child: const Center(child: Text("DEBUG MODE")),
+              ),
             Container(
                 color: ColorsLectary.logoDarkBlue,
                 child: Center(
@@ -123,15 +133,18 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-              child: RichText(
-                textAlign: TextAlign.right,
-                text: TextSpan(
-                  text: '${AppLocalizations.of(context).aboutVersion}  ${Constants.versionCommitHash}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black,
+            GestureDetector(
+              onTap: _increaseDebugCounter,
+              child: Container(
+                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                child: RichText(
+                  textAlign: TextAlign.right,
+                  text: TextSpan(
+                    text: '${AppLocalizations.of(context).aboutVersion}  ${Constants.versionCommitHash}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
@@ -151,5 +164,19 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
       ),
     );
+  }
+
+  void _increaseDebugCounter() {
+    setState(() {
+      _debugCounter++;
+      if (_debugCounter == _magicNumberDebugMode) {
+        LectaryApi.isDebugOverride = true;
+      } else {
+        LectaryApi.isDebugOverride = false;
+      }
+      if (_debugCounter > _magicNumberDebugMode) {
+        _debugCounter = 0;
+      }
+    });
   }
 }
