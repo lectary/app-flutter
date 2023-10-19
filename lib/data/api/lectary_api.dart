@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
@@ -124,6 +125,8 @@ class LectaryApi {
   /// Params are the [timestamp], in the format 'yyyy-MM-dd-HH_mm', and an [errorMessage].
   /// Returns a [Future] with a [http.Response].
   static Future<http.Response?> reportErrorToServer(String timestamp, String errorMessage) async {
+    if (kDebugMode) return null;
+
     // check correct timestamp format
     try {
       final format = DateFormat('yyyy-MM-dd-HH_mm');
