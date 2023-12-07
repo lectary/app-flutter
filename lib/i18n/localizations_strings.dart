@@ -171,7 +171,7 @@ final de = {
   AboutIconCredit: 'Icons von: ',
   AboutIconCreationCreditPart1: 'Icons erstellt von ',
   AboutIconCreationCreditPart2: 'von ',
-  AboutVersion: 'Version 4.3.10',
+  AboutVersion: 'Version',
 };
 
 // Language en
@@ -258,5 +258,5 @@ final en = {
   AboutIconCredit: 'Icons by : ',
   AboutIconCreationCreditPart1: 'Icons made by ',
   AboutIconCreationCreditPart2: 'from ',
-  AboutVersion: 'Version 4.3.10',
+  AboutVersion: 'Version',
 };

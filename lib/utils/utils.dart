@@ -20,6 +20,11 @@ class Utils {
     return packageName.contains('.debug');
   }
 
+  static Future<String> getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
+  }
+
   /// Custom compare function which uses [replaceForSort] to replace special
   /// german letters with equivalent characters used for sorting.
   static int customCompareTo(String a, String b) {

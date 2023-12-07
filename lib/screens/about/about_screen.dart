@@ -6,6 +6,7 @@ import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/global_theme.dart';
+import 'package:lectary/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 /// About-Screen with credits, links and further information about the application and
@@ -24,6 +25,14 @@ class _AboutScreenState extends State<AboutScreen> {
 
   static int _debugCounter = 0;
   static const _magicNumberDebugMode = 17;
+
+  Future? _versionNumberFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _versionNumberFuture = Utils.getVersion();
+  }
 
   @override
   void dispose() {
@@ -133,21 +142,31 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: _increaseDebugCounter,
-              child: Container(
-                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                child: RichText(
-                  textAlign: TextAlign.right,
-                  text: TextSpan(
-                    text: '${AppLocalizations.of(context).aboutVersion}  ${Constants.versionCommitHash}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
+            FutureBuilder(
+              future: _versionNumberFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                  final versionNumber = snapshot.data;
+                  return GestureDetector(
+                    onTap: _increaseDebugCounter,
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+                      child: RichText(
+                        textAlign: TextAlign.right,
+                        text: TextSpan(
+                          text:
+                              '${AppLocalizations.of(context).aboutVersion} $versionNumber',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                  );
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
             ),
             SizedBox(
               height: 70,
