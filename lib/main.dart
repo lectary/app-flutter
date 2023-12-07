@@ -93,8 +93,8 @@ class LocalizedApp extends StatefulWidget {
   /// from everywhere in the app and setting a new locale, which rebuilds the entire application.
   /// Also loads all application settings via [SettingViewModel] on initialization
   static void setLocale(BuildContext context, Locale newLocale) {
-    _LocalizedAppState state = context.findAncestorStateOfType() as _LocalizedAppState;
-    state.setState(() {
+    _LocalizedAppState? state = context.findAncestorStateOfType();
+    state?.setState(() {
       state.locale = newLocale;
     });
   }
