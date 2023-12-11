@@ -1,47 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:lectary/utils/colors.dart';
 
+class CustomAppTheme {
+  static ThemeData defaultLightTheme = _themeData(_lightColorScheme);
+  static ThemeData defaultDarkTheme = _themeData(_darkColorScheme);
 
-ThemeData lectaryThemeLight() {
-  final ThemeData base = ThemeData(primarySwatch: ColorsLectary.whiteSwatch);
-  return base.copyWith(
-    typography: Typography.material2018(platform: TargetPlatform.android),
-    visualDensity: VisualDensity.adaptivePlatformDensity,
-
-    primaryColor: ColorsLectary.white,
-    brightness: Brightness.light,
-    accentColor: ColorsLectary.lightBlue,
-
-    toggleableActiveColor: ColorsLectary.lightBlue,
-
-    primaryIconTheme: base.primaryIconTheme.copyWith(color: ColorsLectary.lightBlue),
-    iconTheme: base.iconTheme.copyWith(color: ColorsLectary.lightBlue),
-
-    textTheme: base.textTheme.copyWith(
-        caption: TextStyle(color: ColorsLectary.lightBlue),
-        headline5: TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
-        headline6: TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
-    ),
-  );
-}
-
-ThemeData lectaryThemeDark() {
-  final ThemeData base = lectaryThemeLight();
-  return base.copyWith(
-      buttonTheme: base.buttonTheme.copyWith(
-        buttonColor: ColorsLectary.lightBlue,
+  static ThemeData _themeData(ColorScheme colorScheme) {
+    // Using `.from` instead of default constructor, so that `scaffoldBackgroundColor` is correctly
+    // initialized without using material3
+    final baseTheme = ThemeData.from(colorScheme: colorScheme);
+    return baseTheme.copyWith(
+      typography: Typography.material2018(platform: TargetPlatform.android),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.grey[300],
+          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
+        ),
       ),
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: ColorsLectary.darkBlue,
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: ColorsLectary.lightBlue,
+      ),
+      iconTheme: const IconThemeData(
+        color: ColorsLectary.lightBlue,
+      ),
+      appBarTheme: const AppBarTheme(
+        foregroundColor: Colors.black,
+        backgroundColor: ColorsLectary.white,
 
-    textTheme: base.textTheme.copyWith(
-        headline6: TextStyle(color: ColorsLectary.white),
-        subtitle1: TextStyle(color: ColorsLectary.white)),
+        /// Tricky one here:
+        /// If left out, the style will be taken from [TextTheme.titleLarge], however, this is customized later.
+        /// It is NOT possible to use [baseTheme.textTheme.titleLarge] (default one before its customized),
+        /// since this does not contain any geometry values, yet!
+        /// Therefore, all values needs to be set explicitly here.
+        /// See [https://github.com/flutter/flutter/issues/86709].
+        /// Values are the defaults from [Typography.englishLike2018]
+        titleTextStyle: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.w500),
+        iconTheme: IconThemeData(
+          color: ColorsLectary.lightBlue,
+        ),
+      ),
+      textTheme: colorScheme.brightness == Brightness.light
+          ? _lightTextTheme(baseTheme)
+          : _darkTextTheme(baseTheme),
+    );
+  }
+
+  static TextTheme _lightTextTheme(ThemeData baseTheme) {
+    return baseTheme.textTheme.copyWith(
+      headlineSmall: const TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
+      titleLarge: const TextStyle(fontWeight: FontWeight.bold, color: ColorsLectary.lightBlue),
+      bodySmall: const TextStyle(color: ColorsLectary.lightBlue),
+    );
+  }
+
+  static TextTheme _darkTextTheme(ThemeData baseTheme) {
+    return baseTheme.textTheme.copyWith(
+      titleLarge: const TextStyle(color: ColorsLectary.white),
+      titleMedium: const TextStyle(color: ColorsLectary.white),
+    );
+  }
+
+  static const _lightColorScheme = ColorScheme.light(
+    primary: ColorsLectary.white,
+    onPrimary: Colors.black,
+    secondary: ColorsLectary.lightBlue,
+    onSecondary: ColorsLectary.white,
+    background: ColorsLectary.white,
+    onBackground: ColorsLectary.lightBlue,
+    surface: ColorsLectary.white,
   );
-}
 
-class CustomTextStyle {
+  static const _darkColorScheme = ColorScheme.dark(
+    primary: ColorsLectary.white,
+    onPrimary: Colors.black,
+    secondary: ColorsLectary.lightBlue,
+    onSecondary: ColorsLectary.white,
+    background: ColorsLectary.darkBlue,
+    onBackground: ColorsLectary.white,
+    surface: ColorsLectary.white,
+  );
+
+  // CUSTOM TEXT STYLES
+
   static TextStyle hyperlink(BuildContext context) {
-    return Theme.of(context).textTheme.bodyText1.copyWith(color: ColorsLectary.red);
+    return Theme.of(context).textTheme.bodyLarge!.copyWith(color: ColorsLectary.red);
   }
 }

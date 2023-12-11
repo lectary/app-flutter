@@ -8,18 +8,24 @@
 /// Each constructor initializes [type] with its corresponding [SelectionType].
 class Selection {
   SelectionType type;
+
   // for package
-  String packTitle;
+  String? packTitle;
+
   // for lecture
-  int lectureId;
-  String lesson;
+  int? lectureId;
+  String? lesson;
+
   // for search
-  String filter;
-  Selection originSelection;
+  String? filter;
+  Selection? originSelection;
 
   Selection.all() : type = SelectionType.all;
+
   Selection.package(this.packTitle) : type = SelectionType.package;
+
   Selection.lecture(this.lectureId, this.lesson) : type = SelectionType.lecture;
+
   Selection.search(this.filter, this.originSelection) : type = SelectionType.search;
 
   @override

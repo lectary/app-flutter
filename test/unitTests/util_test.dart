@@ -58,7 +58,7 @@ void main() {
         Lecture.extractMetadata(zipFile);
         fail("should had thrown exception");
       } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
+        expect(e, const TypeMatcher<LectureException>());
         expect(e.toString(), contains("Missing .zip"));
       }
     });
@@ -69,7 +69,7 @@ void main() {
         Lecture.extractMetadata(zipFile1);
         fail("should had thrown exception");
       } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
+        expect(e, const TypeMatcher<LectureException>());
         expect(e.toString(), contains("Missing: PACK"));
       }
       String zipFile2 = "PACK--Testung---LANG--_OeGS-DE---DATE--2020-03-03.zip";
@@ -77,7 +77,7 @@ void main() {
         Lecture.extractMetadata(zipFile2);
         fail("should had thrown exception");
       } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
+        expect(e, const TypeMatcher<LectureException>());
         expect(e.toString(), contains("Missing: LESSON"));
       }
       String zipFile3 = "PACK--Testung---LESSON--_Oelfarben---DATE--2020-03-03.zip";
@@ -85,7 +85,7 @@ void main() {
         Lecture.extractMetadata(zipFile3);
         fail("should had thrown exception");
       } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
+        expect(e, const TypeMatcher<LectureException>());
         expect(e.toString(), contains("Missing: LANG"));
       }
     });
@@ -96,7 +96,7 @@ void main() {
         Lecture.extractMetadata(zipFile);
         fail("should had thrown exception");
       } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
+        expect(e, const TypeMatcher<LectureException>());
         expect(e.toString(), contains("Malformed LANG"));
       }
     });
@@ -107,7 +107,7 @@ void main() {
         Lecture.extractMetadata(zipFile);
         fail("should had thrown exception");
       } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
+        expect(e, const TypeMatcher<LectureException>());
         expect(e.toString(), contains("Malformed LANG"));
       }
     });
@@ -118,7 +118,7 @@ void main() {
         Lecture.extractMetadata(zipFile);
         fail("should had thrown exception");
       } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
+        expect(e, const TypeMatcher<LectureException>());
         expect(e.toString(), contains("Malformed DATE"));
       }
     });
@@ -143,7 +143,7 @@ void main() {
         Lecture.extractMetadata(zipFile);
         fail("should had thrown exception");
       } catch(e) {
-        expect(e, TypeMatcher<LectureException>());
+        expect(e, const TypeMatcher<LectureException>());
         expect(e.toString(), contains("Lecture has not mandatory metadata"));
       }
     });
@@ -280,17 +280,17 @@ void main() {
   group('MediaType conversion |', () {
     test('should success with mp4 png jpg or txt and should work case insensitive', () {
       MediaType type1 = MediaType.fromString("mp4");
-      expect(type1, MediaType.MP4);
+      expect(type1, MediaType.mp4);
       MediaType type2 = MediaType.fromString("png");
-      expect(type2, MediaType.PNG);
+      expect(type2, MediaType.png);
       MediaType type3 = MediaType.fromString("JPG");
-      expect(type3, MediaType.JPG);
+      expect(type3, MediaType.jpg);
       MediaType type4 = MediaType.fromString("TXT");
-      expect(type4, MediaType.TXT);
+      expect(type4, MediaType.txt);
     });
 
     test('should throw an exception on unknown extension/type', () {
-      expect(() => MediaType.fromString("UNKNOWN"), throwsA(TypeMatcher<MediaTypeException>()));
+      expect(() => MediaType.fromString("UNKNOWN"), throwsA(const TypeMatcher<MediaTypeException>()));
     });
   });
 
@@ -299,8 +299,8 @@ void main() {
 
     expect(currentDate, ""
         "${DateTime.now().year}"
-        "-${DateTime.now().month < 10 ? "0" + DateTime.now().month.toString() : DateTime.now().month}"
-        "-${DateTime.now().day < 10 ? "0" + DateTime.now().day.toString() : DateTime.now().day}");
+        "-${DateTime.now().month < 10 ? "0${DateTime.now().month}" : DateTime.now().month}"
+        "-${DateTime.now().day < 10 ? "0${DateTime.now().day}" : DateTime.now().day}");
   });
 
   test('method fillWithLeadingZeros should fill string with leading zeros up to a length of 5', () {

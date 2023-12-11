@@ -1,5 +1,5 @@
 class VocableException implements Exception {
-  String _message;
+  final String _message;
 
   VocableException(this._message);
 

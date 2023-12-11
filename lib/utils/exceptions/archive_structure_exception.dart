@@ -1,5 +1,5 @@
 class ArchiveStructureException implements Exception {
-  String _message;
+  final String _message;
 
   ArchiveStructureException(this._message);
 

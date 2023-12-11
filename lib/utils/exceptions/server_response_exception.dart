@@ -1,5 +1,5 @@
 class ServerResponseException implements Exception {
-  String _message;
+  final String _message;
 
   ServerResponseException(this._message);
 

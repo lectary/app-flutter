@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:lectary/screens/lectures/widgets/custom_button.dart';
 import 'package:lectary/utils/colors.dart';
@@ -7,21 +8,19 @@ import 'package:lectary/utils/icons.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// A [Row] of custom button widgets for controlling the different modes of the media
 /// items in the carousel like slowMode, autoStart and autoReplay.
 /// Sets and listens for changes of the modes in the [CarouselViewModel].
 class MediaControlArea extends StatefulWidget {
   final int flex;
 
-  MediaControlArea({this.flex});
+  const MediaControlArea({super.key, required this.flex});
 
   @override
-  _MediaControlAreaState createState() => _MediaControlAreaState();
+  State<MediaControlArea> createState() => _MediaControlAreaState();
 }
 
 class _MediaControlAreaState extends State<MediaControlArea> {
-
   @override
   Widget build(BuildContext context) {
     log("build media-control-area");
@@ -43,8 +42,8 @@ class _MediaControlAreaState extends State<MediaControlArea> {
             iconData: LectaryIcons.iconTurtle,
             semanticLabel: Constants.semanticSlowMode,
             iconSize: iconSize,
-            func: () => Provider.of<CarouselViewModel>(context, listen: false)
-                .slowModeOn = slowModeOn ? false : true,
+            func: () => Provider.of<CarouselViewModel>(context, listen: false).slowModeOn =
+                slowModeOn ? false : true,
           ),
           CustomButton(
             color: autoModeOn ? ColorsLectary.orange : ColorsLectary.darkBlue,
@@ -52,18 +51,16 @@ class _MediaControlAreaState extends State<MediaControlArea> {
             semanticLabel: Constants.semanticAutoMode,
             iconSize: iconSize,
             iconContainerWidth: iconContainerWidth,
-            func: () =>
-            Provider.of<CarouselViewModel>(context, listen: false)
-                .autoModeOn = autoModeOn ? false : true,
+            func: () => Provider.of<CarouselViewModel>(context, listen: false).autoModeOn =
+                autoModeOn ? false : true,
           ),
           CustomButton(
             color: loopModeOn ? ColorsLectary.red : ColorsLectary.darkBlue,
             iconData: LectaryIcons.iconReload,
             semanticLabel: Constants.semanticReplayMode,
             iconSize: iconSize,
-            func: () =>
-            Provider.of<CarouselViewModel>(context, listen: false)
-                .loopModeOn = loopModeOn ? false : true,
+            func: () => Provider.of<CarouselViewModel>(context, listen: false).loopModeOn =
+                loopModeOn ? false : true,
           )
         ],
       ),

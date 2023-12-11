@@ -1,72 +1,61 @@
 import 'dart:developer';
 
 import 'package:floor/floor.dart';
-import 'package:flutter/material.dart';
+import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/vocable_exception.dart';
 import 'package:lectary/utils/utils.dart';
-import 'package:lectary/data/db/entities/lecture.dart';
-
 
 /// Entity class representing an vocable, which is part of a [Lecture].
 @Entity(
-    tableName: "vocables",
-    foreignKeys: [
-      ForeignKey(
-        childColumns: ["lecture_id"],
-        parentColumns: ["id"],
-        entity: Lecture
-      )
-    ],
+  tableName: "vocables",
+  foreignKeys: [
+    ForeignKey(childColumns: ["lecture_id"], parentColumns: ["id"], entity: Lecture)
+  ],
 )
 class Vocable {
   @PrimaryKey(autoGenerate: true)
-  int id;
+  int? id;
 
-  @ColumnInfo(name: "lecture_id", nullable: false)
+  @ColumnInfo(name: "lecture_id")
   int lectureId;
 
-  @ColumnInfo(nullable: false)
   String vocable;
 
   // used for sorting lexicographic
-  @ColumnInfo(name: "vocable_sort", nullable: false)
+  @ColumnInfo(name: "vocable_sort")
   String vocableSort;
 
-  @ColumnInfo(name: "media_type", nullable: false)
+  @ColumnInfo(name: "media_type")
   String mediaType;
 
   // contains the path to the media asset
-  @ColumnInfo(nullable: false)
   String media;
 
   // contains the language of the audio or null if no audio is available
-  String audio;
+  String? audio;
 
-  String sort;
-  
-  @ColumnInfo(name: "vocable_progress", nullable: false)
+  String? sort;
+
+  @ColumnInfo(name: "vocable_progress")
   int vocableProgress;
 
-  Vocable(
-      {this.id,
-      @required this.lectureId,
-      @required this.vocable,
-      @required this.vocableSort,
-      @required this.mediaType,
-      @required this.media,
-      this.audio,
-      this.sort,
-      this.vocableProgress = 0})
-      : assert(vocable != null),
-        assert(vocableSort != null),
-        assert(mediaType != null),
-        assert(media != null);
+  Vocable({
+    this.id,
+    required this.lectureId,
+    required this.vocable,
+    required this.vocableSort,
+    required this.mediaType,
+    required this.media,
+    this.audio,
+    this.sort,
+    this.vocableProgress = 0,
+  });
 
   /// Factory constructor to create a new vocable instance from a filePath.
   /// Returns a new [Vocable] on successful metadata extraction.
   /// Returns [Null] on [VocableException] i.e. when media type is unknown.
-  factory Vocable.fromFilePath(String filePath) {
+  static Vocable? fromFilePath(String filePath) {
     String fileName, extension;
     MediaType mediaType;
     Map<String, dynamic> metadata;
@@ -77,12 +66,12 @@ class Vocable {
       // extracting vocable and possible metadata from fileName (i.e. filename without path and extension)
       fileName = Utils.extractFileName(filePath);
       metadata = _extractMetadata(fileName);
-    } catch(e) {
-      log("Invalid vocable: " + e.toString());
+    } catch (e) {
+      log("Invalid vocable: $e");
       return null;
     }
     return Vocable(
-      lectureId: null,
+      lectureId: -1, // temporary default value, will be assigned later when persisted
       vocable: metadata.remove("VOCABLE"),
       vocableSort: metadata.remove("VOCABLE-SORT"),
       media: filePath,
@@ -91,14 +80,13 @@ class Vocable {
       audio: metadata.containsKey("AUDIO") ? metadata.remove("AUDIO") : null,
       sort: metadata.containsKey("SORT") ? Utils.fillWithLeadingZeros(metadata.remove("SORT")) : null,
     );
-
   }
 
   /// Extracts the vocable itself and possible metadata out of an [Vocable] filename.
   /// Returns a [Map] with the vocable and meta data.
   /// Used keys {optional}: VOCABLES, {AUDIO}, {SORT}
   static Map<String, dynamic> _extractMetadata(String fileName) {
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
 
     // check if there are metaData
     if (fileName.contains("---")) {
@@ -126,8 +114,8 @@ class Vocable {
             break;
           case "SORT":
             // ensure that SORT consists of only numbers with a length of 1 to max 5
-            var _parseFormat = RegExp(r'^[0-9]{1,5}$');
-            if (_parseFormat.hasMatch(metadatumValue)) {
+            var parseFormat = RegExp(r'^[0-9]{1,5}$');
+            if (parseFormat.hasMatch(metadatumValue)) {
               result.putIfAbsent("SORT", () => metadatumValue);
             } else {
               // throw new VocableException("Malformed SORT metadatum: $metadatumValue");

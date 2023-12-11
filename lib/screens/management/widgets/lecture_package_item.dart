@@ -1,8 +1,7 @@
 import 'dart:developer';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/models/lecture_package.dart';
@@ -14,14 +13,13 @@ import 'package:lectary/utils/global_theme.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:url_launcher/url_launcher_string.dart';
 
 /// Helper class for realizing categorization of [Lecture] by its package name.
 /// Creates for every [LecturePackageItem] one special header [ListTile] and maps
 /// its children list of [Lecture] to a standard [ListTile].
 class LecturePackageItem extends StatelessWidget {
-  const LecturePackageItem(this.context, this.entry);
+  const LecturePackageItem(this.context, this.entry, {super.key});
 
   final BuildContext context;
   final LecturePackage entry;
@@ -35,9 +33,11 @@ class LecturePackageItem extends StatelessWidget {
   // builds the header tile for the package and standard tiles for the children
   Widget _buildTiles(LecturePackage pack, bool uppercase) {
     // return when there are no children, although this should never happen
-    if (pack.children.isEmpty) return ListTile(title: Text(uppercase ? pack.title.toUpperCase() : pack.title));
-    List<Widget> childs = List<Widget>();
-    childs.add(
+    if (pack.children.isEmpty) {
+      return ListTile(title: Text(uppercase ? pack.title.toUpperCase() : pack.title));
+    }
+    List<Widget> children = [];
+    children.add(
       Container(
         height: 70,
         alignment: Alignment.centerLeft,
@@ -45,48 +45,45 @@ class LecturePackageItem extends StatelessWidget {
           title: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Text(uppercase ? pack.title.toUpperCase() : pack.title,
-                  style: Theme.of(context).textTheme.headline6)),
+                  style: Theme.of(context).textTheme.titleLarge)),
           trailing: IconButton(
-              onPressed: () =>
-                  _showAbstract(pack.title, pack.abstract, uppercase),
-              icon: Icon(Icons.more_horiz,
-                  semanticLabel: Constants.semanticOpenAbstract)),
+              onPressed: () => _showAbstract(pack.title, pack.abstract, uppercase),
+              icon: const Icon(Icons.more_horiz, semanticLabel: Constants.semanticOpenAbstract)),
         ),
       ),
     );
-    pack.children.map((e) => _buildChildren(e, uppercase)).forEach((element) {childs.addAll(element);});
+    pack.children
+        .map((e) => _buildChildren(e, uppercase))
+        .forEach((element) => children.addAll(element));
 
-    Column column = Column(
-        children: childs
-    );
-    return column;
+    return Column(children: children);
   }
 
   // builds the bottom-modal-sheet for the abstract
-  _showAbstract(String packTitle, String abstractText, bool uppercase) {
+  _showAbstract(String packTitle, String? abstractText, bool uppercase) {
     return showModalBottomSheet(
       context: context,
       builder: (_) {
         return Wrap(
           children: <Widget>[
             Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 alignment: Alignment.center,
                 child: Text(uppercase ? packTitle.toUpperCase() : packTitle,
-                    style: Theme.of(context).textTheme.headline6)),
-            Divider(thickness: 1, height: 1),
+                    style: Theme.of(context).textTheme.titleLarge)),
+            const Divider(thickness: 1, height: 1),
             abstractText != null
                 ? Container(
-                    padding: EdgeInsets.only(left: 10, right: 10),
+                    padding: const EdgeInsets.only(left: 10, right: 10),
                     child: Html(
                       data: uppercase ? abstractText.toUpperCase() : abstractText,
                       style: {
-                        "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyText1), // default text style
-                        "a": Style.fromTextStyle(CustomTextStyle.hyperlink(context)),
+                        "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyLarge!), // default text style
+                        "a": Style.fromTextStyle(CustomAppTheme.hyperlink(context)),
                       },
-                      onLinkTap: (url) async {
-                        if (await canLaunch(url)) {
-                          await launch(url);
+                      onLinkTap: (String? url, unused1, unused2) async {
+                        if (url != null && await canLaunchUrlString(url)) {
+                          await launchUrlString(url);
                         } else {
                           log('Could not launch url: $url of abstract: $abstractText');
                           Dialogs.showErrorReportDialog(
@@ -98,12 +95,14 @@ class LecturePackageItem extends StatelessWidget {
                       },
                     ))
                 : Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Center(
                         child: Text(AppLocalizations.of(context).noDescription,
-                            style: Theme.of(context).textTheme.bodyText1))),
-            Divider(height: 1, thickness: 1),
-            _buildButton(icon: Icons.close, text: AppLocalizations.of(context).cancel,
+                            style: Theme.of(context).textTheme.bodyLarge))),
+            const Divider(height: 1, thickness: 1),
+            _buildButton(
+                icon: Icons.close,
+                text: AppLocalizations.of(context).cancel,
                 func: () => Navigator.pop(context)),
           ],
         );
@@ -114,17 +113,17 @@ class LecturePackageItem extends StatelessWidget {
   // builds the children of an package
   List<Widget> _buildChildren(Lecture lecture, bool uppercase) {
     return <Widget>[
-      Divider(height: 1,thickness: 1),
+      const Divider(height: 1, thickness: 1),
       ListTile(
-          leading: _getIconForLectureStatus(lecture.lectureStatus),
-          title: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(
-                  uppercase ? lecture.lesson.toUpperCase() : lecture.lesson)),
-          trailing: IconButton(
-              onPressed: () => _showLectureMenu(lecture),
-              icon: Icon(Icons.more_horiz,
-                  semanticLabel: Constants.semanticOpenMenu))),
+        leading: _getIconForLectureStatus(lecture.lectureStatus),
+        title: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(uppercase ? lecture.lesson.toUpperCase() : lecture.lesson)),
+        trailing: IconButton(
+            onPressed: () => _showLectureMenu(lecture),
+            icon: const Icon(Icons.more_horiz, semanticLabel: Constants.semanticOpenMenu)),
+        onTap: () => _showLectureMenu(lecture),
+      ),
     ];
   }
 
@@ -132,16 +131,18 @@ class LecturePackageItem extends StatelessWidget {
   Widget _getIconForLectureStatus(LectureStatus lectureStatus) {
     switch (lectureStatus) {
       case LectureStatus.downloading:
-        return SizedBox(
-            width: 24, height: 24, child: CircularProgressIndicator());
+        return const SizedBox(width: 24, height: 24, child: CircularProgressIndicator());
       case LectureStatus.persisted:
-        return Icon(Icons.check_circle);
+        return const Icon(Icons.check_circle);
       case LectureStatus.removed:
-        return Icon(Icons.error, color: ColorsLectary.red,);
+        return const Icon(
+          Icons.error,
+          color: ColorsLectary.red,
+        );
       case LectureStatus.updateAvailable:
-        return Icon(Icons.loop);
+        return const Icon(Icons.loop);
       default:
-        return Icon(null);
+        return const Icon(null);
     }
   }
 
@@ -161,9 +162,9 @@ class LecturePackageItem extends StatelessWidget {
           child: Wrap(
             children: <Widget>[
               _buildLectureInfoWidget(lecture, settingViewModel),
-              Divider(height: 1, thickness: 1),
+              const Divider(height: 1, thickness: 1),
               _buildButtonForLectureStatus(lecture, lectureViewModel),
-              Divider(height: 1, thickness: 1),
+              const Divider(height: 1, thickness: 1),
               _buildButton(
                   icon: Icons.close,
                   text: AppLocalizations.of(context).cancel,
@@ -179,7 +180,9 @@ class LecturePackageItem extends StatelessWidget {
   Widget _buildButtonForLectureStatus(Lecture lecture, LectureViewModel lectureViewModel) {
     switch (lecture.lectureStatus) {
       case LectureStatus.notPersisted:
-        return _buildButton(icon: Icons.cloud_download, text: AppLocalizations.of(context).download,
+        return _buildButton(
+            icon: Icons.cloud_download,
+            text: AppLocalizations.of(context).download,
             func: () async {
               Navigator.pop(context);
               Response response = await lectureViewModel.downloadAndSaveLecture(lecture);
@@ -193,7 +196,9 @@ class LecturePackageItem extends StatelessWidget {
             });
       case LectureStatus.persisted:
       case LectureStatus.removed:
-        return _buildButton(icon: Icons.delete, text: AppLocalizations.of(context).delete,
+        return _buildButton(
+            icon: Icons.delete,
+            text: AppLocalizations.of(context).delete,
             func: () async {
               Navigator.pop(context);
               Response response = await lectureViewModel.deleteLecture(lecture);
@@ -206,7 +211,9 @@ class LecturePackageItem extends StatelessWidget {
               }
             });
       case LectureStatus.updateAvailable:
-        return _buildButton(icon: Icons.loop, text: AppLocalizations.of(context).update,
+        return _buildButton(
+            icon: Icons.loop,
+            text: AppLocalizations.of(context).update,
             func: () async {
               Navigator.pop(context);
               Response response = await lectureViewModel.updateLecture(lecture);
@@ -227,54 +234,62 @@ class LecturePackageItem extends StatelessWidget {
   Container _buildLectureInfoWidget(Lecture lecture, SettingViewModel settingViewModel) {
     final uppercase = settingViewModel.settingUppercase;
     return Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-                AppLocalizations.of(context).lectureInfoLecture +
-                    (uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    .copyWith(fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
+              AppLocalizations.of(context).lectureInfoLecture +
+                  (uppercase ? lecture.lesson.toUpperCase() : lecture.lesson),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 10),
             Text(
-                AppLocalizations.of(context).lectureInfoPack +
-                    (uppercase ? lecture.pack.toUpperCase() : lecture.pack),
-                style: Theme.of(context).textTheme.bodyText1),
-            SizedBox(height: 10),
+              AppLocalizations.of(context).lectureInfoPack +
+                  (uppercase ? lecture.pack.toUpperCase() : lecture.pack),
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 10),
             Text(
-                AppLocalizations.of(context).lectureInfoFileSize +
-                    lecture.fileSize.toString() +
-                    AppLocalizations.of(context).lectureInfoFileSizeUnit,
-                style: Theme.of(context).textTheme.bodyText1),
-            SizedBox(height: 10),
+              AppLocalizations.of(context).lectureInfoFileSize +
+                  lecture.fileSize.toString() +
+                  AppLocalizations.of(context).lectureInfoFileSizeUnit,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 10),
             Text(
-                AppLocalizations.of(context).lectureInfoVocableCount +
-                    lecture.vocableCount.toString(),
-                style: Theme.of(context).textTheme.bodyText1),
+              AppLocalizations.of(context).lectureInfoVocableCount +
+                  lecture.vocableCount.toString(),
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
           ],
         ));
   }
 
   // builds the buttons
-  Container _buildButton({IconData icon, String text, Function func=emptyFunction}) {
-    return Container(
+  Widget _buildButton({
+    required IconData icon,
+    required String text,
+    Function func = emptyFunction,
+  }) {
+    return SizedBox(
         height: 50,
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: () => func(),
-          child: Container(
-            child: Row(
-              children: <Widget>[
-                Icon(icon, color: ColorsLectary.lightBlue,),
-                SizedBox(width: 10), // spacer
-                Text(text),
-              ],
-            ),
+          child: Row(
+            children: <Widget>[
+              Icon(
+                icon,
+                color: ColorsLectary.lightBlue,
+              ),
+              const SizedBox(width: 10), // spacer
+              Text(text),
+            ],
           ),
-        )
-    );
+        ));
   }
+
   static emptyFunction() {}
 }

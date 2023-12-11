@@ -1,5 +1,5 @@
 class NoInternetException implements Exception {
-  String _message;
+  final String _message;
 
   NoInternetException(this._message);
 

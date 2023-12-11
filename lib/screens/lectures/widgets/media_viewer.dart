@@ -1,15 +1,16 @@
 import 'dart:developer';
+
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_image.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_text.dart';
-import 'package:lectary/viewmodels/carousel_viewmodel.dart';
-import 'package:provider/provider.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_text_area.dart';
 import 'package:lectary/screens/lectures/widgets/media_viewer_video.dart';
-
+import 'package:lectary/viewmodels/carousel_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 /// Class responsible for displaying the correct media player corresponding to the
 /// [MediaType] of the [Vocable].
@@ -18,9 +19,9 @@ import 'package:lectary/screens/lectures/widgets/media_viewer_video.dart';
 /// Listens on [CarouselViewModel] for changes regarding media-modes and vocable visibility.
 class MediaViewer extends StatelessWidget {
   const MediaViewer({
-    Key key,
-    @required this.vocable,
-    @required this.vocableIndex,
+    Key? key,
+    required this.vocable,
+    required this.vocableIndex,
   }) : super(key: key);
 
   final Vocable vocable;
@@ -32,9 +33,8 @@ class MediaViewer extends StatelessWidget {
     final model = Provider.of<CarouselViewModel>(context, listen: false);
     String lectureName = "";
     if (model.localLectures != null) {
-      Lecture lecture = model.localLectures.firstWhere(
-              (lecture) => lecture.id == vocable.lectureId,
-          orElse: () => null);
+      Lecture? lecture =
+          model.localLectures!.firstWhereOrNull((lecture) => lecture.id == vocable.lectureId);
       lectureName = lecture == null ? "" : lecture.lesson;
     }
     return lectureName;
@@ -56,7 +56,7 @@ class MediaViewer extends StatelessWidget {
               hideVocableModeOn: hideVocableModeOn,
               mediaIndex: vocableIndex,
               text: isVirtualLecture
-                  ? vocable.vocable + "\n[${_getLectureName(context)}]"
+                  ? "${vocable.vocable}\n[${_getLectureName(context)}]"
                   : vocable.vocable,
             );
           },
@@ -69,7 +69,7 @@ class MediaViewer extends StatelessWidget {
 
             Widget resultWidget;
             switch (MediaType.fromString(vocable.mediaType)) {
-              case MediaType.MP4:
+              case MediaType.mp4:
                 resultWidget = LectaryVideoPlayer(
                   videoPath: vocable.media,
                   mediaIndex: vocableIndex,
@@ -79,8 +79,8 @@ class MediaViewer extends StatelessWidget {
                   audio: vocable.audio,
                 );
                 break;
-              case MediaType.PNG:
-              case MediaType.JPG:
+              case MediaType.png:
+              case MediaType.jpg:
                 resultWidget = ImageViewer(
                   imagePath: vocable.media,
                   mediaIndex: vocableIndex,
@@ -88,7 +88,7 @@ class MediaViewer extends StatelessWidget {
                   autoMode: autoModeOn,
                 );
                 break;
-              case MediaType.TXT:
+              case MediaType.txt:
                 resultWidget = TextViewer(
                   textPath: vocable.media,
                   mediaIndex: vocableIndex,

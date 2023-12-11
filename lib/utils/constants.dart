@@ -1,6 +1,5 @@
 class Constants {
   // general
-  static const String versionCommitHash = "2090e6cb218af85354b5e3d3826720edfd246fbd";
   static const bool defaultAppFreshInstalled = true;
   static const String databaseName = "lectary.db";
 
@@ -8,9 +7,11 @@ class Constants {
   static const double breakpointTablet = 800;
 
   // api
-  static const lectaryApiUrl = "https://lectary.net/l4/";
-  static const lectaryApiLectureOverviewEndpoint = "info.php";
-  static const lectaryApiErrorEndpoint = "https://lectary.net/l4/error.php";
+  static const lectaryApiUrl = "lectary.net";
+  static const _lectaryApiVersionPath = "/l4/";
+  static const lectaryApiDownloadPath = _lectaryApiVersionPath;
+  static const lectaryApiLectureOverviewEndpoint = "${_lectaryApiVersionPath}info.php";
+  static const lectaryApiErrorEndpoint = "${_lectaryApiVersionPath}error.php";
 
   // carousel
   static const opacityOfCarouselOverLay = 0.5;
@@ -21,7 +22,7 @@ class Constants {
   static const int mediaAnimationDurationMilliseconds = 2000;
 
   // settings
-  static const bool defaultPlayMediaWithSound = true;
+  static const bool defaultPlayMediaWithSound = false;
   static const bool defaultShowVideoTimeline = true;
   static const bool defaultShowMediaOverlay = true;
   static const bool defaultUppercase = false;

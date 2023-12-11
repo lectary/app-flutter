@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math' as math;
+
 import 'package:archive/archive.dart';
+import 'package:collection/collection.dart';
 import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
@@ -8,11 +10,20 @@ import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/exceptions/archive_structure_exception.dart';
 import 'package:lectary/utils/exceptions/media_type_exception.dart';
-import 'package:collection/collection.dart';
-
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Helper class with multiple static functions for sorting, validation or string operations.
 class Utils {
+  static Future<bool> isDebugMode() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String packageName = packageInfo.packageName;
+    return packageName.contains('.debug');
+  }
+
+  static Future<String> getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
+  }
 
   /// Custom compare function which uses [replaceForSort] to replace special
   /// german letters with equivalent characters used for sorting.
@@ -38,8 +49,8 @@ class Utils {
   /// Groups a lecture list by the lecture pack
   /// Returns a [List] of [LecturePackage]
   static List<LecturePackage> groupLecturesByPack(List<Lecture> lectureList) {
-    final lecturesByPack = groupBy(lectureList, (lecture) => (lecture as Lecture).pack);
-    List<LecturePackage> packList = List();
+    final lecturesByPack = groupBy(lectureList, (dynamic lecture) => (lecture as Lecture).pack);
+    List<LecturePackage> packList = [];
     lecturesByPack.forEach((key, value) => packList.add(LecturePackage(key, value)));
     return packList;
   }
@@ -61,22 +72,24 @@ class Utils {
       String fileName = file.name.replaceAll('\\', '/');
       if (!file.isFile) continue;
       // check if there are media files without a name i.e. missing vocable
-      if (Utils.extractFileName(fileName).isEmpty)
-        throw new ArchiveStructureException("File without fileName found");
+      if (Utils.extractFileName(fileName).isEmpty) {
+        throw ArchiveStructureException("File without fileName found");
+      }
       // check if there are nested directories by splitting fileName by path divider '/'
-      if (fileName.split('/').length > 2)
-        throw new ArchiveStructureException(
-            "Wrong archive structure: $fileName");
+      if (fileName.split('/').length > 2) {
+        throw ArchiveStructureException("Wrong archive structure: $fileName");
+      }
       // check if inner directory name matches zip-fileName
-      if (dirName != Utils.extractDirName(fileName))
-        throw new ArchiveStructureException(
+      if (dirName != Utils.extractDirName(fileName)) {
+        throw ArchiveStructureException(
             "Inner directory name should be equal the archive name!\nZipArchive: $dirName <-> directory: $fileName");
+      }
       // check if archive consists only of valid file types
       try {
         String extension = Utils.extractFileExtension(fileName);
         MediaType.fromString(extension);
       } on MediaTypeException catch (e) {
-        throw new ArchiveStructureException(e.toString());
+        throw ArchiveStructureException(e.toString());
       }
     }
 
@@ -89,8 +102,7 @@ class Utils {
     fileName = fileName.replaceAll('\\', '/');
     if (fileName.isEmpty) return "";
     return fileName.contains('.')
-        ? fileName.substring(
-            fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.'))
+        ? fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.'))
         : fileName.substring(fileName.lastIndexOf('/') + 1);
   }
 
@@ -118,14 +130,14 @@ class Utils {
     List<String> fileNameSplit = fileName.split('.');
     if (fileNameSplit.length != 2) return "";
     List<String> metaInfo = fileNameSplit[0].split('---');
-    if (metaInfo.length == 0) return "";
+    if (metaInfo.isEmpty) return "";
     List<String> dateSplit = metaInfo.firstWhere((element) => element.contains("DATE")).split('--');
     if (dateSplit.length != 2) return "";
     return dateSplit[1];
   }
 
   /// Returns a string where all asciified parts are replaced with the corresponding characters
-  static String deAsciify(String asciifiedString, {List<CodingEntry> codingEntries}) {
+  static String deAsciify(String asciifiedString, {List<CodingEntry>? codingEntries}) {
     String text = asciifiedString;
 
     // 2020-04-19
@@ -135,8 +147,8 @@ class Utils {
     text = text.replaceAll("__", " ");
 
     // problembaeren
-    text = text.replaceAll("_HK", '"' ); // TAKE CARE OF THIS IN FILENAME
-    text = text.replaceAll("_VS", "/" ); // TAKE CARE OF THIS -> PATH DIVIDER
+    text = text.replaceAll("_HK", '"'); // TAKE CARE OF THIS IN FILENAME
+    text = text.replaceAll("_VS", "/"); // TAKE CARE OF THIS -> PATH DIVIDER
 
     // german special characters
     text = text.replaceAll("_Ae", "Ä");
@@ -150,11 +162,11 @@ class Utils {
 
     // german keyboard layout - first row (with <shift>)
     text = text.replaceAll("_GG", "°");
-    text = text.replaceAll("_RR", "!" );
-    text = text.replaceAll("_PARA", "§" );
-    text = text.replaceAll("_DOLLAR", "\$" );
-    text = text.replaceAll("_PERCENT", "%" );
-    text = text.replaceAll("_AMP", "&" );
+    text = text.replaceAll("_RR", "!");
+    text = text.replaceAll("_PARA", "§");
+    text = text.replaceAll("_DOLLAR", "\$");
+    text = text.replaceAll("_PERCENT", "%");
+    text = text.replaceAll("_AMP", "&");
     text = text.replaceAll("_KK", "(");
     text = text.replaceAll("_ZZ", ")");
     text = text.replaceAll("_EQUAL", "=");
@@ -174,7 +186,7 @@ class Utils {
     // special characters (german layout - second row)
     text = text.replaceAll("_ATSY", "@"); // at symbol
     text = text.replaceAll("_EURO", "€");
-    text = text.replaceAll("_STAR", "*" );
+    text = text.replaceAll("_STAR", "*");
     text = text.replaceAll("_PLUS", "+");
     text = text.replaceAll("_TILDE", "~");
 
@@ -213,7 +225,7 @@ class Utils {
 
     return text;
   }
-  
+
   /// Returns the current date in the ISO-8601 format 'yyyy-MM-dd'
   static String currentDate() {
     return DateTime.now().toIso8601String().split('T')[0];
@@ -221,7 +233,7 @@ class Utils {
 
   /// Returns a string filled with leading zeros up to a length of 5
   static String fillWithLeadingZeros(String string) {
-    final int maxLength = 5;
+    const int maxLength = 5;
     return string.padLeft(maxLength, '0');
   }
 
@@ -230,12 +242,12 @@ class Utils {
   /// be considered when choosing a vocable, the better the progress, the rarer a
   /// vocable will be chosen
   static int chooseRandomVocable(bool vocableProgressEnabled, List<Vocable> vocables) {
-    math.Random random = new math.Random();
+    math.Random random = math.Random();
     int rndPage;
     if (vocableProgressEnabled) {
-      List<Vocable> distributedVocableList = List();
+      List<Vocable> distributedVocableList = [];
       vocables.forEach((voc) {
-        switch(voc.vocableProgress) {
+        switch (voc.vocableProgress) {
           case 0:
             distributedVocableList.add(voc);
             distributedVocableList.add(voc);

@@ -5,7 +5,6 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Class responsible for displaying the actual textual [Vocable] in the [Carousel] header.
 /// The visibility of the vocable can be controlled by tapping the vocable itself
 /// or via the [LearningControlArea].
@@ -14,10 +13,15 @@ class TextArea extends StatefulWidget {
   final int mediaIndex;
   final String text;
 
-  TextArea({this.hideVocableModeOn, this.mediaIndex, this.text, Key key}) : super(key: key);
+  const TextArea({
+    required this.hideVocableModeOn,
+    required this.mediaIndex,
+    required this.text,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _TextAreaState createState() => _TextAreaState();
+  State<TextArea> createState() => _TextAreaState();
 }
 
 class _TextAreaState extends State<TextArea> {
@@ -48,8 +52,8 @@ class _TextAreaState extends State<TextArea> {
             ? Container(
                 // visibility icon
                 alignment: Alignment.bottomCenter,
-                padding: EdgeInsets.only(bottom: 10),
-                child: Icon(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: const Icon(
                   Icons.visibility_off,
                   size: 80,
                   color: ColorsLectary.green,
@@ -58,11 +62,11 @@ class _TextAreaState extends State<TextArea> {
             : Container(
                 // vocable-text
                 alignment: Alignment.bottomLeft,
-                padding: EdgeInsets.only(left: 15, bottom: 10),
+                padding: const EdgeInsets.only(left: 15, bottom: 10),
                 child: SingleChildScrollView(
                   child: Text(
                     uppercase ? widget.text.toUpperCase() : widget.text,
-                    style: TextStyle(fontSize: 28, color: ColorsLectary.white),
+                    style: const TextStyle(fontSize: 28, color: ColorsLectary.white),
                   ),
                 ),
               ),

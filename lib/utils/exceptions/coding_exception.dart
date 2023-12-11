@@ -1,5 +1,5 @@
 class CodingException implements Exception {
-  String _message;
+  final String _message;
 
   CodingException(this._message);
 

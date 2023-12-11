@@ -1,18 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/screens/lectures/lecture_not_available_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
+import 'package:lectary/utils/colors.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
-
 
 /// Lecture screen similar to [LectureNotAvailableScreen], but which is meant to be shown only once after app-installation.
 /// Features additional buttons for each available language of [SettingViewModel.learningLanguagesList],
 /// pointing to [LectureManagementScreen] and setting the corresponding [SettingViewModel.learningLanguagesList]
 /// at the same time.
 class LectureStartupScreen extends StatelessWidget {
-  LectureStartupScreen({Key key}) : super(key: key);
+  const LectureStartupScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class LectureStartupScreen extends StatelessWidget {
     final List<Widget> buttons = languages.map((langMedia) => _buildButtonWithLang(context, langMedia)).toList();
     return Center(
       child: Container(
-        padding: EdgeInsets.all(30.0),
+        padding: const EdgeInsets.all(30.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -29,32 +31,32 @@ class LectureStartupScreen extends StatelessWidget {
             Text(
               AppLocalizations.of(context).emptyLectures,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 10,), // separator
-            Flexible( // expand only if needed and there is available space
+            const SizedBox(height: 10),
+            Flexible(
+              // expand only if needed and there is available space
               child: ListView.separated(
                 shrinkWrap: true,
-                separatorBuilder: (context, index) => SizedBox(height: 10),
+                separatorBuilder: (context, index) => const SizedBox(height: 10),
                 itemBuilder: (context, index) => buttons[index],
                 itemCount: buttons.length,
               ),
             ),
-            SizedBox(height: 10,), // separator
+            const SizedBox(height: 10),
             Text(
               AppLocalizations.of(context).minMaxLectureSizes,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-            SizedBox(height: 10,), // separator
+            const SizedBox(height: 10),
             Text(
               AppLocalizations.of(context).learningLanguageCanBeChanged,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme
-                  .subtitle1
-                  .copyWith(fontSize: Theme.of(context).textTheme
-                  .subtitle1
-                  .fontSize - 2),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(fontSize: Theme.of(context).textTheme.titleMedium!.fontSize! - 2),
             )
           ],
         ),
@@ -65,17 +67,20 @@ class LectureStartupScreen extends StatelessWidget {
   /// Builds a button for a specific language.
   /// Navigates to [LectureManagementScreen] when pressed.
   /// Loads async a corresponding flag-image for the passed language.
-  RaisedButton _buildButtonWithLang(BuildContext context, String langMedia) {
-    final double flagHeight = 60;
-    final double flagWidth = 100;
-    return RaisedButton(
+  ElevatedButton _buildButtonWithLang(BuildContext context, String langMedia) {
+    const double flagHeight = 60;
+    const double flagWidth = 100;
+    return ElevatedButton(
       onPressed: () {
         Provider.of<SettingViewModel>(context, listen: false).setSettingLearningLanguage(langMedia);
-        return Navigator.pushNamed(context, LectureManagementScreen.routeName);
+        Navigator.pushNamed(context, LectureManagementScreen.routeName);
       },
-      padding: EdgeInsets.all(15.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: ColorsLectary.lightBlue,
+        padding: const EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -85,26 +90,23 @@ class LectureStartupScreen extends StatelessWidget {
                 langMedia +
                 AppLocalizations.of(context).downloadAndManageLecturesFromLangPart2,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           // FutureBuilder for loading the corresponding flag-widget asynchronously
           FutureBuilder(
             future: _buildFlagWidget(langMedia, flagHeight, flagWidth),
-            builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      snapshot.data == null ? Container() : SizedBox(width: flagWidth),
-                      Icon(
-                        Icons.cloud_download,
-                        size: flagHeight,
-                      ),
-                      snapshot.data
-                    ]);
+            builder: (BuildContext context, AsyncSnapshot<Widget?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  snapshot.data == null ? Container() : const SizedBox(width: flagWidth),
+                  const Icon(
+                    Icons.cloud_download,
+                    size: flagHeight,
+                  ),
+                  snapshot.data!
+                ]);
               } else {
-                return Icon(
+                return const Icon(
                   Icons.cloud_download,
                   size: flagHeight,
                 );
@@ -120,7 +122,7 @@ class LectureStartupScreen extends StatelessWidget {
   /// load the corresponding flag.
   /// Maps languages "ÖGS" to "AT" and "DGS" to "DE.
   /// Returns [Null] if langMedia does not match an country isoCode.
-  Future<Widget> _buildFlagWidget(String langMedia, double flagHeight, double flagWidth) async {
+  Future<Widget?> _buildFlagWidget(String langMedia, double flagHeight, double flagWidth) async {
     String isoCode;
     switch (langMedia) {
       case "ÖGS":
@@ -138,11 +140,11 @@ class LectureStartupScreen extends StatelessWidget {
     String imageAssetPath = 'icons/flags/png/${isoCode.toLowerCase()}.png';
     bool assetExists = await checkIfAssetExists(imageAssetPath, package: "country_icons");
     if (!assetExists) {
-      print("flag image asset does not exist for $isoCode");
+      log("flag image asset does not exist for $isoCode");
       return null;
     }
     final image = Image.asset(imageAssetPath, package: 'country_icons');
-    return Container(
+    return SizedBox(
         height: flagHeight,
         width: flagWidth,
         child: FittedBox(
@@ -155,12 +157,12 @@ class LectureStartupScreen extends StatelessWidget {
 
   /// Utility function to check if an asset with the passed path exists
   /// and to catch any possible exception to handle them gracefully.
-  Future<bool> checkIfAssetExists(String assetPath, {String package}) async {
+  Future<bool> checkIfAssetExists(String assetPath, {String? package}) async {
     try {
       String path = package == null ? assetPath : "packages/$package/$assetPath";
       await rootBundle.load(path);
       return true;
-    } catch(_) {
+    } catch (_) {
       return false;
     }
   }

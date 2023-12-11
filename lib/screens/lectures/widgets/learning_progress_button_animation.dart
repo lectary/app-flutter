@@ -5,28 +5,27 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Class for handling the [Animation] of showing and hiding the learning-progress-button
 /// Uses a [SizeTransition] and a [CurvedAnimation] with [Curves.fastOutSlowIn] for showing and hiding the button via tap on the
 /// arrow-button on the side.
 class LearningProgressButtonAnimation extends StatefulWidget {
+  const LearningProgressButtonAnimation({super.key});
+
   @override
-  _LearningProgressButtonAnimationState createState() => _LearningProgressButtonAnimationState();
+  State<LearningProgressButtonAnimation> createState() => _LearningProgressButtonAnimationState();
 }
 
-class _LearningProgressButtonAnimationState extends State<LearningProgressButtonAnimation> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
+class _LearningProgressButtonAnimationState extends State<LearningProgressButtonAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
   bool _buttonEnabled = false;
 
   @override
   void initState() {
     super.initState();
     // controls the animation and sets its duration
-    _controller = AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: 500)
-    );
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     // defines the kind of animation
     _animation = CurvedAnimation(
       parent: _controller,
@@ -62,11 +61,10 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
+                SizedBox(
                   // the size needs to be set manually
                   width: widthButton,
-                  child: LearningProgressButton(
-                      iconSize: iconSize, color: ColorsLectary.lightBlue),
+                  child: LearningProgressButton(iconSize: iconSize, color: ColorsLectary.lightBlue),
                 ),
               ],
             )),
@@ -77,15 +75,15 @@ class _LearningProgressButtonAnimationState extends State<LearningProgressButton
               widthFactor: 0.5,
               alignment: Alignment.center,
               child: IconButton(
-                  padding: EdgeInsets.all(0.0),
+                  padding: const EdgeInsets.all(0.0),
                   iconSize: widthControl * 2,
                   icon: _buttonEnabled
-                      ? Icon(
+                      ? const Icon(
                           Icons.keyboard_arrow_right,
                           color: ColorsLectary.white,
                           semanticLabel: Constants.semanticDeactivateLearningProgress,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.keyboard_arrow_left,
                           color: ColorsLectary.white,
                           semanticLabel: Constants.semanticActivateLearningProgress,

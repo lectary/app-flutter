@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/utils/colors.dart';
@@ -8,8 +8,7 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
-/// Widget for displaying a [Vocable] of [MediaType.PNG] or [MediaType.JPG].
+/// Widget for displaying a [Vocable] of [MediaType.png] or [MediaType.jpg].
 /// Hides the media behind an [IconButton] initially, which can be changed by tapping.
 /// Uses an [Animation] for an 'slowMode' of the media revealing, where it gets visible continuously over time.
 /// For the animation a [Tween] of type [Double] is used to animate values in a specific range, which are then
@@ -24,35 +23,43 @@ class ImageViewer extends StatefulWidget {
 
   final double slowModeSpeed = Constants.slowModeSpeed;
 
-  ImageViewer({this.imagePath, this.mediaIndex, this.slowMode, this.autoMode, Key key}) : super(key: key);
+  const ImageViewer({
+    required this.imagePath,
+    required this.mediaIndex,
+    required this.slowMode,
+    required this.autoMode,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _ImageViewerState createState() => _ImageViewerState();
+  State<ImageViewer> createState() => _ImageViewerState();
 }
 
 class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin {
   bool showPicture = false;
+
   /// Used for indicating if animation is played once due to autoMode for avoiding looping.
   bool isAutoModeFinished = false;
+
   /// Used for ensuring the animation is only auto-played on swipe in.
   /// E.g. for avoiding that the animation is played when pressing autoPlay
   bool readyForAutoMode = false;
 
-  AnimationController _animationController;
-  Animation<double> _animation;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: Constants.mediaAnimationDurationMilliseconds),
+      duration: const Duration(milliseconds: Constants.mediaAnimationDurationMilliseconds),
       vsync: this,
     );
     _animation = Tween<double>(begin: 50, end: 0).animate(_animationController)
-    ..addListener(() {
-      // update ui on every tick
-      setState(() {});
-    });
+      ..addListener(() {
+        // update ui on every tick
+        setState(() {});
+      });
     readyForAutoMode = widget.autoMode ? true : false;
   }
 
@@ -92,13 +99,12 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
     return Semantics(
       label: Constants.semanticMediumImage,
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque, // ensures that the whole area can be tapped, not only the area containing the child widget
+        behavior: HitTestBehavior.opaque,
+        // ensures that the whole area can be tapped, not only the area containing the child widget
         onTap: () {
           setState(() {
             if (widget.slowMode) {
-              showPicture
-                  ? _animationController.reset()
-                  : _animationController.forward();
+              showPicture ? _animationController.reset() : _animationController.forward();
             }
             showPicture = showPicture ? false : true;
           });
@@ -134,7 +140,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
                         ),
                       ),
                     ])
-                  : Icon(
+                  : const Icon(
                       Icons.image,
                       size: 120,
                     )),

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lectary/data/db/entities/abstract.dart';
@@ -12,9 +14,19 @@ import 'package:lectary/utils/exceptions/no_internet_exception.dart';
 import 'package:lectary/utils/exceptions/server_response_exception.dart';
 import 'package:path_provider/path_provider.dart';
 
-
 /// Endpoint for the communication with the lectary API.
 class LectaryApi {
+  final http.Client _client;
+  final bool _isDebug;
+
+  static bool isDebugOverride = false;
+
+  LectaryApi(this._client, {bool isDebug = false}) : _isDebug = isDebug;
+
+  bool _isDebugMode() {
+    if (isDebugOverride) return true;
+    return _isDebug;
+  }
 
   /// Fetches all available data from the lectary API.
   /// Returns a [LectaryData] as [Future].
@@ -23,13 +35,14 @@ class LectaryApi {
   Future<LectaryData> fetchLectaryData() async {
     http.Response response;
     try {
-      response = await http.get(Constants.lectaryApiUrl + Constants.lectaryApiLectureOverviewEndpoint);
+      response = await _client
+          .get(Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiLectureOverviewEndpoint));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
 
     if (response.statusCode == 200) {
-      return LectaryData.fromJson(json.decode(response.body));
+      return LectaryData.fromJson(json.decode(response.body), _isDebugMode());
     } else {
       throw ServerResponseException(
           "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
@@ -46,7 +59,8 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(Constants.lectaryApiUrl + lecture.fileName);
+      response = await _client.get(
+          Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + lecture.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -73,7 +87,8 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(Constants.lectaryApiUrl + abstract.fileName);
+      response = await _client.get(
+          Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + abstract.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -100,7 +115,8 @@ class LectaryApi {
 
     http.Response response;
     try {
-      response = await http.get(Constants.lectaryApiUrl + coding.fileName);
+      response = await _client.get(
+          Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + coding.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -120,20 +136,22 @@ class LectaryApi {
   /// Function for reporting errors back to the lectary server.
   /// Params are the [timestamp], in the format 'yyyy-MM-dd-HH_mm', and an [errorMessage].
   /// Returns a [Future] with a [http.Response].
-  static Future<http.Response> reportErrorToServer(String timestamp, String errorMessage) async {
+  static Future<http.Response?> reportErrorToServer(String timestamp, String errorMessage) async {
+    if (kDebugMode) return null;
+
     // check correct timestamp format
     try {
       final format = DateFormat('yyyy-MM-dd-HH_mm');
       format.parse(timestamp);
-    } catch(e) {
+    } catch (e) {
       log("Error reporting failed! Reason: ${e.toString()}");
       return null;
     }
 
-    http.Response response;
+    http.Response? response;
     try {
       http.post(
-        Constants.lectaryApiErrorEndpoint,
+        Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiErrorEndpoint),
         headers: <String, String>{
           'Content-Type': 'application/x-www-form-urlencoded',
         },

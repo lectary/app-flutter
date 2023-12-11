@@ -1,5 +1,5 @@
 class MediaTypeException implements Exception {
-  String _message;
+  final String _message;
 
   MediaTypeException(this._message);
 

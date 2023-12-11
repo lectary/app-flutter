@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 // String keys
 const String
     // titles
@@ -165,11 +167,11 @@ final de = {
   AboutIntroductionPart2: 'Wenn Sie Ihre Lernvideos anbieten wollen, setzen Sie sich mit uns in Verbindung.\n\n',
   AboutContact: 'Fragen, Hinweise, Anregungen bitte an ',
   AboutInstruction: 'Anleitung: ',
-  AboutCredits: 'Credits: \n\n',
+  AboutCredits: 'Credits: ',
   AboutIconCredit: 'Icons von: ',
   AboutIconCreationCreditPart1: 'Icons erstellt von ',
   AboutIconCreationCreditPart2: 'von ',
-  AboutVersion: 'Version 4 #',
+  AboutVersion: 'Version',
 };
 
 // Language en
@@ -256,5 +258,5 @@ final en = {
   AboutIconCredit: 'Icons by : ',
   AboutIconCreationCreditPart1: 'Icons made by ',
   AboutIconCreationCreditPart2: 'from ',
-  AboutVersion: 'Version 4 #',
+  AboutVersion: 'Version',
 };

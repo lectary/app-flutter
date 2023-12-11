@@ -1,9 +1,10 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:lectary/i18n/localizations.dart';
 import 'package:lectary/main.dart';
 import 'package:lectary/screens/about/about_screen.dart';
-import 'package:lectary/screens/drawer/main_drawer.dart';
+import 'package:lectary/screens/core/custom_scaffold.dart';
 import 'package:lectary/utils/colors.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/dialogs.dart';
@@ -11,17 +12,17 @@ import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Setting-screen for changing various application settings
 class SettingsScreen extends StatefulWidget {
-  static const String routeName  = '/settings';
+  static const String routeName = '/settings';
+
+  const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-
   @override
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingViewModel>(context);
@@ -44,23 +45,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
           value: context.select((SettingViewModel model) => model.settingUppercase),
           title: Text(AppLocalizations.of(context).settingUppercase),
           onChanged: (value) => settings.toggleSettingUppercase()),
-      ListTile(
-          title: Text(AppLocalizations.of(context).settingResetLearningProgress),
-          onTap: () => Dialogs.showAlertDialog(
-              context: context,
-              title: AppLocalizations.of(context).settingResetLearningProgressQuestion,
-              submitText: AppLocalizations.of(context).reset,
-              submitFunc: () {
-                settings.resetLearningProgress();
-                Provider.of<CarouselViewModel>(context, listen: false).reloadCurrentSelection();
-              })),
+      // TODO DISABLED FEATURE (LearningProgress)
+      // ListTile(
+      //     title: Text(AppLocalizations.of(context).settingResetLearningProgress),
+      //     onTap: () => Dialogs.showAlertDialog(
+      //         context: context,
+      //         title: AppLocalizations.of(context).settingResetLearningProgressQuestion,
+      //         submitText: AppLocalizations.of(context).reset,
+      //         submitFunc: () {
+      //           settings.resetLearningProgress();
+      //           Provider.of<CarouselViewModel>(context, listen: false).reloadCurrentSelection();
+      //         })),
       ListTile(
         title: Text(AppLocalizations.of(context).settingChooseAppLanguage),
         trailing: DropdownButton(
             value: context.select((SettingViewModel model) => model.settingAppLanguage),
             items: Constants.appLanguagesList
-                .map((e) => DropdownMenuItem(child: Text(e.toUpperCase()), value: e)).toList(),
-            onChanged: (value) async {
+                .map((e) => DropdownMenuItem(value: e, child: Text(e.toUpperCase())))
+                .toList(),
+            onChanged: (dynamic value) async {
               if (settings.settingAppLanguage != value) {
                 await settings.setSettingAppLanguage(value);
                 log("setting new locale: $value");
@@ -68,40 +71,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }
             }),
       ),
-      ListTile(
-        title: Text(AppLocalizations.of(context).settingChooseLearningLanguage),
-        trailing: context.select((SettingViewModel model) => model.isUpdatingLanguages)
-            ? SizedBox(
-                width: 24, height: 24, child: CircularProgressIndicator())
-            : DropdownButton(
-                value: context.select((SettingViewModel model) => model.settingLearningLanguage),
-                items: (() {
-                  List<DropdownMenuItem> items = context.select((SettingViewModel model) => model.learningLanguagesList)
-                      .map((e) => DropdownMenuItem(child: Center(child: Text(e)), value: e)).toList();
-                  // adding custom dropdown item for updating languages
-                  items.add(DropdownMenuItem<String>(
-                    child: Column(
-                      children: [
-                        Divider(),
-                        Text(AppLocalizations.of(context).update),
-                      ],
-                    ),
-                    value: "_update", // special 'key' value for filtering it later
-                    onTap: settings.updateLearningLanguages,
-                  ));
-                  return items;
-                })(),
-                onChanged: (value) {
-                  if (value != "_update") { // filter the update value
-                    settings.setSettingLearningLanguage(value);
-                  }
-                }),
-      ),
+      // TODO DISABLED FEATURE (LearningLanguage)
+      // ListTile(
+      //   title: Text(AppLocalizations.of(context).settingChooseLearningLanguage),
+      //   trailing: context.select((SettingViewModel model) => model.isUpdatingLanguages)
+      //       ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator())
+      //       : DropdownButton<String>(
+      //           value: context.select((SettingViewModel model) => model.settingLearningLanguage),
+      //           items: _buildDropdownItems(settings),
+      //           onChanged: (String? value) {
+      //             if (value != null && value != "_update") {
+      //               // filter the update value
+      //               settings.setSettingLearningLanguage(value);
+      //             }
+      //           }),
+      //   onTap: () {},
+      // ),
       ListTile(
         title: Text(AppLocalizations.of(context).settingResetSettings),
-        onTap: () => Dialogs.showAlertDialog(
+        onTap: () => Dialogs.showAlert(
             context: context,
-            title: AppLocalizations.of(context).settingResetSettingsQuestion,
+            title: AppLocalizations.of(context).settingResetSettings,
+            content: AppLocalizations.of(context).settingResetSettingsQuestion,
             submitText: AppLocalizations.of(context).reset,
             submitFunc: () async {
               String oldLang = settings.settingAppLanguage;
@@ -112,12 +103,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 log("setting default locale: $newLang");
                 LocalizedApp.setLocale(context, Locale(settings.settingAppLanguage, ''));
               }
-            }
-            ),
+            }),
       ),
       // link to about-screen
       ListTile(
-          leading: Icon(Icons.info, color: ColorsLectary.lightBlue,),
+          leading: const Icon(
+            Icons.info,
+            color: ColorsLectary.lightBlue,
+          ),
           title: Text(AppLocalizations.of(context).about),
           onTap: () {
             Navigator.pushNamed(context, AboutScreen.routeName);
@@ -125,19 +118,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
 
     // building body with the listView and the list of setting-widgets
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context).screenSettingsTitle),
-      ),
-      drawer: MainDrawer(),
+    return CustomScaffold(
+      appBarTitle: Text(AppLocalizations.of(context).screenSettingsTitle),
       body: ListView.separated(
-        padding: EdgeInsets.all(0),
-        separatorBuilder: (context, index) => Divider(height: 1, thickness: 1),
-        itemCount: settingWidgetList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return settingWidgetList[index];
-        }
-      ),
+          padding: const EdgeInsets.all(0),
+          separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1),
+          itemCount: settingWidgetList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return settingWidgetList[index];
+          }),
     );
+  }
+
+  List<DropdownMenuItem<String>> _buildDropdownItems(SettingViewModel settings) {
+    List<DropdownMenuItem<String>> items = context
+        .select((SettingViewModel model) => model.learningLanguagesList)
+        .map((e) => DropdownMenuItem<String>(value: e, child: Center(child: Text(e))))
+        .toList();
+    // adding custom dropdown item for updating languages
+    items.add(DropdownMenuItem<String>(
+      value: "_update", // special 'key' value for filtering it later
+      onTap: settings.updateLearningLanguages,
+      child: Column(
+        children: [
+          const Divider(),
+          Text(AppLocalizations.of(context).update),
+        ],
+      ),
+    ));
+    return items;
   }
 }

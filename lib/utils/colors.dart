@@ -1,22 +1,20 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-
 
 /// Color.class needs Integer values
 /// #FFDA5D (yellow) converts to 0xFFDA5D
 /// Opacity has to be considered and added with two leading hex-values (0x00-0xFF)
 /// Therefore, the final yellow value with full opacity is 0xFFFFDA5D
 class ColorsLectary {
-  static const white = const Color(0xFFF8F8F8);
-  static const yellow = const Color(0xFFFFDA5D);
-  static const orange = const Color(0xFFF48E5B);
-  static const red = const Color(0xFFE95876);
-  static const green = const Color(0xFF97E975);
-  static const lightBlue = const Color(0xFF5AC1CF);
-  static const darkBlue = const Color(0xFF053751);
-  static const violet = const Color(0xFFB65DFF);
+  static const white = Color(0xFFF8F8F8);
+  static const yellow = Color(0xFFFFDA5D);
+  static const orange = Color(0xFFF48E5B);
+  static const red = Color(0xFFE95876);
+  static const green = Color(0xFF97E975);
+  static const lightBlue = Color(0xFF5AC1CF);
+  static const darkBlue = Color(0xFF053751);
+  static const violet = Color(0xFFB65DFF);
 
-  static const logoDarkBlue = const Color.fromRGBO(7, 54, 80, 1);
+  static const logoDarkBlue = Color.fromRGBO(7, 54, 80, 1);
 
   static const MaterialColor whiteSwatch = MaterialColor(0xFFF8F8F8, whiteCodes);
 }

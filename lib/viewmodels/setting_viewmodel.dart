@@ -26,7 +26,7 @@ class SettingViewModel with ChangeNotifier {
 
   final LectureRepository _lectureRepository;
 
-  SettingViewModel({@required lectureRepository})
+  SettingViewModel({required lectureRepository})
       :_lectureRepository = lectureRepository {
     log("settings instance created");
     loadLocalSettings();

@@ -1,12 +1,12 @@
 import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/main.dart';
+import 'package:lectary/screens/lectures/widgets/media_viewer.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:lectary/screens/lectures/widgets/media_viewer.dart';
-
 
 /// Carousel widget responsible for navigating and displaying the [List] of
 /// [Vocable] and playing its media contents like video, image or text.
@@ -15,17 +15,21 @@ class Carousel extends StatefulWidget {
   final List<Vocable> vocables;
   final CarouselController carouselController;
 
-  Carousel({this.vocables, this.carouselController, Key key}) : super(key: key);
+  const Carousel({
+    required this.vocables,
+    required this.carouselController,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _CarouselState createState() => _CarouselState();
+  State<Carousel> createState() => _CarouselState();
 }
 
 class _CarouselState extends State<Carousel> with RouteAware {
-
   @override
   void initState() {
     super.initState();
+
     /// Adding callback for jumping to the selected [Vocable] after the [Carousel] is initialized fully and
     /// the [widget.carouselController] is set properly
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -57,14 +61,14 @@ class _CarouselState extends State<Carousel> with RouteAware {
               Provider.of<CarouselViewModel>(context, listen: false).currentItemIndex = index;
             }),
         itemCount: widget.vocables.length,
-        itemBuilder: (BuildContext context, int itemIndex) =>
+        itemBuilder: (BuildContext context, int itemIndex, _) =>
             MediaViewer(vocable: widget.vocables[itemIndex], vocableIndex: itemIndex));
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context));
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute<dynamic>);
   }
 
   @override

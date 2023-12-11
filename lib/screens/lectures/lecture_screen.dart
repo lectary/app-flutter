@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,17 +12,16 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-
 /// Lecture screen in case there are available [Vocable].
 /// Consists of the [Carousel] with its [CarouselNavigationOverlay],
 /// and the two control areas [MediaControlArea] and [LearningControlArea].
 class LectureScreen extends StatefulWidget {
   final List<Vocable> vocables;
 
-  LectureScreen({this.vocables, Key key}) : super(key: key);
+  const LectureScreen({required this.vocables, Key? key}) : super(key: key);
 
   @override
-  _LectureScreenState createState() => _LectureScreenState();
+  State<LectureScreen> createState() => _LectureScreenState();
 }
 
 class _LectureScreenState extends State<LectureScreen> {
@@ -54,13 +54,12 @@ class _LectureScreenState extends State<LectureScreen> {
                 right: 0,
                 child: AspectRatio(
                     aspectRatio: Constants.aspectRatio,
-                    child: CarouselNavigationOverlay(
-                        carouselController: carouselController)),
+                    child: CarouselNavigationOverlay(carouselController: carouselController)),
               )
             ],
           ),
         ),
-        MediaControlArea(flex: 1),
+        const MediaControlArea(flex: 1),
         LearningControlArea(flex: 2, carouselController: carouselController),
       ],
     );
