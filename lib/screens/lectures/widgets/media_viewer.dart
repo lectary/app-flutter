@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
@@ -61,51 +62,67 @@ class MediaViewer extends StatelessWidget {
             );
           },
         ),
-        Builder(
-          builder: (BuildContext context) {
-            final bool slowModeOn = context.select((CarouselViewModel model) => model.slowModeOn);
-            final bool autoModeOn = context.select((CarouselViewModel model) => model.autoModeOn);
-            final bool loopModeOn = context.select((CarouselViewModel model) => model.loopModeOn);
-
-            Widget resultWidget;
-            switch (MediaType.fromString(vocable.mediaType)) {
-              case MediaType.mp4:
-                resultWidget = LectaryVideoPlayer(
-                  videoPath: vocable.media,
-                  mediaIndex: vocableIndex,
-                  slowMode: slowModeOn,
-                  autoMode: autoModeOn,
-                  loopMode: loopModeOn,
-                  audio: vocable.audio,
-                );
-                break;
-              case MediaType.png:
-              case MediaType.jpg:
-                resultWidget = ImageViewer(
-                  imagePath: vocable.media,
-                  mediaIndex: vocableIndex,
-                  slowMode: slowModeOn,
-                  autoMode: autoModeOn,
-                );
-                break;
-              case MediaType.txt:
-                resultWidget = TextViewer(
-                  textPath: vocable.media,
-                  mediaIndex: vocableIndex,
-                  slowMode: slowModeOn,
-                  autoMode: autoModeOn,
-                );
-                break;
-              default:
-                // Should be unreachable
-                // assert that all mediaTypes are valid, otherwise the vocable should had been filtered beforehand
-                resultWidget = Container();
-                break;
+        FutureBuilder(
+          future: context.select((CarouselViewModel model) => model.applicationDirectory),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              var directory = snapshot.requireData;
+              return buildContent(directory.path);
             }
-            return resultWidget;
+            return const Center(child: CircularProgressIndicator());
           },
         ),
       ],
+    );
+  }
+
+  Builder buildContent(String applicationDocumentPath) {
+    return Builder(
+      builder: (BuildContext context) {
+        final bool slowModeOn = context.select((CarouselViewModel model) => model.slowModeOn);
+        final bool autoModeOn = context.select((CarouselViewModel model) => model.autoModeOn);
+        final bool loopModeOn = context.select((CarouselViewModel model) => model.loopModeOn);
+
+        // build absolute path to vocable asset
+        final String vocablePath = '$applicationDocumentPath${Platform.pathSeparator}${vocable.media}';
+
+        Widget resultWidget;
+        switch (MediaType.fromString(vocable.mediaType)) {
+          case MediaType.mp4:
+            resultWidget = LectaryVideoPlayer(
+              videoPath: vocablePath,
+              mediaIndex: vocableIndex,
+              slowMode: slowModeOn,
+              autoMode: autoModeOn,
+              loopMode: loopModeOn,
+              audio: vocable.audio,
+            );
+            break;
+          case MediaType.png:
+          case MediaType.jpg:
+            resultWidget = ImageViewer(
+              imagePath: vocablePath,
+              mediaIndex: vocableIndex,
+              slowMode: slowModeOn,
+              autoMode: autoModeOn,
+            );
+            break;
+          case MediaType.txt:
+            resultWidget = TextViewer(
+              textPath: vocablePath,
+              mediaIndex: vocableIndex,
+              slowMode: slowModeOn,
+              autoMode: autoModeOn,
+            );
+            break;
+          default:
+            // Should be unreachable
+            // assert that all mediaTypes are valid, otherwise the vocable should had been filtered beforehand
+            resultWidget = Container();
+            break;
+        }
+        return resultWidget;
+      },
     );
   }
 }
