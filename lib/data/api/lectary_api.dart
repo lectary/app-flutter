@@ -12,6 +12,7 @@ import 'package:lectary/models/lectary_overview.dart';
 import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/exceptions/no_internet_exception.dart';
 import 'package:lectary/utils/exceptions/server_response_exception.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Endpoint for the communication with the lectary API.
@@ -147,6 +148,10 @@ class LectaryApi {
       log("Error reporting failed! Reason: ${e.toString()}");
       return null;
     }
+
+    // enrich error message
+    final package = await PackageInfo.fromPlatform();
+    errorMessage += "\n(Build: ${package.buildNumber}, Platform: ${Platform.operatingSystem} - ${Platform.operatingSystemVersion})";
 
     http.Response? response;
     try {
