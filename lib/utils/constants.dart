@@ -10,7 +10,9 @@ class Constants {
   static const lectaryApiUrl = "lectary.net";
   static const _lectaryApiVersionPath = "/l4/";
   static const lectaryApiDownloadPath = _lectaryApiVersionPath;
+  static const lectaryApiDownloadDebugPath = "${_lectaryApiVersionPath}debug/";
   static const lectaryApiLectureOverviewEndpoint = "${_lectaryApiVersionPath}info.php";
+  static const lectaryApiLectureOverviewDebugEndpoint = "${_lectaryApiVersionPath}debug/info.php";
   static const lectaryApiErrorEndpoint = "${_lectaryApiVersionPath}error.php";
 
   // carousel

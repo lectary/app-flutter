@@ -189,9 +189,9 @@ class _AboutScreenState extends State<AboutScreen> {
     setState(() {
       _debugCounter++;
       if (_debugCounter == _magicNumberDebugMode) {
-        LectaryApi.isDebugOverride = true;
+        LectaryApi.isDebug = true;
       } else {
-        LectaryApi.isDebugOverride = false;
+        LectaryApi.isDebug = false;
       }
       if (_debugCounter > _magicNumberDebugMode) {
         _debugCounter = 0;

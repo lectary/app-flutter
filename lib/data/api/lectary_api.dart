@@ -13,21 +13,14 @@ import 'package:lectary/utils/constants.dart';
 import 'package:lectary/utils/exceptions/no_internet_exception.dart';
 import 'package:lectary/utils/exceptions/server_response_exception.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
 
 /// Endpoint for the communication with the lectary API.
 class LectaryApi {
   final http.Client _client;
-  final bool _isDebug;
 
-  static bool isDebugOverride = false;
+  static bool isDebug = false;
 
-  LectaryApi(this._client, {bool isDebug = false}) : _isDebug = isDebug;
-
-  bool _isDebugMode() {
-    if (isDebugOverride) return true;
-    return _isDebug;
-  }
+  LectaryApi(this._client);
 
   /// Fetches all available data from the lectary API.
   /// Returns a [LectaryData] as [Future].
@@ -36,14 +29,16 @@ class LectaryApi {
   Future<LectaryData> fetchLectaryData() async {
     http.Response response;
     try {
-      response = await _client
-          .get(Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiLectureOverviewEndpoint));
+      final endpoint = isDebug
+          ? Constants.lectaryApiLectureOverviewDebugEndpoint
+          : Constants.lectaryApiLectureOverviewEndpoint;
+      response = await _client.get(Uri.https(Constants.lectaryApiUrl, endpoint));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
 
     if (response.statusCode == 200) {
-      return LectaryData.fromJson(json.decode(response.body), _isDebugMode());
+      return LectaryData.fromJson(json.decode(response.body));
     } else {
       throw ServerResponseException(
           "Error occurred while communicating with server with status code: ${response.statusCode.toString()}");
@@ -55,19 +50,18 @@ class LectaryApi {
   /// Throws [NoInternetException] if there is no internet connection
   /// and [ServerResponseException] on any other errors or if the lecture could
   /// not be found, with corresponding error messages.
-  Future<File> downloadLectureZip(Lecture lecture) async {
-    String dir = (await getTemporaryDirectory()).path;
-
+  Future<File> downloadLectureZip(Lecture lecture, String filePath) async {
     http.Response response;
     try {
+      final endpoint = isDebug ? Constants.lectaryApiDownloadDebugPath : Constants.lectaryApiDownloadPath;
       response = await _client.get(
-          Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + lecture.fileName));
+          Uri.https(Constants.lectaryApiUrl, endpoint + lecture.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
 
     if (response.statusCode == 200) {
-      File file = File('$dir/${lecture.fileName}');
+      File file = File('$filePath/${lecture.fileName}');
       await file.writeAsBytes(response.bodyBytes);
       return file;
     } else if (response.statusCode == 404) {
@@ -83,19 +77,18 @@ class LectaryApi {
   /// Throws [NoInternetException] if there is no internet connection
   /// and [ServerResponseException] on any other errors or if the abstract could
   /// not be found, with corresponding error messages.
-  Future<File> downloadAbstractFile(Abstract abstract) async {
-    String dir = (await getTemporaryDirectory()).path;
-
+  Future<File> downloadAbstractFile(Abstract abstract, String filePath) async {
     http.Response response;
     try {
+      final endpoint = isDebug ? Constants.lectaryApiDownloadDebugPath : Constants.lectaryApiDownloadPath;
       response = await _client.get(
-          Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + abstract.fileName));
+          Uri.https(Constants.lectaryApiUrl, endpoint + abstract.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
 
     if (response.statusCode == 200) {
-      File file = File('$dir/${abstract.fileName}');
+      File file = File('$filePath/${abstract.fileName}');
       await file.writeAsBytes(response.bodyBytes);
       return file;
     } else if (response.statusCode == 404) {
@@ -111,19 +104,18 @@ class LectaryApi {
   /// Throws [NoInternetException] if there is no internet connection
   /// and [ServerResponseException] on any other errors or if the coding could
   /// not be found, with corresponding error messages.
-  Future<File> downloadCodingFile(Coding coding) async {
-    String dir = (await getTemporaryDirectory()).path;
-
+  Future<File> downloadCodingFile(Coding coding, String filePath) async {
     http.Response response;
     try {
+      final endpoint = isDebug ? Constants.lectaryApiDownloadDebugPath : Constants.lectaryApiDownloadPath;
       response = await _client.get(
-          Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiDownloadPath + coding.fileName));
+          Uri.https(Constants.lectaryApiUrl, endpoint + coding.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
 
     if (response.statusCode == 200) {
-      File file = File('$dir/${coding.fileName}');
+      File file = File('$filePath/${coding.fileName}');
       await file.writeAsBytes(response.bodyBytes);
       return file;
     } else if (response.statusCode == 404) {

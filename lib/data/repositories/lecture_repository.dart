@@ -7,6 +7,7 @@ import 'package:lectary/data/db/entities/coding.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
 import 'package:lectary/data/db/entities/vocable.dart';
 import 'package:lectary/models/lectary_overview.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// Repository class for encapsulating data access independent of the source
 class LectureRepository {
@@ -33,7 +34,8 @@ class LectureRepository {
   // Lectures
   ///////////////////
   Future<File> downloadLecture(Lecture lecture) async {
-    return _lectaryApi.downloadLectureZip(lecture);
+    final String dir = (await getTemporaryDirectory()).path;
+    return _lectaryApi.downloadLectureZip(lecture, dir);
   }
 
   Stream<List<Lecture>> watchAllLectures() {
@@ -117,7 +119,8 @@ class LectureRepository {
   // Abstracts
   ///////////////////
   Future<File> downloadAbstract(Abstract abstract) async {
-    return _lectaryApi.downloadAbstractFile(abstract);
+    final String dir = (await getTemporaryDirectory()).path;
+    return _lectaryApi.downloadAbstractFile(abstract, dir);
   }
 
   Future<List<Abstract>> findAllAbstracts() {
@@ -140,7 +143,8 @@ class LectureRepository {
   // Codings
   ///////////////////
   Future<File> downloadCoding(Coding coding) async {
-    return _lectaryApi.downloadCodingFile(coding);
+    final String dir = (await getTemporaryDirectory()).path;
+    return _lectaryApi.downloadCodingFile(coding, dir);
   }
 
   Future<List<Coding>> findAllCodings() {

@@ -15,13 +15,12 @@ class LectaryData {
     required this.codings,
   });
 
-  factory LectaryData.fromJson(Map<String, dynamic> json, bool isDebug) {
+  factory LectaryData.fromJson(Map<String, dynamic> json) {
     // extract json list first to avoid some exceptions
     List<dynamic> jsonLessons = json['lesson'];
     List<Lecture> lessons = jsonLessons
         .map((element) => Lecture.fromJson(element))
         .where((element) => element != null)
-        .where((element) => _filterDebugInProd(element!, isDebug))
         .toList()
         .cast<Lecture>();
     List<dynamic> jsonAbstracts = json['abstract'];
@@ -44,12 +43,6 @@ class LectaryData {
       abstracts: abstracts,
       codings: codings,
     );
-  }
-
-  // Allow debug lectures only in debug mode
-  static bool _filterDebugInProd(Lecture lecture, bool isDebug) {
-    if (isDebug) return true;
-    return !lecture.debug;
   }
 
   @override
