@@ -30,9 +30,9 @@ class LectaryApi {
     http.Response response;
     try {
       final endpoint = isDebug
-          ? Constants.lectaryApiLectureOverviewDebugEndpoint
-          : Constants.lectaryApiLectureOverviewEndpoint;
-      response = await _client.get(Uri.https(Constants.lectaryApiUrl, endpoint));
+          ? Constants.apiPathLectureOverviewDebug
+          : Constants.apiPathLectureOverview;
+      response = await _client.get(Uri.https(Constants.lectaryHost, endpoint));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -53,9 +53,9 @@ class LectaryApi {
   Future<File> downloadLectureZip(Lecture lecture, String filePath) async {
     http.Response response;
     try {
-      final endpoint = isDebug ? Constants.lectaryApiDownloadDebugPath : Constants.lectaryApiDownloadPath;
+      final endpoint = isDebug ? Constants.apiPathDownloadDebug : Constants.apiPathDownload;
       response = await _client.get(
-          Uri.https(Constants.lectaryApiUrl, endpoint + lecture.fileName));
+          Uri.https(Constants.lectaryHost, endpoint + lecture.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -80,9 +80,9 @@ class LectaryApi {
   Future<File> downloadAbstractFile(Abstract abstract, String filePath) async {
     http.Response response;
     try {
-      final endpoint = isDebug ? Constants.lectaryApiDownloadDebugPath : Constants.lectaryApiDownloadPath;
+      final endpoint = isDebug ? Constants.apiPathDownloadDebug : Constants.apiPathDownload;
       response = await _client.get(
-          Uri.https(Constants.lectaryApiUrl, endpoint + abstract.fileName));
+          Uri.https(Constants.lectaryHost, endpoint + abstract.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -107,9 +107,9 @@ class LectaryApi {
   Future<File> downloadCodingFile(Coding coding, String filePath) async {
     http.Response response;
     try {
-      final endpoint = isDebug ? Constants.lectaryApiDownloadDebugPath : Constants.lectaryApiDownloadPath;
+      final endpoint = isDebug ? Constants.apiPathDownloadDebug : Constants.apiPathDownload;
       response = await _client.get(
-          Uri.https(Constants.lectaryApiUrl, endpoint + coding.fileName));
+          Uri.https(Constants.lectaryHost, endpoint + coding.fileName));
     } on SocketException {
       throw NoInternetException("No internet! Check your connection!");
     }
@@ -148,7 +148,7 @@ class LectaryApi {
     http.Response? response;
     try {
       http.post(
-        Uri.https(Constants.lectaryApiUrl, Constants.lectaryApiErrorEndpoint),
+        Uri.https(Constants.lectaryHost, Constants.apiPathErrorReport),
         headers: <String, String>{
           'Content-Type': 'application/x-www-form-urlencoded',
         },

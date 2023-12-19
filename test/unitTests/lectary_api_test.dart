@@ -29,8 +29,8 @@ void main() {
         """, 200));
     await api.fetchLectaryData();
     final endpoint = isDebug
-        ? Constants.lectaryApiLectureOverviewDebugEndpoint
-        : Constants.lectaryApiLectureOverviewEndpoint;
+        ? Constants.apiPathLectureOverviewDebug
+        : Constants.apiPathLectureOverview;
     final actual = verify(client.get(captureAny)).captured.toString();
     expect(actual, contains(endpoint));
   }
@@ -51,8 +51,8 @@ void main() {
     when(client.get(any)).thenAnswer((_) async => http.Response("", 404)); // 404 bypasses file logic
     apiCall.call();
     final endpoint = isDebug
-        ? Constants.lectaryApiDownloadDebugPath
-        : Constants.lectaryApiDownloadPath;
+        ? Constants.apiPathDownloadDebug
+        : Constants.apiPathDownload;
     final actual = verify(client.get(captureAny)).captured.toString();
     expect(actual, contains(endpoint));
   }
