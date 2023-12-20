@@ -13,7 +13,6 @@ import 'package:lectary/screens/lectures/search/vocable_search_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/global_theme.dart';
-import 'package:lectary/utils/utils.dart';
 import 'package:lectary/viewmodels/carousel_viewmodel.dart';
 import 'package:lectary/viewmodels/lecture_viewmodel.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
@@ -28,8 +27,7 @@ void main() async {
   final database = await DatabaseProvider.instance.db;
   log("database initialized!");
 
-  final isDebug = await Utils.isDebugMode();
-  final api = LectaryApi(http.Client(), isDebug: isDebug);
+  final api = LectaryApi(http.Client());
 
   runApp(LectaryApp(lectaryApi: api, lectureDatabase: database));
 }

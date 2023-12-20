@@ -7,11 +7,13 @@ class Constants {
   static const double breakpointTablet = 800;
 
   // api
-  static const lectaryApiUrl = "lectary.net";
-  static const _lectaryApiVersionPath = "/l4/";
-  static const lectaryApiDownloadPath = _lectaryApiVersionPath;
-  static const lectaryApiLectureOverviewEndpoint = "${_lectaryApiVersionPath}info.php";
-  static const lectaryApiErrorEndpoint = "${_lectaryApiVersionPath}error.php";
+  static const lectaryHost = "lectary.net";
+  static const _apiVersion = "/l4";
+  static const apiPathDownload = "$_apiVersion/";
+  static const apiPathLectureOverview = "$_apiVersion/info.php";
+  static const apiPathDownloadDebug = "$_apiVersion/debug/";
+  static const apiPathLectureOverviewDebug = "$_apiVersion/debug/info.php";
+  static const apiPathErrorReport = "$_apiVersion/error.php";
 
   // carousel
   static const opacityOfCarouselOverLay = 0.5;

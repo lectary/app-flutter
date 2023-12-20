@@ -6,6 +6,7 @@ part of 'database.dart';
 // FloorGenerator
 // **************************************************************************
 
+// ignore: avoid_classes_with_only_static_members
 class $FloorLectureDatabase {
   /// Creates a database builder for a persistent database.
   /// Once a database is built, you should keep a reference to it and re-use it.
@@ -68,12 +69,16 @@ class _$LectureDatabase extends LectureDatabase {
 
   CodingDao? _codingDaoInstance;
 
-  Future<sqflite.Database> open(String path, List<Migration> migrations,
-      [Callback? callback]) async {
+  Future<sqflite.Database> open(
+    String path,
+    List<Migration> migrations, [
+    Callback? callback,
+  ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 2,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
+        await callback?.onConfigure?.call(database);
       },
       onOpen: (database) async {
         await callback?.onOpen?.call(database);
@@ -124,8 +129,10 @@ class _$LectureDatabase extends LectureDatabase {
 }
 
 class _$LectureDao extends LectureDao {
-  _$LectureDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database, changeListener),
+  _$LectureDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
         _lectureInsertionAdapter = InsertionAdapter(
             database,
             'lectures',
@@ -276,8 +283,10 @@ class _$LectureDao extends LectureDao {
 }
 
 class _$VocableDao extends VocableDao {
-  _$VocableDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
+  _$VocableDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
         _vocableInsertionAdapter = InsertionAdapter(
             database,
             'vocables',
@@ -328,7 +337,9 @@ class _$VocableDao extends VocableDao {
 
   @override
   Future<List<Vocable>> findVocablesByLectureIdAndLangMedia(
-      int lectureId, String langMedia) async {
+    int lectureId,
+    String langMedia,
+  ) async {
     return _queryAdapter.queryList(
         'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE lecture_id = ?1 AND lang_media = ?2 ORDER BY vocable_sort ASC',
         mapper: (Map<String, Object?> row) => Vocable(id: row['id'] as int?, lectureId: row['lecture_id'] as int, vocable: row['vocable'] as String, vocableSort: row['vocable_sort'] as String, mediaType: row['media_type'] as String, media: row['media'] as String, audio: row['audio'] as String?, sort: row['sort'] as String?, vocableProgress: row['vocable_progress'] as int),
@@ -337,7 +348,9 @@ class _$VocableDao extends VocableDao {
 
   @override
   Future<List<Vocable>> findVocablesByLecturePackAndLangMedia(
-      String lecturePack, String langMedia) async {
+    String lecturePack,
+    String langMedia,
+  ) async {
     return _queryAdapter.queryList(
         'SELECT vocables.* FROM vocables LEFT JOIN lectures ON vocables.lecture_id = lectures.id WHERE pack = ?1 AND lang_media = ?2 ORDER BY vocable_sort ASC',
         mapper: (Map<String, Object?> row) => Vocable(id: row['id'] as int?, lectureId: row['lecture_id'] as int, vocable: row['vocable'] as String, vocableSort: row['vocable_sort'] as String, mediaType: row['media_type'] as String, media: row['media'] as String, audio: row['audio'] as String?, sort: row['sort'] as String?, vocableProgress: row['vocable_progress'] as int),
@@ -395,8 +408,10 @@ class _$VocableDao extends VocableDao {
 }
 
 class _$AbstractDao extends AbstractDao {
-  _$AbstractDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
+  _$AbstractDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
         _abstractInsertionAdapter = InsertionAdapter(
             database,
             'abstracts',
@@ -471,8 +486,10 @@ class _$AbstractDao extends AbstractDao {
 }
 
 class _$CodingDao extends CodingDao {
-  _$CodingDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
+  _$CodingDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
         _codingInsertionAdapter = InsertionAdapter(
             database,
             'codings',

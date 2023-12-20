@@ -1,7 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:collection';
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_controller.dart';
+import 'package:collection/collection.dart';
 import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:lectary/data/db/entities/lecture.dart';
@@ -10,14 +13,14 @@ import 'package:lectary/data/repositories/lecture_repository.dart';
 import 'package:lectary/models/lecture_package.dart';
 import 'package:lectary/models/media_type_enum.dart';
 import 'package:lectary/models/search_result.dart';
+import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/screens/lectures/main_screen.dart';
 import 'package:lectary/screens/management/lecture_management_screen.dart';
 import 'package:lectary/screens/settings/settings_screen.dart';
 import 'package:lectary/utils/constants.dart';
-import 'package:lectary/models/selection_type.dart';
 import 'package:lectary/utils/utils.dart';
-import 'package:collection/collection.dart';
 import 'package:lectary/viewmodels/setting_viewmodel.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -160,10 +163,19 @@ class CarouselViewModel with ChangeNotifier {
     _allLocalVocables.clear();
   }
 
+  /// Cache for app directory, needed for resolving relative file path of vocables
+  late Future<Directory> _applicationDirectory;
+  Future<Directory> get applicationDirectory => _applicationDirectory;
+
+  void initApplicationDirectory() async {
+    _applicationDirectory = getApplicationDocumentsDirectory().whenComplete(() => notifyListeners());
+  }
+
   /// Constructor with passed in [LectureRepository] dependency.
   /// Loads and listens to the [Stream] of local [Lecture].
-  CarouselViewModel({required lectureRepository})
-      : _lectureRepository = lectureRepository;
+  CarouselViewModel({required lectureRepository}) : _lectureRepository = lectureRepository {
+    initApplicationDirectory();
+  }
 
   @override
   void dispose() {

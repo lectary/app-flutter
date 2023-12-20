@@ -437,16 +437,14 @@ class LectureViewModel with ChangeNotifier {
     // validate archive
     Utils.validateArchive(zipFile, archive);
 
-    // get the path to the device's application directory
-    String dir = (await getApplicationDocumentsDirectory()).path;
-
     List<Vocable> vocables = [];
 
     for (ArchiveFile file in archive) {
       if (!file.isFile) continue;
 
       // file.name holds archive name plus actual filename
-      String filePath = '$dir/${file.name}';
+      // NOTE: storing only relative path - application directory may change on iOS
+      String filePath = file.name;
 
       Vocable? newVocable = Vocable.fromFilePath(filePath);
       if (newVocable != null) vocables.add(newVocable);
