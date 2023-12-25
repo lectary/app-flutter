@@ -437,6 +437,9 @@ class LectureViewModel with ChangeNotifier {
     // validate archive
     Utils.validateArchive(zipFile, archive);
 
+    // get the path to the device's application directory
+    String dir = (await getApplicationDocumentsDirectory()).path;
+
     List<Vocable> vocables = [];
 
     for (ArchiveFile file in archive) {
@@ -444,13 +447,13 @@ class LectureViewModel with ChangeNotifier {
 
       // file.name holds archive name plus actual filename
       // NOTE: storing only relative path - application directory may change on iOS
-      String filePath = file.name;
-
-      Vocable? newVocable = Vocable.fromFilePath(filePath);
+      String relativePath = file.name;
+      Vocable? newVocable = Vocable.fromFilePath(relativePath);
       if (newVocable != null) vocables.add(newVocable);
 
       // saving media file locally
-      File outFile = File(filePath);
+      String absolutePath = "$dir/${file.name}";
+      File outFile = File(absolutePath);
       outFile = await outFile.create(recursive: true);
       await outFile.writeAsBytes(file.content);
     }
