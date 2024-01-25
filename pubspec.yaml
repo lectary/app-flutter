@@ -3,7 +3,7 @@ description: Lectary 4 - A sign language learning application
 
 publish_to: 'none'
 
-version: 4.2.2+422
+version: 4.2.3+423
 
 environment:
   sdk: '>=3.0.1 <4.0.0'
