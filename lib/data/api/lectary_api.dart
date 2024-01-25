@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -132,18 +133,18 @@ class LectaryApi {
   static Future<http.Response?> reportErrorToServer(String timestamp, String errorMessage) async {
     if (kDebugMode) return null;
 
-    // check correct timestamp format
-    try {
-      final format = DateFormat('yyyy-MM-dd-HH_mm');
-      format.parse(timestamp);
-    } catch (e) {
-      log("Error reporting failed! Reason: ${e.toString()}");
-      return null;
-    }
-
     // enrich error message
     final package = await PackageInfo.fromPlatform();
-    errorMessage += "\n(Build: ${package.buildNumber}, Platform: ${Platform.operatingSystem} - ${Platform.operatingSystemVersion})";
+    errorMessage += "\nRunning on Build: ${package.buildNumber}, Platform: ${Platform.operatingSystem}";
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      errorMessage +=  " - ${androidInfo.version.release} (SDK ${androidInfo.version.sdkInt}), Model: ${androidInfo.manufacturer} ${androidInfo.model}";
+    }
+    if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      errorMessage += " - ${iosInfo.systemVersion}, Model: ${iosInfo.model}";
+    }
 
     http.Response? response;
     try {

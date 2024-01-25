@@ -96,7 +96,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           text: "lectary.net/anleitung\n\n",
                           style: CustomAppTheme.hyperlink(context),
                           recognizer:
-                              _buildTapGestureRecognizer('https://lectary.net/anleitung4.html')),
+                              _buildTapGestureRecognizer('https://lectary.net/anleitung.html')),
                     ]),
                     TextSpan(
                       text: AppLocalizations.of(context).aboutCredits,
