@@ -27,8 +27,8 @@ dependencies:
   shared_preferences: ^2.1.1
   country_icons: ^3.0.0
   collection: any
-  package_info_plus: 4.2.0
-  device_info_plus: ^9.1.2
+  package_info_plus: ^9.0.0
+  device_info_plus: ^12.3.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -41,7 +41,7 @@ dev_dependencies:
   mockito: ^5.4.0
   floor_generator: ^1.5.0
   build_runner: ^2.4.8
-  flutter_lints: ^3.0.1
+  flutter_lints: ^6.0.0
 
 dependency_overrides:
   analyzer: ^6.4.1 # conflict between floor and flutter_test
