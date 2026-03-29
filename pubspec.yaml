@@ -7,7 +7,7 @@ version: 4.2.3+423
 
 environment:
   sdk: '>=3.0.1 <4.0.0'
-  flutter: ^3.10.1
+  flutter: ^3.41.5
 
 dependencies:
   flutter:
@@ -17,7 +17,7 @@ dependencies:
   intl: any
   provider: ^6.0.5
   http: ^1.1.0
-  floor: ^1.4.2
+  floor: ^1.5.0
   path_provider: ^2.0.15
   archive: ^4.0.9
   url_launcher: ^6.1.11
@@ -39,9 +39,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.0
-  floor_generator: ^1.4.2
-  build_runner: ^2.4.4
+  floor_generator: ^1.5.0
+  build_runner: ^2.4.8
   flutter_lints: ^3.0.1
+
+dependency_overrides:
+  analyzer: ^6.4.1 # conflict between floor and flutter_test
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
