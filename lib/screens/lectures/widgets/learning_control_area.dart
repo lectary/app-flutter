@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 /// Sets and listens for changes in the [CarouselViewModel].
 class LearningControlArea extends StatefulWidget {
   final int flex;
-  final CarouselController carouselController;
+  final CarouselSliderController carouselController;
 
   const LearningControlArea({super.key, required this.flex, required this.carouselController});
 

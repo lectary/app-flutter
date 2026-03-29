@@ -44,7 +44,7 @@ class CarouselViewModel with ChangeNotifier {
   }
 
   /// Used primarily for jumping to other pages via the [VocableSearchScreen]
-  late CarouselController carouselController;
+  late CarouselSliderController carouselController;
 
   /// Used to interrupt videos or animations of the carousel when another route is pushed
   bool _interrupted = false;

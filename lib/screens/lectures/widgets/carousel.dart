@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 /// Uses the package [CarouselSlider].
 class Carousel extends StatefulWidget {
   final List<Vocable> vocables;
-  final CarouselController carouselController;
+  final CarouselSliderController carouselController;
 
   const Carousel({
     required this.vocables,
