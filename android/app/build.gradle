@@ -29,6 +29,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace "com.ionicframework.lectary"
+
     compileSdkVersion 36
 
     compileOptions {
@@ -40,9 +42,6 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 
     defaultConfig {
         applicationId "com.ionicframework.lectary"
@@ -70,6 +69,9 @@ android {
             manifestPlaceholders = [app_name: "Lectary"]
             signingConfig signingConfigs.release
         }
+    }
+    lint {
+        disable 'InvalidPackage'
     }
 }
 
