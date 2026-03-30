@@ -26,7 +26,7 @@ class AppLocalizations {
   };
 
   // Getters for localized values
-  _getValue(String key) {
+  String _getValue(String key) {
     String value = _localizedValues[locale.languageCode]![key] ?? "<no translation>";
     return _settingUppercase
         ? value.toUpperCase()

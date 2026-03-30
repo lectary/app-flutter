@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -60,7 +61,7 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the bottom-modal-sheet for the abstract
-  _showAbstract(String packTitle, String? abstractText, bool uppercase) {
+  Future<dynamic> _showAbstract(String packTitle, String? abstractText, bool uppercase) {
     return showModalBottomSheet(
       context: context,
       builder: (_) {
@@ -147,10 +148,10 @@ class LecturePackageItem extends StatelessWidget {
   }
 
   // builds the bottom-modal-sheet for the lecture menu
-  _showLectureMenu(Lecture lecture) {
+  Future<Void?> _showLectureMenu(Lecture lecture) {
     LectureViewModel lectureViewModel = Provider.of<LectureViewModel>(context, listen: false);
     SettingViewModel settingViewModel = Provider.of<SettingViewModel>(context, listen: false);
-    return showModalBottomSheet(
+    return showModalBottomSheet<Void>(
       context: context,
       builder: (_) {
         return MultiProvider(
@@ -291,5 +292,5 @@ class LecturePackageItem extends StatelessWidget {
         ));
   }
 
-  static emptyFunction() {}
+  static void emptyFunction() {}
 }

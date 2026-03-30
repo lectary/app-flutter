@@ -56,7 +56,7 @@ class LectureViewModel with ChangeNotifier {
   List<Coding> _availableCodings = [];
 
   /// Constructor with passed in [LectureRepository]
-  LectureViewModel({required lectureRepository})
+  LectureViewModel({required LectureRepository lectureRepository})
       : _lectureRepository = lectureRepository;
 
   void resetCurrentFilter() {

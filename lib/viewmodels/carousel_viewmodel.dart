@@ -173,7 +173,7 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Constructor with passed in [LectureRepository] dependency.
   /// Loads and listens to the [Stream] of local [Lecture].
-  CarouselViewModel({required lectureRepository}) : _lectureRepository = lectureRepository {
+  CarouselViewModel({required LectureRepository lectureRepository}) : _lectureRepository = lectureRepository {
     initApplicationDirectory();
   }
 

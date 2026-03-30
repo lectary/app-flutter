@@ -41,5 +41,5 @@ class CustomButton extends StatelessWidget {
     );
   }
 
-  static emptyFunction() {}
+  static void emptyFunction() {}
 }
