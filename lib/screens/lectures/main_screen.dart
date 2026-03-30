@@ -130,8 +130,6 @@ class LectureMainScreen extends StatelessWidget {
         return uppercase ? selection.lesson!.toUpperCase() : selection.lesson!;
       case SelectionType.search:
         return AppLocalizations.of(context).searchLabel + (uppercase ? selection.filter!.toUpperCase() : selection.filter!);
-      default:
-        return "";
     }
   }
 }

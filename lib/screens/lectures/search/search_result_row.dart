@@ -34,8 +34,6 @@ class SearchResultRow extends StatelessWidget {
               return const Icon(Icons.movie);
             case MediaType.txt:
               return const Icon(Icons.subject);
-            default:
-              return const SizedBox();
           }
         })(),
       ),

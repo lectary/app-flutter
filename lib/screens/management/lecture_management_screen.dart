@@ -152,9 +152,6 @@ class _LectureManagementScreenState extends State<LectureManagementScreen> {
             ],
           ),
         );
-
-      default:
-        return Container();
     }
   }
 

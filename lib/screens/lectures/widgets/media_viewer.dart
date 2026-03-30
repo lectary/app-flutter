@@ -115,11 +115,6 @@ class MediaViewer extends StatelessWidget {
               autoMode: autoModeOn,
             );
             break;
-          default:
-            // Should be unreachable
-            // assert that all mediaTypes are valid, otherwise the vocable should had been filtered beforehand
-            resultWidget = Container();
-            break;
         }
         return resultWidget;
       },

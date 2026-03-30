@@ -152,8 +152,6 @@ class _VocableSearchScreenState extends State<VocableSearchScreen> {
       case SelectionType.search:
         return AppLocalizations.of(context).searchLabel +
             (uppercase ? selection.filter!.toUpperCase() : selection.filter!);
-      default:
-        return "";
     }
   }
 }
