@@ -12,8 +12,8 @@ class Dialogs {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return WillPopScope(
-              onWillPop: () async => false,
+          return PopScope(
+              canPop: false,
               child: SimpleDialog(children: <Widget>[
                 Center(
                   child: Column(children: [

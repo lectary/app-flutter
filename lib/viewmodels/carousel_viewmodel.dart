@@ -354,8 +354,8 @@ class CarouselViewModel with ChangeNotifier {
 
   /// Saves the passed [Selection] in the [SharedPreferences].
   /// [SelectionType.all] gets saved with the value 'all'.
-  /// [SelectionType.package] gets saved with the value 'package:<package-title>'.
-  /// [SelectionType.lecture] gets saved with the value 'lecture:<lecture-id>:<lecture-lesson>'.
+  /// [SelectionType.package] gets saved with the value `package:<package-title>`.
+  /// [SelectionType.lecture] gets saved with the value `lecture:<lecture-id>:<lecture-lesson>`.
   /// If [Null] is passed, then the saved selection will be removed.
   Future<void> _saveSelection(Selection? selection) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -417,7 +417,9 @@ class CarouselViewModel with ChangeNotifier {
 
       // safety check
       if (!selectionString.contains(Constants.keySelectionPackage) &&
-          !selectionString.contains(Constants.keySelectionLecture)) return null;
+          !selectionString.contains(Constants.keySelectionLecture)) {
+        return null;
+      }
 
       // retrieve selection type 'package' or 'lecture' by index to be independent of package/lecture names
       int firstIndex = selectionString.indexOf(":");

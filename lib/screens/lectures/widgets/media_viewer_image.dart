@@ -135,7 +135,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
                                 : 0,
                           ),
                           child: Container(
-                            color: ColorsLectary.darkBlue.withOpacity(0),
+                            color: ColorsLectary.darkBlue.withValues(alpha: 0),
                           ),
                         ),
                       ),
