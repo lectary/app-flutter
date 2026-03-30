@@ -13,9 +13,13 @@ class CustomAppTheme {
       typography: Typography.material2018(platform: TargetPlatform.android),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.black,
           backgroundColor: Colors.grey[300],
           shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
         ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)))
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: ColorsLectary.lightBlue,
@@ -23,9 +27,25 @@ class CustomAppTheme {
       iconTheme: const IconThemeData(
         color: ColorsLectary.lightBlue,
       ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty<Color?>.fromMap(<WidgetStatesConstraint, Color>{
+          WidgetState.selected: ColorsLectary.white,
+          WidgetState.any: Colors.grey.shade400,
+        }),
+        trackColor: WidgetStateProperty<Color?>.fromMap(<WidgetStatesConstraint, Color>{
+          WidgetState.selected: ColorsLectary.lightBlue,
+          WidgetState.any: Colors.grey.shade50,
+        }),
+        trackOutlineColor: WidgetStateProperty<Color?>.fromMap(<WidgetStatesConstraint, Color>{
+          WidgetState.selected: ColorsLectary.lightBlue,
+          WidgetState.any: Colors.grey.shade400,
+        }),
+      ),
       appBarTheme: const AppBarTheme(
         foregroundColor: Colors.black,
         backgroundColor: ColorsLectary.white,
+        elevation: 2,
+        shadowColor: Colors.grey,
 
         /// Tricky one here:
         /// If left out, the style will be taken from [TextTheme.titleLarge], however, this is customized later.
@@ -65,9 +85,9 @@ class CustomAppTheme {
     onPrimary: Colors.black,
     secondary: ColorsLectary.lightBlue,
     onSecondary: ColorsLectary.white,
-    background: ColorsLectary.white,
-    onBackground: ColorsLectary.lightBlue,
     surface: ColorsLectary.white,
+    onSurface: Colors.black,
+    outlineVariant: Colors.black12, // includes dividers
   );
 
   static const _darkColorScheme = ColorScheme.dark(
@@ -75,9 +95,9 @@ class CustomAppTheme {
     onPrimary: Colors.black,
     secondary: ColorsLectary.lightBlue,
     onSecondary: ColorsLectary.white,
-    background: ColorsLectary.darkBlue,
-    onBackground: ColorsLectary.white,
-    surface: ColorsLectary.white,
+    surface: ColorsLectary.darkBlue,
+    onSurface: ColorsLectary.white,
+    outlineVariant: ColorsLectary.white, // includes dividers
   );
 
   // CUSTOM TEXT STYLES
