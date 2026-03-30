@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class SearchResultHeader extends StatelessWidget {
   final String title;
 
-  const SearchResultHeader(this.title, {Key? key}) : super(key: key);
+  const SearchResultHeader(this.title, {super.key});
 
   @override
   Widget build(BuildContext context) {

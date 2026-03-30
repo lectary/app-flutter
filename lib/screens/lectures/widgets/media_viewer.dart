@@ -20,10 +20,10 @@ import 'package:provider/provider.dart';
 /// Listens on [CarouselViewModel] for changes regarding media-modes and vocable visibility.
 class MediaViewer extends StatelessWidget {
   const MediaViewer({
-    Key? key,
+    super.key,
     required this.vocable,
     required this.vocableIndex,
-  }) : super(key: key);
+  });
 
   final Vocable vocable;
   final int vocableIndex;

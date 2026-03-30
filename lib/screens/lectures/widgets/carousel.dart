@@ -18,8 +18,8 @@ class Carousel extends StatefulWidget {
   const Carousel({
     required this.vocables,
     required this.carouselController,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<Carousel> createState() => _CarouselState();

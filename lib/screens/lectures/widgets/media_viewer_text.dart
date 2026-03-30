@@ -33,8 +33,8 @@ class TextViewer extends StatefulWidget {
     required this.mediaIndex,
     required this.slowMode,
     required this.autoMode,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<TextViewer> createState() => _TextViewerState();

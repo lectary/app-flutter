@@ -8,11 +8,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final TabBar? tabs;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.actions,
     this.tabs,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

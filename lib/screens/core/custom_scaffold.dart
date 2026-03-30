@@ -12,12 +12,12 @@ class CustomScaffold extends StatelessWidget {
   final bool? resizeToAvoidBottomInset;
 
   const CustomScaffold({
-    Key? key,
+    super.key,
     this.appBarTitle,
     this.appBarActions,
     required this.body,
     this.resizeToAvoidBottomInset,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

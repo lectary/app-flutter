@@ -20,7 +20,7 @@ import 'package:provider/provider.dart';
 class LectureMainScreen extends StatelessWidget {
   static const String routeName = '/';
 
-  const LectureMainScreen({Key? key}) : super(key: key);
+  const LectureMainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -17,8 +17,8 @@ class TextArea extends StatefulWidget {
     required this.hideVocableModeOn,
     required this.mediaIndex,
     required this.text,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<TextArea> createState() => _TextAreaState();
