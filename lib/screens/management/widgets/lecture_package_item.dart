@@ -16,6 +16,8 @@ import 'package:lectary/viewmodels/setting_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../core/custom_scaffold.dart';
+
 /// Helper class for realizing categorization of [Lecture] by its package name.
 /// Creates for every [LecturePackageItem] one special header [ListTile] and maps
 /// its children list of [Lecture] to a standard [ListTile].
@@ -65,47 +67,49 @@ class LecturePackageItem extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       builder: (_) {
-        return Wrap(
-          children: <Widget>[
-            Container(
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.center,
-                child: Text(uppercase ? packTitle.toUpperCase() : packTitle,
-                    style: Theme.of(context).textTheme.titleLarge)),
-            const Divider(thickness: 1, height: 1),
-            abstractText != null
-                ? Container(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Html(
-                      data: uppercase ? abstractText.toUpperCase() : abstractText,
-                      style: {
-                        "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyLarge!), // default text style
-                        "a": Style.fromTextStyle(CustomAppTheme.hyperlink(context)),
-                      },
-                      onLinkTap: (String? url, unused1, unused2) async {
-                        if (url != null && await canLaunchUrlString(url)) {
-                          await launchUrlString(url);
-                        } else {
-                          log('Could not launch url: $url of abstract: $abstractText');
-                          Dialogs.showErrorReportDialog(
-                              context: context,
-                              errorContext: AppLocalizations.of(context).errorOpenAbstractLink,
-                              errorMessage: 'Could not launch url: $url of abstract: $abstractText',
-                              reportCallback: LectureViewModel.reportErrorToLectaryServer);
-                        }
-                      },
-                    ))
-                : Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Center(
-                        child: Text(AppLocalizations.of(context).noDescription,
-                            style: Theme.of(context).textTheme.bodyLarge))),
-            const Divider(height: 1, thickness: 1),
-            _buildButton(
-                icon: Icons.close,
-                text: AppLocalizations.of(context).cancel,
-                func: () => Navigator.pop(context)),
-          ],
+        return EdgeToEdgeContainer(
+          child: Wrap(
+            children: <Widget>[
+              Container(
+                  padding: const EdgeInsets.all(10),
+                  alignment: Alignment.center,
+                  child: Text(uppercase ? packTitle.toUpperCase() : packTitle,
+                      style: Theme.of(context).textTheme.titleLarge)),
+              const Divider(thickness: 1, height: 1),
+              abstractText != null
+                  ? Container(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: Html(
+                        data: uppercase ? abstractText.toUpperCase() : abstractText,
+                        style: {
+                          "html": Style.fromTextStyle(Theme.of(context).textTheme.bodyLarge!), // default text style
+                          "a": Style.fromTextStyle(CustomAppTheme.hyperlink(context)),
+                        },
+                        onLinkTap: (String? url, unused1, unused2) async {
+                          if (url != null && await canLaunchUrlString(url)) {
+                            await launchUrlString(url);
+                          } else {
+                            log('Could not launch url: $url of abstract: $abstractText');
+                            Dialogs.showErrorReportDialog(
+                                context: context,
+                                errorContext: AppLocalizations.of(context).errorOpenAbstractLink,
+                                errorMessage: 'Could not launch url: $url of abstract: $abstractText',
+                                reportCallback: LectureViewModel.reportErrorToLectaryServer);
+                          }
+                        },
+                      ))
+                  : Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                          child: Text(AppLocalizations.of(context).noDescription,
+                              style: Theme.of(context).textTheme.bodyLarge))),
+              const Divider(height: 1, thickness: 1),
+              _buildButton(
+                  icon: Icons.close,
+                  text: AppLocalizations.of(context).cancel,
+                  func: () => Navigator.pop(context)),
+            ],
+          ),
         );
       },
     );
@@ -160,17 +164,19 @@ class LecturePackageItem extends StatelessWidget {
             ChangeNotifierProvider.value(value: lectureViewModel),
             ChangeNotifierProvider.value(value: settingViewModel)
           ],
-          child: Wrap(
-            children: <Widget>[
-              _buildLectureInfoWidget(lecture, settingViewModel),
-              const Divider(height: 1, thickness: 1),
-              _buildButtonForLectureStatus(lecture, lectureViewModel),
-              const Divider(height: 1, thickness: 1),
-              _buildButton(
-                  icon: Icons.close,
-                  text: AppLocalizations.of(context).cancel,
-                  func: () => Navigator.pop(context)),
-            ],
+          child: EdgeToEdgeContainer(
+            child: Wrap(
+              children: <Widget>[
+                _buildLectureInfoWidget(lecture, settingViewModel),
+                const Divider(height: 1, thickness: 1),
+                _buildButtonForLectureStatus(lecture, lectureViewModel),
+                const Divider(height: 1, thickness: 1),
+                _buildButton(
+                    icon: Icons.close,
+                    text: AppLocalizations.of(context).cancel,
+                    func: () => Navigator.pop(context)),
+              ],
+            ),
           ),
         );
       },
