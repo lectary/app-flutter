@@ -31,7 +31,7 @@ void main() {
 
       var encoder = ZipFileEncoder();
       encoder.create('$testDirPath/$baseDir.zip');
-      encoder.addDirectory(validDir, includeDirName: true);
+      encoder.addDirectorySync(validDir, includeDirName: true);
       encoder.close();
 
       File zipFile = File('$testDirPath/$baseDir.zip');
@@ -48,7 +48,7 @@ void main() {
 
       var encoder = ZipFileEncoder();
       encoder.create('$testDirPath/$baseDir.zip');
-      encoder.addDirectory(invalidDirWrongType, includeDirName: true);
+      encoder.addDirectorySync(invalidDirWrongType, includeDirName: true);
       encoder.close();
 
       File zipFile = File('$testDirPath/$baseDir.zip');
@@ -69,7 +69,7 @@ void main() {
 
       var encoder = ZipFileEncoder();
       encoder.create('$testDirPath/$baseDir.zip');
-      encoder.addFile(textFile);
+      encoder.addFileSync(textFile);
       encoder.close();
 
       File zipFile = File('$testDirPath/$baseDir.zip');
@@ -96,7 +96,7 @@ void main() {
 
       var encoder = ZipFileEncoder();
       encoder.create('$testDirPath/$baseDir.zip');
-      encoder.addDirectory(invalidDirNestedDir, includeDirName: true);
+      encoder.addDirectorySync(invalidDirNestedDir, includeDirName: true);
       encoder.close();
 
       File zipFile = File('$testDirPath/$baseDir.zip');
@@ -119,7 +119,7 @@ void main() {
 
       var encoder = ZipFileEncoder();
       encoder.create('$testDirPath/$baseDir.zip');
-      encoder.addDirectory(invalidDirWrongName, includeDirName: true);
+      encoder.addDirectorySync(invalidDirWrongName, includeDirName: true);
       encoder.close();
 
       File zipFile = File('$testDirPath/$baseDir.zip');
@@ -142,7 +142,7 @@ void main() {
 
       var encoder = ZipFileEncoder();
       encoder.create('$testDirPath/$baseDir.zip');
-      encoder.addDirectory(invalidDirWrongName, includeDirName: true);
+      encoder.addDirectorySync(invalidDirWrongName, includeDirName: true);
       encoder.close();
 
       File zipFile = File('$testDirPath/$baseDir.zip');

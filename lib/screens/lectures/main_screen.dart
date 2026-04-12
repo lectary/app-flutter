@@ -20,7 +20,7 @@ import 'package:provider/provider.dart';
 class LectureMainScreen extends StatelessWidget {
   static const String routeName = '/';
 
-  const LectureMainScreen({Key? key}) : super(key: key);
+  const LectureMainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -130,8 +130,6 @@ class LectureMainScreen extends StatelessWidget {
         return uppercase ? selection.lesson!.toUpperCase() : selection.lesson!;
       case SelectionType.search:
         return AppLocalizations.of(context).searchLabel + (uppercase ? selection.filter!.toUpperCase() : selection.filter!);
-      default:
-        return "";
     }
   }
 }

@@ -7,7 +7,7 @@ import 'package:lectary/utils/colors.dart';
 /// Shows a corresponding message and a button linked with the
 /// [LectureManagementScreen]
 class LectureNotAvailableScreen extends StatelessWidget {
-  const LectureNotAvailableScreen({Key? key}) : super(key: key);
+  const LectureNotAvailableScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

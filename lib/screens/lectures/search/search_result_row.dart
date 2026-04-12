@@ -9,7 +9,7 @@ class SearchResultRow extends StatelessWidget {
   final SearchResult searchResult;
   final String searchString;
 
-  const SearchResultRow(this.searchResult, this.searchString, {Key? key}) : super(key: key);
+  const SearchResultRow(this.searchResult, this.searchString, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +34,6 @@ class SearchResultRow extends StatelessWidget {
               return const Icon(Icons.movie);
             case MediaType.txt:
               return const Icon(Icons.subject);
-            default:
-              return const SizedBox();
           }
         })(),
       ),

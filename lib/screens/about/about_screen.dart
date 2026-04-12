@@ -40,7 +40,7 @@ class _AboutScreenState extends State<AboutScreen> {
     super.dispose();
   }
 
-  _buildTapGestureRecognizer(String link) {
+  TapGestureRecognizer _buildTapGestureRecognizer(String link) {
     final recognizer = TapGestureRecognizer()..onTap = () => launchUrlString(link);
     _tapGestureRecognizerList.add(recognizer);
     return recognizer;

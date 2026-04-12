@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 /// pointing to [LectureManagementScreen] and setting the corresponding [SettingViewModel.learningLanguagesList]
 /// at the same time.
 class LectureStartupScreen extends StatelessWidget {
-  const LectureStartupScreen({Key? key}) : super(key: key);
+  const LectureStartupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

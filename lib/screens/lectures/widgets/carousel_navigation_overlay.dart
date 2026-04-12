@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 /// Overlay with two buttons for navigating the [Carousel]
 /// Can be disabled via the settings
 class CarouselNavigationOverlay extends StatelessWidget {
-  final CarouselController carouselController;
+  final CarouselSliderController carouselController;
 
   final widthFactorOfNavigationArrows = 0.5;
 

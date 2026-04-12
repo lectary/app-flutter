@@ -14,7 +14,7 @@ class LectureRepository {
   final LectaryApi _lectaryApi;
   final LectureDatabase _lectureDatabase;
 
-  LectureRepository({required lectaryApi, required lectureDatabase})
+  LectureRepository({required LectaryApi lectaryApi, required lectureDatabase})
       : _lectaryApi = lectaryApi,
         _lectureDatabase = lectureDatabase;
 

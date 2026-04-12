@@ -19,8 +19,8 @@ class CustomSearchBar extends StatefulWidget {
     required this.focusNode,
     this.initOpen = false,
     required this.filterFunction,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CustomSearchBar> createState() => _CustomSearchBarState();

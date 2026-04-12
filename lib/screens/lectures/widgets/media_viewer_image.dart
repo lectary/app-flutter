@@ -28,8 +28,8 @@ class ImageViewer extends StatefulWidget {
     required this.mediaIndex,
     required this.slowMode,
     required this.autoMode,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<ImageViewer> createState() => _ImageViewerState();
@@ -135,7 +135,7 @@ class _ImageViewerState extends State<ImageViewer> with TickerProviderStateMixin
                                 : 0,
                           ),
                           child: Container(
-                            color: ColorsLectary.darkBlue.withOpacity(0),
+                            color: ColorsLectary.darkBlue.withValues(alpha: 0),
                           ),
                         ),
                       ),

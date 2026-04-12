@@ -42,6 +42,11 @@
 	<array>
 		<string>https</string>
 		<string>http</string>
+		<string>mailto</string>
 	</array>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>

@@ -30,9 +30,9 @@ class LectaryVideoPlayer extends StatefulWidget {
     required this.slowMode,
     required this.autoMode,
     required this.loopMode,
-    Key? key,
+    super.key,
     required this.audio,
-  }) : super(key: key);
+  });
 
   @override
   State<LectaryVideoPlayer> createState() => _LectaryVideoPlayerState();

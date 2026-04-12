@@ -81,8 +81,8 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 /// Provides a static [setLocale] method for changing the locale everywhere in the app
 class LocalizedApp extends StatefulWidget {
   const LocalizedApp({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<LocalizedApp> createState() => _LocalizedAppState();

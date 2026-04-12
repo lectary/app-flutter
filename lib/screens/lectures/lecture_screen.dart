@@ -18,14 +18,14 @@ import 'package:provider/provider.dart';
 class LectureScreen extends StatefulWidget {
   final List<Vocable> vocables;
 
-  const LectureScreen({required this.vocables, Key? key}) : super(key: key);
+  const LectureScreen({required this.vocables, super.key});
 
   @override
   State<LectureScreen> createState() => _LectureScreenState();
 }
 
 class _LectureScreenState extends State<LectureScreen> {
-  CarouselController carouselController = CarouselController();
+  CarouselSliderController carouselController = CarouselSliderController();
 
   @override
   void initState() {

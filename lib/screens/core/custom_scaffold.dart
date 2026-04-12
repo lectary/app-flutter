@@ -12,23 +12,42 @@ class CustomScaffold extends StatelessWidget {
   final bool? resizeToAvoidBottomInset;
 
   const CustomScaffold({
-    Key? key,
+    super.key,
     this.appBarTitle,
     this.appBarActions,
     required this.body,
     this.resizeToAvoidBottomInset,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      appBar: CustomAppBar(
-        title: appBarTitle,
-        actions: appBarActions,
+    return EdgeToEdgeContainer(
+      child: Scaffold(
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        appBar: CustomAppBar(
+          title: appBarTitle,
+          actions: appBarActions,
+        ),
+        drawer: const CustomDrawer(),
+        body: body,
       ),
-      drawer: const CustomDrawer(),
-      body: body,
+    );
+  }
+}
+
+/// Adds padding to bottom to account for system navigation bars used for EdgeToEdge system mode.
+class EdgeToEdgeContainer extends StatelessWidget {
+  final Widget child;
+
+  const EdgeToEdgeContainer({required this.child, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    double bottomSafeAreaPadding = MediaQuery.paddingOf(context).bottom;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomSafeAreaPadding),
+      child: child,
     );
   }
 }
