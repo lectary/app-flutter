@@ -3,6 +3,13 @@ description: Lectary 4 - A sign language learning application
 
 publish_to: 'none'
 
+# Application version of the schema a.b.c+x.
+# The build-name (a.b.c) follows semantic versioning.
+# The build-number (x) uniquely identifies the artifact. We just simply reuse the build-name.
+# In Android, build-name is used as versionName while build-number is used as versionCode and must be unique across all published bundles and increasing for newer ones.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 4.2.3+423
 
 environment:
